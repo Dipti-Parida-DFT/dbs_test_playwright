@@ -1,0 +1,22 @@
+{
+  "GetEntitlement": {
+    "getEntitlementValidPayload": {
+      "getEntitlement": {
+        "rqUID": "213213213213213",
+        "channelType": "LNOS",
+        "qs": "SG2BE11S01@SG2BE11",
+        "key": "OOSWEEP"
+      },
+      "sessionId": "Xb2-BLmmIDR0YZlpNy8P_NIsLpY-tUtwk4iEDYVg.i3bku3uatqeapp01"
+    }  
+  },
+  "GetUserDetailWithAuthSignatory":{
+        "getUsersReq": {
+        "rqUID": "123123456543",
+        "channelId": "LNOS",
+        "orgId": "ICRGSG02",
+        "subOrgId": "ICSUSG04",
+        "apiName": "idealsso-banking/user/getUserDetailWithAuthSignatory"
+      }
+  }
+}

@@ -1,0 +1,6 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","730","should return 200 OK with a valid response body","chromium","2026-01-26","passed","2026-01-26","User API: getUserDetailWithAuthSignatory","api\IDEALX\userApi.spec.ts","",""
+"","5702","should return 200 OK with a valid request","chromium","2026-01-26","passed","2026-01-26","Entitlement API: getEntitlement","api\IDEALX\entitlementApi.spec.ts","",""
+"","3663","should handle invalid rqUID with error","chromium","2026-01-26","failed","2026-01-26","Entitlement API: getEntitlement","api\IDEALX\entitlementApi.spec.ts","",""
+"","5195","should handle missing session ID","chromium","2026-01-26","passed","2026-01-26","Entitlement API: getEntitlement","api\IDEALX\entitlementApi.spec.ts","",""
+"","804","should handle invalid input (e.g., empty rqUID) with 4xx","chromium","2026-01-26","failed","2026-01-26","User API: getUserDetailWithAuthSignatory","api\IDEALX\userApi.spec.ts","",""

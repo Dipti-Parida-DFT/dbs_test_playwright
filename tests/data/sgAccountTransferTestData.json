@@ -1,0 +1,18 @@
+{
+  "authentication": {
+    "securityAccessCode": "1234"
+  },
+  "payeeDetails": {
+    "searchTerm": "sg",
+    "payeeName": "A-SGOtherbnkTT-Template-test-"
+  },
+  "paymentDetails": {
+    "amount": "1.00"
+  },
+  "remitterDetails": {
+    "remitterName": "Test"
+  },
+  "transactionDetails": {
+    "referenceNumber": "EBOTT60120706800"
+  }
+}
