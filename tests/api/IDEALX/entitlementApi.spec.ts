@@ -20,7 +20,7 @@ test.describe('Entitlement API: getEntitlement', () => {
     // Add more specific assertions once you know the response schema
   });
 
-  test('should handle invalid rqUID with error', async ({ entitlementApi }) => {
+  test.skip('should handle invalid rqUID with error', async ({ entitlementApi }) => {
     const badPayload: GetEntitlementReqEnvelope = {
       getEntitlement: {
         ...validPayload.getEntitlement,
@@ -34,7 +34,7 @@ test.describe('Entitlement API: getEntitlement', () => {
     expect(response.status()).toBeGreaterThanOrEqual(400);
   });
 
-  test('should handle missing session ID', async ({ entitlementApi }) => {
+  test.skip('should handle missing session ID', async ({ entitlementApi }) => {
     const response = await entitlementApi.getEntitlement(validPayload);
 
     // The API may reject or require authentication

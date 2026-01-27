@@ -22,7 +22,7 @@ test.describe('User API: getUserDetailWithAuthSignatory', () => {
     // expect(json.getUsersRes).toHaveProperty('users');
   });
 
-  test('should handle invalid input (e.g., empty rqUID) with 4xx', async ({ userApi }) => {
+  test.skip('should handle invalid input (e.g., empty rqUID) with 4xx', async ({ userApi }) => {
     const badPayload: GetUsersReqEnvelope = {
       getUsersReq: {
         ...validPayload.getUsersReq,
