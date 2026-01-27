@@ -1,7 +1,7 @@
 // tests/api/IDEALX/entitlementApi.spec.ts
 import { test, expect } from '../../lib/api/api.fixtures';
 import { GetEntitlementReqEnvelope } from '../../lib/api/models';
-import testData from '../../data/api/3716Testdata.json';
+import testData from '../../data/api/3716TestData.json';
 
 test.describe('Entitlement API: getEntitlement', () => {
   const validPayload: GetEntitlementReqEnvelope = testData.GetEntitlement.getEntitlementValidPayload;
