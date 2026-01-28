@@ -9,7 +9,7 @@ let customBrowser: Browser;
 
 test.describe('Bulk Payment', () => {
     test.beforeAll(async () => {
-        customBrowser = await chromium.launch({ headless: false });
+        customBrowser = await chromium.launch({ headless: true });
     });
 
     test.afterAll(async () => {
