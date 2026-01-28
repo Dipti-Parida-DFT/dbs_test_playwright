@@ -3,8 +3,7 @@ import { APIRequestContext, APIResponse } from '@playwright/test';
 import { GetEntitlementReqEnvelope } from './models';
 
 export class EntitlementApi {
-  private readonly baseURL = 'https://10.8.58.138:8443';
-  //'https://10.8.59.68:7443';
+  private readonly baseURL = 'https://10.8.59.68:7443';
 
   constructor(private readonly request: APIRequestContext) {}
 
