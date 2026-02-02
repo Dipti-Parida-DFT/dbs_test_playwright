@@ -1,0 +1,24 @@
+{
+  "GetUserDetailWithAuthSignatory": {
+    "validSessionId": "s8ij8dT8h92QozqRbWkgYgnQVO2uZdzdLD9MJZoY.i3bku3uatqeapp01",
+    "validPayload": {
+      "getUsersReq": {
+        "rqUID": "123123456543",
+        "channelId": "LNOS",
+        "orgId": "ICRGSG02",
+        "subOrgId": "ICSUSG04",
+        "apiName": "idealsso-banking/user/getUserDetailWithAuthSignatory"
+      }
+    },
+    "validChannelTypes": ["LNOS", "APP", "WEB", "PRM", "XER", "PWEB", "MFE"],
+    "invalidChannelPayload": {
+      "getUsersReq": {
+        "rqUID": "123123456543",
+        "channelId": "INVALID",
+        "orgId": "ICRGSG02",
+        "subOrgId": "ICSUSG04",
+        "apiName": "idealsso-banking/user/getUserDetailWithAuthSignatory"
+      }
+    }
+  }
+}

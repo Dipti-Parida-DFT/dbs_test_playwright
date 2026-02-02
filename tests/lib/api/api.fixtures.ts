@@ -9,16 +9,27 @@ type ApiFixtures = {
   userIdAvailApi: UserIdAvailApi;
 };
 
+import { APIRequestContext } from '@playwright/test';
+
 export const test = base.extend<ApiFixtures>({
-  userApi: async ({ request }, use) => {
+  userApi: async (
+    { request }: { request: APIRequestContext },
+    use: (value: UserApi) => Promise<void>
+  ) => {
     await use(new UserApi(request));
   },
 
-  entitlementApi: async ({ request }, use) => {
+  entitlementApi: async (
+    { request }: { request: APIRequestContext },
+    use: (value: EntitlementApi) => Promise<void>
+  ) => {
     await use(new EntitlementApi(request));
   },
 
-  userIdAvailApi: async ({ request }, use) => {
+  userIdAvailApi: async (
+    { request }: { request: APIRequestContext },
+    use: (value: UserIdAvailApi) => Promise<void>
+  ) => {
     await use(new UserIdAvailApi(request));
   },
 });
