@@ -1,44 +1,71 @@
-// tests/api/IDEALX/entitlementApi.spec.ts
 import { test, expect } from '../../lib/api/api.fixtures';
 import { GetEntitlementReqEnvelope } from '../../lib/api/models';
-import testData from '../../data/api/3716TestData.json';
+import testData from '../../data/api/entitlementTestData.json';
 
 test.describe('Entitlement API: getEntitlement', () => {
-  const validPayload: GetEntitlementReqEnvelope = testData.GetEntitlement.getEntitlementValidPayload;
-  const sessionId = testData.GetEntitlement.getEntitlementValidPayload.sessionId;
+  const {
+    validPayload,
+    validChannelTypes,
+    invalidChannelPayload,
+    invalidQsPayload,
+    validSessionId,
+  } = testData.GetEntitlement;
 
-  test('should return 200 OK with a valid request', async ({ entitlementApi }) => {
-    const response = await entitlementApi.getEntitlement(validPayload, sessionId);
+  test('TC004: should return 200 and UX0000 for valid channelType LNOS', async ({ entitlementApi }: any) => {
+    const response = await entitlementApi.getEntitlement(
+      validPayload as GetEntitlementReqEnvelope,
+      validSessionId
+    );
 
-    // Status checks
-    expect(response.ok(), `Status: ${response.status()} ${response.statusText()}`).toBeTruthy();
     expect(response.status()).toBe(200);
 
-    // Body checks
     const json = await response.json();
-    expect(json).toBeTruthy();
-    // Add more specific assertions once you know the response schema
+    expect(json.getEntitlementRes.returnCode).toBe('UX0000');
+    expect(json.getEntitlementRes.returnDesc).toBe('Successful');
   });
 
-  test.skip('should handle invalid rqUID with error', async ({ entitlementApi }) => {
-    const badPayload: GetEntitlementReqEnvelope = {
-      getEntitlement: {
-        ...validPayload.getEntitlement,
-        rqUID: '', // invalid/missing
-      },
-    };
+  test.describe('TC005: valid channelTypes return success', () => {
+    for (const channelType of validChannelTypes) {
+      test(`channelType = ${channelType}`, async ({ entitlementApi }: any) => {
+        const payload: GetEntitlementReqEnvelope = {
+          getEntitlement: {
+            ...validPayload.getEntitlement,
+            channelType,
+          },
+        };
 
-    const response = await entitlementApi.getEntitlement(badPayload, sessionId);
+        const response = await entitlementApi.getEntitlement(payload, validSessionId);
 
-    // Expect an error response
-    expect(response.status()).toBeGreaterThanOrEqual(400);
+        expect(response.status()).toBe(200);
+
+        const json = await response.json();
+        expect(json.getEntitlementRes.returnCode).toBe('UX0000');
+      });
+    }
   });
 
-  test.skip('should handle missing session ID', async ({ entitlementApi }) => {
-    const response = await entitlementApi.getEntitlement(validPayload);
+  test('TC006: invalid channelType returns 500 error', async ({ entitlementApi }: any) => {
+    const response = await entitlementApi.getEntitlement(
+      invalidChannelPayload as GetEntitlementReqEnvelope,
+      validSessionId
+    );
 
-    // The API may reject or require authentication
-    // Adjust assertions based on actual API behavior
-    expect([200, 401, 403]).toContain(response.status());
+    expect(response.status()).toBe(500);
+
+    const bodyText = await response.text();
+    expect(bodyText).toContain('MBG4099E');
+  });
+
+  test('TC007: invalid qs returns UX7777', async ({ entitlementApi }: any) => {
+    const response = await entitlementApi.getEntitlement(
+      invalidQsPayload as GetEntitlementReqEnvelope,
+      validSessionId
+    );
+
+    expect(response.status()).toBeLessThan(500);
+
+    const json = await response.json();
+    expect(json.getEntitlementRes.returnCode).toBe('UX7777');
+    expect(json.getEntitlementRes.returnDesc).toBe('Successful');
   });
 });
