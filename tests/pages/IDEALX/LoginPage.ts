@@ -25,16 +25,22 @@ export class LoginPage {
   }
 
   async login(orgId?: string, userId?: string, pin?: string) {
-    const webComponents = new WebComponents();
-    const creds = { orgId: orgId ?? loginCredentials.orgId, userId: userId ?? loginCredentials.userId, pin: pin ?? loginCredentials.pin };
-    await webComponents.enterText(this.orgIdInput, creds.orgId);
-    await webComponents.enterText(this.userIdInput, creds.userId);
-    await webComponents.enterText(this.pinInput, creds.pin);
-    await this.loginButton.click();
-    await this.page.waitForTimeout(120000); // Wait for potential redirects
-  }
+  const webComponents = new WebComponents();
+  const creds = {
+    orgId: orgId ?? loginCredentials.Singapore.orgId,
+    userId: userId ?? loginCredentials.Singapore.userId,
+    pin: pin ?? loginCredentials.Singapore.pin
+  };
 
-  async loginWithDefaultCredentials() {
-    await this.login();
-  }
-}
+  await webComponents.enterText(this.orgIdInput, creds.orgId);
+  await webComponents.enterText(this.userIdInput, creds.userId);
+  await webComponents.enterText(this.pinInput, creds.pin);
+  await this.loginButton.click();
+
+  await Promise.any([
+    this.page.locator('#logout').waitFor({ state: 'visible', timeout: 120_000 }),
+    this.page.locator('#nav-item-navBBTopDashLinkText').waitFor({ state: 'visible', timeout: 120_000 }),
+    this.page.locator('#nav-item-navBBTopApplyLinkText').waitFor({ state: 'visible', timeout: 120_000 }),
+    this.page.locator('header').waitFor({ state: 'visible', timeout: 120_000 })
+  ]);
+}}

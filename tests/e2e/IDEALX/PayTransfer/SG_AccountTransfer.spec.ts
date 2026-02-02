@@ -10,7 +10,7 @@ test('SG Account Transfer - Complete Payment Flow', async ({ page }) => {
 
   // Login to the application
   await loginPage.goto();
-  await loginPage.login(loginCredentials.orgId, loginCredentials.userId, loginCredentials.pin);
+  await loginPage.login(loginCredentials.Singapore.orgId, loginCredentials.Singapore.userId, loginCredentials.Singapore.pin);
   console.log(page.viewportSize());
 
   //await page.waitForTimeout(400000); // Wait for post-login processes to complete

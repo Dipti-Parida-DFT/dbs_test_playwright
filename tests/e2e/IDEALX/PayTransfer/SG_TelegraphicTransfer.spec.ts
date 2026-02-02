@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { PayTransferPage } from '../../../pages/IDEALX/PayTransfer/PayTransferPage';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
 
-import { chromium, Browser } from 'playwright';
+import { chromium, Browser, Page } from 'playwright';
 
 let customBrowser: Browser;
 
