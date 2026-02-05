@@ -64,6 +64,7 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     
   });
 
+  //We should write Add New Payee, capture reference as helper methods to avoid code duplication
   test('Cannot create Payroll with item amount > 500000000 VND', async ({ page }) => {
     
     // Payments → Transfer Center → Payroll
@@ -82,7 +83,6 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
 
     // From account (type + Enter, works for most typeahead controls)
     await pages.PayrollPage.safeClick(pages.PayrollPage.fromAccount);
-    //await pages.PayrollPage.fromAccount.click({ force: true });
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('Enter');
 
@@ -117,6 +117,9 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.waitForTransferCenterReady();
 
+    //Authentication Pop-up
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+
     await pages.PayrollPage.safeClick(pages.PayrollPage.payroll);
     await pages.PayrollPage.waitForPayrollFormReady();
 
@@ -130,6 +133,7 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeName, testData.Payroll.newPayeeName);
 
     await pages.PayrollPage.safeFill(pages.PayrollPage.payeeBankId, payeeBankID);
+    await pages.PayrollPage.safeClick(pages.PayrollPage.findBankIDButton);
     await pages.PayrollPage.safeClick(pages.PayrollPage.payeeBankSearchResults.first());
 
     await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeAccountNumber, testData.Payroll.newPayeeAcctNumber);
@@ -165,6 +169,9 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.waitForTransferCenterReady();
 
+    //Authentication Pop-up
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+
     await pages.PayrollPage.safeClick(pages.PayrollPage.payroll);
     await pages.PayrollPage.waitForPayrollFormReady();
 
@@ -178,6 +185,7 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeName, testData.Payroll.newPayeeName);
 
     await pages.PayrollPage.safeFill(pages.PayrollPage.payeeBankId, payeeBankID);
+    await pages.PayrollPage.safeClick(pages.PayrollPage.findBankIDButton);
     await pages.PayrollPage.safeClick(pages.PayrollPage.payeeBankSearchResults.first());
 
     await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeAccountNumber, testData.Payroll.newPayeeAcctNumber);

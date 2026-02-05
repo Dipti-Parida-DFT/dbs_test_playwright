@@ -4,6 +4,7 @@ import type { Page } from '@playwright/test';
 import { AccountTransferPage } from './AccountTransferPage';
 import { TransferCentersPage } from './TransferCenterPage';
 import { PayrollPage } from './PayrollPage';
+import { BulkPaymentPage } from './BulkPaymentPage';
 /*import { LVTPaymentPage } from './LVTPaymentPage';
 import { AutoPayPaymentPage } from './AutoPayPaymentPage';
 import { PaymentViaPartnerBankPage } from './PaymentViaPartnerBankPage';
@@ -15,7 +16,7 @@ import { FastPaymentPage } from './FastPaymentPage';
 
 import { NewFastCollectionPage } from './NewFastCollectionPage';
 import { BulkCollectionPage } from './BulkCollectionPage';
-import { BulkPaymentPage } from './BulkPaymentPage';
+
 import { MEPSPaymentPage } from './MEPSPaymentPage';
 import { NewBillPaymentPage } from './NewBillPaymentPage';
 import { PaymentTemplatesPage } from './PaymentTemplatesPage';
@@ -48,6 +49,7 @@ export {
   AccountTransferPage,
   TransferCentersPage,
   PayrollPage,
+  BulkPaymentPage,
  /* LVTPaymentPage,
   AutoPayPaymentPage,
   PaymentViaPartnerBankPage,
@@ -58,7 +60,7 @@ export {
   
   NewFastCollectionPage,
   BulkCollectionPage,
-  BulkPaymentPage,
+  
   MEPSPaymentPage,
   NewBillPaymentPage,
   PaymentTemplatesPage,
@@ -92,6 +94,7 @@ export class PaymentsPages {
   public AccountTransferPage: AccountTransferPage;
   public TransferCentersPage: TransferCentersPage;
   public PayrollPage: PayrollPage;
+  public BulkPaymentPage: BulkPaymentPage;
   /*public LVTPaymentPage: LVTPaymentPage;
   public AutoPayPaymentPage: AutoPayPaymentPage;
   public PaymentViaPartnerBankPage: PaymentViaPartnerBankPage;
@@ -101,7 +104,7 @@ export class PaymentsPages {
   
   public NewFastCollectionPage: NewFastCollectionPage;
   public BulkCollectionPage: BulkCollectionPage;
-  public BulkPaymentPage: BulkPaymentPage;
+  
   public MEPSPaymentPage: MEPSPaymentPage;
   public NewBillPaymentPage: NewBillPaymentPage;
   public PaymentTemplatesPage: PaymentTemplatesPage;
