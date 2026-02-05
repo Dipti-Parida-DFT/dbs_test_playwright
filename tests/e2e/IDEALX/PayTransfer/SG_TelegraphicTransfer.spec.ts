@@ -9,7 +9,7 @@ let customBrowser: Browser;
 
 test.describe('Telegraphic Transfer', () => {
     test.beforeAll(async () => {
-        customBrowser = await chromium.launch({ headless: true });
+        customBrowser = await chromium.launch({ headless: false });
     });
 
     test.afterAll(async () => {

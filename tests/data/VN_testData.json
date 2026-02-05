@@ -1,0 +1,99 @@
+{
+    "BulkPayment": {
+        "UAT": {
+            "loginCompanyId": "VNAUTO01",
+            "loginUserId": "VNAUTO01C01",
+            "fromAccount": "0016001654",
+            "payeeBankID": "79659001"
+        },
+        "SIT": {
+            "loginCompanyId": "SPVNSSM1",
+            "loginUserId": "SPVNSSM1S01",
+            "fromAccount": "0012001234",
+            "payeeBankID": "01203500"
+        },
+        "maxAmountIx": "500000000",
+        "moreThanMaxAmountIx": "500000001",
+        "amountIx": "200000000",
+        "maxAmount": "500,000,000",
+        "moreThanMaxAmount": "500,000,001",
+        "amount": "200,000,000",
+        "bulkExistingPayee": "PayrollExistingPayee",
+        "newPayeeName": "NewPayeeName",
+        "newPayeeAcctNumber": "123456000001",
+        "paymentDetails": "paymentDetails",
+        "amountErrorTip": "Amount is invalid.",
+        "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
+    },
+    "Payroll": {
+        "UAT": {
+            "loginCompanyId": "SPVNSSM1",
+            "loginUserId": "SPVNSSM1S01",
+            "fromAccount": "66670000322",
+            "payeeBankID": "01203500"
+        },
+        "SIT": {
+            "loginCompanyId": "SPVNSSM1",
+            "loginUserId": "SPVNSSM1S01",
+            "fromAccount": "66670000322",
+            "payeeBankID": "01203500"
+        },
+        "maxAmountIx": "500000000",
+        "moreThanMaxAmountIx": "500000001",
+        "amountIx": "200000000",
+        "maxAmount": "500,000,000",
+        "moreThanMaxAmount": "500,000,001",
+        "amount": "200,000,000",
+        "bulkExistingPayee": "PayrollExistingPayee",
+        "newPayeeName": "NewPayeeName",
+        "newPayeeAcctNumber": "123456000001",
+        "paymentDetails": "paymentDetails",
+        "amountErrorTip": "Amount is invalid.",
+        "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
+    },
+    "ManagePayroll": {
+        "UAT": {
+            "loginCompanyId": "SPI309",
+            "loginUserId": "SPI309C01",
+            "fromAccount": "0016001654",
+            "payeeBankID": "79659001"
+        },
+        "SIT": {
+            "loginCompanyId": "SPI309",
+            "loginUserId": "SPI309S03",
+            "fromAccount": "0012001234",
+            "payeeBankID": "01203500"
+        },
+        "maxAmount": "500,000,000",
+        "maxAmountIx": "500000000",
+        "moreThanMaxAmount": "500,000,001",
+        "moreThanMaxAmountIx": "500000001",
+        "amount": "200,000,000",
+        "amountIx": "200000000",
+        "bulkExistingPayee": "PayrollExistingPayee",
+        "newPayeeName": "NewPayeeName",
+        "newPayeeAcctNumber": "123456000001",
+        "paymentDetails": "paymentDetails",
+        "amountErrorTip": "Amount is invalid.",
+        "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
+    },
+    "status": {
+        "Approved": "Approved",
+        "PendingApproval": "Pending Approval",
+        "PartialApproved": "Partial Approved",
+        "PendingRelease": "Pending Release",
+        "PendingVerification": "Pending Verification",
+        "PartialCompleted": "Partial Completed",
+        "Received": "Received",
+        "Completed": "Completed",
+        "Saved": "Saved",
+        "Submitted": "Submitted",
+        "BankRejected": "Bank Rejected",
+        "Rejected": "Rejected",
+        "Failed": "Failed",
+        "Cancelled": "Cancelled"
+    },
+    "paymentType": {
+        "VN_Custom": "VN - Customs Payment"
+    }
+}
