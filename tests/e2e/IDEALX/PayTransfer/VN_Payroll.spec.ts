@@ -65,36 +65,57 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
   });
 
   //We should write Add New Payee, capture reference as helper methods to avoid code duplication
-  test('Cannot create Payroll with item amount > 500000000 VND', async ({ page }) => {
+  test.only('Cannot create Payroll with item amount > 500000000 VND', async ({ page }) => {
     
     // Payments → Transfer Center → Payroll
     await pages.AccountTransferPage.waitForMenu();
-    //await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    await pages.AccountTransferPage.paymentMenu.click({ force: true });
-    //await pages.TransferCentersPage.waitForTransferCenterReady();
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
 
     //Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
     //await pages.TransferCentersPage.waitForTransferCenterReady();
 
     await pages.PayrollPage.safeClick(pages.PayrollPage.payroll);
-    //await pages.PayrollPage.payroll.click({ force: true });
     await pages.PayrollPage.waitForPayrollFormReady();
 
     // From account (type + Enter, works for most typeahead controls)
     await pages.PayrollPage.safeClick(pages.PayrollPage.fromAccount);
     await page.keyboard.type(fromAccount);
+    await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
+    
 
     // New Payee
     await pages.PayrollPage.safeClick(pages.PayrollPage.newPayeeTab);
     await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeName, testData.Payroll.newPayeeName);
+    await page.keyboard.press('Tab');
+    await pages.PayrollPage.newPayeeName.blur();
+    await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeNickName, testData.Payroll.newPayeeNickName);
+    await page.keyboard.press('Tab');
+    await pages.PayrollPage.newPayeeNickName.blur();
 
-    await pages.PayrollPage.safeFill(pages.PayrollPage.payeeBankId, payeeBankID);
+    //await pages.PayrollPage.safeFill(pages.PayrollPage.payeeBankId, payeeBankID);
+    await pages.PayrollPage.payeeBankId.click();
+    await pages.PayrollPage.payeeBankId.fill(payeeBankID);
+    await pages.PayrollPage.payeeBankId.blur();
+
     await pages.PayrollPage.safeClick(pages.PayrollPage.findBankIDButton);
-    await pages.PayrollPage.safeClick(pages.PayrollPage.payeeBankSearchResults.first());
+    await pages.PayrollPage.payeeBankSearchResults.first().click();
+        
+    //await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeAccountNumber, testData.Payroll.newPayeeAcctNumber);
+    await pages.PayrollPage.safeClick(pages.PayrollPage.newPayeeAccountNumber);
+        
+    // Put value into browser clipboard
+    await page.evaluate(async (text) => {
+      await navigator.clipboard.writeText(text);
+    }, testData.Payroll.newPayeeAcctNumber);
 
-    await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeAccountNumber, testData.Payroll.newPayeeAcctNumber);
+    // Paste (Ctrl+V)
+    await page.keyboard.press('Control+V');
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Tab');
+    await pages.PayrollPage.newPayeeAccountNumber.blur();
+
     await pages.PayrollPage.safeClick(pages.PayrollPage.addNewPayeeButton);
 
     // Amount > max + details
@@ -107,7 +128,18 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
 
     // Try Next → expect top-level/banner error
     await pages.PayrollPage.safeClick(pages.PayrollPage.nextButton);
-    const globalError = page.locator('[role="alert"], .error, .error-message, .form-error, .toast-error');
+        
+    const globalError = page.locator([
+      '.alert.alert-error',
+      '.error', '.error-message', '.form-error',
+      '.toast', '.toast-error',          // generic toasts
+      '.alert', '.alert-danger',         // Bootstrap-like
+      '.ant-message', '.ant-message-error', '.ant-notification-notice', // Ant Design
+      '.MuiAlert-root',                  // Material UI
+      '.invalid-feedback'                // Common form feedback
+    ].join(', '));
+
+    await expect(globalError).toBeVisible({ timeout: 30000 });
     await expect(globalError).toContainText(testData.Payroll.errorMessage);
   });
 
@@ -115,7 +147,7 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     // Payments → Transfer Center → Payroll
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    await pages.TransferCentersPage.waitForTransferCenterReady();
+    //await pages.TransferCentersPage.waitForTransferCenterReady();
 
     //Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
@@ -126,17 +158,39 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     // From account
     await pages.PayrollPage.safeClick(pages.PayrollPage.fromAccount);
     await page.keyboard.type(fromAccount);
+    await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
-    // New payee
+    // New Payee
     await pages.PayrollPage.safeClick(pages.PayrollPage.newPayeeTab);
     await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeName, testData.Payroll.newPayeeName);
+    await page.keyboard.press('Tab');
+    await pages.PayrollPage.newPayeeName.blur();
+    await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeNickName, testData.Payroll.newPayeeNickName);
+    await page.keyboard.press('Tab');
+    await pages.PayrollPage.newPayeeNickName.blur();
 
-    await pages.PayrollPage.safeFill(pages.PayrollPage.payeeBankId, payeeBankID);
+    //await pages.PayrollPage.safeFill(pages.PayrollPage.payeeBankId, payeeBankID);
+    await pages.PayrollPage.payeeBankId.click();
+    await pages.PayrollPage.payeeBankId.fill(payeeBankID);
+    await pages.PayrollPage.payeeBankId.blur();
+
     await pages.PayrollPage.safeClick(pages.PayrollPage.findBankIDButton);
-    await pages.PayrollPage.safeClick(pages.PayrollPage.payeeBankSearchResults.first());
+    await pages.PayrollPage.payeeBankSearchResults.first().click();
+    //await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeAccountNumber, testData.Payroll.newPayeeAcctNumber);
+    await pages.PayrollPage.safeClick(pages.PayrollPage.newPayeeAccountNumber);
+        
+    // Put value into browser clipboard
+    await page.evaluate(async (text) => {
+      await navigator.clipboard.writeText(text);
+    }, testData.Payroll.newPayeeAcctNumber);
 
-    await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeAccountNumber, testData.Payroll.newPayeeAcctNumber);
+    // Paste (Ctrl+V)
+    await page.keyboard.press('Control+V');
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Tab');
+    await pages.PayrollPage.newPayeeAccountNumber.blur();
+
     await pages.PayrollPage.safeClick(pages.PayrollPage.addNewPayeeButton);
 
     // Amount = max; add details and submit
@@ -154,7 +208,7 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
 
     // Find it again in Transfer Center by reference
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    await pages.TransferCentersPage.waitForTransferCenterReady();
+    //await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.PayrollPage.waitForViewPaymentPageReady();
 
@@ -167,7 +221,7 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     // Payments → Transfer Center → Payroll
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    await pages.TransferCentersPage.waitForTransferCenterReady();
+    //await pages.TransferCentersPage.waitForTransferCenterReady();
 
     //Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
@@ -183,12 +237,33 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     // First payee
     await pages.PayrollPage.safeClick(pages.PayrollPage.newPayeeTab);
     await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeName, testData.Payroll.newPayeeName);
+    await page.keyboard.press('Tab');
+    await pages.PayrollPage.newPayeeName.blur();
+    await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeNickName, testData.Payroll.newPayeeNickName);
+    await page.keyboard.press('Tab');
+    await pages.PayrollPage.newPayeeNickName.blur();
 
-    await pages.PayrollPage.safeFill(pages.PayrollPage.payeeBankId, payeeBankID);
+    //await pages.PayrollPage.safeFill(pages.PayrollPage.payeeBankId, payeeBankID);
+    await pages.PayrollPage.payeeBankId.click();
+    await pages.PayrollPage.payeeBankId.fill(payeeBankID);
+    await pages.PayrollPage.payeeBankId.blur();
+
     await pages.PayrollPage.safeClick(pages.PayrollPage.findBankIDButton);
-    await pages.PayrollPage.safeClick(pages.PayrollPage.payeeBankSearchResults.first());
+    await pages.PayrollPage.payeeBankSearchResults.first().click();
 
-    await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeAccountNumber, testData.Payroll.newPayeeAcctNumber);
+    await pages.PayrollPage.safeClick(pages.PayrollPage.newPayeeAccountNumber);
+        
+    // Put value into browser clipboard
+    await page.evaluate(async (text) => {
+      await navigator.clipboard.writeText(text);
+    }, testData.Payroll.newPayeeAcctNumber);
+
+    // Paste (Ctrl+V)
+    await page.keyboard.press('Control+V');
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Tab');
+    await pages.PayrollPage.newPayeeAccountNumber.blur();
+
     await pages.PayrollPage.safeClick(pages.PayrollPage.addNewPayeeButton);
 
     await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.maxAmountIx);

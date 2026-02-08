@@ -15,7 +15,7 @@ export class PayrollPage {
     this.fromAccount = page.locator('xpath=//p-auto-complete[@formcontrolname="fromAccount"]');
     this.paymentPriorityRadioGroup = page.locator('xpath=//dbs-radio-group[@formcontrolname="transfer_priority_radio"]');
     this.billerServiceDropdown = page.locator('xpath=//multi-level-dropdown[@name="billerServiceID"]');
-    this.amount = page.locator('xpath=//ShuRu[@name="payeeAmount"]');
+    this.amount = page.locator('xpath=//input[@name="payeeAmount"]');
     this.payeeParticulars = page.locator('xpath=//ShuRu[@name="payeeParticulars"]');
     this.payeeRef = page.locator('xpath=//ShuRu[@name="payeeRef"]');
     this.payeeNationalId = page.locator('xpath=//ShuRu[@name="payeeNationalID"]');
@@ -62,11 +62,13 @@ export class PayrollPage {
     this.existingPayeeTabHeader = page.locator('xpath=//*[@id="ux-tab-labelExistingPayee"]');
     this.payNowTab = page.locator('xpath=//*[@id="ux-tab-labelPayNow"]');
     this.newPayeeName = page.locator('xpath=//*[@name="new-payee-payeeName"]');
+    this.newPayeeNickName = page.locator('xpath=//input[@name="new-payee-nick-name"]');
     this.newPayeeAccountNumber = page.locator('xpath=//*[@name="new-payee-accountNumber"]');
     this.addNewPayeeButton = page.locator('xpath=//*[@name="add-payee"]');
     this.payeeBankId = page.locator('xpath=//*[@id="bulk-newPayee-bankId"]');
     this.findBankIDButton=page.locator('xpath=//*[@id="new-payee-bank-id-button"]');
-    this.payeeBankSearchResults = page.locator('xpath=//*[@class="search-result-container"]');
+    //this.payeeBankSearchResults = page.locator('xpath=//*[@class="search-result-container"]');
+    this.payeeBankSearchResults = page.locator('xpath=//table[@class="swift-results ng-star-inserted"]');
     this.enterBankDetailsManuallyButton = page.locator('xpath=//div[starts-with(@class, "manual clearfix")]');
     this.bsbCode = page.locator('xpath=//ShuRu[@name="bp-swift-select-bsbCode"]');
 
@@ -181,7 +183,7 @@ export class PayrollPage {
     this.viewPaginationButton = page.locator('xpath=//*[@id="pagination-1"]');
     this.viewRejectedCountLabel = page.locator('xpath=//span[@id="radio-label-0"]');
     this.viewBulkTotalItemLabel = page.locator('xpath=//span[@id="view-bulk-totalItem"]');
-    this.showOptionalDetails = page.locator('xpath=//span[@id="show-optional-details-0"]');
+    //this.showOptionalDetails = page.locator('xpath=//span[@id="show-optional-details-0"]');
 
     // Links / schedules / search
     this.idPayrollScheduleLink = page.locator('xpath=//a[contains(@href,"/csr/common/schedule/bom") and text()="Indonesia Payroll"]');
@@ -249,6 +251,7 @@ export class PayrollPage {
   readonly existingPayeeTabHeader: Locator;
   readonly payNowTab: Locator;
   readonly newPayeeName: Locator;
+  readonly newPayeeNickName: Locator;
   readonly newPayeeAccountNumber: Locator;
   readonly addNewPayeeButton: Locator;
   readonly payeeBankId: Locator;

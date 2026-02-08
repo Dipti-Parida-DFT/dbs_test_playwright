@@ -13,7 +13,7 @@ export class AccountTransferPage {
     this.authNow = page.locator('xpath=//*[@id="mat-dialog-0"]/dbs-mars-auth-dialog/div/div[3]/button');
 
     this.makePayment = page.locator('xpath=//*[@id="icon__make_payment"]');
-    this.authDialog = page.locator('xpath=//*[@id="mat-dialog-0"]/dbs-mars-auth-dialog');
+    this.authDialog = page.locator('xpath=//div[contains(@class,"idealx-dialog__container") and contains(@class,"mars-sac-dialog")]');
     this.securityAccessCode = page.locator("xpath=//input[@placeholder='Enter security access code']");
     this.authenticateButton = page.locator("xpath=//*[contains(text(),'Authenticate')]");
 
@@ -345,7 +345,7 @@ export class AccountTransferPage {
   //** wait for Authenticate dialogue if present */
   async handleAuthIfPresent(code = '1111') {
     
-    const appears = await this.securityAccessCode.waitFor({
+    const appears = await this.authDialog.waitFor({
       state: 'visible',
       timeout: 20000
     }).then(() => true).catch(() => false);
@@ -406,7 +406,7 @@ export class AccountTransferPage {
   }
 
   /** Payments menu ready */
-  async waitForMenu(timeout = 45_000) {
+  async waitForMenu(timeout = 15_000) {
     await this.waitForUXLoading();
     await expect(this.paymentMenu).toBeVisible({ timeout });
     await expect(this.paymentMenu).toBeEnabled({ timeout });
