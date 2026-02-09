@@ -1,6 +1,6 @@
 import { test, expect } from '../../lib/api/api.fixtures';
 import { GetEntitlementReqEnvelope } from '../../lib/api/models';
-import testData from '../../data/api/entitlementTestData.json';
+import testData from '../../data/api/getEntitlementTestData.json';
 
 test.describe('Entitlement API: getEntitlement', () => {
   const {
@@ -53,7 +53,7 @@ test.describe('Entitlement API: getEntitlement', () => {
     expect(response.status()).toBe(500);
 
     const bodyText = await response.text();
-    expect(bodyText).toContain('MBG4099E');
+    expect(bodyText).toContain('MBG4099E : Invalid input data');
   });
 
   test('TC007: invalid qs returns UX7777', async ({ entitlementApi }: any) => {

@@ -26,14 +26,5 @@
         "key": "OOSWEEP"
       }
     }
-  },
-  "GetUserDetailWithAuthSignatory":{
-        "getUsersReq": {
-        "rqUID": "123123456543",
-        "channelId": "LNOS",
-        "orgId": "ICRGSG02",
-        "subOrgId": "ICSUSG04",
-        "apiName": "idealsso-banking/user/getUserDetailWithAuthSignatory"
-      }
   }
 }
