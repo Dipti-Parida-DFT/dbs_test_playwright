@@ -1,6 +1,7 @@
 import { Page, Locator } from '@playwright/test';
 import { WebComponents } from '../../lib/components';
 import loginCredentials from '../../data/loginCredentials.json';
+const DEFAULT_REGION = 'Singapore';
 
 export class LoginPage {
   readonly page: Page;
@@ -25,13 +26,19 @@ export class LoginPage {
   }
 
   async login(orgId?: string, userId?: string, pin?: string) {
-    const webComponents = new WebComponents();
-    const creds = { orgId: orgId ?? loginCredentials.orgId, userId: userId ?? loginCredentials.userId, pin: pin ?? loginCredentials.pin };
-    await webComponents.enterText(this.orgIdInput, creds.orgId);
-    await webComponents.enterText(this.userIdInput, creds.userId);
-    await webComponents.enterText(this.pinInput, creds.pin);
-    await this.loginButton.click();
-    await this.page.waitForTimeout(120000); // Wait for potential redirects
+  const webComponents = new WebComponents();
+  const defaultCreds = loginCredentials[DEFAULT_REGION];
+  const creds = {
+    orgId: orgId ?? defaultCreds.orgId,
+    userId: userId ?? defaultCreds.userId,
+    pin: pin ?? defaultCreds.pin
+  };
+
+  await webComponents.enterText(this.orgIdInput, creds.orgId);
+  await webComponents.enterText(this.userIdInput, creds.userId);
+  await webComponents.enterText(this.pinInput, creds.pin);
+  await this.loginButton.click();
+  await this.page.waitForTimeout(120000); // Wait for potential redirects
   }
 
   async loginWithDefaultCredentials() {

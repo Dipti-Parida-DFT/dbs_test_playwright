@@ -1,0 +1,53 @@
+{
+  "GetUserIDAvail": {
+    "validSessionId": "s8ij8dT8h92QozqRbWkgYgnQVO2uZdzdLD9MJZoY.i3bku3uatqeapp01",
+
+    "validUser": {
+      "payload": {
+        "getUserIDavailReq": {
+          "orgId": "SG2BE11",
+          "userId": "DBSQATEST01",
+          "rqUID": "123456"
+        }
+      },
+      "expected": {
+        "isAvailable": true,
+        "message": "User ID is available.",
+        "returnCode": "UX0000",
+        "errorCode": ""
+      }
+    },
+
+    "invalidUser": {
+      "payload": {
+        "getUserIDavailReq": {
+          "orgId": "SG2BE11",
+          "userId": "A",
+          "rqUID": "123456"
+        }
+      },
+      "expected": {
+        "isAvailable": false,
+        "message": "User ID invalid. Enter 6-20 alphanumeric characters, i.e. A-Z, 0-9",
+        "returnCode": "UX0000",
+        "errorCode": "USER_ID_INVALID_FORMAT"
+      }
+    },
+
+    "duplicateUser": {
+      "payload": {
+        "getUserIDavailReq": {
+          "orgId": "SG2BE11",
+          "userId": "DBSQANAT01",
+          "rqUID": "123456"
+        }
+      },
+      "expected": {
+        "isAvailable": false,
+        "message": "User ID already exists.",
+        "returnCode": "UX0000",
+        "errorCode": "USER_ID_DUPLICATE"
+      }
+    }
+  }
+}
