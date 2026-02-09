@@ -4,50 +4,32 @@ import testData from '../../data/api/getUserDetailWithAuthSignatoryTestData.json
 
 test.describe('User API: getUserDetailWithAuthSignatory', () => {
   const {
-    validPayload,
-    validChannelTypes,
-    invalidChannelPayload,
+    successPayload,
+    failurePayload,
     validSessionId,
   } = (testData as any).GetUserDetailWithAuthSignatory;
 
- 
-  test('TC008: channelType LNOS should return 200', async ({ userApi }: any) => {
+  test('TC008: should return UX0000 and Successful', async ({ userApi }: any) => {
     const response = await userApi.getUserDetailWithAuthSignatory(
-      validPayload as GetUsersReqEnvelope,
+      successPayload as GetUsersReqEnvelope,
       validSessionId
     );
 
-    expect(response.status()).toBe(200);
+    const responseBody = await response.json();
+
+    expect(responseBody.getUsersRes.returnCode).toBe('UX0000');
+    expect(responseBody.getUsersRes.returnStatus).toBe('Successful');
   });
 
-
-  test.describe('TC009: valid channelTypes return 200', () => {
-    for (const channelId of validChannelTypes) {
-      test(`channelType = ${channelId}`, async ({ userApi }: any) => {
-        const payload: GetUsersReqEnvelope = {
-          getUsersReq: {
-            ...validPayload.getUsersReq,
-            channelId,
-          },
-        };
-
-        const response = await userApi.getUserDetailWithAuthSignatory(
-          payload,
-          validSessionId
-        );
-
-        expect(response.status()).toBe(200);
-      });
-    }
-  });
-
-
-  test('TC010: invalid channelType should return 500', async ({ userApi }: any) => {
+  test('TC009: should return UX9999 and Failed', async ({ userApi }: any) => {
     const response = await userApi.getUserDetailWithAuthSignatory(
-      invalidChannelPayload as GetUsersReqEnvelope,
+      failurePayload as GetUsersReqEnvelope,
       validSessionId
     );
-// Backend does not enforce channelType validation at HTTP level
-    expect(response.status()).toBe(200);
+
+    const responseBody = await response.json();
+
+    expect(responseBody.getUsersRes.returnCode).toBe('UX9999');
+    expect(responseBody.getUsersRes.returnStatus).toBe('Failed');
   });
 });

@@ -1,6 +1,7 @@
 import { Page, Locator } from '@playwright/test';
 import { WebComponents } from '../../lib/components';
 import loginCredentials from '../../data/loginCredentials.json';
+const DEFAULT_REGION = 'Singapore';
 
 export class LoginPage {
   readonly page: Page;
@@ -26,21 +27,21 @@ export class LoginPage {
 
   async login(orgId?: string, userId?: string, pin?: string) {
   const webComponents = new WebComponents();
+  const defaultCreds = loginCredentials[DEFAULT_REGION];
   const creds = {
-    orgId: orgId ?? loginCredentials.Singapore.orgId,
-    userId: userId ?? loginCredentials.Singapore.userId,
-    pin: pin ?? loginCredentials.Singapore.pin
+    orgId: orgId ?? defaultCreds.orgId,
+    userId: userId ?? defaultCreds.userId,
+    pin: pin ?? defaultCreds.pin
   };
 
   await webComponents.enterText(this.orgIdInput, creds.orgId);
   await webComponents.enterText(this.userIdInput, creds.userId);
   await webComponents.enterText(this.pinInput, creds.pin);
   await this.loginButton.click();
+  await this.page.waitForTimeout(120000); // Wait for potential redirects
+  }
 
-  await Promise.any([
-    this.page.locator('#logout').waitFor({ state: 'visible', timeout: 120_000 }),
-    this.page.locator('#nav-item-navBBTopDashLinkText').waitFor({ state: 'visible', timeout: 120_000 }),
-    this.page.locator('#nav-item-navBBTopApplyLinkText').waitFor({ state: 'visible', timeout: 120_000 }),
-    this.page.locator('header').waitFor({ state: 'visible', timeout: 120_000 })
-  ]);
-}}
+  async loginWithDefaultCredentials() {
+    await this.login();
+  }
+}

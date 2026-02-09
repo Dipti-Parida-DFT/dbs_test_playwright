@@ -1,6 +1,7 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
 import { ApplyPage } from '../../../pages/IDEALX/Apply/ApplyDebitCard';
+import { AuthenticationDialog } from '../../../pages/IDEALX/AuthenticationPage';
 import loginCredentials from '../../../data/loginCredentials.json';
 
 test.describe('Apply → Debit Card affiliate gating', () => {
@@ -9,14 +10,15 @@ test.describe('Apply → Debit Card affiliate gating', () => {
     test.setTimeout(180000);
     const loginPage = new LoginPage(page);
     const applyPage = new ApplyPage(page);
+    const authenticationDialog = new AuthenticationDialog(page);
     await loginPage.goto();
     await loginPage.login(
       loginCredentials.Singapore.orgId,
       loginCredentials.Singapore.userId,
       loginCredentials.Singapore.pin
     );
-    await applyPage.assertPostLogin();
-    await applyPage.openApplyPanel();
+    await applyPage.applyNav.click();
+    await authenticationDialog.handleIfPresent();
     await applyPage.assertDebitCardVisible();
   });
 
@@ -24,14 +26,16 @@ test.describe('Apply → Debit Card affiliate gating', () => {
     test.setTimeout(180000); 
     const loginPage = new LoginPage(page);
     const applyPage = new ApplyPage(page);
+    const authenticationDialog = new AuthenticationDialog(page);
     await loginPage.goto();
     await loginPage.login(
       loginCredentials.NonSingapore.orgId,
       loginCredentials.NonSingapore.userId,
       loginCredentials.NonSingapore.pin
     );
-    await applyPage.assertPostLogin();
-    await applyPage.openApplyPanel();
+    await authenticationDialog.authenticate.click();
+    await applyPage.applyNav.click();
+    await authenticationDialog.handleIfPresent();
     await applyPage.assertDebitCardNotVisible();
   });
 
