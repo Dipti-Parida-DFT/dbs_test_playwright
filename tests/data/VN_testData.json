@@ -31,13 +31,13 @@
             "loginCompanyId": "SPVNSSM1",
             "loginUserId": "SPVNSSM1S01",
             "fromAccount": "66670000322",
-            "payeeBankID": "01203500"
+            "payeeBankID": "ACB"
         },
         "SIT": {
             "loginCompanyId": "SPVNSSM1",
             "loginUserId": "SPVNSSM1S01",
             "fromAccount": "66670000322",
-            "payeeBankID": "01203500"
+            "payeeBankID": "ACB"
         },
         "maxAmountIx": "500000000",
         "moreThanMaxAmountIx": "500000001",
@@ -45,10 +45,10 @@
         "maxAmount": "500,000,000",
         "moreThanMaxAmount": "500,000,001",
         "amount": "200,000,000",
-        "bulkExistingPayee": "PayrollExistingPayee",
-        "newPayeeName": "7888833222 Name",
-        "newPayeeNickName": "7888833222 Name",
-        "newPayeeAcctNumber": "7888833222",
+        "bulkExistingPayee": "AutoTest1",
+        "newPayeeName": "8888833222 Name",
+        "newPayeeNickName": "8888833222 Name",
+        "newPayeeAcctNumber": "8888833222",
         "paymentDetails": "paymentDetails",
         "amountErrorTip": "Amount is invalid.",
         "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."

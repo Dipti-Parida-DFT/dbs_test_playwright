@@ -32,6 +32,9 @@ test.describe.configure({
 
 test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
   let pages: PaymentsPages;
+  // Track created payees per test
+  type CreatedPayee = { nickName?: string; accountNumber?: string };
+  let createdPayees: CreatedPayee[] = [];
    
 
   test.beforeEach(async ({ page }, testInfo) => {
@@ -42,30 +45,35 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
     await loginPage.login(loginCompanyId, loginUserId, '123');
-    // 1) Login
-    // await new NavigatePages(page).loginIdealx(
-    //   loginCompanyId,
-    //   loginUserId,
-    //   '123123', // PIN/password
-      
-    //   {
-    //     // loginUrl: process.env.IDEALX_URL, // set if you want to enforce a URL
-    //     expectLanding: 'Payments',
-    //     freshSession: true,
-    //   }
-    //);
-
     // 2) Create the aggregator once per test
     pages = new PaymentsPages(page);
-  });
-
-  test.afterEach(async ({ page }, testInfo) => {
-    // Optional: write history CSV + attach screenshot on failure
     
   });
 
+  test.afterEach(async ({ page }, testInfo) => {
+    
+  // Only cleanup if the test passed
+  if (testInfo.status !== 'passed') {
+    console.warn(`[cleanup] Skipping payee deletion because test status is ${testInfo.status}`);
+    return;
+    }
+
+    
+  // Best-effort cleanup; never fail the test because cleanup failed
+  for (const p of createdPayees) {
+    try {
+      const key = p.nickName ?? p.accountNumber ?? '';
+      await pages.PayrollPage.deletePayeeByFilter(key, /* confirm */ true);
+      console.log(`[cleanup] Deleted payee with key: ${key}`);
+    } catch (err) {
+      console.warn('[cleanup] Failed to delete a payee:', err);
+    }
+  }
+
+  });
+
   //We should write Add New Payee, capture reference as helper methods to avoid code duplication
-  test.only('Cannot create Payroll with item amount > 500000000 VND', async ({ page }) => {
+  test('Cannot create Payroll with item amount > 500000000 VND', async ({ page }) => {
     
     // Payments → Transfer Center → Payroll
     await pages.AccountTransferPage.waitForMenu();
@@ -85,7 +93,18 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await page.keyboard.press('Enter');
     
 
-    // New Payee
+  // Reusable helper for add new payee
+    const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+      name: testData.Payroll.newPayeeName,
+      nickName: testData.Payroll.newPayeeNickName,
+      bankId: payeeBankID,
+      accountNumber: testData.Payroll.newPayeeAcctNumber,
+    });
+
+  // Register for cleanup
+  createdPayees.push({ nickName, accountNumber });
+
+    /* New Payee
     await pages.PayrollPage.safeClick(pages.PayrollPage.newPayeeTab);
     await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeName, testData.Payroll.newPayeeName);
     await page.keyboard.press('Tab');
@@ -117,6 +136,7 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await pages.PayrollPage.newPayeeAccountNumber.blur();
 
     await pages.PayrollPage.safeClick(pages.PayrollPage.addNewPayeeButton);
+    */
 
     // Amount > max + details
     await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.moreThanMaxAmountIx);
@@ -141,6 +161,7 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
 
     await expect(globalError).toBeVisible({ timeout: 30000 });
     await expect(globalError).toContainText(testData.Payroll.errorMessage);
+    
   });
 
   test('Create Payroll with item amount equal to 500000000 VND', async ({ page }) => {
@@ -161,37 +182,16 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
-    // New Payee
-    await pages.PayrollPage.safeClick(pages.PayrollPage.newPayeeTab);
-    await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeName, testData.Payroll.newPayeeName);
-    await page.keyboard.press('Tab');
-    await pages.PayrollPage.newPayeeName.blur();
-    await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeNickName, testData.Payroll.newPayeeNickName);
-    await page.keyboard.press('Tab');
-    await pages.PayrollPage.newPayeeNickName.blur();
+    // Reusable helper for add new payee
+        const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+          name: testData.Payroll.newPayeeName,
+          nickName: testData.Payroll.newPayeeNickName,
+          bankId: payeeBankID,
+          accountNumber: testData.Payroll.newPayeeAcctNumber,
+        });
 
-    //await pages.PayrollPage.safeFill(pages.PayrollPage.payeeBankId, payeeBankID);
-    await pages.PayrollPage.payeeBankId.click();
-    await pages.PayrollPage.payeeBankId.fill(payeeBankID);
-    await pages.PayrollPage.payeeBankId.blur();
-
-    await pages.PayrollPage.safeClick(pages.PayrollPage.findBankIDButton);
-    await pages.PayrollPage.payeeBankSearchResults.first().click();
-    //await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeAccountNumber, testData.Payroll.newPayeeAcctNumber);
-    await pages.PayrollPage.safeClick(pages.PayrollPage.newPayeeAccountNumber);
-        
-    // Put value into browser clipboard
-    await page.evaluate(async (text) => {
-      await navigator.clipboard.writeText(text);
-    }, testData.Payroll.newPayeeAcctNumber);
-
-    // Paste (Ctrl+V)
-    await page.keyboard.press('Control+V');
-    await page.keyboard.press('Enter');
-    await page.keyboard.press('Tab');
-    await pages.PayrollPage.newPayeeAccountNumber.blur();
-
-    await pages.PayrollPage.safeClick(pages.PayrollPage.addNewPayeeButton);
+    // Register for cleanup
+    createdPayees.push({ nickName, accountNumber });
 
     // Amount = max; add details and submit
     await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.maxAmountIx);
@@ -203,8 +203,12 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await pages.PayrollPage.safeClick(pages.PayrollPage.submitButton);
     await pages.PayrollPage.waitForSubmittedPageReady();
 
-    // Capture reference (adjust if reference appears elsewhere)
-    const reference = (await pages.PayrollPage.referenceLabel.textContent())?.trim() ?? '';
+    // If you just want the full banner text:
+    const referenceText = await pages.PayrollPage.getReferenceText();
+    console.log('Captured reference text:', referenceText);
+    // If you want only the EBLV… token:
+    const reference = await pages.PayrollPage.getReferenceID();
+    console.log('Captured referenceID:', reference);
 
     // Find it again in Transfer Center by reference
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
@@ -217,7 +221,7 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await expect(pages.PayrollPage.amountViewLabel).toContainText(testData.Payroll.maxAmount);
   });
 
-  test('Create payroll with Total amount > 500000000 IDR', async ({ page }) => {
+  test.only('Create payroll with Total amount > 500000000 IDR', async ({ page }) => {
     // Payments → Transfer Center → Payroll
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
@@ -234,37 +238,16 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('Enter');
 
-    // First payee
-    await pages.PayrollPage.safeClick(pages.PayrollPage.newPayeeTab);
-    await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeName, testData.Payroll.newPayeeName);
-    await page.keyboard.press('Tab');
-    await pages.PayrollPage.newPayeeName.blur();
-    await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeNickName, testData.Payroll.newPayeeNickName);
-    await page.keyboard.press('Tab');
-    await pages.PayrollPage.newPayeeNickName.blur();
+    // Reusable helper for add new payee
+      const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+        name: testData.Payroll.newPayeeName,
+        nickName: testData.Payroll.newPayeeNickName,
+        bankId: payeeBankID,
+        accountNumber: testData.Payroll.newPayeeAcctNumber,
+      });
 
-    //await pages.PayrollPage.safeFill(pages.PayrollPage.payeeBankId, payeeBankID);
-    await pages.PayrollPage.payeeBankId.click();
-    await pages.PayrollPage.payeeBankId.fill(payeeBankID);
-    await pages.PayrollPage.payeeBankId.blur();
-
-    await pages.PayrollPage.safeClick(pages.PayrollPage.findBankIDButton);
-    await pages.PayrollPage.payeeBankSearchResults.first().click();
-
-    await pages.PayrollPage.safeClick(pages.PayrollPage.newPayeeAccountNumber);
-        
-    // Put value into browser clipboard
-    await page.evaluate(async (text) => {
-      await navigator.clipboard.writeText(text);
-    }, testData.Payroll.newPayeeAcctNumber);
-
-    // Paste (Ctrl+V)
-    await page.keyboard.press('Control+V');
-    await page.keyboard.press('Enter');
-    await page.keyboard.press('Tab');
-    await pages.PayrollPage.newPayeeAccountNumber.blur();
-
-    await pages.PayrollPage.safeClick(pages.PayrollPage.addNewPayeeButton);
+    // Register for cleanup
+    createdPayees.push({ nickName, accountNumber });
 
     await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.maxAmountIx);
     await pages.PayrollPage.safeClick(pages.PayrollPage.showOptionalDetails);
@@ -275,9 +258,11 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await pages.PayrollPage.safeFill(pages.PayrollPage.existingPayeeFilter, testData.Payroll.bulkExistingPayee);
     await pages.PayrollPage.safeClick(pages.PayrollPage.addExistingPayeeButton);
 
-    await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.maxAmountIx);
+    //await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.maxAmountIx);
+    await pages.PayrollPage.amount.first().fill(testData.Payroll.maxAmountIx);
     await pages.PayrollPage.safeClick(pages.PayrollPage.showOptionalDetails);
-    await pages.PayrollPage.safeFill(pages.PayrollPage.paymentDetailsTextarea, testData.Payroll.paymentDetails);
+    //await pages.PayrollPage.safeFill(pages.PayrollPage.paymentDetailsTextarea, testData.Payroll.paymentDetails);
+    await pages.PayrollPage.paymentDetailsTextarea.first().fill(testData.Payroll.paymentDetails);
 
     // Next → Preview → Submit
     await pages.PayrollPage.safeClick(pages.PayrollPage.nextButton);
@@ -286,7 +271,12 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await pages.PayrollPage.waitForSubmittedPageReady();
 
     // Capture reference and verify
-    const reference = (await pages.PayrollPage.referenceLabel.textContent())?.trim() ?? '';
+      // If you just want the full banner text:
+    const referenceText = await pages.PayrollPage.getReferenceText();
+    console.log('Captured reference text:', referenceText);
+    // If you want only the EBLV… token:
+    const reference = await pages.PayrollPage.getReferenceID();
+    console.log('Captured referenceID:', reference);
 
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.waitForTransferCenterReady();
@@ -294,7 +284,6 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await pages.PayrollPage.waitForViewPaymentPageReady();
 
     await expect(pages.PayrollPage.fromAccountViewLabel).toContainText(fromAccount);
-    // Optionally assert status here if you have a stable selector, e.g.:
-    // await expect(pages.PayrollPage.transactionStatusLabel1).toContainText('EXPECTED_STATUS');
+     
   });
 });

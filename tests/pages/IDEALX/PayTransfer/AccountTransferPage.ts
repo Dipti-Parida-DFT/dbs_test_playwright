@@ -349,11 +349,11 @@ export class AccountTransferPage {
       state: 'visible',
       timeout: 20000
     }).then(() => true).catch(() => false);
-    console.log('Authentication dialog appears:', appears);
+    //console.log('Authentication dialog appears:', appears);
     if (appears) {
       await this.securityAccessCode.fill(code);
       await this.authenticateButton.click();
-      console.log('Handled authentication dialog with code:', code);
+      //console.log('Handled authentication dialog with code:', code);
       await this.authDialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
     }
   }
@@ -399,14 +399,14 @@ export class AccountTransferPage {
   }
 
   /** View MoPayment page (slower) */
-  async waitForViewMoPaymentPage(timeout = 40_000) {
+  async waitForViewMoPaymentPage(timeout = 10_000) {
     await this.waitForUXLoading();
     await this.page.waitForLoadState('networkidle');
     await expect(this.fromAccountValue).toBeVisible({ timeout });
   }
 
   /** Payments menu ready */
-  async waitForMenu(timeout = 15_000) {
+  async waitForMenu(timeout = 5000) {
     await this.waitForUXLoading();
     await expect(this.paymentMenu).toBeVisible({ timeout });
     await expect(this.paymentMenu).toBeEnabled({ timeout });

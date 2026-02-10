@@ -1,6 +1,21 @@
 // pages/PayrollPage.ts
 import { Page, Locator, expect } from '@playwright/test';
 
+
+export type NewPayeeInput = {
+  name: string;
+  nickName: string;
+  bankId: string;
+  accountNumber: string;
+};
+
+
+export type NewPayeeResult = {
+  nickName: string;
+  accountNumber: string;
+};
+
+
 export class PayrollPage {
   constructor(private readonly page: Page) {
     // --- Create Page / Entry points ---
@@ -25,12 +40,12 @@ export class PayrollPage {
     this.payeePassbook = page.locator('xpath=//ShuRu[@name="payeePassbook"]');
     this.payeeSenderFreeText = page.locator('xpath=//ShuRu[@name="payeeFreeText4Sender"]');
     this.paymentDetailsTextarea = page.locator('xpath=//textarea[@name="payeeDetails"]');
-    this.beneficiaryAdvisingToggle = page.locator('xpath=//ShuRu[@name="isBeneAdvising0"]');
-    this.emailId0 = page.locator('xpath=//ShuRu[@name="email-0"]');
-    this.emailId1 = page.locator('xpath=//ShuRu[@name="email-1"]');
-    this.emailId2 = page.locator('xpath=//ShuRu[@name="email-2"]');
-    this.emailId3 = page.locator('xpath=//ShuRu[@name="email-3"]');
-    this.emailId4 = page.locator('xpath=//ShuRu[@name="email-4"]');
+    this.beneficiaryAdvisingToggle = page.locator('xpath=//input[@name="isBeneAdvising0"]');
+    this.emailId0 = page.locator('xpath=//input[@name="email-0"]');
+    this.emailId1 = page.locator('xpath=//input[@name="email-1"]');
+    this.emailId2 = page.locator('xpath=//input[@name="email-2"]');
+    this.emailId3 = page.locator('xpath=//input[@name="email-3"]');
+    this.emailId4 = page.locator('xpath=//input[@name="email-4"]');
     this.messageTextarea = page.locator('xpath=//*[@name="adviceContent"]');
 
     this.nextButton = page.locator('xpath=//button[@name="next"]');
@@ -74,18 +89,18 @@ export class PayrollPage {
 
     // Existing payee
     this.existingPayeeTab = page.locator('xpath=//*[@id="labelExistingPayee_0"]');
-    this.existingPayeeFilter = page.locator('xpath=//ShuRu[@id="payee-selector"]');
+    this.existingPayeeFilter = page.locator('xpath=//input[@id="payee-selector"]');
     this.addExistingPayeeButton = page.locator('xpath=//button[@name="add"]');
 
     // Reject Page
     this.rejectButton = page.locator('xpath=//button[@name="reject"]');
-    this.rejectionReason = page.locator('xpath=//ShuRu[@name="reasonForRejection"]');
+    this.rejectionReason = page.locator('xpath=//input[@name="reasonForRejection"]');
     this.rejectConfirmButton = page.locator('xpath=//dbs-reject-dialog/div/div[2]/div[2]/button[2]');
     this.rejectStatusLabel = page.locator('xpath=//*[@id="bulk-view-rejectStatus_0"]');
 
     // Edit
     this.editButton = page.locator('xpath=//*[@id="bulk-view-edit"]');
-    this.batchId = page.locator('xpath=//ShuRu[@name="batch-id"]');
+    this.batchId = page.locator('xpath=//input[@name="batch-id"]');
 
     // Delete
     this.deleteButton = page.locator('xpath=//button[@name="delete"]');
@@ -99,6 +114,14 @@ export class PayrollPage {
     this.viewTemplateAmount = page.locator('xpath=//*[@id="bulk-view-amount_0"]');
     this.viewTemplatePayeeName = page.locator('xpath=//*[@id="bulk-view-name_0"]');
 
+    //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
+    this.beneficiaryTab = page.locator('xpath=//span[normalize-space()="Payee / Beneficiaries"]');
+    this.beneficiaryFilter= page.locator('xpath=//input[@id="approve-filter"]');
+    this.beneficiaryDelButton= page.locator('xpath=//button[@name="payee-delete"]');
+    this.beneficiaryDelCnfButton= page.locator('xpath=//button[@id="dialogDelete"]');
+    this.beneficiaryDelDismissButton= page.locator('xpath=//button[@name="cancel"]');
+
+
     // View payroll Payment Page
     this.hashValueLabel = page.locator('xpath=//*[@id="bulk-view-hashValue"]');
     this.fromAccountViewLabel = page.locator('xpath=//*[@id="bulk-view-accountNum"]');
@@ -111,6 +134,7 @@ export class PayrollPage {
     this.chargeAccountLabel = page.locator('xpath=//*[@id="bulk-view-charge-account"]');
     this.paymentDateLabel = page.locator('xpath=//*[@id="bulk-view-paymentDate"]');
     this.referenceLabel = page.locator('xpath=//*[@id="viewReference"]');
+    this.referenceID = page.locator('xpath=//label[contains(text(),"Payroll Payment")]');
     this.batchIdLabel = page.locator('xpath=//*[@id="bulk-view-batchId"]');
     this.billerServiceIdLabel = page.locator('xpath=//*[@id="bulk-view-billerServiceID"]');
     this.paymentSummaryPanel = page.locator('xpath=//*[@class="summary-panel step2-panel-triangle"]');
@@ -265,6 +289,13 @@ export class PayrollPage {
   readonly existingPayeeFilter: Locator;
   readonly addExistingPayeeButton: Locator;
 
+  //Delete Payee
+  readonly beneficiaryTab: Locator;
+  readonly beneficiaryFilter: Locator;
+  readonly beneficiaryDelButton: Locator;
+  readonly beneficiaryDelCnfButton: Locator;
+  readonly beneficiaryDelDismissButton: Locator;
+
   // Reject/edit/delete
   readonly rejectButton: Locator;
   readonly rejectionReason: Locator;
@@ -294,6 +325,7 @@ export class PayrollPage {
   readonly chargeAccountLabel: Locator;
   readonly paymentDateLabel: Locator;
   readonly referenceLabel: Locator;
+  readonly referenceID: Locator;
   readonly batchIdLabel: Locator;
   readonly billerServiceIdLabel: Locator;
   readonly paymentSummaryPanel: Locator;
@@ -378,6 +410,144 @@ export class PayrollPage {
   readonly confirmButton: Locator;
 
   // ---------- Helper waits (English names) ----------
+  
+/**
+   * Add a new payee flow (reusable in all tests).
+   * Mirrors the exact steps you currently perform, including clipboard paste.
+   */
+async addNewPayee(input: NewPayeeInput): Promise<NewPayeeResult> {
+  const { name, nickName, bankId, accountNumber } = input;
+
+    await this.newPayeeTab.click();
+    await this.safeClick(this.newPayeeName);
+    await this.safeFill(this.newPayeeName, name);
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeName.blur();
+    await this.safeClick(this.newPayeeNickName);
+    await this.safeFill(this.newPayeeNickName, nickName);
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeNickName.blur();
+    await this.payeeBankId.click();
+    await this.payeeBankId.fill(bankId);
+    await this.page.keyboard.press('Enter');
+    await this.payeeBankId.blur();
+    await this.safeClick(this.findBankIDButton);
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
+    await this.payeeBankSearchResults.first().click();
+    await this.safeClick(this.newPayeeAccountNumber);
+
+    // Preserve your clipboard -> paste behavior
+    await this.page.evaluate(async (text) => {
+      await navigator.clipboard.writeText(text);
+    }, accountNumber);
+
+    await this.page.keyboard.press('Control+V');
+    await this.page.keyboard.press('Enter');
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeAccountNumber.blur();
+    await this.safeClick(this.addNewPayeeButton);
+    return { nickName, accountNumber };
+  }
+
+
+  /** Delete Payee fnction */
+  
+  async openBeneficiariesTabIfPresent(): Promise<boolean> {
+    const count = await this.beneficiaryTab.count();
+    if (count === 0) return false;
+    await this.safeClick(this.beneficiaryTab);
+    return true;
+  }
+
+  
+async filterBeneficiaries(query: string) {
+  await this.safeFill(this.beneficiaryFilter, '');
+  await this.safeFill(this.beneficiaryFilter, query);
+  await this.beneficiaryFilter.press('Enter'); // try enter
+  await this.beneficiaryFilter.blur();         // and blur, in case enter isn't enough
+  // Small debounce for filter to apply
+  await this.page.waitForTimeout(500);
+}
+
+
+async deletePayeeGlobal(confirm = true) {
+  
+    await this.safeClick(this.beneficiaryDelButton);
+    if (confirm) {
+      await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: 10000 });
+      await this.beneficiaryDelCnfButton.click();
+    } else {
+      await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: 10000 });
+      await this.beneficiaryDelDismissButton.click();
+    }
+  
+
+  // Wait for disappearance of a success banner OR row removal if you can detect it.
+  // Fallback: brief pause to let UI settle.
+  await this.page.waitForTimeout(800);
+}
+
+
+beneficiaryRowsByText(text: string): Locator {
+  // Scope to the datatable body rows to avoid picking elements from the right pane
+  return this.page
+    .locator('.payee-transaction-list ngx-datatable datatable-body datatable-row-wrapper datatable-body-row')
+    .filter({ hasText: text });
+}
+  
+ async deletePayeeInRow(textKey: string, confirm = true) {
+  const row = this.beneficiaryRowsByText(textKey).first();
+  await expect(row).toBeVisible({ timeout: 15000 });
+
+  const rowDeleteButton = row.locator('xpath=.//button[@name="payee-delete"]');
+  await this.safeClick(rowDeleteButton);
+
+    if (confirm) {
+      await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: 10000 });
+      await this.beneficiaryDelCnfButton.click();
+      // Wait until the row disappears to confirm deletion
+      await expect(row).toHaveCount(0, { timeout: 15000 });
+    } else {
+      await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: 10000 });
+      await this.beneficiaryDelDismissButton.click();
+      await expect(row).toBeVisible(); // still there
+    }
+}
+
+  async deletePayeeByFilter(textKey?: string, confirm = true) {
+    const opened = await this.openBeneficiariesTabIfPresent();
+    if (!opened) {
+      console.warn('[cleanup] Beneficiaries tab not present on this page; skipping delete.');
+      return;
+    }
+
+    if (textKey && textKey.trim()) {
+      await this.filterBeneficiaries(textKey);
+      await this.deletePayeeInRow(textKey, confirm);
+    } else {
+      // When you can’t filter by a unique string, we use the global delete button.
+      await this.deletePayeeGlobal(confirm);
+    }
+  }
+
+  
+  /**
+     * Returns the raw banner text (trimmed). If you only need EBLV…,
+     * use getReferenceToken() below.
+     */
+  async getReferenceText(): Promise<string> {
+    const raw = await this.referenceID.textContent();
+    return (raw ?? '').trim();
+  }
+
+  //Extract reference ID
+  
+  async getReferenceID(): Promise<string> {
+    const raw = await this.getReferenceText();
+    const match = raw.match(/\b(EB[A-Z0-9-]+)\b/i);
+    return match?.[1] ?? '';
+  }
+
   /** Wait until the Payroll form controls (e.g., fromAccount) are ready */
   async waitForPayrollFormReady(timeout = 20_000) {
     await this.waitForUXLoading();
