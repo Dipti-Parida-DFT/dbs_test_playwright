@@ -51,13 +51,11 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
   });
 
   test.afterEach(async ({ page }, testInfo) => {
-    
   // Only cleanup if the test passed
   if (testInfo.status !== 'passed') {
     console.warn(`[cleanup] Skipping payee deletion because test status is ${testInfo.status}`);
     return;
     }
-
     
   // Best-effort cleanup; never fail the test because cleanup failed
   for (const p of createdPayees) {
@@ -69,7 +67,6 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
       console.warn('[cleanup] Failed to delete a payee:', err);
     }
   }
-
   });
 
   //We should write Add New Payee, capture reference as helper methods to avoid code duplication
@@ -103,40 +100,6 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
 
   // Register for cleanup
   createdPayees.push({ nickName, accountNumber });
-
-    /* New Payee
-    await pages.PayrollPage.safeClick(pages.PayrollPage.newPayeeTab);
-    await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeName, testData.Payroll.newPayeeName);
-    await page.keyboard.press('Tab');
-    await pages.PayrollPage.newPayeeName.blur();
-    await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeNickName, testData.Payroll.newPayeeNickName);
-    await page.keyboard.press('Tab');
-    await pages.PayrollPage.newPayeeNickName.blur();
-
-    //await pages.PayrollPage.safeFill(pages.PayrollPage.payeeBankId, payeeBankID);
-    await pages.PayrollPage.payeeBankId.click();
-    await pages.PayrollPage.payeeBankId.fill(payeeBankID);
-    await pages.PayrollPage.payeeBankId.blur();
-
-    await pages.PayrollPage.safeClick(pages.PayrollPage.findBankIDButton);
-    await pages.PayrollPage.payeeBankSearchResults.first().click();
-        
-    //await pages.PayrollPage.safeFill(pages.PayrollPage.newPayeeAccountNumber, testData.Payroll.newPayeeAcctNumber);
-    await pages.PayrollPage.safeClick(pages.PayrollPage.newPayeeAccountNumber);
-        
-    // Put value into browser clipboard
-    await page.evaluate(async (text) => {
-      await navigator.clipboard.writeText(text);
-    }, testData.Payroll.newPayeeAcctNumber);
-
-    // Paste (Ctrl+V)
-    await page.keyboard.press('Control+V');
-    await page.keyboard.press('Enter');
-    await page.keyboard.press('Tab');
-    await pages.PayrollPage.newPayeeAccountNumber.blur();
-
-    await pages.PayrollPage.safeClick(pages.PayrollPage.addNewPayeeButton);
-    */
 
     // Amount > max + details
     await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.moreThanMaxAmountIx);
@@ -221,7 +184,7 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await expect(pages.PayrollPage.amountViewLabel).toContainText(testData.Payroll.maxAmount);
   });
 
-  test.only('Create payroll with Total amount > 500000000 IDR', async ({ page }) => {
+  test('Create payroll with Total amount > 500000000 IDR', async ({ page }) => {
     // Payments → Transfer Center → Payroll
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);

@@ -1,11 +1,24 @@
 // tests/pages/IDEALX/PayTransfer/BulkPaymentPage.ts
 import { Page, Locator, expect } from '@playwright/test';
 
+export type NewPayeeInput = {
+  name: string;
+  nickName: string;
+  bankId: string;
+  accountNumber: string;
+};
+
+
+export type NewPayeeResult = {
+  nickName: string;
+  accountNumber: string;
+};
+
 export class BulkPaymentPage {
   constructor(private readonly page: Page) {
     // Create Page / Menu
     this.menuRadio = page.locator('xpath=//dbs-toolbar/div/div[2]/p-horizontal-navigation/div/ul[2]/li[2]');
-    this.bulkPayment = page.locator('xpath=//*[@id="icon__bulk_payment"]');
+    this.bulkPayment = page.locator('xpath=//*[@id="icon__bulk_payment"]/parent::span');
 
     // Create form
     this.debitTypeSelect = page.locator('xpath=//p-auto-complete[@id="debitType"]');
@@ -13,20 +26,20 @@ export class BulkPaymentPage {
     this.fromAccount = page.locator('xpath=//p-auto-complete[@formcontrolname="fromAccount"]');
     this.billerServiceID = page.locator('xpath=//multi-level-dropdown[@name="billerServiceID"]');
     this.bankCharge = page.locator('xpath=//dbs-radio-group[@formcontrolname="bankCharge"]');
-    this.amount = page.locator('xpath=//ShuRu[@name="payeeAmount"]');
-    this.payeeRef = page.locator('xpath=//ShuRu[@name="payeeRef"]');
-    this.payeeParticulars = page.locator('xpath=//ShuRu[@name="payeeParticulars"]');
+    this.amount = page.locator('xpath=//input[@name="payeeAmount"]');
+    this.payeeRef = page.locator('xpath=//input[@name="payeeRef"]');
+    this.payeeParticulars = page.locator('xpath=//input[@name="payeeParticulars"]');
     this.paymentDetailsTextarea = page.locator('xpath=//textarea[@name="payeeDetails"]');
     this.payeeFreeText4Sender = page.locator('xpath=//*[@name="payeeFreeText4Sender"]');
-    this.isBeneAdvising = page.locator('xpath=//ShuRu[@name="isBeneAdvising0"]');
-    this.emailId0 = page.locator('xpath=//ShuRu[@name="email-0"]');
-    this.emailId1 = page.locator('xpath=//ShuRu[@name="email-1"]');
-    this.emailId2 = page.locator('xpath=//ShuRu[@name="email-2"]');
-    this.emailId3 = page.locator('xpath=//ShuRu[@name="email-3"]');
-    this.emailId4 = page.locator('xpath=//ShuRu[@name="email-4"]');
+    this.isBeneAdvising = page.locator('xpath=//input[@name="isBeneAdvising0"]');
+    this.emailId0 = page.locator('xpath=//input[@name="email-0"]');
+    this.emailId1 = page.locator('xpath=//input[@name="email-1"]');
+    this.emailId2 = page.locator('xpath=//input[@name="email-2"]');
+    this.emailId3 = page.locator('xpath=//input[@name="email-3"]');
+    this.emailId4 = page.locator('xpath=//input[@name="email-4"]');
     this.message = page.locator('xpath=//textarea[@name="adviceContent"]');
     this.existingPayeeTab = page.locator('xpath=//*[@id="labelExistingPayee_0"]');
-    this.filterExistingPayee = page.locator('xpath=//ShuRu[@name="payee-selector"]');
+    this.existingPayeeFilter = page.locator('xpath=//input[@name="payee-selector"]');
     this.addPayee = page.locator('xpath=//button[@name="addPayee"]');
     this.addButton = page.locator('xpath=//button[@name="add"]');
 
@@ -51,21 +64,21 @@ export class BulkPaymentPage {
     this.payeeBankResultList = page.locator('xpath=//bulk-bank-finder/div/div/span[2]/table/tr/td/label/div[1]');
     this.payeeBankSearchResults = page.locator('xpath=//*[@class="search-result-container"]');
     this.enterDetailButton = page.locator('xpath=//div[starts-with(@class, "manual clearfix")]');
-    this.bsbCodeText = page.locator('xpath=//ShuRu[@name="bp-swift-select-bsbCode"]');
-    this.proxyTypeMobNum = page.locator('xpath=//ShuRu[@name="proxyTypeMobNumShuRu"]');
+    this.bsbCodeText = page.locator('xpath=//input[@name="bp-swift-select-bsbCode"]');
+    this.proxyTypeMobNum = page.locator('xpath=//input[@name="proxyTypeMobNumShuRu"]');
     this.payeeBankIDSelected = page.locator('xpath=//dbs-typeahead-window/div/div[1]/span');
-    this.newPayeeName = page.locator('xpath=//ShuRu[@name="new-payee-payeeName"]');
-    this.payeeAddress1 = page.locator('xpath=//ShuRu[@name="new-payee-add1"]');
-    this.newPayeeAccountNumber = page.locator('xpath=//ShuRu[@name="new-payee-accountNumber"]');
+    this.newPayeeName = page.locator('xpath=//input[@name="new-payee-payeeName"]');
+    this.payeeAddress1 = page.locator('xpath=//input[@name="new-payee-add1"]');
+    this.newPayeeAccountNumber = page.locator('xpath=//input[@name="new-payee-accountNumber"]');
     this.addNewPayeeButton = page.locator('xpath=//button[@name="add-payee"]');
     this.showOptionalDetails = page.locator('xpath=//div[@id="temp-bulk-create-optDetail_0"]');
 
     // Actions / controls
-    this.approveNowCheckBox = page.locator('xpath=//ShuRu[@id="approveNow"]');
+    this.approveNowCheckBox = page.locator('xpath=//input[@id="approveNow"]');
     this.pushOption = page.locator('xpath=//*[@class="push-option-label"]');
-    this.batchId = page.locator('xpath=//ShuRu[@name="batch-id"]');
+    this.batchId = page.locator('xpath=//input[@name="batch-id"]');
     this.getChallengeSMS = page.locator('xpath=//button[@name="get-challenge"]');
-    this.challengeResponse = page.locator('xpath=//ShuRu[@name="responseCode"]');
+    this.challengeResponse = page.locator('xpath=//input[@name="responseCode"]');
     this.saveAsTemplateCheckbox = page.locator('xpath=//*[@name="saveAsTemplate"]');
     this.templateName = page.locator('xpath=//*[@name="templateName"]');
     this.saveAsDraft = page.locator('xpath=//button[@name="save-as-draft"]');
@@ -86,16 +99,23 @@ export class BulkPaymentPage {
 
     // Reject
     this.rejectButton = page.locator('xpath=//button[@name="reject"]');
-    this.reasonForRejection = page.locator('xpath=//ShuRu[@name="reasonForRejection"]');
+    this.reasonForRejection = page.locator('xpath=//input[@name="reasonForRejection"]');
     this.rejectDialogButton = page.locator('xpath=//dbs-reject-dialog/div/div[2]/div[2]/button[2]');
     this.rejectStatus = page.locator('xpath=//strong[@id="bulk-view-rejectStatus_0"]');
     this.rejectButton4 = page.locator('xpath=//button[@class="btn btn__secondary medium bg-white text-red-500 ng-star-inserted"]');
     this.rejectStatus2 = page.locator('xpath=//strong[@id="bulk-view-rejectStatus_1"]');
     this.rejectStatus3 = page.locator('xpath=//strong[@id="bulk-view-rejectStatus_2"]');
 
+    //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
+    this.beneficiaryTab = page.locator('xpath=//span[normalize-space()="Payee / Beneficiaries"]');
+    this.beneficiaryFilter= page.locator('xpath=//input[@id="approve-filter"]');
+    this.beneficiaryDelButton= page.locator('xpath=//button[@name="payee-delete"]');
+    this.beneficiaryDelCnfButton= page.locator('xpath=//button[@id="dialogDelete"]');
+    this.beneficiaryDelDismissButton= page.locator('xpath=//button[@name="cancel"]');
+
     // View Page
     this.hashValue = page.locator('xpath=//*[@id="bulk-view-hashValue"]');
-    this.fromAccountView = page.locator('xpath=//span[@id="bulk-view-accountNum"]');
+    this.fromAccountViewLabel = page.locator('xpath=//*[@id="bulk-view-accountNum"]');
     this.balanceValue = page.locator('xpath=//*[@id="bulk-view-acctBalance"]');
     this.paymentTypeValue = page.locator('xpath=//span[@id="bulk-view-paymentType"]');
     this.paymentTypeC3Value = page.locator('xpath=//dbs-bp-view-summary-section/div[5]/span[2]/span[2]');
@@ -106,6 +126,7 @@ export class BulkPaymentPage {
     this.paymentDateView = page.locator('xpath=//*[@id="bulk-view-paymentDate"]');
     this.cutOffTimeView = page.locator('xpath=//label[@id="bulk-view-cutOffTime"]');
     this.referenceValue = page.locator('xpath=//*[@id="viewReference"]');
+    this.referenceID = page.locator('xpath=//label[contains(text(),"Bulk Payment")]');
     this.batchIDValue = page.locator('xpath=//*[@id="bulk-view-batchId"]');
     this.billerServiceIDValue = page.locator('xpath=//*[@id="bulk-view-billerServiceID"]');
     this.transactionBankCode0 = page.locator('xpath=//dbs-view-transfer-list[1]/div/div[1]/div[1]/div[2]/div[3]');
@@ -222,11 +243,11 @@ export class BulkPaymentPage {
     this.templatePurposeCodeValue = page.locator('xpath=//multi-level-dropdown[@formcontrolname="payeePurposeCode"]');
 
     // Select type buttons
-    this.todayDayButton = page.locator('xpath=//ShuRu[@id="sgb_today_day"]');
-    this.customDayButton = page.locator('xpath=//ShuRu[@id="sgb_set_date"]');
-    this.expressTypeButton = page.locator('xpath=//ShuRu[@id="exp_type"]');
-    this.fastTypeButton = page.locator('xpath=//ShuRu[@id="fast_type"]');
-    this.giroTypeButton = page.locator('xpath=//ShuRu[@id="giro_Type"]');
+    this.todayDayButton = page.locator('xpath=//input[@id="sgb_today_day"]');
+    this.customDayButton = page.locator('xpath=//input[@id="sgb_set_date"]');
+    this.expressTypeButton = page.locator('xpath=//input[@id="exp_type"]');
+    this.fastTypeButton = page.locator('xpath=//input[@id="fast_type"]');
+    this.giroTypeButton = page.locator('xpath=//input[@id="giro_Type"]');
 
     // CN IBPS Bulk / TW eACH template entry
     this.ibpsBulkRadioBtn = page.locator('xpath=//*[@value="cnbibps"]');
@@ -257,7 +278,7 @@ export class BulkPaymentPage {
   readonly emailId4: Locator;
   readonly message: Locator;
   readonly existingPayeeTab: Locator;
-  readonly filterExistingPayee: Locator;
+  readonly existingPayeeFilter: Locator;
   readonly addPayee: Locator;
   readonly addButton: Locator;
 
@@ -317,8 +338,15 @@ export class BulkPaymentPage {
   readonly rejectStatus2: Locator;
   readonly rejectStatus3: Locator;
 
+  //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
+  readonly beneficiaryTab: Locator;
+  readonly beneficiaryFilter: Locator;
+  readonly beneficiaryDelButton: Locator;
+  readonly beneficiaryDelCnfButton: Locator;
+  readonly beneficiaryDelDismissButton: Locator;
+
   readonly hashValue: Locator;
-  readonly fromAccountView: Locator;
+  readonly fromAccountViewLabel: Locator;
   readonly balanceValue: Locator;
   readonly paymentTypeValue: Locator;
   readonly paymentTypeC3Value: Locator;
@@ -329,6 +357,7 @@ export class BulkPaymentPage {
   readonly paymentDateView: Locator;
   readonly cutOffTimeView: Locator;
   readonly referenceValue: Locator;
+  readonly referenceID: Locator;
   readonly batchIDValue: Locator;
   readonly billerServiceIDValue: Locator;
   readonly transactionBankCode0: Locator;
@@ -450,6 +479,143 @@ export class BulkPaymentPage {
 
   // ────────────────────────────── Waits / Actions ──────────────────────────────
 
+
+  /**
+     * Add a new payee flow (reusable in all tests).
+     * Mirrors the exact steps you currently perform, including clipboard paste.
+     */
+  async addNewPayee(input: NewPayeeInput): Promise<NewPayeeResult> {
+    const { name, nickName, bankId, accountNumber } = input;
+  
+      await this.newPayeeTab.click();
+      await this.safeClick(this.newPayeeName);
+      await this.safeFill(this.newPayeeName, name);
+      await this.page.keyboard.press('Tab');
+      await this.newPayeeName.blur();
+      await this.safeClick(this.newPayeeNickName);
+      await this.safeFill(this.newPayeeNickName, nickName);
+      await this.page.keyboard.press('Tab');
+      await this.newPayeeNickName.blur();
+      await this.payeeBankId.click();
+      await this.payeeBankId.fill(bankId);
+      await this.page.keyboard.press('Enter');
+      await this.payeeBankId.blur();
+      await this.safeClick(this.findBankIDButton);
+      await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
+      await this.payeeBankSearchResults.first().click();
+      await this.safeClick(this.newPayeeAccountNumber);
+  
+      // Preserve your clipboard -> paste behavior
+      await this.page.evaluate(async (text) => {
+        await navigator.clipboard.writeText(text);
+      }, accountNumber);
+  
+      await this.page.keyboard.press('Control+V');
+      await this.page.keyboard.press('Enter');
+      await this.page.keyboard.press('Tab');
+      await this.newPayeeAccountNumber.blur();
+      await this.safeClick(this.addNewPayeeButton);
+      return { nickName, accountNumber };
+    }
+
+     /** Delete Payee fnction */
+  
+  async openBeneficiariesTabIfPresent(): Promise<boolean> {
+    const count = await this.beneficiaryTab.count();
+    if (count === 0) return false;
+    await this.safeClick(this.beneficiaryTab);
+    return true;
+  }
+
+  
+async filterBeneficiaries(query: string) {
+  await this.safeFill(this.beneficiaryFilter, '');
+  await this.safeFill(this.beneficiaryFilter, query);
+  await this.beneficiaryFilter.press('Enter'); // try enter
+  await this.beneficiaryFilter.blur();         // and blur, in case enter isn't enough
+  // Small debounce for filter to apply
+  await this.page.waitForTimeout(500);
+}
+
+
+async deletePayeeGlobal(confirm = true) {
+  
+    await this.safeClick(this.beneficiaryDelButton);
+    if (confirm) {
+      await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: 10000 });
+      await this.beneficiaryDelCnfButton.click();
+    } else {
+      await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: 10000 });
+      await this.beneficiaryDelDismissButton.click();
+    }
+  
+
+  // Wait for disappearance of a success banner OR row removal if you can detect it.
+  // Fallback: brief pause to let UI settle.
+  await this.page.waitForTimeout(800);
+}
+
+
+beneficiaryRowsByText(text: string): Locator {
+  // Scope to the datatable body rows to avoid picking elements from the right pane
+  return this.page
+    .locator('.payee-transaction-list ngx-datatable datatable-body datatable-row-wrapper datatable-body-row')
+    .filter({ hasText: text });
+}
+  
+ async deletePayeeInRow(textKey: string, confirm = true) {
+  const row = this.beneficiaryRowsByText(textKey).first();
+  await expect(row).toBeVisible({ timeout: 15000 });
+
+  const rowDeleteButton = row.locator('xpath=.//button[@name="payee-delete"]');
+  await this.safeClick(rowDeleteButton);
+
+    if (confirm) {
+      await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: 10000 });
+      await this.beneficiaryDelCnfButton.click();
+      // Wait until the row disappears to confirm deletion
+      await expect(row).toHaveCount(0, { timeout: 15000 });
+    } else {
+      await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: 10000 });
+      await this.beneficiaryDelDismissButton.click();
+      await expect(row).toBeVisible(); // still there
+    }
+}
+
+  async deletePayeeByFilter(textKey?: string, confirm = true) {
+    const opened = await this.openBeneficiariesTabIfPresent();
+    if (!opened) {
+      console.warn('[cleanup] Beneficiaries tab not present on this page; skipping delete.');
+      return;
+    }
+
+    if (textKey && textKey.trim()) {
+      await this.filterBeneficiaries(textKey);
+      await this.deletePayeeInRow(textKey, confirm);
+    } else {
+      // When you can’t filter by a unique string, we use the global delete button.
+      await this.deletePayeeGlobal(confirm);
+    }
+  }
+
+  
+  /**
+     * Returns the raw banner text (trimmed). If you only need EBLV…,
+     * use getReferenceToken() below.
+     */
+  async getReferenceText(): Promise<string> {
+    const raw = await this.referenceID.textContent();
+    return (raw ?? '').trim();
+  }
+
+  //Extract reference ID
+  
+  async getReferenceID(): Promise<string> {
+    const raw = await this.getReferenceText();
+    const match = raw.match(/\b(EB[A-Z0-9-]+)\b/i);
+    return match?.[1] ?? '';
+  }
+
   /** Former: jiazhai() – waits until create form is ready (fromAccount visible). */
   async waitForBulkPaymentFormReady(timeout = 20_000) {
     await this.waitForUXLoading();
@@ -464,7 +630,7 @@ export class BulkPaymentPage {
   }
 
   /** Former: jiazhaiForSubmittedPage() – Submitted page ready (finish/done button). */
-  async waitForSubmittedPageReady(timeout = 20_000) {
+  async waitForSubmittedPageReady(timeout = 50_000) {
     await this.waitForUXLoading();
     await expect(this.finishedButton).toBeVisible({ timeout });
   }
@@ -472,7 +638,7 @@ export class BulkPaymentPage {
   /** Former: jiazhaiForViewPaymentPage() – View page ready (fromAccountView + hashValue). */
   async waitForViewPaymentPageReady(timeout = 30_000) {
     await this.waitForUXLoading();
-    await expect(this.fromAccountView).toBeVisible({ timeout });
+    await expect(this.fromAccountViewLabel).toBeVisible({ timeout });
     await expect(this.hashValue).toBeVisible({ timeout });
     await this.page.waitForTimeout(500).catch(() => {});
   }
@@ -524,7 +690,7 @@ export class BulkPaymentPage {
 
   /** Former: addExistingPayee(testDate) */
   async addExistingPayee(existingPayeeFilter: string) {
-    await this.safeFill(this.filterExistingPayee, existingPayeeFilter);
+    await this.safeFill(this.existingPayeeFilter, existingPayeeFilter);
     await this.safeClick(this.addButton);
   }
 

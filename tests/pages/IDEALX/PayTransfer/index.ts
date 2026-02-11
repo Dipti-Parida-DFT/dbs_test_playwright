@@ -137,6 +137,7 @@ export class PaymentsPages {
     this.AccountTransferPage = new AccountTransferPage(page);
     this.TransferCentersPage = new TransferCentersPage(page);
     this.PayrollPage = new PayrollPage(page);
+    this.BulkPaymentPage = new BulkPaymentPage(page);
 
     /*this.LVTPaymentPage = new LVTPaymentPage(page);
     this.AutoPayPaymentPage = new AutoPayPaymentPage(page);
@@ -148,7 +149,7 @@ export class PaymentsPages {
     
     this.NewFastCollectionPage = new NewFastCollectionPage(page);
     this.BulkCollectionPage = new BulkCollectionPage(page);
-    this.BulkPaymentPage = new BulkPaymentPage(page);
+    
     this.MEPSPaymentPage = new MEPSPaymentPage(page);
     this.NewBillPaymentPage = new NewBillPaymentPage(page);
     this.PaymentTemplatesPage = new PaymentTemplatesPage(page);
