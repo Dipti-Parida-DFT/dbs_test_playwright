@@ -5,10 +5,7 @@ import path from 'node:path';
 
 import { NavigatePages, PaymentsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
-//import { PaymentsPages } from '../../../pages/IDEALX/index';
 
-// (Optional) test-history + screenshot hook (Playwright utils we converted)
-//import { recordTestResult, PROJECT_TYPE } from '../utils/playwrightUtils';
 
 // --- Load JSON test data ---
 const testDataPath = path.resolve(__dirname, '../../../data/VN_testData.json');
@@ -175,7 +172,6 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
 
     // Find it again in Transfer Center by reference
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    //await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.PayrollPage.waitForViewPaymentPageReady();
 
@@ -221,10 +217,8 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await pages.PayrollPage.safeFill(pages.PayrollPage.existingPayeeFilter, testData.Payroll.bulkExistingPayee);
     await pages.PayrollPage.safeClick(pages.PayrollPage.addExistingPayeeButton);
 
-    //await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.maxAmountIx);
     await pages.PayrollPage.amount.first().fill(testData.Payroll.maxAmountIx);
     await pages.PayrollPage.safeClick(pages.PayrollPage.showOptionalDetails);
-    //await pages.PayrollPage.safeFill(pages.PayrollPage.paymentDetailsTextarea, testData.Payroll.paymentDetails);
     await pages.PayrollPage.paymentDetailsTextarea.first().fill(testData.Payroll.paymentDetails);
 
     // Next → Preview → Submit
@@ -236,16 +230,15 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     // Capture reference and verify
       // If you just want the full banner text:
     const referenceText = await pages.PayrollPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
+    //console.log('Captured reference text:', referenceText);
     // If you want only the EBLV… token:
     const reference = await pages.PayrollPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
+    //console.log('Captured referenceID:', reference);
 
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.PayrollPage.waitForViewPaymentPageReady();
-
     await expect(pages.PayrollPage.fromAccountViewLabel).toContainText(fromAccount);
      
   });
