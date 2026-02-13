@@ -180,7 +180,7 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
   });
 
   // ─────────────────────────────────────────────────────────────────────────────
-  test.only('Create Bulk Payment with Total amount > 500000000 IDR', async ({ page }) => {
+  test('Create Bulk Payment with Total amount > 500000000 IDR', async ({ page }) => {
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.paymentMenu.click({ force: true });
     await pages.AccountTransferPage.handleAuthIfPresent('1111');
