@@ -12,12 +12,6 @@ export interface GetUsersReqEnvelope {
   getUsersReq: GetUsersReq;
 }
 
-// If you know the response shape, define it here for strong typing.
-// export interface GetUsersResEnvelope {
-//   getUsersRes: {
-//     // <-- fill with actual fields when known
-//   };
-// }
 
 export interface GetEntitlementReq {
   rqUID: string;
@@ -28,4 +22,23 @@ export interface GetEntitlementReq {
 
 export interface GetEntitlementReqEnvelope {
   getEntitlement: GetEntitlementReq;
+}
+
+export interface GetUserIDAvailReq {
+  orgId: string;
+  userId: string;
+}
+
+export interface GetUserIDAvailReqEnvelope {
+  getUserIDavailReq: GetUserIDAvailReq;
+}
+
+export interface GetUserIDAvailRes {
+  orgId: string;
+  userId: string;
+  isAvailable: boolean;
+  message: string;
+  returnStatus: string;
+  returnCode: string;
+  errorCode: string;
 }
