@@ -16,12 +16,16 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "@playwright/test": "^1.57.0",
+    "@playwright/test": "^1.58.1",
+    "@types/log4js": "^0.0.33",
+    "@types/moment": "^2.11.29",
     "@types/node": "^25.0.3",
     "allure-commandline": "^2.36.0",
     "allure-playwright": "^3.4.5"
   },
   "dependencies": {
+    "log4js": "^6.9.1",
+    "moment": "^2.30.1",
     "typescript": "^5.9.3"
   }
 }
