@@ -1,11 +1,5 @@
 {
     "BulkPayment": {
-        "UAT": {
-            "loginCompanyId": "SPVNSSM1",
-            "loginUserId": "SPVNSSM1S01",
-            "fromAccount": "66670000322",
-            "payeeBankID": "ACB"
-        },
         "SIT": {
             "loginCompanyId": "SPVNSSM1",
             "loginUserId": "SPVNSSM1S01",
@@ -28,12 +22,6 @@
         "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
     },
     "Payroll": {
-        "UAT": {
-            "loginCompanyId": "SPVNSSM1",
-            "loginUserId": "SPVNSSM1S01",
-            "fromAccount": "66670000322",
-            "payeeBankID": "ACB"
-        },
         "SIT": {
             "loginCompanyId": "SPVNSSM1",
             "loginUserId": "SPVNSSM1S01",
@@ -50,33 +38,6 @@
         "newPayeeName": "8888833222 Name",
         "newPayeeNickName": "8888833222 Name",
         "newPayeeAcctNumber": "8888833222",
-        "paymentDetails": "paymentDetails",
-        "amountErrorTip": "Amount is invalid.",
-        "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
-    },
-    "ManagePayroll": {
-        "UAT": {
-            "loginCompanyId": "SPI309",
-            "loginUserId": "SPI309C01",
-            "fromAccount": "0016001654",
-            "payeeBankID": "79659001"
-        },
-        "SIT": {
-            "loginCompanyId": "SPI309",
-            "loginUserId": "SPI309S03",
-            "fromAccount": "0012001234",
-            "payeeBankID": "01203500"
-        },
-        "maxAmount": "500,000,000",
-        "maxAmountIx": "500000000",
-        "moreThanMaxAmount": "500,000,001",
-        "moreThanMaxAmountIx": "500000001",
-        "amount": "200,000,000",
-        "amountIx": "200000000",
-        "bulkExistingPayee": "PayrollExistingPayee",
-        "newPayeeName": "NewPayeeName",
-        "newPayeeNickName": "7888833222 Name",
-        "newPayeeAcctNumber": "123456000001",
         "paymentDetails": "paymentDetails",
         "amountErrorTip": "Amount is invalid.",
         "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
