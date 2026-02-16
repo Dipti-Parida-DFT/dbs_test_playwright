@@ -14,13 +14,10 @@ import { chromium, Browser } from 'playwright';
 
 let customBrowser: Browser;
 
-// --- Environment flags ---
-const SIT = (process.env.ENV?.toUpperCase() === 'SIT');
-
-const loginCompanyId = SIT ? testData.Payroll.SIT.loginCompanyId : testData.Payroll.UAT.loginCompanyId;
-const loginUserId    = SIT ? testData.Payroll.SIT.loginUserId    : testData.Payroll.UAT.loginUserId;
-const fromAccount    = SIT ? testData.Payroll.SIT.fromAccount    : testData.Payroll.UAT.fromAccount;
-const payeeBankID    = SIT ? testData.Payroll.SIT.payeeBankID    : testData.Payroll.UAT.payeeBankID;
+const loginCompanyId = testData.Payroll.SIT.loginCompanyId;
+const loginUserId    = testData.Payroll.SIT.loginUserId;
+const fromAccount    = testData.Payroll.SIT.fromAccount;
+const payeeBankID    = testData.Payroll.SIT.payeeBankID;
 
 // Configure retries like the old Protractor suite
 test.describe.configure({

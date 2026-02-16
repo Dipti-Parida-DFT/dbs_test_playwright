@@ -12,13 +12,10 @@ let customBrowser: Browser;
 const testDataPath = path.resolve(__dirname, '../../../data/VN_testData.json');
 const testData = JSON.parse(fs.readFileSync(testDataPath, 'utf-8'));
 
-// --- Environment flags ---
-const SIT = (process.env.ENV?.toUpperCase() === 'SIT');
-
-const loginCompanyId = SIT ? testData.BulkPayment.SIT.loginCompanyId : testData.BulkPayment.UAT.loginCompanyId;
-const loginUserId    = SIT ? testData.BulkPayment.SIT.loginUserId    : testData.BulkPayment.UAT.loginUserId;
-const fromAccount    = SIT ? testData.BulkPayment.SIT.fromAccount    : testData.BulkPayment.UAT.fromAccount;
-const payeeBankID    = SIT ? testData.BulkPayment.SIT.payeeBankID    : testData.BulkPayment.UAT.payeeBankID;
+const loginCompanyId = testData.BulkPayment.SIT.loginCompanyId;
+const loginUserId    = testData.BulkPayment.SIT.loginUserId;
+const fromAccount    = testData.BulkPayment.SIT.fromAccount;
+const payeeBankID    = testData.BulkPayment.SIT.payeeBankID;
 
 test.describe.configure({
   retries: Number(process.env.CASE_RETRY_TIMES ?? 0),
