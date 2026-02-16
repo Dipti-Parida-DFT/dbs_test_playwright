@@ -12,7 +12,7 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './tests/e2e/IDEALX',
+  testDir: './tests',
   /* Longer test timeout if CI is slow */
   timeout: 60_000, // adjust as needed
   expect: { timeout: 10_000 },
