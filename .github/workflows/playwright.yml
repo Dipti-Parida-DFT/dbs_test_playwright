@@ -21,10 +21,10 @@ jobs:
     # Optional reachability probe (see section 0.A)
     - name: Network probe
       run: curl -k --max-time 10 -I "https://10.8.59.68:7443" || true
-    - name: Run Playwright tests (with Xvfb)
+    - name: Run Playwright tests
       env: 
         CI: true
-      run: xvfb-run -a npx playwright test
+      run: npx playwright test
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
