@@ -42,6 +42,27 @@
         "amountErrorTip": "Amount is invalid.",
         "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
     },
+    "VN_TaxPayment": {
+        "SIT": {
+            "loginCompanyId": "SPVNSSM1",
+            "loginUserId": "SPVNSSM1S01",
+            "fromAccount": "66670000322",
+            "payeeBankID": "ACB"
+        },
+        "maxAmountIx": "500000000",
+        "moreThanMaxAmountIx": "500000001",
+        "amountIx": "200000000",
+        "maxAmount": "500,000,000",
+        "moreThanMaxAmount": "500,000,001",
+        "amount": "200,000,000",
+        "bulkExistingPayee": "AutoTest1",
+        "newPayeeName": "8888833222 Name",
+        "newPayeeNickName": "8888833222 Name",
+        "newPayeeAcctNumber": "8888833222",
+        "paymentDetails": "paymentDetails",
+        "amountErrorTip": "Amount is invalid.",
+        "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
+    },
     "status": {
         "Approved": "Approved",
         "PendingApproval": "Pending Approval",
