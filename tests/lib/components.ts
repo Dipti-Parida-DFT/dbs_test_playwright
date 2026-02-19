@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 export class WebComponents {
     
     constructor(private readonly defaultTimeout = 30_000) {}
@@ -19,7 +19,42 @@ export class WebComponents {
         await target.fill(value, { timeout });
     }
 
-    
+      /**
+       * Author: LC5741501
+       * Created Date: 16/02/26
+       * This method take custom time to wait for the element before click
+       * @param locator 
+       * @param timeout 
+       */
+      async clickWhenVisibleAndEnabledCustomWait(locator: Locator, timeout?: number) {
+        await expect(locator).toBeVisible({timeout});
+        await expect(locator).toBeEnabled({ timeout });
+        await locator.click();
+      }
+
+      /**
+       * Author: LC5741501
+       * Created Date: 16/02/26
+       * This method take custom time to wait for the element before click
+       * @param locator 
+       * @param timeout 
+       */
+      async clickWhenVisibleAndEnabled(locator: Locator, timeout = 15_000) {
+        await expect(locator).toBeVisible({timeout});
+        await expect(locator).toBeEnabled({ timeout });
+        await locator.click();
+      }
+
+      async safeClick(locator: Locator, timeout = 15_000) {
+        await expect(locator).toBeVisible({ timeout });
+        await expect(locator).toBeEnabled({ timeout });
+        await locator.click();
+      }
+
+      async keyboardAction(fromAccount: Locator, fromAccount1: any, ) {
+        fromAccount.type(fromAccount1);
+        fromAccount.type('Enter');
+      }
 
 
   async robustClickElement(target: Locator, opts?: { timeout?: number; state?: 'visible'|'attached'; retries?: number }) {

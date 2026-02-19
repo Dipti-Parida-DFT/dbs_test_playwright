@@ -23,6 +23,7 @@ export class LoginPage {
 
   async goto() {
     await this.page.goto('https://10.8.58.138:8443/iws/ssologin');
+    //await this.page.setViewportSize({ width: 1920, height: 1080 })
   }
 
   async login(orgId?: string, userId?: string, pin?: string) {
@@ -38,7 +39,7 @@ export class LoginPage {
   await webComponents.enterText(this.userIdInput, creds.userId);
   await webComponents.enterText(this.pinInput, creds.pin);
   await this.loginButton.click();
-  await this.page.waitForTimeout(120000); // Wait for potential redirects
+  await this.page.waitForTimeout(70000); // Wait for potential redirects
   }
 
   async loginWithDefaultCredentials() {

@@ -32,7 +32,7 @@ export class PayrollPage {
     this.billerServiceDropdown = page.locator('xpath=//multi-level-dropdown[@name="billerServiceID"]');
     this.amount = page.locator('xpath=//input[@name="payeeAmount"]');
     this.payeeParticulars = page.locator('xpath=//ShuRu[@name="payeeParticulars"]');
-    this.payeeRef = page.locator('xpath=//ShuRu[@name="payeeRef"]');
+    this.payeeRef = page.locator('xpath=//input[@name="payeeRef"]');
     this.payeeNationalId = page.locator('xpath=//ShuRu[@name="payeeNationalID"]');
     this.payeeMandateDetail = page.locator('xpath=//ShuRu[@name="payeeMandateDetail"]');
     this.payeeStockCode = page.locator('xpath=//ShuRu[@name="payeeStockCode"]');
@@ -40,13 +40,17 @@ export class PayrollPage {
     this.payeePassbook = page.locator('xpath=//ShuRu[@name="payeePassbook"]');
     this.payeeSenderFreeText = page.locator('xpath=//ShuRu[@name="payeeFreeText4Sender"]');
     this.paymentDetailsTextarea = page.locator('xpath=//textarea[@name="payeeDetails"]');
+    this.messageToThePayeeCheckBox = page.locator('xpath=//span[text()="5 notifications "]');
+    this.internalReference = page.locator('xpath=//input[@name="batchReference"]');
+    this.batchID = page.locator('xpath=//input[@name="batch-id"]');
+    this.savePayeeCheckBox = page.locator('xpath=//input[@name="savePayee"]/following-sibling::label/div/span');
     this.beneficiaryAdvisingToggle = page.locator('xpath=//input[@name="isBeneAdvising0"]');
     this.emailId0 = page.locator('xpath=//input[@name="email-0"]');
     this.emailId1 = page.locator('xpath=//input[@name="email-1"]');
     this.emailId2 = page.locator('xpath=//input[@name="email-2"]');
     this.emailId3 = page.locator('xpath=//input[@name="email-3"]');
     this.emailId4 = page.locator('xpath=//input[@name="email-4"]');
-    this.messageTextarea = page.locator('xpath=//*[@name="adviceContent"]');
+    this.emailMessageTextarea = page.locator('xpath=//*[@name="adviceContent"]');
 
     this.nextButton = page.locator('xpath=//button[@name="next"]');
     this.submitButton = page.locator('xpath=//button[@name="submit"]');
@@ -84,6 +88,7 @@ export class PayrollPage {
     this.findBankIDButton=page.locator('xpath=//*[@id="new-payee-bank-id-button"]');
     //this.payeeBankSearchResults = page.locator('xpath=//*[@class="search-result-container"]');
     this.payeeBankSearchResults = page.locator('xpath=//table[@class="swift-results ng-star-inserted"]');
+    //this.payeeBankSearchResults = page.locator('xpath=//table[@class="swift-results ng-star-inserted"]/tr/td/label');
     this.enterBankDetailsManuallyButton = page.locator('xpath=//div[starts-with(@class, "manual clearfix")]');
     this.bsbCode = page.locator('xpath=//ShuRu[@name="bp-swift-select-bsbCode"]');
 
@@ -125,9 +130,12 @@ export class PayrollPage {
     // View payroll Payment Page
     this.hashValueLabel = page.locator('xpath=//*[@id="bulk-view-hashValue"]');
     this.fromAccountViewLabel = page.locator('xpath=//*[@id="bulk-view-accountNum"]');
+    this.fromAccountViewLabel2 = page.locator('xpath=//*[@id="bulk-view-accountName"]');
     this.balanceLabel = page.locator('xpath=//*[@id="bulk-view-acctBalance"]');
     this.paymentTypeLabel = page.locator('xpath=//*[@id="bulk-view-paymentType"]');
-
+    this.paymentType = page.locator('xpath=//*[@id="bulk-view-paymentType"]');
+    this.paymentDate = page.locator('xpath=//*[@id="bulk-view-paymentDate"]');
+    
     this.paymentTypeDetailLabel = page.locator('xpath=//dbs-bp-view-summary-section/div[5]/span[2]/span[2]');
     this.amountViewLabel = page.locator('xpath=//*[@id="bulk-view-paymentAmount"]');
     this.bankChargeLabel = page.locator('xpath=//*[@id="bulk-view-bankChargeType"]');
@@ -139,14 +147,23 @@ export class PayrollPage {
     this.billerServiceIdLabel = page.locator('xpath=//*[@id="bulk-view-billerServiceID"]');
     this.paymentSummaryPanel = page.locator('xpath=//*[@class="summary-panel step2-panel-triangle"]');
 
+    this.paymentSummaryLabel = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[1]');
+    this.totalPayeesLabel = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[2]');
+    this.totalPayeesValue = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[3]');
+    this.totalAmountLabel = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[4]');
+    this.totalAmountValue = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[5]');
+
     this.transactionStatusLabel1 = page.locator('xpath=//div[@id="bulk-view-status_0"]');
     this.transactionStatusLabel2 = page.locator('xpath=//div[@id="bulk-view-status_1"]');
-    this.payeeNameLabel1 = page.locator('xpath=//*[@id="bulk-view-name_0"]');
+    this.payeeNameLabel1Value = page.locator('xpath=//*[@id="bulk-view-name_0"]');
     this.payeeNameLabel2 = page.locator('xpath=//*[@id="bulk-view-name_1"]');
-    this.payeeNicknameLabel = page.locator('xpath=//*[@id="bulk-view-nickName_0"]');
-    this.bankNameLabel1 = page.locator('xpath=//*[@id="bulk-view-payeeBankName_0"]');
-    this.bankNameLabel2 = page.locator('xpath=//*[@id="bulk-view-payeeBankName_1"]');
+
+    this.payeeNicknameLabelValue = page.locator('xpath=//*[@id="bulk-view-nickName_0"]');
+
+    this.bankNameLabel1Value = page.locator('xpath=//*[@id="bulk-view-payeeBankName_0"]');
+    this.bankNameLabel2Value = page.locator('xpath=//*[@id="bulk-view-payeeBankName_1"]');
     this.branchNameLabel = page.locator('xpath=//*[@id="bulk-view-payeeBranchName_0"]');
+
     this.bankSwiftBicLabel1 = page.locator('xpath=//*[@id="bulk-view-bankDetailsMsgDisplay_0"]');
     this.bankSwiftBicLabel2 = page.locator('xpath=//*[@id="bulk-view-bankDetailsMsgDisplay_1"]');
     this.nationalIdLabel = page.locator('xpath=//dbs-view-transfer-list/div/div[1]/div[1]/div[3]/div[2]/strong[2]');
@@ -157,6 +174,9 @@ export class PayrollPage {
 
     this.accountNumberLabel1 = page.locator('xpath=//*[@id="bulk-view-acctNum_0"]');
     this.accountNumberLabel2 = page.locator('xpath=//*[@id="bulk-view-acctNum_1"]');
+
+    this.status = page.locator('xpath=//*[@id="bulk-view-pendingStatus_0"]');
+    
     this.viewPayrollFilter = page.locator('xpath=//*[@id="bulk-view-filter"]');
     this.amountFirstLabel = page.locator('xpath=//*[@id="bulk-view-amount_0"]');
     this.amountSecondLabel = page.locator('xpath=//*[@id="bulk-view-amount_1"]');
@@ -176,11 +196,24 @@ export class PayrollPage {
     this.messageLabel2 = page.locator('xpath=//*[@id="bulk-view-message_1"]');
     this.emailListLabel1 = page.locator('xpath=//*[@id="bulk-view-email_0"]');
     this.emailListLabel2 = page.locator('xpath=//*[@id="bulk-view-email_1"]');
+
+    this.emailListLabel1Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[1]');
+    this.emailListLabel2Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[2]');
+    this.emailListLabel3Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[3]');
+    this.emailListLabel4Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[4]');
+    this.emailListLabel5Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[5]');
+
     this.passbookLabel = page.locator('xpath=//*[@id="bulk-view-passBook_0"]');
     this.freeTextLabel = page.locator('xpath=//*[@id="bulk-view-freeText_0"]');
 
     this.nextApproverLabel = page.locator('xpath=//dbs-approval-requirement/div/section/div[1]/span[2]');
     this.activityLogSection = page.locator('xpath=//*[@class="payment-history"]');
+
+    this.deleteButonPayroll = page.locator('xpath=//button[@name="delete"]');
+    this.deleteButonConfirmDeletePopup = page.locator('xpath=//button[@id="dialogDelete"]');
+    this.transactionDeletedPopupLabel = page.locator('xpath=//h2[text()="Transaction deleted"]');
+    this.transactionDeletedPopupLabelMsg = page.locator('xpath=//p[@id="dialogMessage"]/span');
+    
 
     this.viewVerifyReleaseButton = page.locator('xpath=//button[@name="view-verify-release"]');
     this.verifyReleaseConfirmButton = page.locator('xpath=//button[@name="verify-release"]');
@@ -240,13 +273,17 @@ export class PayrollPage {
   readonly payeePassbook: Locator;
   readonly payeeSenderFreeText: Locator;
   readonly paymentDetailsTextarea: Locator;
+  readonly messageToThePayeeCheckBox: Locator;
+  readonly internalReference: Locator;
+  readonly batchID: Locator;
   readonly beneficiaryAdvisingToggle: Locator;
+  readonly savePayeeCheckBox: Locator;
   readonly emailId0: Locator;
   readonly emailId1: Locator;
   readonly emailId2: Locator;
   readonly emailId3: Locator;
   readonly emailId4: Locator;
-  readonly messageTextarea: Locator;
+  readonly emailMessageTextarea: Locator;
 
   readonly nextButton: Locator;
   readonly submitButton: Locator;
@@ -316,8 +353,12 @@ export class PayrollPage {
 
   readonly hashValueLabel: Locator;
   readonly fromAccountViewLabel: Locator;
+  readonly fromAccountViewLabel2: Locator;
   readonly balanceLabel: Locator;
   readonly paymentTypeLabel: Locator;
+  readonly paymentType: Locator;
+  readonly paymentDate: Locator;
+  
 
   readonly paymentTypeDetailLabel: Locator;
   readonly amountViewLabel: Locator;
@@ -329,14 +370,20 @@ export class PayrollPage {
   readonly batchIdLabel: Locator;
   readonly billerServiceIdLabel: Locator;
   readonly paymentSummaryPanel: Locator;
+  
+  readonly paymentSummaryLabel: Locator;
+  readonly totalPayeesLabel: Locator;
+  readonly totalPayeesValue: Locator;
+  readonly totalAmountLabel: Locator;
+  readonly totalAmountValue: Locator;
 
   readonly transactionStatusLabel1: Locator;
   readonly transactionStatusLabel2: Locator;
-  readonly payeeNameLabel1: Locator;
+  readonly payeeNameLabel1Value: Locator;
   readonly payeeNameLabel2: Locator;
-  readonly payeeNicknameLabel: Locator;
-  readonly bankNameLabel1: Locator;
-  readonly bankNameLabel2: Locator;
+  readonly payeeNicknameLabelValue: Locator;
+  readonly bankNameLabel1Value: Locator;
+  readonly bankNameLabel2Value: Locator;
   readonly branchNameLabel: Locator;
   readonly bankSwiftBicLabel1: Locator;
   readonly bankSwiftBicLabel2: Locator;
@@ -349,6 +396,8 @@ export class PayrollPage {
   readonly accountNumberLabel1: Locator;
   readonly accountNumberLabel2: Locator;
   readonly viewPayrollFilter: Locator;
+  readonly status: Locator;
+
   readonly amountFirstLabel: Locator;
   readonly amountSecondLabel: Locator;
   readonly transactionCodeLabel1: Locator;
@@ -367,12 +416,24 @@ export class PayrollPage {
   readonly messageLabel2: Locator;
   readonly emailListLabel1: Locator;
   readonly emailListLabel2: Locator;
+
+  readonly emailListLabel1Value: Locator;
+  readonly emailListLabel2Value: Locator;
+  readonly emailListLabel3Value: Locator;
+  readonly emailListLabel4Value: Locator;
+  readonly emailListLabel5Value: Locator;
+  
   readonly passbookLabel: Locator;
   readonly freeTextLabel: Locator;
 
   readonly nextApproverLabel: Locator;
   readonly activityLogSection: Locator;
 
+  readonly deleteButonPayroll: Locator;
+  readonly deleteButonConfirmDeletePopup: Locator;
+  readonly transactionDeletedPopupLabel: Locator;
+  readonly transactionDeletedPopupLabelMsg: Locator;
+  
   readonly viewVerifyReleaseButton: Locator;
   readonly verifyReleaseConfirmButton: Locator;
   readonly toNewPayeeNameLabel: Locator;
@@ -446,6 +507,53 @@ async addNewPayee(input: NewPayeeInput): Promise<NewPayeeResult> {
     await this.page.keyboard.press('Tab');
     await this.newPayeeAccountNumber.blur();
     await this.safeClick(this.addNewPayeeButton);
+    return { nickName, accountNumber };
+  }
+
+
+  /**
+   * Author : LC5741501
+   * Method "addNewPayeeWithDetails" : Add's a new payee with its details (reusable in all tests).
+   */
+async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
+  const { name, nickName, bankId, accountNumber } = input;
+
+    // Click : New Payee Tab
+    await this.newPayeeTab.click();
+
+    // Enter : Payee Name
+    await this.enterTextarea(this.newPayeeName, name);
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeName.blur();
+
+    // Enter : Payee nickname
+    await this.enterTextarea(this.newPayeeNickName, nickName);
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeNickName.blur();
+
+    // Enter : Payee bank ID
+    await this.enterTextarea(this.payeeBankId, bankId);
+    await this.page.keyboard.press('Enter');
+    await this.payeeBankId.blur();
+    await this.safeClick(this.findBankIDButton);
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
+    await this.payeeBankSearchResults.first().click();
+    await this.safeClick(this.newPayeeAccountNumber);
+
+    // Enter : Payee bank account number
+    // Preserve your clipboard -> paste behavior
+    await this.page.evaluate(async (text) => {
+      await navigator.clipboard.writeText(text);
+    }, accountNumber);
+
+    await this.page.keyboard.press('Control+V');
+    await this.page.keyboard.press('Enter');
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeAccountNumber.blur();
+
+    //Click : Add Payee button
+    await this.safeClick(this.addNewPayeeButton);
+    
     return { nickName, accountNumber };
   }
 
@@ -693,10 +801,33 @@ beneficiaryRowsByText(text: string): Locator {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
     await locator.click();
+
+    /**
+     * Author: LC5741501
+     * This method waits for 15 seconds for the element
+     * to be visible
+     */
+  }  async waitElementToBeVisible(locator: Locator, timeout = 15_000) {
+    await expect(locator).toBeVisible({ timeout });
+    await expect(locator).toBeEnabled({ timeout });
   }
+
+
 
   async safeFill(locator: Locator, value: string, timeout = 15_000) {
     await expect(locator).toBeVisible({ timeout });
     await locator.fill(value);
   }
+
+  async enterTextarea(locator: Locator, value: string, timeout = 15_000) {
+    //await expect(locator).toBeVisible({ timeout });
+    //await locator.fill(value);
+    await expect(locator).toBeVisible({ timeout });
+    await expect(locator).toBeEnabled({ timeout });
+    await locator.click();
+    await expect(locator).toBeEditable();        // visible + enabled + not readonly
+    await locator.fill(value);
+
+  }
+
 }
