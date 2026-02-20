@@ -1,5 +1,6 @@
 // pages/PayrollPage.ts
 import { Page, Locator, expect } from '@playwright/test';
+import { WebComponents } from '../../../lib/components';
 
 
 export type NewPayeeInput = {
@@ -51,6 +52,8 @@ export class PayrollPage {
     this.emailId3 = page.locator('xpath=//input[@name="email-3"]');
     this.emailId4 = page.locator('xpath=//input[@name="email-4"]');
     this.emailMessageTextarea = page.locator('xpath=//*[@name="adviceContent"]');
+    this.earliestAvailableDateCheckbox = page.locator('xpath=//span[text()="Earliest Available Date "]');
+    
 
     this.nextButton = page.locator('xpath=//button[@name="next"]');
     this.submitButton = page.locator('xpath=//button[@name="submit"]');
@@ -284,6 +287,8 @@ export class PayrollPage {
   readonly emailId3: Locator;
   readonly emailId4: Locator;
   readonly emailMessageTextarea: Locator;
+  readonly earliestAvailableDateCheckbox: Locator;
+
 
   readonly nextButton: Locator;
   readonly submitButton: Locator;
@@ -471,6 +476,9 @@ export class PayrollPage {
   readonly confirmButton: Locator;
 
   // ---------- Helper waits (English names) ----------
+
+   // create lib => components.ts object
+   webComponents = new WebComponents();
   
 /**
    * Add a new payee flow (reusable in all tests).
@@ -478,7 +486,6 @@ export class PayrollPage {
    */
 async addNewPayee(input: NewPayeeInput): Promise<NewPayeeResult> {
   const { name, nickName, bankId, accountNumber } = input;
-
     await this.newPayeeTab.click();
     await this.safeClick(this.newPayeeName);
     await this.safeFill(this.newPayeeName, name);
@@ -513,7 +520,8 @@ async addNewPayee(input: NewPayeeInput): Promise<NewPayeeResult> {
 
   /**
    * Author : LC5741501
-   * Method "addNewPayeeWithDetails" : Add's a new payee with its details (reusable in all tests).
+   * Created Date: 17/02/2026
+   * This Method "addNewPayeeWithDetails" : Add's a new payee with all details (reusable in all tests).
    */
 async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
   const { name, nickName, bankId, accountNumber } = input;
@@ -522,23 +530,23 @@ async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
     await this.newPayeeTab.click();
 
     // Enter : Payee Name
-    await this.enterTextarea(this.newPayeeName, name);
+    await this.webComponents.enterTextarea(this.newPayeeName, name);
     await this.page.keyboard.press('Tab');
     await this.newPayeeName.blur();
 
     // Enter : Payee nickname
-    await this.enterTextarea(this.newPayeeNickName, nickName);
+    await this.webComponents.enterTextarea(this.newPayeeNickName, nickName);
     await this.page.keyboard.press('Tab');
     await this.newPayeeNickName.blur();
 
     // Enter : Payee bank ID
-    await this.enterTextarea(this.payeeBankId, bankId);
+    await this.webComponents.enterTextarea(this.payeeBankId, bankId);
     await this.page.keyboard.press('Enter');
     await this.payeeBankId.blur();
-    await this.safeClick(this.findBankIDButton);
+    await this.webComponents.clickWhenVisibleAndEnabled(this.findBankIDButton);
     await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
     await this.payeeBankSearchResults.first().click();
-    await this.safeClick(this.newPayeeAccountNumber);
+    await this.webComponents.clickWhenVisibleAndEnabled(this.newPayeeAccountNumber);
 
     // Enter : Payee bank account number
     // Preserve your clipboard -> paste behavior
@@ -552,11 +560,69 @@ async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
     await this.newPayeeAccountNumber.blur();
 
     //Click : Add Payee button
-    await this.safeClick(this.addNewPayeeButton);
-    
+    await this.webComponents.clickWhenVisibleAndEnabled(this.addNewPayeeButton);
     return { nickName, accountNumber };
   }
 
+  /**
+   * Author : LC5741501
+   * Created Date: 20/02/2026
+   * @param testData : is a Json object
+   * This method Enters Step 2: Payment to Amount and other opetional fields 
+   */
+  async enterNewPayeeAmountAndOptionalDetails(testData){
+
+    // Step 2: Enter Amount (SGD) = add Amount
+    await this.webComponents.enterTextarea(this.amount, testData.Payroll.amount);
+    
+    // Step 2: Payment from => Below steps for the (Step 2) optionals fields.
+
+    // Enter Reference for payee
+    await this.webComponents.enterTextarea(this.payeeRef, testData.Payroll.referenceForPayee);
+
+    // Click Show optional details arrow
+    await this.webComponents.clickWhenVisibleAndEnabled(this.showOptionalDetails);
+    
+
+    // Enter Payment details to the payee bank
+    await this.webComponents.enterTextarea(this.paymentDetailsTextarea, testData.Payroll.paymentDetails);
+
+    // Click : "Message to the payee" checkbox
+    await this.webComponents.clickWhenVisibleAndEnabled(this.messageToThePayeeCheckBox);
+    
+    // Enter : Emails 1
+    await this.webComponents.enterTextarea(this.emailId0, testData.Payroll.emailId0);
+    // Enter : Emails 2
+    await this.webComponents.enterTextarea(this.emailId1, testData.Payroll.emailId1);
+    // Enter : Emails 3
+    await this.webComponents.enterTextarea(this.emailId2, testData.Payroll.emailId2);
+    // Enter : Emails 4
+    await this.webComponents.enterTextarea(this.emailId3, testData.Payroll.emailId3);
+    // Enter : Emails 5
+    await this.webComponents.enterTextarea(this.emailId4, testData.Payroll.emailId4);
+
+    // Enter : Emails Mesage (Textarea)
+    await this.webComponents.enterTextarea(this.emailMessageTextarea, testData.Payroll.emailMessage);
+
+  }
+
+  /**
+   * Author : LC5741501
+   * Created Date: 20/02/2026
+   * @param testData : Contains Json value
+   * This method enters the Step 4: Transaction references in Payroll page
+   * for the fields Internal reference and Batch ID
+   */
+  async enterTransactionReferences(testData){
+
+    //Step 4: Payment date : Enter Internal reference, Batch ID
+    // Internal reference : add details
+    await this.webComponents.enterTextarea(this.internalReference, testData.Payroll.internalReference);
+    
+    // Batch ID : add details
+    await this.webComponents.enterText(this.batchID, testData.Payroll.batchID);
+
+  }
 
   /** Delete Payee fnction */
   
@@ -807,7 +873,9 @@ beneficiaryRowsByText(text: string): Locator {
      * This method waits for 15 seconds for the element
      * to be visible
      */
-  }  async waitElementToBeVisible(locator: Locator, timeout = 15_000) {
+  }  
+  
+  async waitElementToBeVisible(locator: Locator, timeout = 15_000) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
   }
@@ -819,7 +887,7 @@ beneficiaryRowsByText(text: string): Locator {
     await locator.fill(value);
   }
 
-  async enterTextarea(locator: Locator, value: string, timeout = 15_000) {
+  async enterTextareanew(locator: Locator, value: string, timeout = 15_000) {
     //await expect(locator).toBeVisible({ timeout });
     //await locator.fill(value);
     await expect(locator).toBeVisible({ timeout });
@@ -829,5 +897,122 @@ beneficiaryRowsByText(text: string): Locator {
     await locator.fill(value);
 
   }
+
+  /**
+     * Author : LC5741501
+     * This method validates the details of Expected
+     * values(JSON) Vs Actual Selected Payee Or Reference No (from UI) 
+     */
+    async validatePayeeOrRefrenceNoDetailsOfPayroll(testData) {
+      
+      // Assertions
+      // 1) Hash value : Auto generated hence checking only value lable is visible or not
+      await expect(this.hashValueLabel).toBeVisible;
+      
+      // 2) From : Validate UI Vs Json
+      await expect(this.fromAccountViewLabel).toContainText(testData.Payroll.fromAccount1);
+      await expect(this.fromAccountViewLabel2).toContainText(testData.Payroll.fromAccount2);
+      
+      // 3) Payment Type : Validate UI Vs Json
+      await expect(this.paymentType).toContainText(testData.Payroll.paymentType);
+  
+       // 4) Your account will be deducted : 
+       await expect(this.paymentDate).toBeVisible;
+  
+      // 5) Internal reference : Validate UI Vs Json
+      await expect(this.referenceLabel).toContainText(testData.Payroll.internalReference);
+      
+      // 6) Batch ID : Validate UI Vs Json
+       await expect(this.batchIdLabel).toContainText(testData.Payroll.batchID);
+  
+      // 7) Your account will be deducted : 
+      await expect(this.viewPayrollFilter).toBeVisible;
+      
+      // 8) Payment summary : Validate UI Vs Json (Payment summary Label)
+      await expect(this.paymentSummaryLabel).toContainText(testData.Payroll.paymentSummaryLabel);
+  
+      // 9) Total Payees Label : Validate UI Vs Json
+      await expect(this.totalPayeesLabel).toContainText(testData.Payroll.totalPayeesLabel);
+      
+      // 10) Total Payees Value : Validate UI Vs Json
+      await expect(this.totalPayeesValue).toContainText(testData.Payroll.totalPayeesLabelValue);
+      
+      // 11) Total Amount Label : Validate UI Vs Json
+      await expect(this.totalAmountLabel).toContainText(testData.Payroll.totalAmountLabel);
+  
+      // 12) Total Amount Value : Validate UI Vs Json
+      await expect(this.totalAmountValue).toContainText(testData.Payroll.totalAmountLabelValue);
+  
+      // 13) Payee/Nickname : Validate (Payee Name) UI Vs Json
+      await expect(this.payeeNameLabel1Value).toContainText(testData.Payroll.newPayeeName);
+  
+      // 14) Payee/Nickname : Validate (Nickname) UI Vs Json
+      await expect(this.payeeNicknameLabelValue).toContainText(testData.Payroll.newPayeeNickName);
+  
+      // 15) Bank/SWIFT BIC: Validate (Bank) UI Vs Json
+      await expect(this.bankNameLabel1Value).toContainText(testData.Payroll.bankNameValue);
+  
+      // 16) Bank/SWIFT BIC: Validate (SWIFT) UI Vs Json
+      await expect(this.bankSwiftBicLabel1).toContainText(testData.Payroll.bankSwiftBicValue);
+  
+      // 17) Account number: Validate UI Vs Json
+      await expect(this.accountNumberLabel1).toContainText(testData.Payroll.newPayeeAcctNumber);
+  
+      // 18) Status (PendingApproval) : Validate UI Vs Json
+      await expect(this.status).toContainText(testData.status.PendingApproval);
+      
+      // 19) Amount (SGD): Validate UI Vs Json
+      await expect(this.amountFirstLabel).toContainText(testData.Payroll.amount);
+  
+      // 20) Purpose Code (SALA - Salary Payment) : Validate UI Vs Json
+      await expect(this.purposeCodeLabel1).toContainText(testData.Payroll.purposeCode);
+  
+      // 21) Reference for payee (optional): Validate UI Vs Json
+      await expect(this.referenceForPayeeLabel1).toContainText(testData.Payroll.referenceForPayee);
+  
+      // 22) Reference for payee (optional): Validate UI Vs Json
+      await expect(this.referenceForPayeeLabel1).toContainText(testData.Payroll.referenceForPayee);
+      
+      // Click : showOptionalViewButton1
+      await this.safeClick(this.showOptionalViewButton1);
+  
+      // 23) Message to payee (optional): Validate UI Vs Json
+      await expect(this.messageLabel1).toContainText(testData.Payroll.emailMessage);
+      
+      // 24)Emails 1 to 5 : Validate UI Vs Json
+      await expect(this.emailListLabel1Value).toContainText(testData.Payroll.emailId0);
+      await expect(this.emailListLabel2Value).toContainText(testData.Payroll.emailId1);
+      await expect(this.emailListLabel3Value).toContainText(testData.Payroll.emailId2);
+      await expect(this.emailListLabel4Value).toContainText(testData.Payroll.emailId3);
+      await expect(this.emailListLabel5Value).toContainText(testData.Payroll.emailId4);
+      
+      // 25) Next approver : Visible
+      await expect(this.nextApproverLabel).toBeVisible;
+  
+      // 25) Next approver : Visible
+      await expect(this.activityLogSection).toBeVisible;
+    
+    }
+
+    /**
+       * Author : LC5741501
+       * This method delete's the PayeeOrReference No
+       */
+      async deleteOpenPayeeOrReferenceNo(testData: { Payroll: { transactionDeleted: string | RegExp | readonly (string | RegExp)[]; internalReference: string | RegExp | readonly (string | RegExp)[]; }; }){
+    
+        // Click : Delete button
+        await this.safeClick(this.deleteButonPayroll);
+    
+        // Click : Delete button (Confirm delete Popup)
+        await this.safeClick(this.deleteButonConfirmDeletePopup);
+    
+        //Validate : Transaction Deleted Popup Label
+        await this.waitElementToBeVisible(this.transactionDeletedPopupLabel);
+        await expect(this.transactionDeletedPopupLabel).toContainText(testData.Payroll.transactionDeleted);
+        
+        // Validate : Refrence No is present in the deleted message
+        await this.waitElementToBeVisible(this.transactionDeletedPopupLabelMsg);
+        await expect(this.transactionDeletedPopupLabelMsg).toContainText(testData.Payroll.internalReference);
+      }
 
 }

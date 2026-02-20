@@ -18,6 +18,7 @@ export class WebComponents {
         await target.waitFor({ state: 'visible', timeout });
         await target.fill(value, { timeout });
     }
+    
 
       /**
        * Author: LC5741501
@@ -45,16 +46,23 @@ export class WebComponents {
         await locator.click();
       }
 
-      async safeClick(locator: Locator, timeout = 15_000) {
+      /**
+       * Author: LC5741501
+       * Created Date: 16/02/26
+       * This method enters value in input and textarea fields 
+       * @param locator 
+       * @param value 
+       * @param timeout 
+       */
+      async enterTextarea(locator: Locator, value: string, timeout = 15_000) {
         await expect(locator).toBeVisible({ timeout });
         await expect(locator).toBeEnabled({ timeout });
         await locator.click();
+        await expect(locator).toBeEditable();        // visible + enabled + not readonly
+        await locator.fill(value);
+    
       }
-
-      async keyboardAction(fromAccount: Locator, fromAccount1: any, ) {
-        fromAccount.type(fromAccount1);
-        fromAccount.type('Enter');
-      }
+    
 
 
   async robustClickElement(target: Locator, opts?: { timeout?: number; state?: 'visible'|'attached'; retries?: number }) {

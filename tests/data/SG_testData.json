@@ -3,15 +3,17 @@
         "SIT": {
             "loginCompanyId": "SG2BFE1",
             "loginUserId": "DBSAUTO0001",
-            "fromAccount": "021account (SGD)",
+            "fromAccount": "021account",
             "payeeBankID": "EASTASIALIMITED"
         },
         "newPayeeName": "Test_Payee_Name001",
         "newPayeeNickName": "Test_Payee_Nickname001",
         "newPayeeAcctNumber": "Acc0007",
         "referenceForPayee": "TestReferenceForPayee",
+        
         "internalReference": "IntRef00001",
         "amount" : "1.00",
+        "editAmount": "2.00",
         "paymentDetails": "TestPaymentDetails",
         "emailId0": "Email0@dbs.com",
         "emailId1": "Email1@dbs.com",
