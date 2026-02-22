@@ -24,7 +24,7 @@ jobs:
     - name: Run Playwright tests
       env: 
         CI: true
-      run: npx playwright test:e2e
+      run: npm run test:e2e
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
