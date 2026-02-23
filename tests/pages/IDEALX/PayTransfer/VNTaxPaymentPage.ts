@@ -5,6 +5,8 @@ import { Page, Locator, expect } from '@playwright/test';
 export class VNTaxPaymentPage {
   constructor(private readonly page: Page) {
     // --- Create Page / Entry points ---
+    this.firstDot = page.locator('xpath=//ul[contains(@class,"pages__container")]/li');
+    this.secondDot = page.locator('xpath=(//ul[contains(@class,"pages__container")]/li)[2]');
     this.VNTaxPayment = page.locator('xpath=//*[@id="icon__tax"]/parent::span');
 
     // Core fields
@@ -12,7 +14,10 @@ export class VNTaxPaymentPage {
     this.orgTaxCode = page.locator('xpath=//p-auto-complete[@formcontrolname="taxCode"]');
     this.selectTaxes = page.locator('xpath=//p-auto-complete[@formcontrolname="optionsField"]');
     this.applyTaxes = page.locator('xpath=//button[@name="apply"]');
+    this.paymentID = page.locator('xpath=//span[contains(@class,"ui-autocomplete-list-item-label")][normalize-space()="Payment ID"]');
     this.optionID = page.locator('xpath=//input[@name="optionalId"]');
+    this.optionIDInput = page.locator('xpath=//input[@name="optionalId"]');
+    this.corporateTaxFilterInput = page.locator('xpath=//input[@id="corporate-tax-filter"]');
     this.nonSequential = page.locator('xpath=//input[@type="radio" and @value="nonSequential"]');
     this.sequential = page.locator('xpath=//input[@type="radio" and @value="sequential"]');
 
@@ -21,7 +26,8 @@ export class VNTaxPaymentPage {
     this.customerReference = page.locator('xpath=//input[@name="customerReference"]');
     this.cancelButton = page.locator('xpath=//button[@name="cancel"]');
     this.nextButton = page.locator('xpath=//button[@name="next"]');
-    this.amountToPayVND = page.locator('xpath=//li[label[normalize-space()="Amount to pay VND"]]//input');
+    this.outstandingAmount = page.locator('xpath=//label[normalize-space()="Outstanding amount VND"]/following::span[1]');
+    this.amountToPayVND = page.locator('xpath=//label[normalize-space()="Amount to pay VND"]/following::input[1]');
     this.submitButton = page.locator('xpath=//button[@name="submit"]');
     this.approveNowCheckbox = page.locator('xpath=//*[@id="approveNow"]');
 
@@ -38,6 +44,13 @@ export class VNTaxPaymentPage {
     this.copyButton = page.locator('xpath=//button[@name="copy"]');
     this.pushApprovalOption = page.locator('xpath=//*[@class="push-option-label"]');
     this.amountInlineError = page.locator('xpath=//bp-payee-amount//span[starts-with(@class, "dbs-validation-error")]');
+
+    //Alert dialog when we select taxes from different tax office
+    this.alertDialog = page.locator('.alert-dialog');
+    this.alertDialogTitle = this.alertDialog.locator('.alert-dialog-title');
+    this.alertDialogContent = this.alertDialog.locator('.alert-dialog-content');
+    this.alertDialogClose = this.alertDialog.locator('button.alert-dialog-close');
+    this.alertDialogGotIt = this.alertDialog.locator('xpath=//button[normalize-space()="Got it"]');
 
     // Reject Page
     this.rejectButton = page.locator('xpath=//button[@name="reject"]');
@@ -128,7 +141,7 @@ export class VNTaxPaymentPage {
     this.viewPaginationButton = page.locator('xpath=//*[@id="pagination-1"]');
     this.viewRejectedCountLabel = page.locator('xpath=//span[@id="radio-label-0"]');
     this.viewBulkTotalItemLabel = page.locator('xpath=//span[@id="view-bulk-totalItem"]');
-    //this.showOptionalDetails = page.locator('xpath=//span[@id="show-optional-details-0"]');
+    this.showOptionalDetails = page.locator('xpath=//span[@id="show-optional-details-0"]');
 
     // Links / schedules / search
     this.idPayrollScheduleLink = page.locator('xpath=//a[contains(@href,"/csr/common/schedule/bom") and text()="Indonesia Payroll"]');
@@ -142,12 +155,17 @@ export class VNTaxPaymentPage {
   }
 
   // ---------- Locators (readonly) ----------
+  readonly firstDot: Locator;
+  readonly secondDot: Locator;
   readonly VNTaxPayment: Locator;
   readonly fromAccount: Locator;
   readonly orgTaxCode: Locator;
   readonly selectTaxes: Locator;
   readonly applyTaxes: Locator;
   readonly optionID: Locator;
+  readonly paymentID: Locator;
+  readonly optionIDInput: Locator;
+  readonly corporateTaxFilterInput: Locator;
   readonly nonSequential: Locator;
   readonly sequential: Locator;
   readonly paymentDate: Locator;
@@ -155,35 +173,25 @@ export class VNTaxPaymentPage {
   readonly customerReference: Locator;
   readonly cancelButton: Locator;
   readonly nextButton: Locator;
+  readonly outstandingAmount: Locator;
   readonly amountToPayVND: Locator;
   readonly submitButton: Locator;
   readonly approveNowCheckbox: Locator;
   readonly getChallengeTextButton: Locator;
   readonly getChallengeSMSButton: Locator;
   readonly challengeResponse: Locator;
-
+  readonly showOptionalDetails: Locator;
 
   readonly billerServiceDropdown: Locator;
   readonly amount: Locator;
-  readonly payeeParticulars: Locator;
-  readonly payeeRef: Locator;
-  readonly payeeNationalId: Locator;
-  readonly payeeMandateDetail: Locator;
-  readonly payeeStockCode: Locator;
-  readonly showOptionalDetails: Locator;
-  readonly payeePassbook: Locator;
-  readonly payeeSenderFreeText: Locator;
-  readonly paymentDetailsTextarea: Locator;
-  readonly beneficiaryAdvisingToggle: Locator;
-  readonly emailId0: Locator;
-  readonly emailId1: Locator;
-  readonly emailId2: Locator;
-  readonly emailId3: Locator;
-  readonly emailId4: Locator;
-  readonly messageTextarea: Locator;
 
-  
-  
+  //Alert dialog on selecting taxes from different tax office
+  readonly alertDialog: Locator;
+  readonly alertDialogTitle: Locator;
+  readonly alertDialogContent: Locator;
+  readonly alertDialogClose: Locator;
+  readonly alertDialogGotIt: Locator;
+ 
   readonly approveButton: Locator;
   readonly acceptAndApproveButton: Locator;
   readonly approveSubmitButton: Locator;
@@ -328,6 +336,21 @@ export class VNTaxPaymentPage {
     const raw = await this.getReferenceText();
     const match = raw.match(/\b(EB[A-Z0-9-]+)\b/i);
     return match?.[1] ?? '';
+  }
+
+  /*Alert dialog text verification while selecting taxes from different tax office */
+  async expectDifferentOfficeDialog() {
+    await expect(this.alertDialog).toBeVisible({ timeout: 10_000 });
+    await expect(this.alertDialogTitle).toHaveText('This tax is from a different tax office');
+    await expect(this.alertDialogContent).toHaveText(
+      'You can only select taxes from the same tax office in the same payment.'
+    );
+    await expect(this.alertDialogGotIt).toBeEnabled();
+  }
+
+  async dismissDifferentOfficeDialog() {
+    await this.alertDialogGotIt.click();
+    //await expect(this.alertDialog).toBeHidden();
   }
 
   /** Wait until the Payroll form controls (e.g., fromAccount) are ready */
