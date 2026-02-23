@@ -49,6 +49,40 @@ export class WebComponents {
       /**
        * Author: LC5741501
        * Created Date: 16/02/26
+       * This method is for Java script click
+       * @param locator 
+       * @param timeout 
+       */
+      async javaScriptsClick(locator: Locator) {
+        await locator.evaluate((el: HTMLElement) => {el.click()});
+      }
+
+            /**
+       * Author: LC5741501
+       * Created Date: 16/02/26
+       * This method validates element is visible in UI or not
+       * @param locator 
+       * @param timeout 
+       */
+        async waitElementToBeVisible(locator: Locator, timeout = 15_000) {
+          await expect(locator).toBeVisible({timeout});
+          await expect(locator).toBeEnabled({ timeout });
+        }
+
+      /**
+       * Author: LC5741501
+       * Created Date: 16/02/26
+       * This method compaires the UI vs Json value
+       * @param locator : Ui object
+       * @param referenceForPayee : Json Value
+       */
+      async compareUIVsJsonValue(locator: Locator, referenceForPayee: any, ) {
+        expect(locator).toContainText(referenceForPayee);
+      }
+
+      /**
+       * Author: LC5741501
+       * Created Date: 16/02/26
        * This method enters value in input and textarea fields 
        * @param locator 
        * @param value 
