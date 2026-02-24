@@ -453,7 +453,7 @@ test.describe('SG_TelegraphicTransfer (Playwright using PaymentsPages)', () => {
 
 });
 
-  test('TC009_SG_TelegraphicTransfer - Reject A TT Paymment Via Transfer Center', async ({ page }) => {
+  test('TC009_SG_TelegraphicTransfer - Reject A TT Payment Via Transfer Center', async ({ page }) => {
     await pages.TelegraphicTransferPage.handleAnnouncementIfPresent();   
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
@@ -482,8 +482,120 @@ test.describe('SG_TelegraphicTransfer (Playwright using PaymentsPages)', () => {
     await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText("Rejected");
 
 });
+  test('TC010_SG_TelegraphicTransfer - Delete A TT Payment Via Transfer Center', async ({ page }) => {
+    await pages.TelegraphicTransferPage.handleAnnouncementIfPresent();   
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    await pages.AccountTransferPage.waitForTransferCenterReady();
+    if (reference2 && reference2.trim().length > 0) {
+      await pages.TransferCentersPage.searchAndOpenByReference(reference2);
+    } else {
+        throw new Error(
+          'reference2 is empty');
+      }
+    await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.ttDeletePaymentButton);
+    await pages.TelegraphicTransferPage.waitForDeletePaymentSuccess();
 
+    await pages.TelegraphicTransferPage.waitForRejectTransactionID();
 
+    const reference = await pages.TelegraphicTransferPage.getRejectReferenceID();
+    console.log('Captured referenceID:', reference);
+
+    await pages.TelegraphicTransferPage.ttSaveAsDraftDismissButton.evaluate(el => (el as HTMLElement).click());
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await expect(pages.TelegraphicTransferPage.ttDeletePaymentSuccessMessage).toContainText("No information to display");
+
+});
+  test('TC011_SG_TelegraphicTransfer - Create A TT Payment With Currency As SGD And Payee Bank Supports PARTIOR', async ({ page }) => {
+    await pages.TelegraphicTransferPage.handleAnnouncementIfPresent();   
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    await pages.AccountTransferPage.waitForTransferCenterReady();
+    await pages.TelegraphicTransferPage.saferClick(pages.TelegraphicTransferPage.makePayment);
+    await pages.TelegraphicTransferPage.waitForTTFormReady();
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.fromAccount);
+    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.fromAccount, testData.TelegraphicTransfer.fromAccountEP);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.partiourPayeeBankAccountDropdown);
+    await pages.TelegraphicTransferPage.waitForSGDCurrency();
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.amountInput);
+    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.amountInput, testData.TelegraphicTransfer.amountA2);
+    
+    const existingttResult = await pages.TelegraphicTransferPage.addExistingTTPayee({           
+     existingAccountNumber:      testData.TelegraphicTransfer.SupportPartiorPayee,
+     bankChargeType:     testData.TelegraphicTransfer.bankChargeTypeOUR,          
+     payeeBankMsg:       testData.TelegraphicTransfer.bankMessage,          
+     email1:             testData.TelegraphicTransfer.emailId0,            
+     email2:             testData.TelegraphicTransfer.emailId1,
+     email3:             testData.TelegraphicTransfer.emailId2,
+     email4:             testData.TelegraphicTransfer.emailId3,
+     email5:             testData.TelegraphicTransfer.emailId4,
+     payeeMsg:           testData.TelegraphicTransfer.message,           
+     additionalNote:     testData.TelegraphicTransfer.transactionNote,         
+     remitterIdentity:   testData.TelegraphicTransfer.remitterIdentity}
+    );
+
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTPayeeNextButton);
+    await pages.TelegraphicTransferPage.waitForNewTTPreviewPageReady();
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTsubmitButton);
+    await pages.TelegraphicTransferPage.waitFornewTTSubmittedPageReady();
+
+    const reference = await pages.TelegraphicTransferPage.getNewTTReferenceID();
+    console.log('Captured referenceID:', reference);
+
+    reference3 = reference;
+
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTfinishButton);
+
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
+    await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText(testData.TelegraphicTransfer.SupportPartiorPayee);
+    await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText(testData.TelegraphicTransfer.amountA2);
+    await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText("Pending Verification");
+
+  });
+
+  test('TC012_SG_TelegraphicTransfer - Approve A TT Payment For PARTIOR', async ({ page }) => {
+    await pages.TelegraphicTransferPage.handleAnnouncementIfPresent();   
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    await pages.AccountTransferPage.waitForTransferCenterReady();
+    if (reference3 && reference3.trim().length > 0) {
+      await pages.TransferCentersPage.searchAndOpenByReference(reference3);
+    } else {
+        throw new Error(
+          'reference3 is empty');
+      }
+    await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
+    await pages.TelegraphicTransferPage.ttApproveButton.evaluate(el => (el as HTMLElement).click());
+    await pages.TelegraphicTransferPage.ttAlternativeApproveNowCheckBox.evaluate(el => (el as HTMLElement).click());
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.ttGetChallengeSMSButton);
+    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.ttGetChallengeInput, testData.TelegraphicTransfer.challengeResponse);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTsubmitButton);
+    await pages.TelegraphicTransferPage.ttApproveButton.evaluate(el => (el as HTMLElement).click());
+    await pages.TelegraphicTransferPage.waitForDeletePaymentSuccess();
+    await pages.TelegraphicTransferPage.waitForRejectTransactionID();
+    const reference = await pages.TelegraphicTransferPage.getRejectReferenceID();
+    console.log('Captured referenceID:', reference);
+
+    await pages.TelegraphicTransferPage.ttSaveAsDraftDismissButton.evaluate(el => (el as HTMLElement).click());
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
+    await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText(testData.TelegraphicTransfer.fromAccountEP);
+    await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText("Completed");
+
+});
+
+  
 
 
 

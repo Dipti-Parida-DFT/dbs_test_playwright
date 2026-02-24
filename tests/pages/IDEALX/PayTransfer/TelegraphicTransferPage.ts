@@ -163,6 +163,11 @@ export class TelegraphicTransferPage {
     this.ttRejectPaymentSuccessMessage = page.locator('//div[contains(@class,"prompt-dialog")]');
     this.ttRejectPaymentReasonInput = page.locator('//input[@name="reasonForRejection"]');
     this.ttRejectPaymentSuccessButton = page.locator('//button[contains(@class,"btn__primary medium") and @name="reject"]');
+    this.ttDeletePaymentButton = page.locator('//button[@name="delete"]');
+    this.ttDeletePaymentSuccessButton = page.locator('//button[@id="dialogDelete"]');
+    this.ttDeletePaymentSuccessMessage = page.locator('//p[@id="labelNoInformationDisplay"]');
+    this.partiourPayeeBankAccountDropdown = page.locator('//span[contains(text(),"BAERSGS0XXX")]');
+    this.ttApproveButton = page.locator('//button[@name="approve"]');
 
     }
 
@@ -248,7 +253,11 @@ export class TelegraphicTransferPage {
     readonly ttRejectPaymentSuccessMessage: Locator;
     readonly ttRejectPaymentReasonInput: Locator;
     readonly ttRejectPaymentSuccessButton: Locator;
-
+    readonly ttDeletePaymentButton: Locator;
+    readonly ttDeletePaymentSuccessButton: Locator;
+    readonly ttDeletePaymentSuccessMessage: Locator;
+    readonly partiourPayeeBankAccountDropdown: Locator;
+    readonly ttApproveButton: Locator;
 
 
   
@@ -651,5 +660,12 @@ export class TelegraphicTransferPage {
     return match?.[1] ?? '';
   }
 
-
+  async waitForDeletePaymentSuccess(timeout = 15_000) {
+    await this.waitForUXLoading();
+    await expect(this.ttRejectPaymentSuccessMessage).toBeVisible({ timeout });
+    await expect(this.ttDeletePaymentSuccessButton).toBeEnabled({ timeout });
+    await this.saferClick(this.ttDeletePaymentSuccessButton);
   }
+
+
+}
