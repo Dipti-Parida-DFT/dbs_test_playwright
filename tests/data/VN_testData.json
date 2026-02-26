@@ -2,7 +2,7 @@
     "BulkPayment": {
         "SIT": {
             "loginCompanyId": "SPVNSSM1",
-            "loginUserId": "DBSAUTOVN01",
+            "loginUserId": "SPVNSSM1S01",
             "fromAccount": "66670000322",
             "payeeBankID": "ACB"
         },
@@ -45,7 +45,7 @@
     "TaxPayment": {
         "SIT": {
             "loginCompanyId": "SPVNSSM1",
-            "loginUserId": "DBSAUTOVN01",
+            "loginUserId": "SPVNSSM1S01",
             "fromAccount": "66670000322",
             "payeeBankID": "ACB"
         },

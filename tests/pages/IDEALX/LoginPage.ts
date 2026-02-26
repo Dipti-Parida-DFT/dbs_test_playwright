@@ -10,6 +10,9 @@ export class LoginPage {
   readonly pinInput: Locator;
   readonly loginButton: Locator;
   readonly postLoginIndicator: Locator;
+  readonly authenticate: Locator;
+  readonly acknowledgeChkBox: Locator;
+  readonly closeButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -17,8 +20,23 @@ export class LoginPage {
     this.userIdInput = page.locator('input[name="userId"], input[placeholder*="User" i]');
     this.pinInput = page.locator('input[type="password"], input[placeholder*="PIN" i]');
     this.loginButton = page.locator('button:has-text("Login"), button[type="submit"]');
+    //Handle Acknowledgement pop-up if it appears
+    this.authenticate = page.locator('//button[normalize-space()="I acknowledge"]');
+    this.acknowledgeChkBox = page.locator('//label[@for="checkbox"]');
+    this.closeButton = page.locator('button:has(svg)');
     // Use a unique selector for the Pay & Transfer nav item
     this.postLoginIndicator = page.locator('#nav-item-navBBTopPaymentsLinkText');
+  }
+
+  async handleAnnouncementIfPresent() {
+    const acknowledgeBtn = this.authenticate;
+ 
+    if (await acknowledgeBtn.isVisible({ timeout: 20_000 }).catch(() => false)) {
+        await this.acknowledgeChkBox.check();
+        await acknowledgeBtn.click();
+        await this.page.waitForLoadState('networkidle');
+        await this.closeButton.click();
+    }
   }
 
   async goto() {

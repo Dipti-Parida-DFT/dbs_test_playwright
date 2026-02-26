@@ -35,6 +35,7 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
     await loginPage.login(loginCompanyId, loginUserId, '123');
+    await loginPage.handleAnnouncementIfPresent();
     // 2) Create the aggregator once per test
     pages = new PaymentsPages(page);
     
@@ -57,8 +58,7 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
 
     //Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
-    //await pages.TransferCentersPage.waitForTransferCenterReady();
-
+   
     // If icon not visible on the first page → click the second dot
     if (!(await pages.VNTaxPaymentPage.VNTaxPayment.isVisible())) {
     await pages.VNTaxPaymentPage.secondDot.click();
@@ -86,8 +86,7 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
     //Get Outstandting value from record 1
     const rawValue1=(await pages.VNTaxPaymentPage.outstandingAmount.nth(0).innerText()).trim();
     const numericValue1 = rawValue1.replace(/[^0-9.-]+/g, '');
-    console.log({ rawValue1, numericValue1 });
-
+    
     // Amount to pay VND for record 1
     await pages.VNTaxPaymentPage.amountToPayVND.nth(0).scrollIntoViewIfNeeded();
     await pages.VNTaxPaymentPage.amountToPayVND.nth(0).fill(numericValue1);
@@ -95,8 +94,7 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
     //Get Outstandting value from record 2
     const rawValue2=(await pages.VNTaxPaymentPage.outstandingAmount.nth(1).innerText()).trim();
     const numericValue2 = rawValue2.replace(/[^0-9.-]+/g, '');
-    console.log({ rawValue2, numericValue2 });
-
+   
     // Amount to pay VND for record 2
     await pages.VNTaxPaymentPage.amountToPayVND.nth(1).scrollIntoViewIfNeeded();
     await pages.VNTaxPaymentPage.amountToPayVND.nth(1).fill(numericValue2);
@@ -116,10 +114,8 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
 
     // Capture reference and verify
     const referenceText = await pages.VNTaxPaymentPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
     // If you want only the EBLV… token:
     const reference = await pages.VNTaxPaymentPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
 
     //Click on finish button
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.finishButton);
@@ -142,8 +138,7 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
 
     //Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
-    //await pages.TransferCentersPage.waitForTransferCenterReady();
-
+   
     // If icon not visible on the first page → click the second dot
     if (!(await pages.VNTaxPaymentPage.VNTaxPayment.isVisible())) {
     await pages.VNTaxPaymentPage.secondDot.click();
@@ -161,18 +156,23 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
     await page.keyboard.press('Enter');
     
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.applyTaxes);
+    await pages.VNTaxPaymentPage.corporateTaxFilterInput.waitFor({ state: 'visible', timeout: 5000 });
+    
+    const radioBtn = page.getByLabel('Sequential', { exact: true });
+    radioBtn.waitFor({ state: 'visible', timeout: 5000 });
+    await radioBtn.scrollIntoViewIfNeeded();
+    await radioBtn.evaluate((el: HTMLInputElement) => el.click())
+
     //Selcet sequential tax radio button 
-    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.sequential);
     const selectButton = page.getByRole('button', { name: /\+\s*Select/i });
 
     // Click the first record in DOM order
-    await selectButton.nth(2).click();
+    await selectButton.nth(1).click();
     
     //Get Outstandting value from record 1
     const rawValue1=(await pages.VNTaxPaymentPage.outstandingAmount.nth(0).innerText()).trim();
     const numericValue1 = rawValue1.replace(/[^0-9.-]+/g, '');
-    console.log({ rawValue1, numericValue1 });
-
+    
     // Amount to pay VND for record 1
     await pages.VNTaxPaymentPage.amountToPayVND.nth(0).scrollIntoViewIfNeeded();
     await pages.VNTaxPaymentPage.amountToPayVND.nth(0).fill(numericValue1);
@@ -192,11 +192,9 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
 
     // Capture reference and verify
     const referenceText = await pages.VNTaxPaymentPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
     // If you want only the EBLV… token:
     const reference = await pages.VNTaxPaymentPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
-
+    
     //Click on finish button
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.finishButton);
 
@@ -218,8 +216,7 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
 
     //Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
-    //await pages.TransferCentersPage.waitForTransferCenterReady();
-
+    
     // If icon not visible on the first page → click the second dot
     if (!(await pages.VNTaxPaymentPage.VNTaxPayment.isVisible())) {
     await pages.VNTaxPaymentPage.secondDot.click();
@@ -285,8 +282,7 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
 
     //Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
-    //await pages.TransferCentersPage.waitForTransferCenterReady();
-
+    
     // If icon not visible on the first page → click the second dot
     if (!(await pages.VNTaxPaymentPage.VNTaxPayment.isVisible())) {
     await pages.VNTaxPaymentPage.secondDot.click();
@@ -304,8 +300,14 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
     await page.keyboard.press('Enter');
     
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.applyTaxes);
+    await pages.VNTaxPaymentPage.corporateTaxFilterInput.waitFor({ state: 'visible', timeout: 5000 });
+    
+    const radioBtn = page.getByLabel('Sequential', { exact: true });
+    radioBtn.waitFor({ state: 'visible', timeout: 5000 });
+    await radioBtn.scrollIntoViewIfNeeded();
+    await radioBtn.evaluate((el: HTMLInputElement) => el.click())
+
     //For Sequential select first taxes
-    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.sequential);
     const selectButton = page.getByRole('button', { name: /\+\s*Select/i });
     
     //Click first record
@@ -403,8 +405,7 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
     //Get Outstandting value from record 2
     const rawValue2=(await pages.VNTaxPaymentPage.outstandingAmount.nth(1).innerText()).trim();
     const numericValue2 = rawValue2.replace(/[^0-9.-]+/g, '');
-    console.log({ rawValue2, numericValue2 });
-
+    
     // Amount to pay VND for record 2
     await pages.VNTaxPaymentPage.amountToPayVND.nth(1).scrollIntoViewIfNeeded();
     await pages.VNTaxPaymentPage.amountToPayVND.nth(1).fill(numericValue2);
@@ -424,11 +425,9 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
 
     // Capture reference and verify
     const referenceText = await pages.VNTaxPaymentPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
     // If you want only the EBLV… token:
     const reference = await pages.VNTaxPaymentPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
-
+    
     //Click on finish button
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.finishButton);
 

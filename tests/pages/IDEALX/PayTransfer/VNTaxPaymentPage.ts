@@ -18,8 +18,8 @@ export class VNTaxPaymentPage {
     this.optionID = page.locator('xpath=//input[@name="optionalId"]');
     this.optionIDInput = page.locator('xpath=//input[@name="optionalId"]');
     this.corporateTaxFilterInput = page.locator('xpath=//input[@id="corporate-tax-filter"]');
-    this.nonSequential = page.locator('xpath=//input[@type="radio" and @value="nonSequential"]');
-    this.sequential = page.locator('xpath=//input[@type="radio" and @value="sequential"]');
+    this.nonSequential = page.locator('xpath=//span[normalize-space()="Non-sequential"]/ancestor::label');
+    this.sequential = page.locator('xpath=//span[normalize-space()="Sequential"]/ancestor::label');
 
     this.paymentDate = page.locator('xpath=//input[@formcontrolname="paymentDate"]');
     this.chargeAccount = page.locator('xpath=//p-auto-complete[@formcontrolname="chargeAccount"]');
@@ -353,6 +353,7 @@ export class VNTaxPaymentPage {
     //await expect(this.alertDialog).toBeHidden();
   }
 
+  
   /** Wait until the Payroll form controls (e.g., fromAccount) are ready */
   async waitForVNTaxPaymentPageReady(timeout = 20_000) {
     await this.waitForUXLoading();
