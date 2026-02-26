@@ -12,7 +12,7 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './tests',
+  //testDir: './tests',
   /* Longer test timeout if CI is slow */
   timeout: 60_000, // adjust as needed
   expect: { timeout: 10_000 },
@@ -43,10 +43,15 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
-  projects: [
+  projects: [ 
     {
-      name: 'chromium',
+      name: 'e2e',
+      testDir: './tests/e2e',
       use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'api',
+      testDir: './tests/api'
     },
 
     // {
