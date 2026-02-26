@@ -5,6 +5,7 @@ import { AccountTransferPage } from './AccountTransferPage';
 import { TransferCentersPage } from './TransferCenterPage';
 import { PayrollPage } from './PayrollPage';
 import { BulkPaymentPage } from './BulkPaymentPage';
+
 /*import { LVTPaymentPage } from './LVTPaymentPage';
 import { AutoPayPaymentPage } from './AutoPayPaymentPage';
 import { PaymentViaPartnerBankPage } from './PaymentViaPartnerBankPage';

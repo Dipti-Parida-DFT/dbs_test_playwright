@@ -1,0 +1,61 @@
+{
+   "Payroll": {
+        "SIT": {
+            "loginCompanyId": "SG2BFE1",
+            "loginUserId": "DBSAUTO0001",
+            "fromAccount": "021account",
+            "payeeBankID": "EASTASIALIMITED"
+        },
+        "newPayeeName": "Test_Payee_Name001",
+        "newPayeeNickName": "Test_Payee_Nickname001",
+        "newPayeeAcctNumber": "Acc0007",
+        "referenceForPayee": "TestReferenceForPayee",
+
+        "internalReference": "IntRef00001",
+        "amount" : "1.00",
+        "editAmount": "2.00",
+        "paymentDetails": "TestPaymentDetails",
+        "emailId0": "Email0@dbs.com",
+        "emailId1": "Email1@dbs.com",
+        "emailId2": "Email2@dbs.com",
+        "emailId3": "Email3@dbs.com",
+        "emailId4": "Email4@dbs.com",
+        "emailMessage": "TestEmailMessage",
+        "batchID": "00001",
+        "fromAccount1": "021account  (SGD)",
+        "fromAccount2": "021account",
+        "paymentType": "Singapore Payroll",
+        "yourAccountDeducted": "SGD 1.00",
+        "yourAccountDeductedEdited":"SGD 2.00",
+        "paymentSummaryLabel": "Payment summary:",
+        "totalPayeesLabel": "Total payees:",
+        "totalPayeesLabelValue": "1",
+        "totalAmountLabel": "Total amount",
+        "totalAmountLabelValue": "(SGD): 1.00",
+        "totalAmountLabelValueEdited": "(SGD): 2.00",
+        "bankNameValue": "EASTASIALIMITED",
+        "bankSwiftBicValue": "70920200",
+        "purposeCode": "SALA - Salary Payment",
+        "transactionDeleted": "Transaction deleted" 
+
+    },
+    "status": {
+        "Approved": "Approved",
+        "PendingApproval": "Pending Approval",
+        "PartialApproved": "Partial Approved",
+        "PendingRelease": "Pending Release",
+        "PendingVerification": "Pending Verification",
+        "PartialCompleted": "Partial Completed",
+        "Received": "Received",
+        "Completed": "Completed",
+        "Saved": "Saved",
+        "Submitted": "Submitted",
+        "BankRejected": "Bank Rejected",
+        "Rejected": "Rejected",
+        "Failed": "Failed",
+        "Cancelled": "Cancelled"
+    },
+    "paymentType": {
+        "VN_Custom": "VN - Customs Payment"
+    }
+}

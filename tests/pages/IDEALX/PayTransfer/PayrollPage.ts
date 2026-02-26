@@ -1,5 +1,6 @@
 // pages/PayrollPage.ts
 import { Page, Locator, expect } from '@playwright/test';
+import { WebComponents } from '../../../lib/components';
 
 
 export type NewPayeeInput = {
@@ -32,7 +33,7 @@ export class PayrollPage {
     this.billerServiceDropdown = page.locator('xpath=//multi-level-dropdown[@name="billerServiceID"]');
     this.amount = page.locator('xpath=//input[@name="payeeAmount"]');
     this.payeeParticulars = page.locator('xpath=//ShuRu[@name="payeeParticulars"]');
-    this.payeeRef = page.locator('xpath=//ShuRu[@name="payeeRef"]');
+    this.payeeRef = page.locator('xpath=//input[@name="payeeRef"]');
     this.payeeNationalId = page.locator('xpath=//ShuRu[@name="payeeNationalID"]');
     this.payeeMandateDetail = page.locator('xpath=//ShuRu[@name="payeeMandateDetail"]');
     this.payeeStockCode = page.locator('xpath=//ShuRu[@name="payeeStockCode"]');
@@ -40,13 +41,19 @@ export class PayrollPage {
     this.payeePassbook = page.locator('xpath=//ShuRu[@name="payeePassbook"]');
     this.payeeSenderFreeText = page.locator('xpath=//ShuRu[@name="payeeFreeText4Sender"]');
     this.paymentDetailsTextarea = page.locator('xpath=//textarea[@name="payeeDetails"]');
+    this.messageToThePayeeCheckBox = page.locator('xpath=//span[text()="5 notifications "]');
+    this.internalReference = page.locator('xpath=//input[@name="batchReference"]');
+    this.batchID = page.locator('xpath=//input[@name="batch-id"]');
+    this.savePayeeCheckBox = page.locator('xpath=//input[@name="savePayee"]/following-sibling::label/div/span');
     this.beneficiaryAdvisingToggle = page.locator('xpath=//input[@name="isBeneAdvising0"]');
     this.emailId0 = page.locator('xpath=//input[@name="email-0"]');
     this.emailId1 = page.locator('xpath=//input[@name="email-1"]');
     this.emailId2 = page.locator('xpath=//input[@name="email-2"]');
     this.emailId3 = page.locator('xpath=//input[@name="email-3"]');
     this.emailId4 = page.locator('xpath=//input[@name="email-4"]');
-    this.messageTextarea = page.locator('xpath=//*[@name="adviceContent"]');
+    this.emailMessageTextarea = page.locator('xpath=//*[@name="adviceContent"]');
+    this.earliestAvailableDateCheckbox = page.locator('xpath=//span[text()="Earliest Available Date "]');
+    
 
     this.nextButton = page.locator('xpath=//button[@name="next"]');
     this.submitButton = page.locator('xpath=//button[@name="submit"]');
@@ -84,6 +91,7 @@ export class PayrollPage {
     this.findBankIDButton=page.locator('xpath=//*[@id="new-payee-bank-id-button"]');
     //this.payeeBankSearchResults = page.locator('xpath=//*[@class="search-result-container"]');
     this.payeeBankSearchResults = page.locator('xpath=//table[@class="swift-results ng-star-inserted"]');
+    //this.payeeBankSearchResults = page.locator('xpath=//table[@class="swift-results ng-star-inserted"]/tr/td/label');
     this.enterBankDetailsManuallyButton = page.locator('xpath=//div[starts-with(@class, "manual clearfix")]');
     this.bsbCode = page.locator('xpath=//ShuRu[@name="bp-swift-select-bsbCode"]');
 
@@ -125,9 +133,12 @@ export class PayrollPage {
     // View payroll Payment Page
     this.hashValueLabel = page.locator('xpath=//*[@id="bulk-view-hashValue"]');
     this.fromAccountViewLabel = page.locator('xpath=//*[@id="bulk-view-accountNum"]');
+    this.fromAccountViewLabel2 = page.locator('xpath=//*[@id="bulk-view-accountName"]');
     this.balanceLabel = page.locator('xpath=//*[@id="bulk-view-acctBalance"]');
     this.paymentTypeLabel = page.locator('xpath=//*[@id="bulk-view-paymentType"]');
-
+    this.paymentType = page.locator('xpath=//*[@id="bulk-view-paymentType"]');
+    this.paymentDate = page.locator('xpath=//*[@id="bulk-view-paymentDate"]');
+    
     this.paymentTypeDetailLabel = page.locator('xpath=//dbs-bp-view-summary-section/div[5]/span[2]/span[2]');
     this.amountViewLabel = page.locator('xpath=//*[@id="bulk-view-paymentAmount"]');
     this.bankChargeLabel = page.locator('xpath=//*[@id="bulk-view-bankChargeType"]');
@@ -139,14 +150,23 @@ export class PayrollPage {
     this.billerServiceIdLabel = page.locator('xpath=//*[@id="bulk-view-billerServiceID"]');
     this.paymentSummaryPanel = page.locator('xpath=//*[@class="summary-panel step2-panel-triangle"]');
 
+    this.paymentSummaryLabel = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[1]');
+    this.totalPayeesLabel = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[2]');
+    this.totalPayeesValue = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[3]');
+    this.totalAmountLabel = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[4]');
+    this.totalAmountValue = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[5]');
+
     this.transactionStatusLabel1 = page.locator('xpath=//div[@id="bulk-view-status_0"]');
     this.transactionStatusLabel2 = page.locator('xpath=//div[@id="bulk-view-status_1"]');
-    this.payeeNameLabel1 = page.locator('xpath=//*[@id="bulk-view-name_0"]');
+    this.payeeNameLabel1Value = page.locator('xpath=//*[@id="bulk-view-name_0"]');
     this.payeeNameLabel2 = page.locator('xpath=//*[@id="bulk-view-name_1"]');
-    this.payeeNicknameLabel = page.locator('xpath=//*[@id="bulk-view-nickName_0"]');
-    this.bankNameLabel1 = page.locator('xpath=//*[@id="bulk-view-payeeBankName_0"]');
-    this.bankNameLabel2 = page.locator('xpath=//*[@id="bulk-view-payeeBankName_1"]');
+
+    this.payeeNicknameLabelValue = page.locator('xpath=//*[@id="bulk-view-nickName_0"]');
+
+    this.bankNameLabel1Value = page.locator('xpath=//*[@id="bulk-view-payeeBankName_0"]');
+    this.bankNameLabel2Value = page.locator('xpath=//*[@id="bulk-view-payeeBankName_1"]');
     this.branchNameLabel = page.locator('xpath=//*[@id="bulk-view-payeeBranchName_0"]');
+
     this.bankSwiftBicLabel1 = page.locator('xpath=//*[@id="bulk-view-bankDetailsMsgDisplay_0"]');
     this.bankSwiftBicLabel2 = page.locator('xpath=//*[@id="bulk-view-bankDetailsMsgDisplay_1"]');
     this.nationalIdLabel = page.locator('xpath=//dbs-view-transfer-list/div/div[1]/div[1]/div[3]/div[2]/strong[2]');
@@ -157,6 +177,9 @@ export class PayrollPage {
 
     this.accountNumberLabel1 = page.locator('xpath=//*[@id="bulk-view-acctNum_0"]');
     this.accountNumberLabel2 = page.locator('xpath=//*[@id="bulk-view-acctNum_1"]');
+
+    this.status = page.locator('xpath=//*[@id="bulk-view-pendingStatus_0"]');
+    
     this.viewPayrollFilter = page.locator('xpath=//*[@id="bulk-view-filter"]');
     this.amountFirstLabel = page.locator('xpath=//*[@id="bulk-view-amount_0"]');
     this.amountSecondLabel = page.locator('xpath=//*[@id="bulk-view-amount_1"]');
@@ -168,19 +191,35 @@ export class PayrollPage {
     this.referenceForPayeeLabel2 = page.locator('xpath=//dbs-view-transfer-list[2]//*[@id="reference-for-payee"]');
     this.particularsLabel1 = page.locator('xpath=//dbs-view-transfer-list[1]/div/div[1]/div[2]/div[4]/div[2]/strong');
     this.particularsLabel2 = page.locator('xpath=//dbs-view-transfer-list[2]/div/div[1]/div[2]/div[4]/div[2]/strong');
-    this.showOptionalViewButton1 = page.locator('xpath=//*[@id="bulk-viewTemp-optDetail_0"]');
+    //this.showOptionalViewButton1 = page.locator('xpath=//*[@id="bulk-viewTemp-optDetail_0"]');
+    //this.showOptionalViewButton1 = page.locator('xpath=(//span[text()="Show optional details"])[2]');
+    this.showOptionalViewButton1 = page.locator('xpath=(//span[text()="Show optional details"])[2]');
+
     this.showOptionalViewButton2 = page.locator('xpath=//*[@id="bulk-viewTemp-optDetail_1"]');
     this.paymentDetailLabel1 = page.locator('xpath=//*[@id="bulk-view-paymentDetails_0"]');
-    this.paymentDetailLabel2 = page.locator('xpath=//*[@id="bulk-view-paymentDetails_1"]');
+    this.paymentDetailLabel2 = page.locator('(//span[text()="Show optional details"])[2]path=//*[@id="bulk-view-paymentDetails_1"]');
     this.messageLabel1 = page.locator('xpath=//*[@id="bulk-view-message_0"]');
     this.messageLabel2 = page.locator('xpath=//*[@id="bulk-view-message_1"]');
     this.emailListLabel1 = page.locator('xpath=//*[@id="bulk-view-email_0"]');
     this.emailListLabel2 = page.locator('xpath=//*[@id="bulk-view-email_1"]');
+
+    this.emailListLabel1Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[1]');
+    this.emailListLabel2Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[2]');
+    this.emailListLabel3Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[3]');
+    this.emailListLabel4Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[4]');
+    this.emailListLabel5Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[5]');
+
     this.passbookLabel = page.locator('xpath=//*[@id="bulk-view-passBook_0"]');
     this.freeTextLabel = page.locator('xpath=//*[@id="bulk-view-freeText_0"]');
 
     this.nextApproverLabel = page.locator('xpath=//dbs-approval-requirement/div/section/div[1]/span[2]');
     this.activityLogSection = page.locator('xpath=//*[@class="payment-history"]');
+
+    this.deleteButonPayroll = page.locator('xpath=//button[@name="delete"]');
+    this.deleteButonConfirmDeletePopup = page.locator('xpath=//button[@id="dialogDelete"]');
+    this.transactionDeletedPopupLabel = page.locator('xpath=//h2[text()="Transaction deleted"]');
+    this.transactionDeletedPopupLabelMsg = page.locator('xpath=//p[@id="dialogMessage"]/span');
+    
 
     this.viewVerifyReleaseButton = page.locator('xpath=//button[@name="view-verify-release"]');
     this.verifyReleaseConfirmButton = page.locator('xpath=//button[@name="verify-release"]');
@@ -240,13 +279,19 @@ export class PayrollPage {
   readonly payeePassbook: Locator;
   readonly payeeSenderFreeText: Locator;
   readonly paymentDetailsTextarea: Locator;
+  readonly messageToThePayeeCheckBox: Locator;
+  readonly internalReference: Locator;
+  readonly batchID: Locator;
   readonly beneficiaryAdvisingToggle: Locator;
+  readonly savePayeeCheckBox: Locator;
   readonly emailId0: Locator;
   readonly emailId1: Locator;
   readonly emailId2: Locator;
   readonly emailId3: Locator;
   readonly emailId4: Locator;
-  readonly messageTextarea: Locator;
+  readonly emailMessageTextarea: Locator;
+  readonly earliestAvailableDateCheckbox: Locator;
+
 
   readonly nextButton: Locator;
   readonly submitButton: Locator;
@@ -316,8 +361,12 @@ export class PayrollPage {
 
   readonly hashValueLabel: Locator;
   readonly fromAccountViewLabel: Locator;
+  readonly fromAccountViewLabel2: Locator;
   readonly balanceLabel: Locator;
   readonly paymentTypeLabel: Locator;
+  readonly paymentType: Locator;
+  readonly paymentDate: Locator;
+  
 
   readonly paymentTypeDetailLabel: Locator;
   readonly amountViewLabel: Locator;
@@ -329,14 +378,20 @@ export class PayrollPage {
   readonly batchIdLabel: Locator;
   readonly billerServiceIdLabel: Locator;
   readonly paymentSummaryPanel: Locator;
+  
+  readonly paymentSummaryLabel: Locator;
+  readonly totalPayeesLabel: Locator;
+  readonly totalPayeesValue: Locator;
+  readonly totalAmountLabel: Locator;
+  readonly totalAmountValue: Locator;
 
   readonly transactionStatusLabel1: Locator;
   readonly transactionStatusLabel2: Locator;
-  readonly payeeNameLabel1: Locator;
+  readonly payeeNameLabel1Value: Locator;
   readonly payeeNameLabel2: Locator;
-  readonly payeeNicknameLabel: Locator;
-  readonly bankNameLabel1: Locator;
-  readonly bankNameLabel2: Locator;
+  readonly payeeNicknameLabelValue: Locator;
+  readonly bankNameLabel1Value: Locator;
+  readonly bankNameLabel2Value: Locator;
   readonly branchNameLabel: Locator;
   readonly bankSwiftBicLabel1: Locator;
   readonly bankSwiftBicLabel2: Locator;
@@ -349,6 +404,8 @@ export class PayrollPage {
   readonly accountNumberLabel1: Locator;
   readonly accountNumberLabel2: Locator;
   readonly viewPayrollFilter: Locator;
+  readonly status: Locator;
+
   readonly amountFirstLabel: Locator;
   readonly amountSecondLabel: Locator;
   readonly transactionCodeLabel1: Locator;
@@ -367,12 +424,24 @@ export class PayrollPage {
   readonly messageLabel2: Locator;
   readonly emailListLabel1: Locator;
   readonly emailListLabel2: Locator;
+
+  readonly emailListLabel1Value: Locator;
+  readonly emailListLabel2Value: Locator;
+  readonly emailListLabel3Value: Locator;
+  readonly emailListLabel4Value: Locator;
+  readonly emailListLabel5Value: Locator;
+  
   readonly passbookLabel: Locator;
   readonly freeTextLabel: Locator;
 
   readonly nextApproverLabel: Locator;
   readonly activityLogSection: Locator;
 
+  readonly deleteButonPayroll: Locator;
+  readonly deleteButonConfirmDeletePopup: Locator;
+  readonly transactionDeletedPopupLabel: Locator;
+  readonly transactionDeletedPopupLabelMsg: Locator;
+  
   readonly viewVerifyReleaseButton: Locator;
   readonly verifyReleaseConfirmButton: Locator;
   readonly toNewPayeeNameLabel: Locator;
@@ -410,6 +479,9 @@ export class PayrollPage {
   readonly confirmButton: Locator;
 
   // ---------- Helper waits (English names) ----------
+
+   // create lib => components.ts object
+   webComponents = new WebComponents();
   
 /**
    * Add a new payee flow (reusable in all tests).
@@ -417,7 +489,6 @@ export class PayrollPage {
    */
 async addNewPayee(input: NewPayeeInput): Promise<NewPayeeResult> {
   const { name, nickName, bankId, accountNumber } = input;
-
     await this.newPayeeTab.click();
     await this.safeClick(this.newPayeeName);
     await this.safeFill(this.newPayeeName, name);
@@ -449,6 +520,118 @@ async addNewPayee(input: NewPayeeInput): Promise<NewPayeeResult> {
     return { nickName, accountNumber };
   }
 
+
+  /**
+   * Author : LC5741501
+   * Created Date: 17/02/2026
+   * This Method "addNewPayeeWithDetails" : Add's a new payee with all details (reusable in all tests).
+   */
+async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
+  const { name, nickName, bankId, accountNumber } = input;
+
+    // Click : New Payee Tab
+    await this.newPayeeTab.click();
+
+    // Enter : Payee Name
+    await this.webComponents.enterTextarea(this.newPayeeName, name);
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeName.blur();
+
+    // Enter : Payee nickname
+    await this.webComponents.enterTextarea(this.newPayeeNickName, nickName);
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeNickName.blur();
+
+    // Enter : Payee bank ID
+    await this.webComponents.enterTextarea(this.payeeBankId, bankId);
+    await this.page.keyboard.press('Enter');
+    await this.payeeBankId.blur();
+    await this.webComponents.clickWhenVisibleAndEnabled(this.findBankIDButton);
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
+    await this.payeeBankSearchResults.first().click();
+    await this.webComponents.clickWhenVisibleAndEnabled(this.newPayeeAccountNumber);
+
+    // Enter : Payee bank account number
+    // Preserve your clipboard -> paste behavior
+    await this.page.evaluate(async (text) => {
+      await navigator.clipboard.writeText(text);
+    }, accountNumber);
+
+    await this.page.keyboard.press('Control+V');
+    await this.page.keyboard.press('Enter');
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeAccountNumber.blur();
+
+    //Click : Add Payee button
+    await this.webComponents.clickWhenVisibleAndEnabled(this.addNewPayeeButton);
+    return { nickName, accountNumber };
+  }
+
+  /**
+   * Author : LC5741501
+   * Created Date: 20/02/2026
+   * @param testData : is a Json object
+   * This method Enters Step 2: Payment to Amount and other opetional fields 
+   */
+  async enterNewPayeeAmountAndOptionalDetails(testData){
+
+    // Step 2: Enter Amount (SGD) = add Amount
+    await this.webComponents.enterTextarea(this.amount, testData.Payroll.amount);
+    
+    // Step 2: Payment from => Below steps for the (Step 2) optionals fields.
+
+    // Enter Reference for payee
+    await this.webComponents.enterTextarea(this.payeeRef, testData.Payroll.referenceForPayee);
+
+    // Click Show optional details arrow
+    await this.webComponents.clickWhenVisibleAndEnabled(this.showOptionalDetails);
+    
+
+    // Enter Payment details to the payee bank
+    await this.webComponents.enterTextarea(this.paymentDetailsTextarea, testData.Payroll.paymentDetails);
+
+    // Click : "Message to the payee" checkbox
+    await this.webComponents.clickWhenVisibleAndEnabled(this.messageToThePayeeCheckBox);
+    
+    // Enter : Emails 1
+    await this.webComponents.enterTextarea(this.emailId0, testData.Payroll.emailId0);
+    // Enter : Emails 2
+    await this.webComponents.enterTextarea(this.emailId1, testData.Payroll.emailId1);
+    // Enter : Emails 3
+    await this.webComponents.enterTextarea(this.emailId2, testData.Payroll.emailId2);
+    // Enter : Emails 4
+    await this.webComponents.enterTextarea(this.emailId3, testData.Payroll.emailId3);
+    // Enter : Emails 5
+    await this.webComponents.enterTextarea(this.emailId4, testData.Payroll.emailId4);
+
+    // Enter : Emails Mesage (Textarea)
+    await this.webComponents.enterTextarea(this.emailMessageTextarea, testData.Payroll.emailMessage);
+
+  }
+
+  /**
+   * Author : LC5741501
+   * Created Date: 20/02/2026
+   * @param testData : Contains Json value
+   * This method enters the Step 4: Transaction references in Payroll page
+   * for the fields Internal reference and Batch ID
+   */
+  async enterTransactionReferences(testData,internalReferenceBoolean){
+
+    //Step 4: Payment date : Enter Internal reference, Batch ID
+    // Internal reference : It Adds the value if internalReferenceBoolean=true
+    //Else it will keep it blank
+    if (internalReferenceBoolean) {
+      await this.webComponents.enterTextarea(this.internalReference, testData.Payroll.internalReference);
+      console.log("Entered the Internal Reference Value : " + testData.Payroll.internalReference);
+    }else {
+      console.log("Not entered the Internal Reference");
+    }
+    
+    // Batch ID : add details
+    await this.webComponents.enterText(this.batchID, testData.Payroll.batchID);
+
+  }
 
   /** Delete Payee fnction */
   
@@ -568,8 +751,14 @@ beneficiaryRowsByText(text: string): Locator {
     await expect(this.finishButton).toBeVisible({ timeout });
   }
 
+   /** Wait until Pay & Transfer page is ready (Payroll visible) */
+   async waitForPayAndTransferPageReady(timeout = 20_000) {
+    await this.waitForUXLoading();
+    await expect(this.payroll).toBeVisible({ timeout });
+  }
+
   /** Wait until view payment page has loaded key labels */
-  async waitForViewPaymentPageReady(timeout = 25_000) {
+  async waitForViewPaymentPageReady(timeout = 55_000) {
     await this.waitForUXLoading();
     await expect(this.fromAccountViewLabel).toBeVisible({ timeout });
     await expect(this.amountViewLabel).toBeVisible({ timeout });
@@ -693,10 +882,193 @@ beneficiaryRowsByText(text: string): Locator {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
     await locator.click();
+
+    /**
+     * Author: LC5741501
+     * This method waits for 15 seconds for the element
+     * to be visible
+     */
+  }  
+  
+  async waitElementToBeVisible(locator: Locator, timeout = 15_000) {
+    await expect(locator).toBeVisible({ timeout });
+    await expect(locator).toBeEnabled({ timeout });
   }
+
+
 
   async safeFill(locator: Locator, value: string, timeout = 15_000) {
     await expect(locator).toBeVisible({ timeout });
     await locator.fill(value);
   }
+
+  async enterTextareanew(locator: Locator, value: string, timeout = 15_000) {
+    //await expect(locator).toBeVisible({ timeout });
+    //await locator.fill(value);
+    await expect(locator).toBeVisible({ timeout });
+    await expect(locator).toBeEnabled({ timeout });
+    await locator.click();
+    await expect(locator).toBeEditable();        // visible + enabled + not readonly
+    await locator.fill(value);
+
+  }
+
+  /**
+     * Author : LC5741501
+     * This method validates the details of Expected
+     * values(JSON) Vs Actual Selected Payee Or Reference No (from UI) 
+     */
+    async validatePayeeOrRefrenceNoDetailsOfPayroll(testData,internalReferenceAutoGenerated, reference, amountSGDIsEdit,yourAccountDeductedEdited) {
+      
+      // Assertions
+      // 1) Hash value : Auto generated hence checking value is Not Null
+      await this.webComponents.verifyUIElementTextIsNotNull(this.hashValueLabel);
+      
+      // 2) From : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.fromAccountViewLabel, testData.Payroll.fromAccount1);
+      await this.webComponents.compareUIVsJsonValue(this.fromAccountViewLabel2, testData.Payroll.fromAccount2);
+      
+      // 3) Payment Type : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.paymentType, testData.Payroll.paymentType);
+  
+       // 4) Your account will be deducted : 
+       // If yourAccountDeductedEdited = true it checkes edited value of 'your Account Deducted' field
+       //Else not edited value of 'your Account Deducted'
+       if(yourAccountDeductedEdited){
+        await this.webComponents.compareUIVsJsonValue(this.amountViewLabel, testData.Payroll.yourAccountDeductedEdited);
+       }else{
+        await this.webComponents.compareUIVsJsonValue(this.amountViewLabel, testData.Payroll.yourAccountDeducted);
+       }
+       
+       //5 Payment Date: checking value is Not Null
+       await this.webComponents.verifyUIElementTextIsNotNull(this.paymentDate);
+  
+      // 6) Internal reference : Validate UI Vs Json
+      if(internalReferenceAutoGenerated){
+        await this.webComponents.compareUIVsJsonValue(this.referenceLabel, reference);
+      }else{
+        await this.webComponents.compareUIVsJsonValue(this.referenceLabel, testData.Payroll.internalReference);
+      }
+      
+      
+      // 7) Batch ID : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.batchIdLabel, testData.Payroll.batchID);
+  
+      // 8) Filter is Visible 
+      await this.webComponents.waitElementToBeVisible(this.viewPayrollFilter);
+      
+      // 9) Payment summary : Validate UI Vs Json (Payment summary Label)
+      await this.webComponents.compareUIVsJsonValue(this.paymentSummaryLabel, testData.Payroll.paymentSummaryLabel);
+  
+      // 10) Total Payees Label : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.totalPayeesLabel, testData.Payroll.totalPayeesLabel);
+      
+      // 11) Total Payees Value : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.totalPayeesValue, testData.Payroll.totalPayeesLabelValue);
+      
+      // 12) Total Amount Label : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.totalAmountLabel, testData.Payroll.totalAmountLabel);
+  
+      // 13) Total Amount Value : Validate UI Vs Json
+      if(amountSGDIsEdit){
+      await this.webComponents.compareUIVsJsonValue(this.totalAmountValue, testData.Payroll.totalAmountLabelValueEdited);
+      }else{
+        await this.webComponents.compareUIVsJsonValue(this.totalAmountValue, testData.Payroll.totalAmountLabelValue);
+      }
+      // 14) Payee/Nickname : Validate (Payee Name) UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.payeeNameLabel1Value, testData.Payroll.newPayeeName);
+  
+      // 15) Payee/Nickname : Validate (Nickname) UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.payeeNicknameLabelValue, testData.Payroll.newPayeeNickName);
+  
+      // 16) Bank/SWIFT BIC: Validate (Bank) UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.bankNameLabel1Value, testData.Payroll.bankNameValue);
+  
+      // 17) Bank/SWIFT BIC: Validate (SWIFT) UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.bankSwiftBicLabel1, testData.Payroll.bankSwiftBicValue);
+  
+      // 18) Account number: Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.accountNumberLabel1, testData.Payroll.newPayeeAcctNumber);
+  
+      // 19) Status (PendingApproval) : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.status, testData.status.PendingApproval);
+      
+      // 20) Amount (SGD): Validate UI Vs Json
+      // If amountSGDIsEdit = true it checks edited value of amount
+      // else checks no edited value of amount
+      if(amountSGDIsEdit){
+        await this.webComponents.compareUIVsJsonValue(this.amountFirstLabel, testData.Payroll.editAmount);
+      }else{
+        await this.webComponents.compareUIVsJsonValue(this.amountFirstLabel, testData.Payroll.amount);
+      }
+      
+      // 21) Purpose Code (SALA - Salary Payment) : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.purposeCodeLabel1, testData.Payroll.purposeCode);
+  
+      // 22) Reference for payee (optional): Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.referenceForPayeeLabel1, testData.Payroll.referenceForPayee);
+
+      // Click : showOptionalViewButton1
+     await this.webComponents.clickWhenVisibleAndEnabled(this.showOptionalViewButton1);
+      
+      // 23) Message to payee (optional): Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.messageLabel1, testData.Payroll.emailMessage);
+      
+      // 24)Emails 1 to 5 : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel1Value, testData.Payroll.emailId0);
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel2Value, testData.Payroll.emailId1);
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel3Value, testData.Payroll.emailId2);
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel4Value, testData.Payroll.emailId3);
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel5Value, testData.Payroll.emailId4);
+
+      // 25) Next approver : value is not Null
+      await this.webComponents.verifyUIElementTextIsNotNull(this.nextApproverLabel);
+  
+      // 26) Next approver : Visible
+      await this.webComponents.waitElementToBeVisible(this.activityLogSection);
+    
+    }
+
+    /**
+     * Author : LC5741501
+     * This method validates the details of Expected
+     * values(JSON) Vs Actual Selected Payee Or Reference No (from UI) 
+     */
+    async editAmountSGD(testData) {
+
+      // Click : Edit button
+      await this.webComponents.clickWhenVisibleAndEnabled(this.editButton);
+
+    // Step 2: Enter Amount (SGD) = add Amount
+    await this.webComponents.enterTextarea(this.amount, testData.Payroll.editAmount);
+
+    }
+
+    /**
+       * Author : LC5741501
+       * This method delete's the PayeeOrReference No
+       */
+      async deleteOpenPayeeOrReferenceNo(testData, internalReferenceAutoGenerated, reference){
+    
+        // Click : Delete button
+        await this.webComponents.clickWhenVisibleAndEnabled(this.deleteButonPayroll);
+    
+        // Click : Delete button (Confirm delete Popup)
+        await this.webComponents.clickWhenVisibleAndEnabled(this.deleteButonConfirmDeletePopup);
+    
+        //Validate : Transaction Deleted Popup Label
+        await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabel);
+        await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabel, testData.Payroll.transactionDeleted);
+
+        // Validate : Refrence No is present in the deleted message
+        if(internalReferenceAutoGenerated){
+          await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabelMsg);
+        await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabelMsg, reference);
+        }else{
+          await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabelMsg);
+        await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabelMsg, testData.Payroll.internalReference);
+        }
+        
+      }
+
 }
