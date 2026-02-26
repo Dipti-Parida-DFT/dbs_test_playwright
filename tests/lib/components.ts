@@ -97,6 +97,28 @@ export class WebComponents {
     
       }
 
+      
+/**
+ * Author: LC5741501
+ * Created Date: 16/02/26
+  * Gets text from a given locator and validates it is not null/empty.
+  * @returns The extracted text
+ */
+ async verifyTextIsNotNull(locator: Locator){
+  
+  // Wait for element to be visible
+  await locator.waitFor({ state: "visible" });
+
+  // Get text from UI
+  const text = await locator.textContent();
+
+  // Validate text
+  if (!text || text.trim().length === 0) {
+      throw new Error(`Text is null or empty for locator: ${text}`);
+  }
+  console.log(`Text found: ${text.trim()}`);
+  return text.trim();
+}
 
   async robustClickElement(target: Locator, opts?: { timeout?: number; state?: 'visible'|'attached'; retries?: number }) {
     const timeout = opts?.timeout ?? this.defaultTimeout;

@@ -66,24 +66,27 @@ export class BulkCollectionPage {
     
 
     this.hashValue = page.locator('//*[@id="bulk-view-hashValue"]');
-
-
     this.toAccountNumberLabel = page.locator('//span[@id="bulk-view-accountNum"]');
     this.toAccountNameLabel = page.locator('//span[@id="bulk-view-accountName"]');
-    this.paymentType = page.locator('//*[@id="bulk-view-paymentType"]');
-    this.totalAmountValue = page.locator('//button[@name="submit"]');
-    this.viewConsolidateCreditValue = page.locator('//button[@name="next"]');
-    this.paymentDate = page.locator('//button[@name="submit"]');
+    this.paymentTypeValue = page.locator('//*[@id="bulk-view-paymentType"]');
+    this.totalAmountValue = page.locator('//*[@id="bulk-view-paymentAmount"]');
+    this.viewCreditValue = page.locator('//*[@id="bulk-view-debitType-template"]');
+    this.paymentDate = page.locator('//*[@id="bulk-view-paymentDate"]');
 
-    this.referenceValue = page.locator('//button[@name="next"]');
-    this.batchIDValue = page.locator('//button[@name="submit"]');
-    this.payeeNameValue = page.locator('//button[@name="next"]');
-    this.payeeBankSwiftBic = page.locator('//button[@name="submit"]');
-    this.accountNumberValue = page.locator('//button[@name="next"]');
-    this.DDAReferenceValue = page.locator('//button[@name="submit"]');
+    this.referenceValue = page.locator('//*[@id="viewReference"]');
+    this.batchIDValue = page.locator('//*[@id="bulk-view-batchId"]');
+    this.payerNameValue = page.locator('//*[@id="bulk-view-name_0"]');
+    this.payerNickNameValue = page.locator('//*[@id="bulk-view-nickName_0"]');
+    
+    this.bankNameValue = page.locator('//*[@id="bulk-view-payeeBankName_0"]');
+    this.bankCodeValue = page.locator('//*[@id="bulk-view-bankDetailsMsgDisplay_0"]');
 
-    this.mandateIdValue = page.locator('//button[@name="next"]');
-    this.transactionStatusValue = page.locator('//button[@name="submit"]');
+    this.accountNumberValue = page.locator('//strong[@id="bulk-view-acctNum_0"]');
+    this.DDAReferenceValue = page.locator('//*[@id="bulk-view-ddaRef_0"]');
+
+    this.mandateIdValue = page.locator('//*[@id="bulk-view-mandateId_0"]');
+    this.transactionStatusValue = page.locator('//strong[@id="bulk-view-pendingStatus_0"]');
+    
     this.amountValue = page.locator('//button[@name="next"]');
     this.transactionCodeView = page.locator('//button[@name="submit"]');
     this.payeePurposeCodeValue = page.locator('//button[@name="next"]');
@@ -139,15 +142,17 @@ export class BulkCollectionPage {
   readonly hashValue: Locator;
   readonly toAccountNumberLabel: Locator;
   readonly toAccountNameLabel: Locator;
-  readonly paymentType: Locator;
+  readonly paymentTypeValue: Locator;
   readonly totalAmountValue: Locator;
-  readonly viewConsolidateCreditValue: Locator;
+  readonly viewCreditValue: Locator;
   readonly paymentDate: Locator;
 
   readonly referenceValue: Locator;
   readonly batchIDValue: Locator;
-  readonly payeeNameValue: Locator;
-  readonly payeeBankSwiftBic: Locator;
+  readonly payerNameValue: Locator;
+  readonly payerNickNameValue: Locator;
+  readonly bankNameValue: Locator;
+  readonly bankCodeValue: Locator;
   readonly accountNumberValue: Locator;
   readonly DDAReferenceValue: Locator;
 
