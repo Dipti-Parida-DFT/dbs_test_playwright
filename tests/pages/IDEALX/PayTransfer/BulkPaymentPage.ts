@@ -492,10 +492,10 @@ export class BulkPaymentPage {
       await this.safeFill(this.newPayeeName, name);
       await this.page.keyboard.press('Tab');
       await this.newPayeeName.blur();
-      await this.safeClick(this.newPayeeNickName);
-      await this.safeFill(this.newPayeeNickName, nickName);
+      //await this.safeClick(this.newPayeeNickName);
+      //await this.safeFill(this.newPayeeNickName, nickName);
       await this.page.keyboard.press('Tab');
-      await this.newPayeeNickName.blur();
+      //await this.newPayeeNickName.blur();
       await this.payeeBankId.click();
       await this.payeeBankId.fill(bankId);
       await this.page.keyboard.press('Enter');
@@ -504,7 +504,7 @@ export class BulkPaymentPage {
       await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
       await this.payeeBankSearchResults.first().click();
       await this.safeClick(this.newPayeeAccountNumber);
-  
+      
       // Preserve your clipboard -> paste behavior
       await this.page.evaluate(async (text) => {
         await navigator.clipboard.writeText(text);

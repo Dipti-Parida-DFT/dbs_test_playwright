@@ -145,7 +145,7 @@ export class PayrollPage {
     this.chargeAccountLabel = page.locator('xpath=//*[@id="bulk-view-charge-account"]');
     this.paymentDateLabel = page.locator('xpath=//*[@id="bulk-view-paymentDate"]');
     this.referenceLabel = page.locator('xpath=//*[@id="viewReference"]');
-    this.referenceID = page.locator('xpath=//label[contains(text(),"Payroll Payment")]');
+    this.referenceID = page.locator('xpath=//label[contains(text(),"Bulk Collection")]');
     this.batchIdLabel = page.locator('xpath=//*[@id="bulk-view-batchId"]');
     this.billerServiceIdLabel = page.locator('xpath=//*[@id="bulk-view-billerServiceID"]');
     this.paymentSummaryPanel = page.locator('xpath=//*[@class="summary-panel step2-panel-triangle"]');

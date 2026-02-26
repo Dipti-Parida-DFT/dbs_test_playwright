@@ -5,6 +5,7 @@ import { AccountTransferPage } from './AccountTransferPage';
 import { TransferCentersPage } from './TransferCenterPage';
 import { PayrollPage } from './PayrollPage';
 import { BulkPaymentPage } from './BulkPaymentPage';
+import { BulkCollectionPage } from './BulkCollectionPage';
 
 /*import { LVTPaymentPage } from './LVTPaymentPage';
 import { AutoPayPaymentPage } from './AutoPayPaymentPage';
@@ -51,6 +52,7 @@ export {
   TransferCentersPage,
   PayrollPage,
   BulkPaymentPage,
+  BulkCollectionPage,
  /* LVTPaymentPage,
   AutoPayPaymentPage,
   PaymentViaPartnerBankPage,
@@ -96,6 +98,7 @@ export class PaymentsPages {
   public TransferCentersPage: TransferCentersPage;
   public PayrollPage: PayrollPage;
   public BulkPaymentPage: BulkPaymentPage;
+  public BulkCollectionPage: BulkCollectionPage;
   /*public LVTPaymentPage: LVTPaymentPage;
   public AutoPayPaymentPage: AutoPayPaymentPage;
   public PaymentViaPartnerBankPage: PaymentViaPartnerBankPage;
@@ -139,6 +142,7 @@ export class PaymentsPages {
     this.TransferCentersPage = new TransferCentersPage(page);
     this.PayrollPage = new PayrollPage(page);
     this.BulkPaymentPage = new BulkPaymentPage(page);
+    this.BulkCollectionPage = new BulkCollectionPage(page);
 
     /*this.LVTPaymentPage = new LVTPaymentPage(page);
     this.AutoPayPaymentPage = new AutoPayPaymentPage(page);

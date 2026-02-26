@@ -153,10 +153,14 @@ test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
     // If you want only the EBLV… token:
     const reference = await pages.PayrollPage.getReferenceID();
     console.log('Captured referenceID:', reference);
+
+     // Click on Finish button
+     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.finishButton);
+     await pages.BulkCollectionPage.waitForPayAndTransferPageReady();
     
     // Find it again in Transfer Center by reference
     //await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    //await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.searchAndOpenByReference(testData.Payroll.internalReference);
     await pages.PayrollPage.waitForViewPaymentPageReady();
     
@@ -275,5 +279,5 @@ test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
 
   });
 
-
+  
 });
