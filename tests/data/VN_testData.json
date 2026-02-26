@@ -24,7 +24,7 @@
     "Payroll": {
         "SIT": {
             "loginCompanyId": "SPVNSSM1",
-            "loginUserId": "SPVNSSM1S01",
+            "loginUserId": "DBSAUTOVN01",
             "fromAccount": "66670000322",
             "payeeBankID": "ACB"
         },
@@ -40,6 +40,22 @@
         "newPayeeAcctNumber": "8888833222",
         "paymentDetails": "paymentDetails",
         "amountErrorTip": "Amount is invalid.",
+        "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
+    },
+    "TaxPayment": {
+        "SIT": {
+            "loginCompanyId": "SPVNSSM1",
+            "loginUserId": "SPVNSSM1S01",
+            "fromAccount": "66670000322",
+            "payeeBankID": "ACB"
+        },
+        "PaymentID" : "0406102971720001",
+        "DecisionID" : "456763332",
+        "DocumentNumber" : "456763332",
+        "chargeAccount" : "66670000322",
+        "taxOfficeName": "Tax office Test",
+        "diffrentTaxOfficeName": "Tax office Test QA",
+        "differentTaxOfficeError": "You can only select taxes from the same tax office in the same payment.",
         "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
     },
     "status": {
