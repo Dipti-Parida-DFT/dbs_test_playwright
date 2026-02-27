@@ -1,8 +1,8 @@
 {
   "TelegraphicTransfer": {
     "loginCompanyId": "SG2BFE1",
-    "loginUserId": "SG2BFE1S02",
-    "loginUserIdAlt": "DBSAUTOSG01",
+    "loginUserId": "DBSAUTOSG01",
+    "loginUserIdAlt": "SG2BFE1S13",
     "verifyUserId": "SG2BFE1S01",
 
     "fromAccountNP": "02020202",
