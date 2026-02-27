@@ -14,14 +14,22 @@ let customBrowser: Browser;
 
 let reference2: string | undefined;
 let reference3: string | undefined;
+let copyreference: string | undefined;
 
 const SIT = (process.env.ENV?.toUpperCase() === 'SIT');
 
-const loginCompanyId = SIT ? testData.TelegraphicTransfer.SIT.loginCompanyId : testData.TelegraphicTransfer.UAT.loginCompanyId;
-const loginUserId    = SIT ? testData.TelegraphicTransfer.SIT.loginUserId    : testData.TelegraphicTransfer.UAT.loginUserId;
+function isFromTC014(title: string): boolean {
+  const m = /^TC(\d+)/i.exec(title);
+  return !!m && Number(m[1]) >= 14;
+}
+
+
+// const loginCompanyId = SIT ? testData.TelegraphicTransfer.SIT.loginCompanyId : testData.TelegraphicTransfer.UAT.loginCompanyId;
+// const loginUserId    = SIT ? testData.TelegraphicTransfer.SIT.loginUserId    : testData.TelegraphicTransfer.UAT.loginUserId;
 const fromAccountNP    = SIT ? testData.TelegraphicTransfer.SIT.fromAccountNP    : testData.TelegraphicTransfer.UAT.fromAccountNP;
 const payeeBankID    = SIT ? testData.TelegraphicTransfer.SIT.payeeBankID    : testData.TelegraphicTransfer.UAT.payeeBankID;
 const fromAccountEP    = SIT ? testData.TelegraphicTransfer.SIT.fromAccountEP    : testData.TelegraphicTransfer.UAT.fromAccountEP;
+
 
 
 test.describe.configure({
@@ -38,9 +46,15 @@ test.describe('SG_TelegraphicTransfer (Playwright using PaymentsPages)', () => {
     process.env.currentTestTitle = testInfo.title;
     customBrowser = await chromium.launch({ headless: false });
     test.setTimeout(8000_000);
+    const envNode = SIT ? testData.TelegraphicTransfer.SIT : testData.TelegraphicTransfer.UAT;
+    const useAltCreds = isFromTC014(testInfo.title);
+
+    const loginCompanyId = useAltCreds ? envNode.loginCompanyIdAlt : envNode.loginCompanyId;
+    const loginUserId    = useAltCreds ? envNode.loginUserIdAlt    : envNode.loginUserId;
+
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await loginPage.login(loginCompanyId, loginUserId, '123');
+    await loginPage.login(loginCompanyId, loginUserId, '123'); // change pwd if needed
     pages = new PaymentsPages(page);
     
   });
@@ -398,7 +412,7 @@ test.describe('SG_TelegraphicTransfer (Playwright using PaymentsPages)', () => {
     const reference = await pages.TelegraphicTransferPage.getNewTTReferenceID();
     console.log('Captured referenceID:', reference);
 
-    reference2 = reference; 
+    copyreference = reference; 
 
     await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTfinishButton);
 
@@ -408,11 +422,11 @@ test.describe('SG_TelegraphicTransfer (Playwright using PaymentsPages)', () => {
     await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
     await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText(testData.TelegraphicTransfer.fromAccountNP);
     await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText(testData.TelegraphicTransfer.amountA1);
-    await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText("Pending Approval");
+    await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText("Pending Verification");
 
 });
 
-  test('TC008_SG_TelegraphicTransfer - Edit A TT Paymment Via Transfer Center', async ({ page }) => {
+  test('TC008_SG_TelegraphicTransfer - Edit A TT Payment Via Transfer Center', async ({ page }) => {
     await pages.TelegraphicTransferPage.handleAnnouncementIfPresent();   
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
@@ -595,39 +609,186 @@ test.describe('SG_TelegraphicTransfer (Playwright using PaymentsPages)', () => {
 
 });
 
-  
+  test('TC013_SG_TelegraphicTransfer - Edit a TT Payment with max amount 999999999.99 CNH', async ({ page }) => {
+    await pages.TelegraphicTransferPage.handleAnnouncementIfPresent();   
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    await pages.AccountTransferPage.waitForTransferCenterReady();
+    await pages.TelegraphicTransferPage.saferClick(pages.TelegraphicTransferPage.makePayment);
+    await pages.TelegraphicTransferPage.waitForTTFormReady();
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.fromAccount);
+    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.fromAccount, testData.TelegraphicTransfer.fromAccountCNH);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.CNHPayeeBankAccountDropdown);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.selectCurrencyDropdown);
+    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.selectCurrencyDropdown, "CNH");
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.CNHPayeeCurrencyDropdown);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.amountInput);
+    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.amountInput, testData.TelegraphicTransfer.maxCNHAmount);
+    
+    const existingttResult = await pages.TelegraphicTransferPage.addExistingTTPayee({           
+     existingAccountNumber:      testData.TelegraphicTransfer.existingAccountNumber,
+     bankChargeType:     testData.TelegraphicTransfer.bankChargeTypeSHARED,          
+     payeeBankMsg:       testData.TelegraphicTransfer.bankMessage,          
+     email1:             testData.TelegraphicTransfer.emailId0,            
+     email2:             testData.TelegraphicTransfer.emailId1,
+     email3:             testData.TelegraphicTransfer.emailId2,
+     email4:             testData.TelegraphicTransfer.emailId3,
+     email5:             testData.TelegraphicTransfer.emailId4,
+     payeeMsg:           testData.TelegraphicTransfer.message,           
+     additionalNote:     testData.TelegraphicTransfer.transactionNote,         
+     remitterIdentity:   testData.TelegraphicTransfer.remitterIdentity}
+    );
 
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTPurposeCode);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.inputNewTTPurposeCode);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.CNHPurposeCodeDropdown);
+    await pages.TelegraphicTransferPage.newTTPurposeCode.blur();
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTPayeeNextButton);
+    await pages.TelegraphicTransferPage.waitForNewTTPreviewPageReady();
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTsubmitButton);
+    await pages.TelegraphicTransferPage.waitFornewTTSubmittedPageReady();
 
+    const reference = await pages.TelegraphicTransferPage.getNewTTReferenceID();
+    console.log('Captured referenceID:', reference);
 
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTfinishButton);
 
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
+    await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText(testData.TelegraphicTransfer.fromAccountEP);
+    await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText("Pending Approval");
 
+  });
 
+  test('TC014_SG_TelegraphicTransfer - Verify A TT Payment Via My Verify', async ({ page }) => {
+    await pages.TelegraphicTransferPage.handleAnnouncementIfPresent();   
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.ApprovalPage.saferClick(pages.ApprovalPage.approvalMenu);
+    await pages.ApprovalPage.saferClick(pages.ApprovalPage.approvalVerifyTab);
+    await pages.ApprovalPage.waitForVerifyCenterReady();
+    if (copyreference && copyreference.trim().length > 0) {
+      await pages.ApprovalPage.searchVerifyAndOpenByReference(copyreference);
+    } else {
+        throw new Error(
+          'copyreference is empty');
+    }
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    await pages.TransferCentersPage.searchAndOpenByReference(copyreference);
+    await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
+    await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText(testData.TelegraphicTransfer.fromAccountEP);
+    await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText("Pending Approval");
+  });
 
+  test('TC015_SG_TelegraphicTransfer - Approve A TT Payment Via Transfer Center', async ({ page }) => {
+    await pages.TelegraphicTransferPage.handleAnnouncementIfPresent();   
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    await pages.AccountTransferPage.waitForTransferCenterReady();
+    if (copyreference && copyreference.trim().length > 0) {
+      await pages.TransferCentersPage.searchAndOpenByReference(copyreference);
+    } else {
+        throw new Error(
+          'copyrefrence is empty');
+      }
+    await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
+    await pages.TelegraphicTransferPage.ttApproveButton.evaluate(el => (el as HTMLElement).click());
+    await pages.TelegraphicTransferPage.ttAlternativeApproveNowCheckBox.evaluate(el => (el as HTMLElement).click());
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.ttGetChallengeSMSButton);
+    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.ttGetChallengeInput, testData.TelegraphicTransfer.challengeResponse);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTsubmitButton);
+    await pages.TelegraphicTransferPage.ttApproveButton.evaluate(el => (el as HTMLElement).click());
+    await pages.TelegraphicTransferPage.waitForDeletePaymentSuccess();
+    await pages.TelegraphicTransferPage.waitForRejectTransactionID();
+    const reference = await pages.TelegraphicTransferPage.getRejectReferenceID();
+    console.log('Captured referenceID:', reference);
 
+    await pages.TelegraphicTransferPage.ttSaveAsDraftDismissButton.evaluate(el => (el as HTMLElement).click());
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
+    await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText(testData.TelegraphicTransfer.fromAccountEP);
+    await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText("Pending Release");
 
+});
 
+  test('TC016_SG_TelegraphicTransfer - Release A TT Payment Via My Release', async ({ page }) => {
+    await pages.TelegraphicTransferPage.handleAnnouncementIfPresent();   
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.ApprovalPage.saferClick(pages.ApprovalPage.approvalMenu);
+    await pages.ApprovalPage.saferClick(pages.ApprovalPage.approveReleaseTab);
+    await pages.ApprovalPage.waitForVerifyCenterReady();
+    if (copyreference && copyreference.trim().length > 0) {
+      await pages.ApprovalPage.searchReleaseAndOpenByReference(copyreference);
+    } else {
+        throw new Error(
+          'copyreference is empty');
+    }
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    await pages.TransferCentersPage.searchAndOpenByReference(copyreference);
+    await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
+    await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText(testData.TelegraphicTransfer.fromAccountEP);
+    await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText("Completed");
+  });
 
+  test('TC017_SG_TelegraphicTransfer - DOL User Create A TT Payment With Showing FX Savings Message Old UI', async ({ page }) => {
+    await pages.TelegraphicTransferPage.handleAnnouncementIfPresent();   
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    await pages.AccountTransferPage.waitForTransferCenterReady();
+    await pages.TelegraphicTransferPage.saferClick(pages.TelegraphicTransferPage.makePayment);
+    await pages.TelegraphicTransferPage.waitForTTFormReady();
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.fromAccount);
+    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.fromAccount, testData.TelegraphicTransfer.fromAccountCNH);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.CNHPayeeBankAccountDropdown);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.selectCurrencyDropdown);
+    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.selectCurrencyDropdown, "CNH");
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.CNHPayeeCurrencyDropdown);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.amountInput);
+    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.amountInput, testData.TelegraphicTransfer.amountA2); 
+    await expect(pages.TelegraphicTransferPage.ttFXSavingsMessage).toContainText(testData.TelegraphicTransfer.savingsMsg);
 
+    const existingttResult = await pages.TelegraphicTransferPage.addExistingTTPayee({           
+     existingAccountNumber:      testData.TelegraphicTransfer.existingAccountNumber,
+     bankChargeType:     testData.TelegraphicTransfer.bankChargeTypeOUR,          
+     payeeBankMsg:       testData.TelegraphicTransfer.bankMessage,          
+     email1:             testData.TelegraphicTransfer.emailId0,            
+     email2:             testData.TelegraphicTransfer.emailId1,
+     email3:             testData.TelegraphicTransfer.emailId2,
+     email4:             testData.TelegraphicTransfer.emailId3,
+     email5:             testData.TelegraphicTransfer.emailId4,
+     payeeMsg:           testData.TelegraphicTransfer.message,           
+     additionalNote:     testData.TelegraphicTransfer.transactionNote,         
+     remitterIdentity:   testData.TelegraphicTransfer.remitterIdentity}
+    );
 
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTPurposeCode);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.inputNewTTPurposeCode);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.CNHPurposeCodeDropdown);
+    await pages.TelegraphicTransferPage.newTTPurposeCode.blur();
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTPayeeNextButton);
+    await pages.TelegraphicTransferPage.waitForNewTTPreviewPageReady();
+    await expect(pages.TelegraphicTransferPage.baseFXExchangeRate).toContainText(testData.TelegraphicTransfer.exchangeRate);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTsubmitButton);
+    await pages.TelegraphicTransferPage.waitFornewTTSubmittedPageReady();
 
+    const reference = await pages.TelegraphicTransferPage.getNewTTReferenceID();
+    console.log('Captured referenceID:', reference);
+    await expect(pages.TelegraphicTransferPage.baseFXExchangeRate).toContainText(testData.TelegraphicTransfer.exchangeRate);
+    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTfinishButton);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
+    await expect(pages.TelegraphicTransferPage.baseFXExchangeRate).toContainText(testData.TelegraphicTransfer.exchangeRate);
+  });
 
 });

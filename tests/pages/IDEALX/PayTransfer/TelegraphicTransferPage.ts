@@ -169,6 +169,14 @@ export class TelegraphicTransferPage {
     this.partiourPayeeBankAccountDropdown = page.locator('//span[contains(text(),"BAERSGS0XXX")]');
     this.ttApproveButton = page.locator('//button[@name="approve"]');
 
+    this.CNHPayeeBankAccountDropdown = page.locator('//span[contains(text(),"20191022000011")]');
+    this.selectCurrencyDropdown = page.locator('//input[@id="send-currency"]');
+    this.CNHPayeeCurrencyDropdown = page.locator('//span[contains(text(),"CNH")]');
+    this.CNHPurposeCodeDropdown = page.locator('//div[@id="select-item-Goods trade"]');
+
+    this.ttFXSavingsMessage = page.locator('//div[contains(@class,"alert-disclarimer")]');
+    this.baseFXExchangeRate = page.locator('//div[@id="fxDolViewSection"]');
+
     }
 
     readonly authenticate: Locator;
@@ -258,6 +266,13 @@ export class TelegraphicTransferPage {
     readonly ttDeletePaymentSuccessMessage: Locator;
     readonly partiourPayeeBankAccountDropdown: Locator;
     readonly ttApproveButton: Locator;
+    readonly CNHPayeeBankAccountDropdown: Locator;
+    readonly selectCurrencyDropdown: Locator;
+    readonly CNHPayeeCurrencyDropdown: Locator;
+    readonly CNHPurposeCodeDropdown: Locator;
+
+    readonly ttFXSavingsMessage: Locator;
+    readonly baseFXExchangeRate: Locator;
 
 
   

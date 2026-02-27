@@ -4,10 +4,11 @@
       "loginCompanyId": "SG2BFE1",
       "loginUserId": "SG2BFE1S02",
       "loginUserId02": "SPI307A17",
-      "verifyUserId": "SPI307R02",
+      "verifyUserId": "SG2BFE1S01",
       "fromAccount": {
         "fromAccountNP": "02020202",
-        "fromAccountEP": "03030303"
+        "fromAccountEP": "03030303",
+        "fromAccountCNH": "000011"
       },
       "payeeBankID": "AOFMMYK0XXX"
     },
@@ -15,10 +16,11 @@
       "loginCompanyId": "SG2BFE1",
       "loginUserId": "SG2BFE1S02",
       "loginUserId02": "SPI307A17",
-      "verifyUserId": "SPI307R02",
+      "verifyUserId": "SG2BFE1S01",
       "fromAccount": {
         "fromAccountNP": "02020202",
-        "fromAccountEP": "03030303"
+        "fromAccountEP": "03030303",
+        "fromAccountCNH": "000011"
       },
       "payeeBankID": "AOFMMYK0XXX"
     },
@@ -30,7 +32,7 @@
 
     "amountA1": "10",
     "amountA2": "5,600",
-    "maxCNHAmount": "999999999999.99",
+    "maxCNHAmount": "999999999.99",
     "maxCNHAmountValue": "999,999,999,999.99",
     "amountV": "3,100",
     "editAmount": "20",
@@ -41,7 +43,7 @@
     "existingPayee": "SPI307-TT-ExistingPayee",
     "existingPayeeAcctNum": "12341234124",
     "PayeeForTemplate": "ExistingTTpayee01",
-    "SupportPartiorPayee": "Payee bank support PARTIOR",
+    "SupportPartiorPayee": "BAERSGS0XXX",
 
     "Country": "Hong Kong",
     "myanmarCountry": "Myanmar",
@@ -91,7 +93,7 @@
     "bankChargeTypeSHARED": "SHARED",
     "bankChargeTypeTHEY": "THEY",
     "preferentialRate": "Preferential Rate\n1USD = 1.4065SGD\nRegular Bank Rate: 1USD = 1.4165SGD\nRates are indicative only.",
-    "savingsMsg": "You save:\nSGD 1,000.00\nfor every USD 100K converted",
+    "savingsMsg": "You can choose an existing Foreign Exchange or book a new one for this payment",
     "exchangeRate": "1 USD = 1.4065 SGD"
   },
   "AccountTransfer": {
