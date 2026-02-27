@@ -1,42 +1,63 @@
 {
-   "BulkPayment": {
+   "BulkCollection": {
         "SIT": {
             "loginCompanyId": "SHKLT008",
             "loginUserId": "DBSAUTOHK002",
-            "fromAccount": "783700301",
-            "payeeBankID": "ALLA"
-        },
+            "fromAccount": "783700301"
+        }
+    },
+    "BulkCollectionValidationData": {
+        "toAccountNumberLabel": "783700301 (USD)",
+        "toAccountNameLabel": "NAME OF ACCT NO:7837003010",
+        "paymentType": "Hong Kong Bulk Collection",
+        "totalAmount": "USD 1.00",
+        "totalAmountConsolidated": "USD 3.00",
+        "creditType":"Itemized Credit",
+        "creditTypeConsolidated":"Consolidated Credit",
+        "collectionSummaryLabel": "Collection summary:",
+        "totalPayersLabel": "Total payers:",
+        "totalPayersLabelValue": "1",
+        "totalPayersConsolidatedLabelValue": "2",
+        "totalAmountLabel": "Total amount",
+        "totalAmountLabelValue": "(USD): 1.00",
+        "totalAmountConsolidatedLabelValue": "(USD): 3.00",
+        "bankNameValue": "ALLAHABAD BANK",
+        "bankCode": "0256",
+        "transactionDeleted": "Transaction deleted" 
+    },
+    "BulkCollectionValidationDataPayer2": {
+        "bankNameValue": "BANCO DE ORO UNIBANK, INC, HK BRANC",
+        "bankCode": "0067",
+        "transactionDeleted": "Transaction deleted" 
+    },
+    "payer1": {
         "newPayeeName": "Test_Payer_Name001",
+        "payeeBankID": "ALLA",
         "newPayeeAcctNumber": "10102345",
         "DDAReference": "DDARef001",
         "mandateID": "MandateID001",
+        "amount" : "1.00",
+        "transactionCode": "92 - Direct Debit(Merchant Payment)",
+        "transactionCodeTc002": "98 - Direct Debit(Merchant Payment - Consolidated posting)",
+        "purposeOfPayment": "Merchant Initiated Bills Payment",
         "particulars": "Particulars1",
         "collectionDetails": "CollectionDetailsTest01",
-        "amount" : "1.00",
-        "editAmount": "2.00",
         "emailId0": "Email0@dbs.com",
         "emailId1": "Email1@dbs.com",
         "emailId2": "Email2@dbs.com",
         "emailId3": "Email3@dbs.com",
         "emailId4": "Email4@dbs.com",
-        "emailMessage": "TestEmailMessage",
-        "batchID": "00001",
-        "fromAccount1": "021account  (SGD)",
-        "fromAccount2": "021account",
-        "paymentType": "Singapore Payroll",
-        "yourAccountDeducted": "SGD 1.00",
-        "yourAccountDeductedEdited":"SGD 2.00",
-        "paymentSummaryLabel": "Payment summary:",
-        "totalPayeesLabel": "Total payees:",
-        "totalPayeesLabelValue": "1",
-        "totalAmountLabel": "Total amount",
-        "totalAmountLabelValue": "(SGD): 1.00",
-        "totalAmountLabelValueEdited": "(SGD): 2.00",
-        "bankNameValue": "EASTASIALIMITED",
-        "bankSwiftBicValue": "70920200",
-        "purposeCode": "SALA - Salary Payment",
-        "transactionDeleted": "Transaction deleted" 
-
+        "emailMessage": "TestEmailMessage"
+    },
+    "payer2": {
+        "newPayeeName": "AutoTestBulkCollection",
+        "newPayeeNickName": "AutoTestBulkCollectionNickName",
+        "newPayeeAcctNumber": "010123456",
+        "DDAReference": "DDA reference002",
+        "mandateID": "Mandate ID002",
+        "amount" : "2.00",
+        "transactionCode": "38 - Direct Debit(Consolidated posting)",
+        "particulars": "Particulars2"    
     },
     "status": {
         "Approved": "Approved",
@@ -53,8 +74,5 @@
         "Rejected": "Rejected",
         "Failed": "Failed",
         "Cancelled": "Cancelled"
-    },
-    "paymentType": {
-        "VN_Custom": "VN - Customs Payment"
     }
 }
