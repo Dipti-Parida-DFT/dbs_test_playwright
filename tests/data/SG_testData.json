@@ -1,0 +1,125 @@
+{
+  "TelegraphicTransfer": {
+    "loginCompanyId": "SG2BFE1",
+    "loginUserId": "DBSAUTOSG01",
+    "loginUserIdAlt": "SG2BFE1S13",
+    "verifyUserId": "SG2BFE1S01",
+
+    "fromAccountNP": "02020202",
+    "fromAccountEP": "03030303",
+    "fromAccountCNH": "000011",
+
+    "payeeBankID": "AOFMMYK0XXX",
+
+    "paymentCurrency": "USD",
+    "myrPaymentCcy": "MYR",
+    "inrPaymentCcy": "INR",
+
+    "amountA1": "10",
+    "amountA2": "5,600",
+    "maxCNHAmount": "999999999.99",
+    "maxCNHAmountValue": "999,999,999,999.99",
+    "amountV": "3,100",
+    "editAmount": "20",
+
+    "fxRef0": "FxReference0",
+    "fxAmount0": "10",
+
+    "existingPayee": "SPI307-TT-ExistingPayee",
+    "existingAccountNumber": "12341234124",
+    "existingPayeeAcctNum": "12341234124",
+    "PayeeForTemplate": "ExistingTTpayee01",
+    "SupportPartiorPayee": "BAERSGS0XXX",
+
+    "Country": "Hong Kong",
+    "myanmarCountry": "Myanmar",
+
+    "name": "TTNewPayeeName",
+    "nickName": "TTNewPayeeNick",
+
+    "add1": "17 Jln",
+    "add2": "Taman Sppk",
+    "add3": "newPayeeAdd3",
+
+    "city": "Kuala Lumpur",
+
+    "payeeBankName": "A.A. ANTHONY AND CO SDN BHD",
+    "payeeBankLocation": "MALAYSIA",
+
+    "myPayeeBankID": "AMCBMYK0XXX",
+
+    "routingCode": "1234567",
+    "accountNumber": "123456000001",
+
+    "intermediaryBankCountry": "MALAYSIA",
+    "intermediaryBankLocation": "MALAYSIA",
+    "intermediaryBankId": "AOFMMYK0XXX",
+
+    "purposeCode": "04000",
+    "bankMessage": "PaymentDetails",
+
+    "emailId0": "Email0@dbs.com",
+    "emailId1": "Email1@dbs.com",
+    "emailId2": "Email2@dbs.com",
+    "emailId3": "Email3@dbs.com",
+    "emailId4": "Email4@dbs.com",
+
+    "message": "message",
+    "transactionNote": "transactionNote",
+    "remitterIdentity": "messageToOrderingBank",
+    "challengeResponse": "76786778",
+
+    "templateName": "testTTtemplate001",
+    "existingTemplate": "testTTtemplate001",
+
+    "specPmtPurpose": "Dividend-related Co.",
+    "cnhPurposeCode": "04000",
+
+    "paymentType": "Singapore Telegraphic Transfer",
+    "bankChargeTypeOUR": "OUR",
+    "bankChargeTypeSHARED": "SHARED",
+    "bankChargeTypeTHEY": "THEY",
+    "preferentialRate": "Preferential Rate\n1USD = 1.4065SGD\nRegular Bank Rate: 1USD = 1.4165SGD\nRates are indicative only.",
+    "savingsMsg": "You can choose an existing Foreign Exchange or book a new one for this payment",
+    "exchangeRate": "1 USD = 1.4065 SGD"
+  },
+  "AccountTransfer": {
+    "loginCompanyId": "SPI307",
+    "loginUserId": "SPI307A16",
+    "verifyUserId": "SPI307A17",
+    "loginUserNonDol": "SPI307A18",
+    "fromAccount": "0039007639",
+
+    "Country": "SINGAPORE",
+    "paymentCurrency": "SGD",
+    "paymentCurrencyFCY": "USD",
+    "amountA1": "10",
+    "amountA2": "1,100",
+    "amountV": "3,100",
+    "editAmount": "20",
+    "fxRef0": "FxReference0",
+    "fxAmount0": "10",
+    "existingPayee": "SPI307-ACT-ExistingPayee",
+    "newPayeeName": "ACT AUTO NewPayeeName01",
+    "newPayeeAdd1": "ACT AUTO newPayeeAdd1",
+    "newPayeeAdd2": "ACT AUTO newPayeeAdd2",
+    "newPayeeAdd3": "ACT AUTO newPayeeAdd3",
+    "newPayeeAcctNumber": "38900000001",
+    "paymentDetail": "ACT AUTO PaymentDetails",
+    "emailIdO": "ACT_AUTO_Email0@dbs.com",
+    "emailId1": "ACT_AUTO_Email1@dbs.com",
+    "emailId2": "ACT_AUTO_Email2@dbs.com",
+    "emailId3": "ACT_AUTO_Email3@dbs.com",
+    "emailId4": "ACT_AUTO_Email4@dbs.com",
+    "message": "ACT AUTO TEST message",
+    "faxCountryCode0": "65",
+    "faxAreaCode0": "000",
+    "faxNo0": "76786778",
+    "transactionNote": "ACT Transaction Note test message",
+    "existingTemplate": "ACTAutoTemplateName001",
+    "rejectReason": "Reject ACT for AUTO TEST",
+    "deductAmt": "SGD 16.32",
+    "deductAmt1": "8.16",
+    "paymentType": "Singapore Account Transfer"
+  }
+}
