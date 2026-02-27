@@ -1,31 +1,16 @@
 {
   "TelegraphicTransfer": {
-    "UAT": {
-      "loginCompanyId": "SG2BFE1",
-      "loginUserId": "SG2BFE1S02",
-      "loginUserId02": "SPI307A17",
-      "verifyUserId": "SG2BFE1S01",
-      "fromAccount": {
-        "fromAccountNP": "02020202",
-        "fromAccountEP": "03030303",
-        "fromAccountCNH": "000011"
-      },
-      "payeeBankID": "AOFMMYK0XXX"
-    },
-    "SIT": {
-      "loginCompanyId": "SG2BFE1",
-      "loginUserId": "SG2BFE1S02",
-      "loginUserId02": "SPI307A17",
-      "verifyUserId": "SG2BFE1S01",
-      "fromAccount": {
-        "fromAccountNP": "02020202",
-        "fromAccountEP": "03030303",
-        "fromAccountCNH": "000011"
-      },
-      "payeeBankID": "AOFMMYK0XXX"
-    },
+    "loginCompanyId": "SG2BFE1",
+    "loginUserId": "SG2BFE1S02",
+    "loginUserIdAlt": "DBSAUTOSG01",
+    "verifyUserId": "SG2BFE1S01",
 
+    "fromAccountNP": "02020202",
     "fromAccountEP": "03030303",
+    "fromAccountCNH": "000011",
+
+    "payeeBankID": "AOFMMYK0XXX",
+
     "paymentCurrency": "USD",
     "myrPaymentCcy": "MYR",
     "inrPaymentCcy": "INR",
@@ -41,6 +26,7 @@
     "fxAmount0": "10",
 
     "existingPayee": "SPI307-TT-ExistingPayee",
+    "existingAccountNumber": "12341234124",
     "existingPayeeAcctNum": "12341234124",
     "PayeeForTemplate": "ExistingTTpayee01",
     "SupportPartiorPayee": "BAERSGS0XXX",
@@ -61,12 +47,12 @@
     "payeeBankLocation": "MALAYSIA",
 
     "myPayeeBankID": "AMCBMYK0XXX",
-    "payeeBankID": "AOFMMYK0XXX",
 
     "routingCode": "1234567",
     "accountNumber": "123456000001",
 
     "intermediaryBankCountry": "MALAYSIA",
+    "intermediaryBankLocation": "MALAYSIA",
     "intermediaryBankId": "AOFMMYK0XXX",
 
     "purposeCode": "04000",
@@ -83,6 +69,7 @@
     "remitterIdentity": "messageToOrderingBank",
     "challengeResponse": "76786778",
 
+    "templateName": "testTTtemplate001",
     "existingTemplate": "testTTtemplate001",
 
     "specPmtPurpose": "Dividend-related Co.",
@@ -97,20 +84,12 @@
     "exchangeRate": "1 USD = 1.4065 SGD"
   },
   "AccountTransfer": {
-    "UAT": {
-      "loginCompanyId": "SPI307",
-      "loginUserId": "SPI307A16",
-      "verifyUserId": "SPI307A17",
-      "loginUserNonDol": "SPI307A18",
-      "fromAccount": "0039310439"
-    },
-    "SIT": {
-      "loginCompanyId": "SPI307",
-      "loginUserId": "SPI307A16",
-      "verifyUserId": "SPI307A17",
-      "loginUserNonDol": "SPI307A18",
-      "fromAccount": "0039007639"
-    },
+    "loginCompanyId": "SPI307",
+    "loginUserId": "SPI307A16",
+    "verifyUserId": "SPI307A17",
+    "loginUserNonDol": "SPI307A18",
+    "fromAccount": "0039007639",
+
     "Country": "SINGAPORE",
     "paymentCurrency": "SGD",
     "paymentCurrencyFCY": "USD",
