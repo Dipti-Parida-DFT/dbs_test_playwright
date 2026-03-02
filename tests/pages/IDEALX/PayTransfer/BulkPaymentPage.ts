@@ -492,8 +492,8 @@ export class BulkPaymentPage {
       await this.safeFill(this.newPayeeName, name);
       await this.page.keyboard.press('Tab');
       await this.newPayeeName.blur();
-      //await this.safeClick(this.newPayeeNickName);
-      //await this.safeFill(this.newPayeeNickName, nickName);
+      // await this.safeClick(this.newPayeeNickName);
+      // await this.safeFill(this.newPayeeNickName, nickName);
       await this.page.keyboard.press('Tab');
       //await this.newPayeeNickName.blur();
       await this.payeeBankId.click();
