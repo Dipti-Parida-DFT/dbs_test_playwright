@@ -7,3 +7,5 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 allure-results/
+SG_Payroll_allure-results.zip
+HK_Bulkcollection_allure-results.zip

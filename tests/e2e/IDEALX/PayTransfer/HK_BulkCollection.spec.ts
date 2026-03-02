@@ -1,13 +1,13 @@
 /**
        * Author: LC5741501
-       * Created Date: 16/02/26
-       * This Class "tests/PayTransfer/SG_Payroll.spec.ts"
+       * Created Date: 26/02/26
+       * This Class "tests/PayTransfer/HK_BulkCollection.spects"
        * Description: This class has two test cases.
-       * 1) TC001_SGPayroll - Create SG Payroll Alternate with new payee
-       * 2) TC002_SGPayroll - Edit Payroll Alternate via Transfer Center
+       * 1) TC001_HK_BulkCollection - Create a Bulk collection with new Payer
+       * 2) TC002_HK_BulkCollection - Create a Bulk collection with Trasanction code add 38 and 98
        */
 
-// tests/PayTransfer/SG_Payroll.spec.ts
+// tests/PayTransfer/HK_BulkCollection.pec.ts
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';

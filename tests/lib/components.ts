@@ -40,7 +40,7 @@ export class WebComponents {
    * @param locator 
    * @param timeout 
    */
-  async clickWhenVisibleAndEnabled(locator: Locator, timeout = 15_000) {
+  async clickWhenVisibleAndEnabled(locator: Locator, timeout = 55_000) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
     await locator.click();

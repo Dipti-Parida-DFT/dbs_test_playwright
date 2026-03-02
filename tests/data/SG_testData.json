@@ -54,8 +54,5 @@
         "Rejected": "Rejected",
         "Failed": "Failed",
         "Cancelled": "Cancelled"
-    },
-    "paymentType": {
-        "VN_Custom": "VN - Customs Payment"
     }
 }

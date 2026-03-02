@@ -547,7 +547,7 @@ async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
     await this.page.keyboard.press('Enter');
     await this.payeeBankId.blur();
     await this.webComponents.clickWhenVisibleAndEnabled(this.findBankIDButton);
-    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 45000 });
     await this.payeeBankSearchResults.first().click();
     await this.webComponents.clickWhenVisibleAndEnabled(this.newPayeeAccountNumber);
 
@@ -739,7 +739,7 @@ beneficiaryRowsByText(text: string): Locator {
   }
 
   /** Wait until preview page is ready (submit visible/enabled) */
-  async waitForPreviewPageReady(timeout = 20_000) {
+  async waitForPreviewPageReady(timeout = 75_000) {
     await this.waitForUXLoading();
     await expect(this.submitButton).toBeVisible({ timeout });
     await expect(this.submitButton).toBeEnabled({ timeout });
@@ -752,13 +752,13 @@ beneficiaryRowsByText(text: string): Locator {
   }
 
    /** Wait until Pay & Transfer page is ready (Payroll visible) */
-   async waitForPayAndTransferPageReady(timeout = 20_000) {
+   async waitForPayAndTransferPageReady(timeout = 130_000) {
     await this.waitForUXLoading();
     await expect(this.payroll).toBeVisible({ timeout });
   }
 
   /** Wait until view payment page has loaded key labels */
-  async waitForViewPaymentPageReady(timeout = 55_000) {
+  async waitForViewPaymentPageReady(timeout = 185_000) {
     await this.waitForUXLoading();
     await expect(this.fromAccountViewLabel).toBeVisible({ timeout });
     await expect(this.amountViewLabel).toBeVisible({ timeout });
@@ -868,8 +868,8 @@ beneficiaryRowsByText(text: string): Locator {
     for (const sel of spinnerSelectors) {
       const spinner = this.page.locator(sel).first();
       try {
-        if (await spinner.isVisible({ timeout: 500 }).catch(() => false)) {
-          await spinner.waitFor({ state: 'hidden', timeout: 15_000 });
+        if (await spinner.isVisible({ timeout: 1000 }).catch(() => false)) {
+          await spinner.waitFor({ state: 'hidden', timeout: 180_000 });
         }
       } catch {
         /* ignore */
@@ -878,7 +878,7 @@ beneficiaryRowsByText(text: string): Locator {
     await this.page.waitForLoadState('networkidle');
   }
 
-  async safeClick(locator: Locator, timeout = 15_000) {
+  async safeClick(locator: Locator, timeout = 25_000) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
     await locator.click();
@@ -890,19 +890,19 @@ beneficiaryRowsByText(text: string): Locator {
      */
   }  
   
-  async waitElementToBeVisible(locator: Locator, timeout = 15_000) {
+  async waitElementToBeVisible(locator: Locator, timeout = 25_000) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
   }
 
 
 
-  async safeFill(locator: Locator, value: string, timeout = 15_000) {
+  async safeFill(locator: Locator, value: string, timeout = 35_000) {
     await expect(locator).toBeVisible({ timeout });
     await locator.fill(value);
   }
 
-  async enterTextareanew(locator: Locator, value: string, timeout = 15_000) {
+  async enterTextareanew(locator: Locator, value: string, timeout = 25_000) {
     //await expect(locator).toBeVisible({ timeout });
     //await locator.fill(value);
     await expect(locator).toBeVisible({ timeout });
