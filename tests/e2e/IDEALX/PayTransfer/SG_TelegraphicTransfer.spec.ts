@@ -55,7 +55,7 @@ test.describe('SG_TelegraphicTransfer – Primary User (TC001–TC013)', () => {
     pages = new PaymentsPages(sharedPage);
     // Store context on pages object so afterAll can close it
     (pages as any).__context = context;
-  }, 300_000);
+  });
 
   test.afterAll(async () => {
     await (pages as any).__context?.close().catch(() => {});
