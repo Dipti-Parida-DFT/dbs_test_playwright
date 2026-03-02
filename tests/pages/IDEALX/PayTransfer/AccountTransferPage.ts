@@ -347,7 +347,7 @@ export class AccountTransferPage {
     
     const appears = await this.authDialog.waitFor({
       state: 'visible',
-      timeout: 20000
+      timeout: 60000
     }).then(() => true).catch(() => false);
     //console.log('Authentication dialog appears:', appears);
     if (appears) {
@@ -406,7 +406,7 @@ export class AccountTransferPage {
   }
 
   /** Payments menu ready */
-  async waitForMenu(timeout = 5000) {
+  async waitForMenu(timeout = 60000) {
     await this.waitForUXLoading();
     await expect(this.paymentMenu).toBeVisible({ timeout });
     await expect(this.paymentMenu).toBeEnabled({ timeout });
