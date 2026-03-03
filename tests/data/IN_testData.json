@@ -181,6 +181,7 @@
         "messageEdit": "messageEdit",
         "paymentType": "India Bulk Collection",
         "payeeBankName": "DEPOSITORY(PTE)LIMITE",
+        "MandateID": "",
         "totalItem": "1"
     },
     "ETAXPayment": {

@@ -7,14 +7,12 @@ import { PayrollPage } from './PayrollPage';
 import { BulkPaymentPage } from './BulkPaymentPage';
 import { BulkCollectionPage } from './BulkCollectionPage';
 
-
 export {
   AccountTransferPage,
   TransferCentersPage,
   PayrollPage,
   BulkPaymentPage,
-  BulkCollectionPage,
- 
+  BulkCollectionPage
 };
 
 export class PaymentsPages {
@@ -24,12 +22,11 @@ export class PaymentsPages {
   public BulkPaymentPage: BulkPaymentPage;
   public BulkCollectionPage: BulkCollectionPage;
   
-
   constructor(private readonly page: Page) {
     this.AccountTransferPage = new AccountTransferPage(page);
     this.TransferCentersPage = new TransferCentersPage(page);
     this.PayrollPage = new PayrollPage(page);
     this.BulkPaymentPage = new BulkPaymentPage(page);
     this.BulkCollectionPage = new BulkCollectionPage(page);
-    }
+  }
 }

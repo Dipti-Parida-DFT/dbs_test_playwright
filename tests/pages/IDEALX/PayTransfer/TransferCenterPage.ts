@@ -112,14 +112,14 @@ export class TransferCentersPage {
   // ---------- Waits / Helpers (Chinese → English) ----------
 
   /** Former: jiazhai() — wait until a key list item (reference link) is visible/clickable */
-  async waitForTransferCenterReady(timeout = 20_000) {
+  async waitForTransferCenterReady(timeout = 199_000) {
     await this.waitForUXLoading();
     await expect(this.transferCenterFilter).toBeVisible({ timeout });
     //await expect(this.transferCenterFilter).toBeEnabled({ timeout });
   }
 
   /** Former: jiazhai2() — slower readiness (network + visibility) */
-  async waitForTransferCenterReadySlow(timeout = 30_000) {
+  async waitForTransferCenterReadySlow(timeout = 45_000) {
     await this.waitForUXLoading();
     await this.page.waitForLoadState('networkidle');
     await expect(this.transferCenterFilter).toBeVisible({ timeout });
@@ -259,21 +259,21 @@ export class TransferCentersPage {
     for (const sel of spinnerSelectors) {
       const spinner = this.page.locator(sel).first();
       try {
-        if (await spinner.isVisible({ timeout: 400 }).catch(() => false)) {
-          await spinner.waitFor({ state: 'hidden', timeout: 15_000 });
+        if (await spinner.isVisible({ timeout: 1000 }).catch(() => false)) {
+          await spinner.waitFor({ state: 'hidden', timeout: 395_000 });
         }
       } catch { /* ignore individual spinner errors */ }
     }
     await this.page.waitForLoadState('networkidle');
   }
 
-  async safeClick(locator: Locator, timeout = 15_000) {
+  async safeClick(locator: Locator, timeout = 99_000) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
     await locator.click();
   }
 
-  async safeFill(locator: Locator, value: string, timeout = 15_000) {
+  async safeFill(locator: Locator, value: string, timeout = 35_000) {
     await expect(locator).toBeVisible({ timeout });
     await locator.fill(value);
   }

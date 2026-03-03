@@ -88,9 +88,10 @@ test.describe.serial('IN_Bulk Collection', () => {
     // Reusable helper for add new payee
     const { name, accountNumber }  = await pages.BulkCollectionPage.addNewPayee({
         name: testData.BulkCollection.newPayeeName,
-        ddaReference: testData.BulkCollection.DDAreference,
+        DDAReferenceNo: testData.BulkCollection.DDAreference,
         bankId: payeeBankID,
         accountNumber: testData.BulkCollection.payeeBankAccountNumber,
+        MandateID: testData.BulkCollection.MandateID,
         });
 
     // Register for cleanup
@@ -124,7 +125,7 @@ test.describe.serial('IN_Bulk Collection', () => {
     console.log('Captured referenceID:', reference);
 
     //Click on finished button
-    await pages.BulkCollectionPage.finishedButton.click();   
+    await pages.BulkCollectionPage.finishButton.click();   
 
     // Find it again in Transfer Center by reference
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
@@ -185,7 +186,7 @@ test.describe.serial('IN_Bulk Collection', () => {
     console.log('Edited referenceID:', referenceEdit);
   
       //Click on finished button
-      await pages.BulkCollectionPage.finishedButton.click();  
+      await pages.BulkCollectionPage.finishButton.click();  
 
     // Reopen view page
     await pages.AccountTransferPage.paymentMenu.click();
@@ -230,11 +231,11 @@ async function checkViewPageAllField(args: {
   );
   await expect(pages.BulkCollectionPage.transactionStatusValue).toContainText(testData.status.PendingApproval);
   await expect(pages.BulkCollectionPage.hashValue).not.toHaveText('');
-  await expect(pages.BulkCollectionPage.fromAccountViewLabel).toContainText(testData.BulkCollection.SIT.fromAccount
+  await expect(pages.BulkCollectionPage.toAccountNameLabel).toContainText(testData.BulkCollection.SIT.fromAccount
   );
   await expect(pages.BulkCollectionPage.ucicCodeValue).toContainText(testData.BulkCollection.UCICCode);
   await expect(pages.BulkCollectionPage.balanceValue).not.toHaveText('');
-  await expect(pages.BulkCollectionPage.paymentType).toContainText(testData.BulkCollection.paymentType);
+  await expect(pages.BulkCollectionPage.paymentTypeValue).toContainText(testData.BulkCollection.paymentType);
   await expect(pages.BulkCollectionPage.totalAmountValue).toContainText(
     isEdit ? testData.BulkCollection.editAmount : testData.BulkCollection.amount
   );
@@ -245,17 +246,17 @@ async function checkViewPageAllField(args: {
   await expect(pages.BulkCollectionPage.colTotalAmount).toContainText(
     isEdit ? testData.BulkCollection.editAmount : testData.BulkCollection.amount
   );
-  await expect(pages.BulkCollectionPage.payeeNameValue).toContainText(testData.BulkCollection.newPayeeName);
-  await expect(pages.BulkCollectionPage.payeeNickNameValue).toContainText(testData.BulkCollection.newPayeeName);
-  await expect(pages.BulkCollectionPage.payeeBankName).toContainText(testData.BulkCollection.payeeBankName);
-  await expect(pages.BulkCollectionPage.payeeBankSwiftBic).toContainText(testData.BulkCollection.payeeBankID);
+  await expect(pages.BulkCollectionPage.payerNameValue).toContainText(testData.BulkCollection.newPayeeName);
+  await expect(pages.BulkCollectionPage.payerNickNameValue).toContainText(testData.BulkCollection.newPayeeName);
+  await expect(pages.BulkCollectionPage.payerBankName).toContainText(testData.BulkCollection.payeeBankName);
+  await expect(pages.BulkCollectionPage.bankCodeValue).toContainText(testData.BulkCollection.payeeBankID);
   await expect(pages.BulkCollectionPage.accountNumberValue).toContainText(
     testData.BulkCollection.payeeBankAccountNumber
   );
-  await expect(pages.BulkCollectionPage.ddaReferenceValue).toContainText(testData.BulkCollection.DDAreference);
+  await expect(pages.BulkCollectionPage.DDAReferenceValue).toContainText(testData.BulkCollection.DDAreference);
   await expect(pages.BulkCollectionPage.refForPayeeValue).toContainText(testData.BulkCollection.referenceForPayee);
   await pages.BulkCollectionPage.showOptionView.first().click(); // collapse optional section again
-  await expect(pages.BulkCollectionPage.messageValue).toContainText(
+  await expect(pages.BulkCollectionPage.emailmessageValue).toContainText(
     isEdit ? testData.BulkCollection.messageEdit : testData.BulkCollection.message
   );
 
@@ -266,5 +267,5 @@ async function checkViewPageAllField(args: {
   await expect(pages.BulkCollectionPage.emailList).toContainText(testData.BulkCollection.emailId3);
   await expect(pages.BulkCollectionPage.emailList).toContainText(testData.BulkCollection.emailId4);
 
-  await expect(pages.BulkCollectionPage.activityLog).toContainText(isEdit ? 'Modify' : 'Create');
+  await expect(pages.BulkCollectionPage.activityLogSection).toContainText(isEdit ? 'Modify' : 'Create');
 }
