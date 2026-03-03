@@ -128,9 +128,9 @@ export class TransferCentersPage {
 
   /** Former: quyemianjiancha(reference) — filter by reference and open the first match */
   async searchAndOpenByReference(reference: string) {
-    await this.waitForTransferCenterReady();
+    //await this.waitForTransferCenterReady();
     await this.safeFill(this.transferCenterFilter, reference);
-    await this.waitForTransferCenterReady();
+    //await this.waitForTransferCenterReady();
     await this.safeClick(this.referenceLink);
   }
 
