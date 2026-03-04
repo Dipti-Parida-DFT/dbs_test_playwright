@@ -8,7 +8,37 @@ export type NewPayeeInput = {
   nickName: string;
   bankId: string;
   accountNumber: string;
+  
 };
+
+export type NewPayeeOthersInput = {
+  amount: string;
+  transactionCode: string;
+  referenceForPayee: string;
+  particulars: string;
+  paymentDetails: string;
+  email1: string;
+  email2: string;
+  email3: string;
+  email4: string;
+  email5: string;
+  emailMessage: string;
+};
+
+export type NewPayee1ValidationDetails = {
+  amount: string;
+  transactionCode: string;
+  referenceForPayee: string;
+  particulars: string;
+  paymentDetails: string;
+  email1: string;
+  email2: string;
+  email3: string;
+  email4: string;
+  email5: string;
+  emailMessage: string;
+};
+
 
 
 export type NewPayeeResult = {
@@ -32,7 +62,7 @@ export class PayrollPage {
     this.paymentPriorityRadioGroup = page.locator('xpath=//dbs-radio-group[@formcontrolname="transfer_priority_radio"]');
     this.billerServiceDropdown = page.locator('xpath=//multi-level-dropdown[@name="billerServiceID"]');
     this.amount = page.locator('xpath=//input[@name="payeeAmount"]');
-    this.payeeParticulars = page.locator('xpath=//ShuRu[@name="payeeParticulars"]');
+    this.payeeParticulars = page.locator('xpath=//*[@name="payeeParticulars"]');
     this.payeeRef = page.locator('xpath=//input[@name="payeeRef"]');
     this.payeeNationalId = page.locator('xpath=//ShuRu[@name="payeeNationalID"]');
     this.payeeMandateDetail = page.locator('xpath=//ShuRu[@name="payeeMandateDetail"]');
@@ -232,7 +262,7 @@ export class PayrollPage {
     // Create from template
     this.templatePurposeCodeDropdown = page.locator('xpath=//multi-level-dropdown[@formcontrolname="payeePurposeCode"]');
     this.templateTransactionCodeDropdown = page.locator('xpath=//multi-level-dropdown[@formcontrolname="transactionCode"]');
-
+    this.transactionCodeValue22SalaryCredit = page.locator('xpath=//span[text()="22 - Salary Credit"]');
     // Tabs / pagination in view page
     this.viewAllTab = page.locator('xpath=//a[@id="ux-tab-1"]');
     this.viewPendingTab = page.locator('xpath=//a[@id="ux-tab-2"]');
@@ -453,6 +483,7 @@ export class PayrollPage {
   // From template selectors
   readonly templatePurposeCodeDropdown: Locator;
   readonly templateTransactionCodeDropdown: Locator;
+  readonly transactionCodeValue22SalaryCredit: Locator;
 
   // Tabs/pagination
   readonly viewAllTab: Locator;
@@ -566,6 +597,7 @@ async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
     await this.webComponents.clickWhenVisibleAndEnabled(this.addNewPayeeButton);
     return { nickName, accountNumber };
   }
+  
 
   /**
    * Author : LC5741501
@@ -606,6 +638,75 @@ async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
 
     // Enter : Emails Mesage (Textarea)
     await this.webComponents.enterTextarea(this.emailMessageTextarea, testData.Payroll.emailMessage);
+
+  }
+
+
+  /**
+   * Author : LC5741501
+   * Created Date: 20/02/2026
+   * @param testData : is a Json object
+   * This method Enters Step 2: Payment to Amount and other opetional fields 
+   */
+  async enterNewPayeeAllOtherDetails(input: NewPayeeOthersInput){
+    const { amount, transactionCode, referenceForPayee, particulars,paymentDetails,email1,email2,email3,
+      email4,email5,emailMessage} = input;
+
+    // Step 2: Enter Amount (SGD) = add Amount
+    await this.webComponents.enterTextarea(this.amount, amount);
+
+    // Step 2: Transaction code(If not Null/Blank)
+    const trueCheck: boolean=await this.webComponents.stringIsNotNullOrBlank(transactionCode);
+    console.log("TransactionCode Is : " + trueCheck);
+    // If true
+    if(trueCheck){
+
+      switch (transactionCode) {
+        case '22SalaryCredit':
+          // Click Transaction Code Dropdown and select "22SalaryCredit"
+          await this.webComponents.clickWhenVisibleAndEnabled(this.templateTransactionCodeDropdown);
+          await this.webComponents.clickWhenVisibleAndEnabled(this.transactionCodeValue22SalaryCredit);
+          break;
+    
+        default:
+        }
+
+    }
+  
+    // Step 2: Payment from => Below steps for the (Step 2) optionals fields.
+
+    // Step 2: If true(value present): Enter Reference for payee 
+    if(await this.webComponents.stringIsNotNullOrBlank(referenceForPayee)){
+      await this.webComponents.enterTextarea(this.payeeRef, referenceForPayee);
+    }
+
+    // Step 2: If true(value present): Enter Particulars
+    if(await this.webComponents.stringIsNotNullOrBlank(particulars)){
+      await this.webComponents.enterTextarea(this.payeeParticulars, particulars);
+    }
+
+    // Click Show optional details arrow
+    await this.webComponents.clickWhenVisibleAndEnabled(this.showOptionalDetails);
+    
+    // Enter Payment details to the payee bank
+    await this.webComponents.enterTextarea(this.paymentDetailsTextarea, paymentDetails);
+
+    // Click : "Message to the payee" checkbox
+    await this.webComponents.clickWhenVisibleAndEnabled(this.messageToThePayeeCheckBox);
+    
+    // Enter : Emails 1
+    await this.webComponents.enterTextarea(this.emailId0, email1);
+    // Enter : Emails 2
+    await this.webComponents.enterTextarea(this.emailId1, email2);
+    // Enter : Emails 3
+    await this.webComponents.enterTextarea(this.emailId2, email3);
+    // Enter : Emails 4
+    await this.webComponents.enterTextarea(this.emailId3, email4);
+    // Enter : Emails 5
+    await this.webComponents.enterTextarea(this.emailId4, email5);
+
+    // Enter : Emails Mesage (Textarea)
+    await this.webComponents.enterTextarea(this.emailMessageTextarea, emailMessage);
 
   }
 
