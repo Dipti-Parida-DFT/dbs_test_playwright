@@ -53,7 +53,7 @@ export class LoginPage {
  
     if (await acknowledgeBtn.isVisible({ timeout: 20_000 }).catch(() => false)) {
         await acknowledgeBtn.click();
-        console.log('Announcement acknowledged');
+        //console.log('Announcement acknowledged');
         await this.page.waitForLoadState('networkidle');
     }
 }

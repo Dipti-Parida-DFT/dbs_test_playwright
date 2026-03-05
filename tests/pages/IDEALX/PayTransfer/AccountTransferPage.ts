@@ -349,11 +349,11 @@ export class AccountTransferPage {
       state: 'visible',
       timeout: 60000
     }).then(() => true).catch(() => false);
-    console.log('Authentication dialog appears:', appears);
+    //console.log('Authentication dialog appears:', appears);
     if (appears) {
       await this.securityAccessCode.fill(code);
       await this.authenticateButton.click();
-      console.log('Handled authentication dialog with code:', code);
+     //console.log('Handled authentication dialog with code:', code);
       await this.authDialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
     }
   }

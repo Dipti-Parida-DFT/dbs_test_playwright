@@ -45,7 +45,7 @@ test.describe.serial('IN_Bulk Collection', () => {
   test.afterEach(async ({}, testInfo) => {
   // Only cleanup if the test passed
   if (testInfo.status !== 'passed') {
-    console.warn(`[cleanup] Skipping payee deletion because test status is ${testInfo.status}`);
+    //console.warn(`[cleanup] Skipping payee deletion because test status is ${testInfo.status}`);
     return;
     }
     
@@ -119,10 +119,10 @@ test.describe.serial('IN_Bulk Collection', () => {
 
     // If you just want the full banner text:
     const referenceText = await pages.BulkCollectionPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
+    //console.log('Captured reference text:', referenceText);
     // If you want only the EBLV… token:
     reference = await pages.BulkCollectionPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
+    //console.log('Captured referenceID:', reference);
 
     //Click on finished button
     await pages.BulkCollectionPage.finishButton.click();   
@@ -151,7 +151,7 @@ test.describe.serial('IN_Bulk Collection', () => {
      //Authentication Pop-up
      await pages.AccountTransferPage.handleAuthIfPresent("1111")
     
-     console.log('Reference for edit test:', reference);
+     //console.log('Reference for edit test:', reference);
     // Open the view by reference (or search)
     if (reference.trim().length > 0) {
       console.log('Opening by reference:', reference);
@@ -180,10 +180,10 @@ test.describe.serial('IN_Bulk Collection', () => {
 
     // New reference if changed
     const rawText = (await pages.BulkCollectionPage.getReferenceText()) ?? '';
-    console.log('Edited Reference:', rawText);
+    //console.log('Edited Reference:', rawText);
       // If you want only the EBLV… token:
     referenceEdit = await pages.BulkCollectionPage.getReferenceID();
-    console.log('Edited referenceID:', referenceEdit);
+    //console.log('Edited referenceID:', referenceEdit);
   
       //Click on finished button
       await pages.BulkCollectionPage.finishButton.click();  
