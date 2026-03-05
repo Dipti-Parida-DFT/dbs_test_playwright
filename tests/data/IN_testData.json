@@ -161,7 +161,7 @@
     "BulkCollection": {
         "SIT": {
             "loginCompanyId": "IN2BFE1",
-            "loginUserId": "IN2BFE1A02",
+            "loginUserId": "DBSAUTOIN01",
             "fromAccount": "466588832"
         },
         "amount": "10",

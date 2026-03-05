@@ -64,7 +64,7 @@ test.describe.serial('IN_Bulk Collection', () => {
   }
   });
 
-  test('Create a Bulk collection with new Payee', async ({page}, testInfo) => {
+  test('TC001_INBulkCollection - Create a Bulk collection with new Payee', async ({page}, testInfo) => {
       
     //Navigate to Payments menu
     await pages.AccountTransferPage.waitForMenu();
@@ -142,7 +142,7 @@ test.describe.serial('IN_Bulk Collection', () => {
     });
   });
 
-  test('Edit a Bulk Collection via Transfer Center', async ({page}, testInfo) => {
+  test('TC001_INBulkCollection - Edit a Bulk Collection via Transfer Center', async ({page}, testInfo) => {
        
      // Navigate to Payments menu
      await pages.AccountTransferPage.waitForMenu();
