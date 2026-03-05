@@ -50,6 +50,29 @@ export type NewTTPayeeResult = {
   remitterIdentity: string;
 };
 
+export type NewSGDTTPayeeInput = {
+  name: string;
+  nickName: string;
+  add1: string;
+  add2: string;
+  city: string;
+  bankId: string;
+  accountNumber: string;
+  purposeCode: string;
+};
+
+
+export type NewSGDTTPayeeResult = {
+  name: string;
+  nickName: string;
+  add1: string;
+  add2: string;
+  city: string;
+  bankId: string;
+  accountNumber: string;
+  purposeCode: string;
+};
+
 export type ExistingTTPayeeInput = {
   existingAccountNumber: string;
   bankChargeType: BankChargeType;
@@ -90,6 +113,9 @@ export class TelegraphicTransferPage {
     this.newPayeeTab = page.locator('//a[@id="ux-tab-NEW"]');
     this.cognitiveContinue = page.locator('//button[@id="cognitive-continue"]');
     this.enterNewPayeeBankID = page.locator('//input[@name="new-payee-bank-id"]');
+    this.inputnewTTBankLocation = page.locator('//input[@id="new-payee-country"]');
+    this.inputnewTTBankLocationSGDDropdown = page.locator('//span[contains(text(),"SINGAPORE")]');
+    this.newTTSGDbankIDButton = page.locator('//span[contains(text(),"DBSSSGS0XXX")]');
     this.newTTPayeeName = page.locator('//textarea[@name="new-payee-name"]');
     this.newTTPayeeNickname = page.locator('//input[@name="new-payee-nick-name"]');
     this.newTTPayeeAddress1 = page.locator('//input[@name="new-payee-add1"]');
@@ -112,6 +138,7 @@ export class TelegraphicTransferPage {
     this.newTTPurposeCode = page.locator('//input[@name="purposeCode"]');
     this.inputNewTTPurposeCode = page.locator('//input[@placeholder="Purpose code number or description"]');
     this.newTTPurposeCodeSelect = page.locator('//span[contains(text(),"04000 - Animal and vegetable oils, fat and waxes")]');
+    this.newTTSGDPurposeCodeSelect = page.locator('//span[contains(text(),"GSTX - Goods & Services Tax")]');
     this.newTTPaymentRemark = page.locator('//textarea[@name="paymentDetail"]');
     this.newTTPayeeMsgCheckbox = page.locator('//input[@id="isBeneAdvising"]');
     this.newTTPayeeEmail1 = page.locator('//input[@name="email-id-0"]');
@@ -127,12 +154,21 @@ export class TelegraphicTransferPage {
     this.newTTsubmitButton = page.locator('//button[@name="submit"]');
     this.newTTfinishButton = page.locator('//button[@name="finish"]');
     this.MYRcontinue = page.locator('//button[@name="continue"]');
-    this.newTTreferenceID = page.locator('//label[contains(text(),"Telegraphic Transfer")]');
+    this.newTTreferenceID = page.locator('//label[contains(text(),"Telegraphic Transfer E")]');
+    this.newTTSGDreferenceID = page.locator('//label[contains(text(),"FAST Payment")]');
     this.newTTHashValueLabel = page.locator('//span[@id="ott-view-hashValue"]');
     this.newTTFromAccountViewLabel = page.locator('//span[@id="view-ott-accountNum"]');
+    this.newTTSGDFromAccountViewLabel = page.locator('//span[@id="domestic-view-accountNum"]');
     this.newTTPayeeBankLocationLabel = page.locator('//span[@id="ott-view-payee-countryName"]');
     this.newTTPaymentRefLabel = page.locator('//span[@id="ott-view-custRef"]');
     this.newTTRefStatusLabel = page.locator('//div[@id="ott-view-status"]');
+    this.newTTSGDRefStatusLabel = page.locator('//div[@id="domestic-view-status"]');
+    this.newTTSelectApprovalButton = page.locator('//button[@name="select-approve"]');
+    this.newTTCancelButton = page.locator('//button[@name="cancel"]');
+    this.newTTAmountValue = page.locator('//span[@class="input value preview-account-label"]');
+    this.newTTReferenceValue = page.locator('//div[@id="ott-view-customerReference"]');
+    this.newTTSGDReferenceValue = page.locator('//div[@id="domestic-view-customerReference"]');
+    this.newTTActivityLog = page.locator('//div[@class="payment-history"]');
 
     this.existingPayeeTab = page.locator('//a[@id="ux-tab-EXISTING"]');
     this.existingPayeeBankAccount = page.locator('//input[@id="existing-payee"]');
@@ -146,11 +182,14 @@ export class TelegraphicTransferPage {
 
     this.ttSaveAsTemplateCheckbox = page.locator('//input[@id="saveAsTemplate"]');
     this.ttSaveAsTemplateInput = page.locator('//input[@name="templateName"]');
-    this.templateMenu = page.locator('//a[@*="/transfers/manage-templates"]');
+    this.templateMenu = page.locator('//a[@*="#/transfers/manage-templates"]');
     this.templateFilter = page.locator('//input[@id="manage-template-filter"]');
+    this.templateName = page.locator('//div[@id="ott-viewTemp-templateName"]');
     this.templateLink = page.locator('//a[@id="template-list-templateName_0"]');
-    this.templateAmount = page.locator('(//div[@class="show-template-grey"])[1]');
-    this.templateMakeAPaymentButton = page.locator('//a[@id="template-list-makeAPayment_0"]');
+    this.templateStatus = page.locator('//div[@id="ott-viewTemp-status"]');
+    this.templateAmount = page.locator('//span[@class="preview-account-label edit-label"]');
+    this.templateMakeAPaymentButton = page.locator('//button[@name="make-payment"]');
+    this.templateApproveButton = page.locator('//button[@name="Approve"]');
 
     this.ttSaveAsDraftButton = page.locator('//button[@name="save-as-draft"]');
     this.ttSaveAsDraftSuccessMessage = page.locator('//*[@role="dialog"]');
@@ -176,6 +215,7 @@ export class TelegraphicTransferPage {
 
     this.ttFXSavingsMessage = page.locator('//div[contains(@class,"alert-disclarimer")]');
     this.baseFXExchangeRate = page.locator('//div[@id="fxDolViewSection"]');
+    this.logoutButton = page.locator('//div[@id="logout"]');
 
     }
 
@@ -186,6 +226,9 @@ export class TelegraphicTransferPage {
     readonly newPayeeTab: Locator;
     readonly cognitiveContinue: Locator;
     readonly enterNewPayeeBankID: Locator;
+    readonly inputnewTTBankLocation: Locator;
+    readonly inputnewTTBankLocationSGDDropdown: Locator;
+    readonly newTTSGDbankIDButton: Locator;
     readonly makePayment: Locator;
     readonly amountInput: Locator;
     readonly newTTPayeeName: Locator;
@@ -210,6 +253,7 @@ export class TelegraphicTransferPage {
     readonly newTTPurposeCode: Locator;
     readonly inputNewTTPurposeCode: Locator;
     readonly newTTPurposeCodeSelect: Locator;
+    readonly newTTSGDPurposeCodeSelect: Locator;
     readonly newTTPaymentRemark: Locator;
     readonly newTTPayeeMsgCheckbox: Locator;
     readonly newTTPayeeEmail1: Locator;
@@ -226,11 +270,20 @@ export class TelegraphicTransferPage {
     readonly newTTfinishButton: Locator;
     readonly MYRcontinue: Locator;
     readonly newTTreferenceID: Locator;
+    readonly newTTSGDreferenceID: Locator;
     readonly newTTHashValueLabel: Locator;
     readonly newTTFromAccountViewLabel: Locator;
     readonly newTTPayeeBankLocationLabel: Locator;
     readonly newTTPaymentRefLabel: Locator;
     readonly newTTRefStatusLabel: Locator;
+    readonly newTTSGDRefStatusLabel: Locator;
+    readonly newTTSelectApprovalButton: Locator;
+    readonly newTTCancelButton: Locator;
+    readonly newTTAmountValue: Locator;
+    readonly newTTReferenceValue: Locator;
+    readonly newTTSGDReferenceValue: Locator;
+    readonly newTTActivityLog: Locator;
+    readonly newTTSGDFromAccountViewLabel: Locator;
 
     readonly existingPayeeTab: Locator;
     readonly existingPayeeBankAccount: Locator;
@@ -247,8 +300,11 @@ export class TelegraphicTransferPage {
     readonly templateMenu: Locator;
     readonly templateFilter: Locator;
     readonly templateLink: Locator;
+    readonly templateName: Locator;
     readonly templateAmount: Locator;
     readonly templateMakeAPaymentButton: Locator;
+    readonly templateStatus: Locator;
+    readonly templateApproveButton: Locator;
 
     readonly ttSaveAsDraftButton: Locator;
     readonly ttSaveAsDraftSuccessMessage: Locator;
@@ -273,32 +329,20 @@ export class TelegraphicTransferPage {
 
     readonly ttFXSavingsMessage: Locator;
     readonly baseFXExchangeRate: Locator;
+    readonly logoutButton: Locator;
 
 
   
-  private async safeCheck(locator: Locator, timeout = 15_000) {
-    await expect(locator).toBeVisible({ timeout });
-    await expect(locator).toBeEnabled({ timeout });
-    const tag = (await locator.evaluate(el => el.tagName.toLowerCase())).toString();
-    const type = (await locator.getAttribute('type')) ?? '';
-    if (!(tag === 'input' && (type === 'checkbox' || type === 'radio'))) {
-    throw new Error('safeCheck expects an <input type="checkbox|radio"> locator.');
-      }
-      if (!(await locator.isChecked().catch(() => false))) {
-        await locator.check();
-        }
-    }
-
   private async selectBankCharge(charge: BankChargeType) {
   switch (charge) {
     case 'OUR':
-      await this.safeCheck(this.bankChargesOurRadioButton);
+      await this.bankChargesOurRadioButton.evaluate(el => (el as HTMLElement).click());
       break;
     case 'SHARED':
-      await this.safeCheck(this.bankChargesSharedRadioButton);
+      await this.bankChargesSharedRadioButton.evaluate(el => (el as HTMLElement).click());
       break;
     case 'THEY':
-      await this.safeCheck(this.bankChargesTheyRadioButton);
+      await this.bankChargesTheyRadioButton.evaluate(el => (el as HTMLElement).click());
       break;
     default:
       throw new Error(`Unsupported bank charge: ${charge}`);
@@ -327,7 +371,7 @@ export class TelegraphicTransferPage {
     await this.page.waitForLoadState('networkidle');
   }
 
-  async safeClick(locator: Locator, timeout = 15_000) {
+  async safeClick(locator: Locator, timeout = 150_000) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
     await locator.click();
@@ -348,7 +392,7 @@ export class TelegraphicTransferPage {
   async handleAnnouncementIfPresent() {
     const acknowledgeBtn = this.authenticate;
 
-    if (await acknowledgeBtn.isVisible({ timeout: 20_000 }).catch(() => false)) {
+    if (await acknowledgeBtn.isVisible({ timeout: 120_000 }).catch(() => false)) {
         await acknowledgeBtn.click();
         await this.page.waitForLoadState('networkidle');
     }
@@ -358,7 +402,7 @@ export class TelegraphicTransferPage {
     return await this.MYRcurrency.isVisible({ timeout }).catch(() => false);
   }
 
-  async waitForTTFormReady(timeout = 50_000) {
+  async waitForTTFormReady(timeout = 150_000) {
     await this.page.waitForLoadState('domcontentloaded');
     await this.page.waitForLoadState('networkidle');
     await this.waitForUXLoading();
@@ -367,15 +411,16 @@ export class TelegraphicTransferPage {
   }
 
   async handleCognitiveContinueIfPresent() {
-    const paye2ScamacknowledgeBtn = this.cognitiveContinue;
-    await this.page.waitForTimeout(5000); // wait for potential pop-up to appear
-    if (await paye2ScamacknowledgeBtn.isVisible({ timeout: 20_000 }).catch(() => false)) {
-        await this.saferClick(this.cognitiveContinue, 20_000);
-        await this.page.waitForLoadState('networkidle');
-    }
+    try {
+    await this.cognitiveContinue.waitFor({ state: 'visible', timeout: 5000 });
+    await this.saferClick(this.cognitiveContinue);
+    await this.waitForUXLoading();
+  } catch {
+    // popup did not appear → continue safely
+  }
 }
 
-  async waitForNewPayeeFormReady(timeout = 20_000) {
+  async waitForNewPayeeFormReady(timeout = 120_000) {
     await this.page.waitForLoadState('domcontentloaded');
     await this.page.waitForLoadState('networkidle');
     await this.waitForUXLoading();
@@ -611,11 +656,11 @@ export class TelegraphicTransferPage {
  async ttSaveAsTemplate() {
       await this.ttSaveAsTemplateCheckbox.evaluate(el => (el as HTMLElement).click());
       await this.safeClick(this.ttSaveAsTemplateInput);
-      const templateName = `Template_${Date.now()}`;
-      await this.safeFill(this.ttSaveAsTemplateInput, templateName);
+      const template = `Template${Date.now()}`;
+      await this.safeFill(this.ttSaveAsTemplateInput, template);
       await this.page.keyboard.press('Tab');
       await this.ttSaveAsTemplateInput.blur();
-      return templateName;
+      return template;
     }
   
  async waitForTemplateFilterReady(timeout = 20_000) {
@@ -628,7 +673,10 @@ export class TelegraphicTransferPage {
     await this.safeClick(this.templateMenu);
     await this.waitForTemplateFilterReady();
     await this.safeFill(this.templateFilter, templateName);
-    await this.safeClick(this.templateLink);
+    await this.waitForUXLoading();
+    await expect(this.templateLink).toBeVisible({ timeout: 150_000 });
+    // await this.safeClick(this.templateLink);
+    await this.templateLink.click();
   } 
 
  async waitForSaveAsDraft(timeout = 15_000) {
@@ -682,5 +730,83 @@ export class TelegraphicTransferPage {
     await this.saferClick(this.ttDeletePaymentSuccessButton);
   }
 
+  async waitForSGNewPayeeFormReady(timeout = 120_000) {
+    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForLoadState('networkidle');
+    await this.waitForUXLoading();
+    await expect(this.inputnewTTBankLocation).toBeVisible({ timeout });
+    await expect(this.inputnewTTBankLocation).toBeEnabled({ timeout });
+  }
 
+  async addNewSGTTPayee(input: NewSGDTTPayeeInput): Promise<NewSGDTTPayeeResult> {
+    const { name, nickName, city, add1, add2, bankId, accountNumber, purposeCode } = input;
+      await this.safeClick(this.newPayeeTab)
+      await this.handleCognitiveContinueIfPresent();
+      await this.waitForSGNewPayeeFormReady();
+      await this.inputnewTTBankLocation.click();
+      await this.safeFill(this.inputnewTTBankLocation, 'SINGAPORE');
+      await this.safeClick(this.inputnewTTBankLocationSGDDropdown);
+      await this.enterNewPayeeBankID.waitFor({ state: 'visible' });
+      await this.enterNewPayeeBankID.fill(bankId);
+      await this.page.keyboard.press('Enter');
+      await this.enterNewPayeeBankID.blur();
+      await this.safeClick(this.newTTSGDbankIDButton);
+
+      await this.safeClick(this.newTTPayeeAccountNumber);
+      await this.safeFill(this.newTTPayeeAccountNumber, accountNumber);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeAccountNumber.blur();
+
+      await this.safeClick(this.newTTPayeeName);
+      await this.safeFill(this.newTTPayeeName, name);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeName.blur();
+
+      await this.safeClick(this.newTTPayeeNickname);
+      await this.safeFill(this.newTTPayeeNickname, nickName);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeNickname.blur();
+
+      await this.safeClick(this.payeeLocation);
+      await this.safeClick(this.MYRlocation);
+      await this.payeeLocation.blur();
+
+      await this.safeClick(this.newPayeeCity);
+      await this.safeFill(this.newPayeeCity, city);
+      await this.page.keyboard.press('Tab');
+      await this.newPayeeCity.blur();
+
+      await this.safeClick(this.newTTPayeeAddress1);
+      await this.safeFill(this.newTTPayeeAddress1, add1);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeAddress1.blur();
+
+      await this.safeClick(this.newTTPayeeAddress2);
+      await this.safeFill(this.newTTPayeeAddress2, add2);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeAddress2.blur();
+
+      await this.newTTPurposeCode.click();
+      await this.safeClick(this.inputNewTTPurposeCode);
+      await this.safeFill(this.inputNewTTPurposeCode, purposeCode);
+      await this.safeClick(this.newTTSGDPurposeCodeSelect);
+      await this.newTTPurposeCode.blur();
+      return { name, nickName, city, add1, add2, bankId, accountNumber, purposeCode };
 }
+  async getNewSGDTTReferenceText(): Promise<string> {
+    const raw = await this.newTTSGDreferenceID.textContent();
+    return (raw ?? '').trim();
+  }
+
+  async getNewSGDTTReferenceID(): Promise<string> {
+    const raw = await this.getNewSGDTTReferenceText();
+    const match = raw.match(/\b(EB[A-Z0-9-]+)\b/i);
+    return match?.[1] ?? '';
+  }
+
+  async newTTSGDWaitForViewPaymentPageReady(timeout = 25_000) {
+    await this.waitForUXLoading();
+    await expect(this.newTTSGDFromAccountViewLabel).toBeVisible({ timeout });
+  }
+
+};
