@@ -25,7 +25,7 @@ export type NewPayeeOthersInput = {
   emailMessage: string;
 };
 
-export type NewPayee1ValidationDetails = {
+export type NewPayee1Data = {
   amount: string;
   transactionCode: string;
   referenceForPayee: string;
@@ -39,6 +39,43 @@ export type NewPayee1ValidationDetails = {
   emailMessage: string;
 };
 
+export type NewPayee1ValidationData = {
+  fromAccountValue1: string;
+  fromAccountValue2: string;
+  paymentTypeValue: string;
+  amountDeductedValue: string;
+  amountDeductedEditedValue: string;
+
+  referenceValueUserProvided: string;
+  batchIdValueUserProvided: string;
+  
+  paymentSummaryLabel: string;
+  totalPayeesLabel: string;
+  totalPayeesValue: string;
+  totalAmountLabel: string;
+  totalAmountValue: string;
+  totalAmountValueEdited: string;
+  
+  payeeNameLabelValue: string;
+  payeeNicknameLabelValue: string;
+  bankNameLabelValue: string;
+  bankSwiftBicLabelValue: string;
+  accountNumberLabelValue: string;
+  statusLabelValue: string;
+  amountLabelValue: string;
+  amountEditedLabelValue: string,
+  transactionLabelValue: string;
+  purposeCodeLabelValue: string;
+  referenceForPayeeLabelValue: string;
+  particularsLabelValue: string;
+  paymentDetailsLabelValue: string;
+  emailMessageLabelValue: string
+  email1LabelValue: string;
+  email2LabelValue: string;
+  email3LabelValue: string;
+  email4LabelValue: string;
+  email5LabelValue: string;  
+};
 
 
 export type NewPayeeResult = {
@@ -176,6 +213,9 @@ export class PayrollPage {
     this.paymentDateLabel = page.locator('xpath=//*[@id="bulk-view-paymentDate"]');
     this.referenceLabel = page.locator('xpath=//*[@id="viewReference"]');
     this.referenceID = page.locator('xpath=//label[contains(text(),"Payroll Payment")]');
+    // Have added this locator for Management Payroll bcs above is not working
+    this.referenceIDPayroll = page.locator('xpath=//label[contains(text(),"Payroll")]');
+    
     this.batchIdLabel = page.locator('xpath=//*[@id="bulk-view-batchId"]');
     this.billerServiceIdLabel = page.locator('xpath=//*[@id="bulk-view-billerServiceID"]');
     this.paymentSummaryPanel = page.locator('xpath=//*[@class="summary-panel step2-panel-triangle"]');
@@ -405,6 +445,7 @@ export class PayrollPage {
   readonly paymentDateLabel: Locator;
   readonly referenceLabel: Locator;
   readonly referenceID: Locator;
+  readonly referenceIDPayroll: Locator;
   readonly batchIdLabel: Locator;
   readonly billerServiceIdLabel: Locator;
   readonly paymentSummaryPanel: Locator;
@@ -648,7 +689,7 @@ async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
    * @param testData : is a Json object
    * This method Enters Step 2: Payment to Amount and other opetional fields 
    */
-  async enterNewPayeeAllOtherDetails(input: NewPayeeOthersInput){
+  async enterNewPayeeAllOtherDetails(input: NewPayee1Data){
     const { amount, transactionCode, referenceForPayee, particulars,paymentDetails,email1,email2,email3,
       email4,email5,emailMessage} = input;
 
@@ -820,7 +861,7 @@ beneficiaryRowsByText(text: string): Locator {
      * use getReferenceToken() below.
      */
   async getReferenceText(): Promise<string> {
-    const raw = await this.referenceID.textContent();
+    const raw = await this.referenceIDPayroll.textContent();
     return (raw ?? '').trim();
   }
 
@@ -1126,6 +1167,155 @@ beneficiaryRowsByText(text: string): Locator {
       await this.webComponents.verifyUIElementTextIsNotNull(this.nextApproverLabel);
   
       // 26) Next approver : Visible
+      await this.webComponents.waitElementToBeVisible(this.activityLogSection);
+    
+    }
+
+
+
+    /**
+     * Author : LC5741501
+     * This method validates the details of Expected
+     * values(JSON) Vs Actual Selected Payee Or Reference No (from UI) 
+     */
+    async validatePayeeOrRefrenceNoDetails(input: NewPayee1ValidationData, reference) {
+      const { fromAccountValue1,fromAccountValue2,paymentTypeValue,amountDeductedValue,amountDeductedEditedValue,
+        referenceValueUserProvided,batchIdValueUserProvided,paymentSummaryLabel,totalPayeesLabel,totalPayeesValue,
+        totalAmountLabel,totalAmountValue,totalAmountValueEdited,payeeNameLabelValue,
+        payeeNicknameLabelValue,bankNameLabelValue,bankSwiftBicLabelValue,accountNumberLabelValue,statusLabelValue,
+        amountLabelValue,amountEditedLabelValue,transactionLabelValue,purposeCodeLabelValue,
+        referenceForPayeeLabelValue,particularsLabelValue,
+        paymentDetailsLabelValue,emailMessageLabelValue,email1LabelValue,email2LabelValue,email3LabelValue,
+        email4LabelValue,email5LabelValue} = input;
+      // Assertions
+      // 1) Hash value : Auto generated hence checking value is Not Null
+      await this.webComponents.verifyUIElementTextIsNotNull(this.hashValueLabel);
+      
+      // 2) From : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.fromAccountViewLabel, fromAccountValue1);
+      await this.webComponents.compareUIVsJsonValue(this.fromAccountViewLabel2, fromAccountValue2);
+      
+      // 3) Payment Type : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.paymentType, paymentTypeValue);
+  
+       // 4) Account deducted : If amountDeductedEditedValue is Not Null/Blank, it means Amount is editd, and validate edited value
+       //Else not edited, then validate actual amount
+       if(await this.webComponents.stringIsNotNullOrBlank(amountDeductedEditedValue)){
+        await this.webComponents.compareUIVsJsonValue(this.amountViewLabel, amountDeductedEditedValue);
+       }else{
+        await this.webComponents.compareUIVsJsonValue(this.amountViewLabel, amountDeductedValue);
+       }
+       
+       //5 Payment Date: checking value is Not Null
+       await this.webComponents.verifyUIElementTextIsNotNull(this.paymentDate);
+  
+      // 6) Internal reference : If referenceValueUserProvided is Not Null/Blank, it means value present, validate User provided value
+       //Else value not present, then autogenerated reference No
+      if(await this.webComponents.stringIsNotNullOrBlank(referenceValueUserProvided)){
+        await this.webComponents.compareUIVsJsonValue(this.referenceLabel, referenceValueUserProvided);
+      }else{
+        await this.webComponents.compareUIVsJsonValue(this.referenceLabel, reference);
+      }
+      
+      // 7) Batch ID : If batchIdValueUserProvided is Not Null/Blank, it means user provided the value and validate it
+      // Else validete auto generated Batch Id value is not null
+      if(await this.webComponents.stringIsNotNullOrBlank(batchIdValueUserProvided)){
+        await this.webComponents.compareUIVsJsonValue(this.batchIdLabel, batchIdValueUserProvided);
+      }else{
+        await this.webComponents.verifyUIElementTextIsNotNull(this.batchIdLabel);
+      }
+      
+      // 8) Filter is Visible 
+      await this.webComponents.waitElementToBeVisible(this.viewPayrollFilter);
+      
+      // 9) Payment summary : Validate UI Vs Json (Payment summary Label) Additional Validation
+      await this.webComponents.compareUIVsJsonValue(this.paymentSummaryLabel, paymentSummaryLabel);
+  
+      // 10) Total Payees Label : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.totalPayeesLabel, totalPayeesLabel);
+      
+      // 11) Total Payees Value : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.totalPayeesValue, totalPayeesValue);
+      
+      // 12) Total Amount Label : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.totalAmountLabel, totalAmountLabel);
+  
+      // 13) Total Amount Value : If totalAmountValueEdited is Not Null/Blank, it means its edited and validate it
+      // Else validete the without edited value
+      if(await this.webComponents.stringIsNotNullOrBlank(totalAmountValueEdited)){
+      await this.webComponents.compareUIVsJsonValue(this.totalAmountValue, totalAmountValueEdited);
+      }else{
+        await this.webComponents.compareUIVsJsonValue(this.totalAmountValue, totalAmountValue);
+      }
+      // 14) Payee/Nickname : Validate (Payee Name) UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.payeeNameLabel1Value, payeeNameLabelValue);
+  
+      // 15) Payee/Nickname : Validate (Nickname) UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.payeeNicknameLabelValue, payeeNicknameLabelValue);
+  
+      // 16) Bank/SWIFT BIC: Validate (Bank) UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.bankNameLabel1Value, bankNameLabelValue);
+  
+      // 17) Bank/SWIFT BIC: Validate (SWIFT) UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.bankSwiftBicLabel1, bankSwiftBicLabelValue);
+  
+      // 18) Account number: Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.accountNumberLabel1, accountNumberLabelValue);
+  
+      // 19) Status (PendingApproval) : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.status, statusLabelValue);
+      
+      // 20) Amount (SGD): Validate UI Vs Json
+      // If amountEditedLabelValue : is edited validate the edited value
+      // else validate the no edited value of amount
+      if(await this.webComponents.stringIsNotNullOrBlank(amountEditedLabelValue)){
+        await this.webComponents.compareUIVsJsonValue(this.amountFirstLabel, amountEditedLabelValue);
+      }else{
+        await this.webComponents.compareUIVsJsonValue(this.amountFirstLabel, amountLabelValue);
+      }      
+
+      // 21) If Purpose Code: Value is not null/Blank validate the value provided UI Vs Json
+      if(await this.webComponents.stringIsNotNullOrBlank(purposeCodeLabelValue)){
+        await this.webComponents.compareUIVsJsonValue(this.amountFirstLabel, purposeCodeLabelValue);
+      }
+
+      // 22) If Transaction Code: Value is not null/Blank validate the value provided UI Vs Json
+      if(await this.webComponents.stringIsNotNullOrBlank(transactionLabelValue)){
+        await this.webComponents.compareUIVsJsonValue(this.transactionCodeLabel1, transactionLabelValue);
+      }
+
+      //23) If Reference for payee: Value is not null/Blank validate the value provided UI Vs Json
+      if(await this.webComponents.stringIsNotNullOrBlank(referenceForPayeeLabelValue)){
+        await this.webComponents.compareUIVsJsonValue(this.referenceForPayeeLabel1, referenceForPayeeLabelValue);
+      }
+      
+      //24) If particulars: Value is not null/Blank validate the value provided UI Vs Json
+      if(await this.webComponents.stringIsNotNullOrBlank(particularsLabelValue)){
+        await this.webComponents.compareUIVsJsonValue(this.particularsLabel1, particularsLabelValue);
+      }
+
+      // Click : showOptionalViewButton1
+     await this.webComponents.javaScriptsClick(this.showOptionalViewButton1);
+
+      //25) If Payment details: Value is not null/Blank validate the value provided UI Vs Json
+      if(await this.webComponents.stringIsNotNullOrBlank(paymentDetailsLabelValue)){
+        await this.webComponents.compareUIVsJsonValue(this.paymentDetailLabel1, paymentDetailsLabelValue);
+      }
+      
+      // 26) Message to payee (optional): Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.messageLabel1, emailMessageLabelValue);
+      
+      // 27)Emails 1 to 5 : Validate UI Vs Json
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel1Value, email1LabelValue);
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel2Value, email2LabelValue);
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel3Value, email3LabelValue);
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel4Value, email4LabelValue);
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel5Value, email5LabelValue);
+
+      // 28) Next approver : value is not Null
+      await this.webComponents.verifyUIElementTextIsNotNull(this.nextApproverLabel);
+  
+      // 29) Next approver : Visible
       await this.webComponents.waitElementToBeVisible(this.activityLogSection);
     
     }

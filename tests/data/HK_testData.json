@@ -79,8 +79,7 @@
         "SIT": {
             "loginCompanyId": "SHKLT008",
             "loginUserIdHKMP": "DBSAUTOHKBLKCN01",
-            "fromAccount": "781024341",
-            "payeeBankID": "EASTASIALIMITED"
+            "fromAccount": "781024341"
         }
     },
     "ManagePayrollPayer1": {
@@ -89,7 +88,9 @@
         "payeeBankID": "ALLA",
         "newPayeeAcctNumber": "10102345",
         "amount" : "1.00",
+        "amountEdited" : "",
         "transactionCode": "22SalaryCredit",
+        "purposeCode": "",
         "referenceForPayee": "TestReferenceForPayee",
         "particulars": "Particulars1",
         "paymentDetails": "TestPaymentDetails",
@@ -98,25 +99,31 @@
         "emailId2": "Email2@dbs.com",
         "emailId3": "Email3@dbs.com",
         "emailId4": "Email4@dbs.com",
-        "emailMessage": "TestEmailMessage"
+        "emailMessage": "TestEmailMessage",
+
+        "internalReferenceUserProvided": "",
+        "batchIdValueUserProvided": ""
     },
-    "ManagePayrollValidationData": {
-        "toAccountNumberLabel": "783700301 (USD)",
-        "toAccountNameLabel": "NAME OF ACCT NO:7837003010",
-        "paymentType": "Hong Kong Bulk Collection",
-        "totalAmount": "USD 1.00",
-        "totalAmountConsolidated": "USD 3.00",
-        "creditType":"Itemized Credit",
-        "creditTypeConsolidated":"Consolidated Credit",
-        "collectionSummaryLabel": "Collection summary:",
-        "totalPayersLabel": "Total payers:",
-        "totalPayersLabelValue": "1",
-        "totalPayersConsolidatedLabelValue": "2",
+    "ManagePayrollPayee1ValidationData": {
+        "fromAccountValue1": "781024341 (HKD)",
+        "fromAccountValue2": "SNAME 7810243",
+        "paymentTypeValue": "Hong Kong Management Payroll",
+        "amountDeductedValue": "HKD 1.00",
+        "amountDeductedEditedValue": "",
+      
+
+        "paymentSummaryLabel":"Payment summary:",
+        "totalPayeesLabel":"Total payees:",
+        "totalPayeesValue": "1",
         "totalAmountLabel": "Total amount",
-        "totalAmountLabelValue": "(USD): 1.00",
-        "totalAmountConsolidatedLabelValue": "(USD): 3.00",
-        "bankNameValue": "ALLAHABAD BANK",
-        "bankCode": "0256",
-        "transactionDeleted": "Transaction deleted" 
+        "totalAmountValue": "(HKD): 1.00",
+        "totalAmountValueEdited": "",
+
+        "bankNameLabelValue": "ALLAHABAD BANK",
+        "bankSwiftBicLabelValue": "0256",
+
+        
+        "purposeCodeLabelValue": "",
+        "transactionCodeLabelValue": "22 - Salary Credit"
     }
 }

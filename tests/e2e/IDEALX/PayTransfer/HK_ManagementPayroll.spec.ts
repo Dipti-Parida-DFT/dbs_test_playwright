@@ -174,7 +174,47 @@ test.describe('HK_ManagementPayroll (Playwright using PaymentsPages)', () => {
     await pages.PayrollPage.waitForViewPaymentPageReady();
     
     // This method validates the existing PayeeOrRefrenceNo Details.
-    await pages.PayrollPage.validatePayeeOrRefrenceNoDetailsOfPayroll(testData, reference);
+    await pages.PayrollPage.validatePayeeOrRefrenceNoDetails({
+        fromAccountValue1: testData.ManagePayrollPayee1ValidationData.fromAccountValue1,
+        fromAccountValue2: testData.ManagePayrollPayee1ValidationData.fromAccountValue2,
+        paymentTypeValue: testData.ManagePayrollPayee1ValidationData.paymentTypeValue,
+        amountDeductedValue: testData.ManagePayrollPayee1ValidationData.amountDeductedValue,
+        amountDeductedEditedValue: testData.ManagePayrollPayee1ValidationData.amountDeductedEditedValue,
+
+        referenceValueUserProvided: testData.ManagePayrollPayer1.internalReferenceUserProvided,
+        batchIdValueUserProvided: testData.ManagePayrollPayer1.batchIdValueUserProvided,
+        
+        paymentSummaryLabel: testData.ManagePayrollPayee1ValidationData.paymentSummaryLabel,
+        totalPayeesLabel: testData.ManagePayrollPayee1ValidationData.totalPayeesLabel,
+        totalPayeesValue: testData.ManagePayrollPayee1ValidationData.totalPayeesValue,
+        totalAmountLabel: testData.ManagePayrollPayee1ValidationData.totalAmountLabel,
+        totalAmountValue: testData.ManagePayrollPayee1ValidationData.totalAmountValue,
+        totalAmountValueEdited: testData.ManagePayrollPayee1ValidationData.totalAmountValueEdited,
+        
+        
+        payeeNameLabelValue: testData.ManagePayrollPayer1.newPayeeName,
+        payeeNicknameLabelValue: testData.ManagePayrollPayer1.newPayeeNickName,
+        bankNameLabelValue: testData.ManagePayrollPayee1ValidationData.bankNameLabelValue,
+        bankSwiftBicLabelValue: testData.ManagePayrollPayee1ValidationData.bankSwiftBicLabelValue,
+        accountNumberLabelValue: testData.ManagePayrollPayer1.newPayeeAcctNumber,
+        statusLabelValue: testData.status.PendingApproval,
+
+        amountLabelValue: testData.ManagePayrollPayer1.amount,
+        amountEditedLabelValue: testData.ManagePayrollPayer1.amountEdited,
+        transactionLabelValue: testData.ManagePayrollPayee1ValidationData.transactionCodeLabelValue,
+        purposeCodeLabelValue: testData.ManagePayrollPayee1ValidationData.purposeCodeLabelValue,
+
+        referenceForPayeeLabelValue: testData.ManagePayrollPayer1.referenceForPayee,
+        particularsLabelValue: testData.ManagePayrollPayer1.particulars,
+
+        paymentDetailsLabelValue: testData.ManagePayrollPayer1.paymentDetails,
+        emailMessageLabelValue: testData.ManagePayrollPayer1.emailMessage,
+        email1LabelValue: testData.ManagePayrollPayer1.emailId0,
+        email2LabelValue: testData.ManagePayrollPayer1.emailId1,
+        email3LabelValue: testData.ManagePayrollPayer1.emailId2,
+        email4LabelValue: testData.ManagePayrollPayer1.emailId3,
+        email5LabelValue: testData.ManagePayrollPayer1.emailId4
+    },reference);
 
     //This method deletes the existing opened PayeeOrRefrenceNo Details.
     await pages.BulkCollectionPage.deleteOpenPayerOrReferenceNo(testData, reference);
