@@ -56,7 +56,9 @@
         "taxOfficeName": "Tax office Test",
         "diffrentTaxOfficeName": "Tax office Test QA",
         "differentTaxOfficeError": "You can only select taxes from the same tax office in the same payment.",
-        "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
+        "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again.",
+        "NoDataMessage": "No information found. Our search with the General Department of Taxation (GDT) did not yield any data."
+
     },
     "status": {
         "Approved": "Approved",

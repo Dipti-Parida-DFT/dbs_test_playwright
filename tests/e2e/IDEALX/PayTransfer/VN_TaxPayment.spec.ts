@@ -158,6 +158,10 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.applyTaxes);
     await pages.VNTaxPaymentPage.corporateTaxFilterInput.waitFor({ state: 'visible', timeout: 5000 });
     
+    //Non-sequential is selected by default
+    const nonSequential = page.getByLabel('Non-sequential', { exact: true })
+    await expect(nonSequential).toBeChecked();
+    
     const radioBtn = page.getByLabel('Sequential', { exact: true });
     radioBtn.waitFor({ state: 'visible', timeout: 5000 });
     await radioBtn.scrollIntoViewIfNeeded();
@@ -440,5 +444,104 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
     await expect(pages.VNTaxPaymentPage.fromAccountViewLabel).toContainText(fromAccount);
         
   });
+
+  test('TC006_VNTax - Verify error message when no org tax code present', async ({ page }) => {
+    
+    // Payments → Transfer Center → TaxPayment
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+
+    //Authentication Pop-up
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    
+    // If icon not visible on the first page → click the second dot
+    if (!(await pages.VNTaxPaymentPage.VNTaxPayment.isVisible())) {
+    await pages.VNTaxPaymentPage.secondDot.click();
+    // Now wait for the VN Tax icon to appear
+    await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+    }
+
+    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+    await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+
+    // From account (type + Enter, works for most typeahead controls)
+    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.fromAccount);
+    await page.keyboard.type(fromAccount);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    
+    //Make sure Org Tax code field is disabled 
+    await expect(pages.VNTaxPaymentPage.orgTaxCode).toBeDisabled();
+
+    //Select charge account
+    await pages.VNTaxPaymentPage.chargeAccount.scrollIntoViewIfNeeded();
+    await pages.VNTaxPaymentPage.chargeAccount.click();
+    await page.keyboard.type(testData.TaxPayment.chargeAccount);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+  //Click next and verify error message for no org tax code
+  await pages.VNTaxPaymentPage.nextButton.click();
+
+  // Generic banner error container
+    const globalError = page.locator([
+      '.alert.alert-error',
+      '.error', '.error-message', '.form-error',
+      '.toast', '.toast-error',          // generic toasts
+      '.alert', '.alert-danger',         // Bootstrap-like
+      '.ant-message', '.ant-message-error', '.ant-notification-notice', // Ant Design
+      '.MuiAlert-root',                  // Material UI
+      '.invalid-feedback'                // Common form feedback
+    ].join(', '));
+
+    await expect(globalError).toBeVisible({ timeout: 30000 });
+    await expect(globalError).toContainText(testData.TaxPayment.errorMessage);
+
+    //Click on cancel
+    await pages.VNTaxPaymentPage.cancelButton.click();
+  });
+
+  test('TC007_VNTax - Verify error message when no tax data present', async ({ page }) => {
+    
+    // Payments → Transfer Center → TaxPayment
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+
+    //Authentication Pop-up
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    
+    // If icon not visible on the first page → click the second dot
+    if (!(await pages.VNTaxPaymentPage.VNTaxPayment.isVisible())) {
+    await pages.VNTaxPaymentPage.secondDot.click();
+    // Now wait for the VN Tax icon to appear
+    await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+    }
+
+    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+    await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+
+    // From account (type + Enter, works for most typeahead controls)
+    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.fromAccount);
+    await page.keyboard.type(fromAccount);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    
+    //Click Apply to load taxes
+    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.applyTaxes);
+  
+    const emptyMessage = page
+    .locator('datatable-selection')
+    .locator('.empty-row');
+
+  await expect(emptyMessage).toBeVisible({ timeout: 30000 });
+
+  // `toContainText` will normalize whitespace and treat <br> as whitespace
+  await expect(emptyMessage).toContainText(testData.TaxPayment.NoDataMessage)
+
+    //Click on cancel
+    await pages.VNTaxPaymentPage.cancelButton.click();
+  });
+
+
 
 });
