@@ -115,7 +115,6 @@ export class TransferCentersPage {
   async waitForTransferCenterReady(timeout = 20_000) {
     await this.waitForUXLoading();
     await expect(this.transferCenterFilter).toBeVisible({ timeout });
-    //await expect(this.transferCenterFilter).toBeEnabled({ timeout });
   }
 
   /** Former: jiazhai2() — slower readiness (network + visibility) */
@@ -123,7 +122,6 @@ export class TransferCentersPage {
     await this.waitForUXLoading();
     await this.page.waitForLoadState('networkidle');
     await expect(this.transferCenterFilter).toBeVisible({ timeout });
-    //await expect(this.transferCenterFilter).toBeEnabled({ timeout });
   }
 
   /** Former: quyemianjiancha(reference) — filter by reference and open the first match */
