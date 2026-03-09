@@ -20,6 +20,48 @@ export class WebComponents {
   }
 
 
+  /** 
+   * Author: LC5741501
+   * wait for Authenticate dialogue if present 
+   * Created Date: 16/02/26
+   */
+
+
+
+
+
+
+
+
+
+  async handleAuthIfPresent(authDialog: Locator, securityAccessCode: Locator, authenticateButton: Locator) {
+    
+    const appears = await authDialog.waitFor({
+      state: 'visible',
+      timeout: 60000
+    }).then(() => true).catch(() => false);
+    //console.log('Authentication dialog appears:', appears);
+    if (appears) {
+      await securityAccessCode.fill('1111');
+      await authenticateButton.click();
+      //console.log('Handled authentication dialog with code:', code);
+      await authDialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   /**
    * Author: LC5741501
    * Created Date: 16/02/26

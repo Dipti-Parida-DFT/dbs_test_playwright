@@ -536,7 +536,7 @@ async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
     await this.webComponents.enterTextarea(this.newPayeeName, name);
     await this.page.keyboard.press('Tab');
     await this.newPayeeName.blur();
-
+  
     // Enter : Payee nickname
     await this.webComponents.enterTextarea(this.newPayeeNickName, nickName);
     await this.page.keyboard.press('Tab');

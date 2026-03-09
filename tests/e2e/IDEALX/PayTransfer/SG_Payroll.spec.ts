@@ -97,7 +97,7 @@ test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
   test('TC001_SGPayroll - Create Payroll Alternate with new payee', async ({ page }) => {
     // Payments → Transfer Center → Payroll
     // paymentMenu => Pay & Transfer (Left option)
-    
+
     await pages.AccountTransferPage.waitForMenu();
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.AccountTransferPage.paymentMenu,15_000);
 

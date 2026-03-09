@@ -5,8 +5,16 @@ import path from 'node:path';
 import { NavigatePages, PaymentsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
 import { chromium, Browser } from 'playwright';
+import { WebComponents } from '../../../lib/components';
+import { AccountTransferPage } from '../../../pages/IDEALX/PayTransfer/AccountTransferPage';
 
 let customBrowser: Browser;
+
+// create lib => components.ts object
+const webComponents = new WebComponents();
+
+// create lib => components.ts object
+const accountTransfer =new AccountTransferPage();
 
 // --- Load JSON test data ---
 const testDataPath = path.resolve(__dirname, '../../../data/VN_testData.json');
@@ -64,10 +72,12 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
     // Payments → Transfer Center → BulkPayment
     await pages.AccountTransferPage.waitForMenu();
     //await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    await pages.AccountTransferPage.paymentMenu.click();
+    //await pages.AccountTransferPage.paymentMenu.click();
+    await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.AccountTransferPage.paymentMenu,15_000);
 
     //Authentication Pop-up
-    await pages.AccountTransferPage.handleAuthIfPresent('1111');
+    //await pages.AccountTransferPage.handleAuthIfPresent("1111");
+    await webComponents.handleAuthIfPresent(AccountTransferPage.authDialog, AccountTransferPage.securityAccessCode, AccountTransferPage.authenticateButton);
 
      // await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
