@@ -1,3 +1,27 @@
+/**
+       * Author: LC5764725
+       * Created Date: 03/09/26
+       * This Class "tests/PayTransfer/SG_TelegraphicTransfer.spec.ts"
+       * Description: This class has seventeen test cases.
+       * 1) TC001_SG_TelegraphicTransfer - Create A TT Payment With New Payee
+       * 2) TC002_SG_TelegraphicTransfer - Create A TT Payment With ApprovalNow Pmchallenge
+       * 3) TC003_SG_TelegraphicTransfer - Create A TT Payment With ApprovalNow Mchallenge
+       * 4) TC004_SG_TelegraphicTransfer - Create A TT Payment With Save As Template
+       * 5) TC005_SG_TelegraphicTransfer - Create A TT Payment From Template
+       * 6) TC006_SG_TelegraphicTransfer - Create A TT With Save As Draft
+       * 7) TC007_SG_TelegraphicTransfer - Copy A TT Payment Via Transfer Center
+       * 8) TC008_SG_TelegraphicTransfer - Edit A TT Payment Via Transfer Center 
+       * 9) TC009_SG_TelegraphicTransfer - Reject A TT Payment Via Transfer Center
+       *10) TC010_SG_TelegraphicTransfer - Delete A TT Payment Via Transfer Center
+       *11) TC011_SG_TelegraphicTransfer - Create A TT Payment With Currency As SGD And Payee Bank Supports PARTIOR
+       *12) TC012_SG_TelegraphicTransfer - Approve A TT Payment For PARTIOR
+       *13) TC013_SG_TelegraphicTransfer - Edit a TT Payment with max amount 999999999.99 CNH
+       *14) TC014_SG_TelegraphicTransfer - Verify A TT Payment Via My Verify
+       *15) TC015_SG_TelegraphicTransfer - Approve A TT Payment Via Transfer Center
+       *16) TC016_SG_TelegraphicTransfer - Release A TT Payment Via My Release
+       *17) TC017_SG_TelegraphicTransfer - DOL User Create A TT Payment With Showing FX Savings Message Old UI
+       */
+
 // tests/SG_TelegraphicTransfer.spec.ts
 import { test, expect, Page } from '@playwright/test';
 import fs from 'node:fs';
