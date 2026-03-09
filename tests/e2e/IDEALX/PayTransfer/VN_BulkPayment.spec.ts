@@ -13,9 +13,6 @@ let customBrowser: Browser;
 // create lib => components.ts object
 const webComponents = new WebComponents();
 
-// create lib => components.ts object
-const accountTransfer =new AccountTransferPage();
-
 // --- Load JSON test data ---
 const testDataPath = path.resolve(__dirname, '../../../data/VN_testData.json');
 const testData = JSON.parse(fs.readFileSync(testDataPath, 'utf-8'));
@@ -70,18 +67,26 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
   // ─────────────────────────────────────────────────────────────────────────────
   test('Cannot create Bulk Payment with item amount > 500000000 VND', async ({ page }) => {
     // Payments → Transfer Center → BulkPayment
-    await pages.AccountTransferPage.waitForMenu();
+    //await pages.AccountTransferPage.waitForMenu();
+    //(Changed)
+    await webComponents.waitElementToBeVisibleCustomWait(pages.AccountTransferPage.paymentMenu, 60000);
+
     //await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    //await pages.AccountTransferPage.paymentMenu.click();
+    //await pages.AccountTransferPage.paymentMenu.click(); 
+    //(Changed)
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.AccountTransferPage.paymentMenu,15_000);
 
-    //Authentication Pop-up
+    //Authentication Pop-up (Changed)
     //await pages.AccountTransferPage.handleAuthIfPresent("1111");
-    await webComponents.handleAuthIfPresent(AccountTransferPage.authDialog, AccountTransferPage.securityAccessCode, AccountTransferPage.authenticateButton);
+    // (Changed)
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
 
      // await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
+
+    // (Changed)
     await pages.BulkPaymentPage.waitForBulkPaymentFormReady();
+    webComponents.waitForUXLoading([],page);
 
     // From Account
     await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.fromAccount);

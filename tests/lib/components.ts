@@ -25,15 +25,6 @@ export class WebComponents {
    * wait for Authenticate dialogue if present 
    * Created Date: 16/02/26
    */
-
-
-
-
-
-
-
-
-
   async handleAuthIfPresent(authDialog: Locator, securityAccessCode: Locator, authenticateButton: Locator) {
     
     const appears = await authDialog.waitFor({
@@ -48,17 +39,6 @@ export class WebComponents {
       await authDialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
     }
   }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -107,6 +87,18 @@ export class WebComponents {
 * @param timeout 
 */
   async waitElementToBeVisible(locator: Locator, timeout = 15_000) {
+    await expect(locator).toBeVisible({ timeout });
+    await expect(locator).toBeEnabled({ timeout });
+  }
+
+  /**
+    * Author: LC5741501
+    * Created Date: 09/03/26
+    * This method validates element is visible in UI or not
+    * @param locator 
+    * @param timeout 
+  */
+  async waitElementToBeVisibleCustomWait(locator: Locator, timeout?: number) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
   }
@@ -161,6 +153,31 @@ export class WebComponents {
 
     console.log(`Text found: ${text.trim()}`);
   }
+
+
+  /** Generic UX loading guard: wait for common spinners/overlays then network idle. */
+  async waitForUXLoading(extraSpinnerSelectors: string[] = [], page: Page) {
+    const spinnerSelectors = [
+      '//ng-busy/div',
+      '.ux-loading',
+      '.loading',
+      '.spinner',
+      '.mat-progress-spinner',
+      '.cdk-overlay-backdrop',
+      ...extraSpinnerSelectors,
+    ];
+    for (const sel of spinnerSelectors) {
+      const loc = sel.startsWith('/') ? page.locator(`xpath=${sel}`) : page.locator(sel);
+      try {
+        const first = loc.first();
+        if (await first.isVisible({ timeout: 400 }).catch(() => false)) {
+          await first.waitFor({ state: 'hidden', timeout: 15_000 });
+        }
+      } catch { /* ignore */ }
+    }
+    await page.waitForLoadState('networkidle').catch(() => {});
+  }
+
 
 
 
