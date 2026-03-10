@@ -20,6 +20,28 @@ export class WebComponents {
   }
 
 
+  /** 
+   * Author: LC5741501
+   * wait for Authenticate dialogue if present 
+   * Created Date: 16/02/26
+   */
+  async handleAuthIfPresent(authDialog: Locator, securityAccessCode: Locator, authenticateButton: Locator) {
+    
+    const appears = await authDialog.waitFor({
+      state: 'visible',
+      timeout: 60000
+    }).then(() => true).catch(() => false);
+    //console.log('Authentication dialog appears:', appears);
+    if (appears) {
+      await securityAccessCode.fill('1111');
+      await authenticateButton.click();
+      //console.log('Handled authentication dialog with code:', code);
+      await authDialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+    }
+  }
+
+
+
   /**
    * Author: LC5741501
    * Created Date: 16/02/26
@@ -70,14 +92,48 @@ export class WebComponents {
   }
 
   /**
+    * Author: LC5741501
+    * Created Date: 09/03/26
+    * This method validates element is visible in UI or not
+    * @param locator 
+    * @param timeout 
+  */
+  async waitElementToBeVisibleCustomWait(locator: any, timeout?: number) {
+    await expect(locator).toBeVisible({ timeout });
+    await expect(locator).toBeEnabled({ timeout });
+  }
+
+   /**
+    * Author: LC5741501
+    * Created Date: 09/03/26
+    * This method types the value provided through KeyBoard action
+    * @param page : Current page
+    * @param text : text to enter
+  */
+   async typeTextThroughKeyBoardAction(page: Page, text: string) {
+    await page.keyboard.type(text);
+  }
+
+    /**
+    * Author: LC5741501
+    * Created Date: 09/03/26
+    * This method types the value provided through KeyBoard action
+    * @param page : Current page
+    * @param text : text to enter
+  */
+    async pressGivenButtonThroughKeyBoardAction(page: Page, text: string) {
+      await page.keyboard.press(text);
+    }
+
+  /**
    * Author: LC5741501
    * Created Date: 16/02/26
    * This method compaires the UI vs Json value
    * @param locator : Ui object
-   * @param referenceForPayee : Json Value
+   * @param givenData : Json Value
    */
-  async compareUIVsJsonValue(locator: Locator, referenceForPayee: any,) {
-    expect(locator).toContainText(referenceForPayee);
+  async compareUIVsJsonValue(locator: any, givenData: any,) {
+    expect(locator).toContainText(givenData);
   }
 
   /**
@@ -119,12 +175,34 @@ export class WebComponents {
 
     console.log(`Text found: ${text.trim()}`);
   }
-  
-  
-  // utils/strings.ts
-  async stringIsNotNullOrBlank(s: string | null | undefined): Promise<boolean> {
-    return typeof s === 'string' && s.trim().length > 0;
+
+
+  /** 
+   * Author: LC5741501
+   * Created Date: 09/03/26
+   * Generic UX loading guard: wait for common spinners/overlays then network idle. */
+  async waitForUXLoading(extraSpinnerSelectors: string[] = [], page: Page) {
+    const spinnerSelectors = [
+      '//ng-busy/div',
+      '.ux-loading',
+      '.loading',
+      '.spinner',
+      '.mat-progress-spinner',
+      '.cdk-overlay-backdrop',
+      ...extraSpinnerSelectors,
+    ];
+    for (const sel of spinnerSelectors) {
+      const loc = sel.startsWith('/') ? page.locator(`xpath=${sel}`) : page.locator(sel);
+      try {
+        const first = loc.first();
+        if (await first.isVisible({ timeout: 400 }).catch(() => false)) {
+          await first.waitFor({ state: 'hidden', timeout: 15_000 });
+        }
+      } catch { /* ignore */ }
+    }
+    await page.waitForLoadState('networkidle').catch(() => {});
   }
+
 
 
 
