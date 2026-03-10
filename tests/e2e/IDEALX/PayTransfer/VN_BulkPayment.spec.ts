@@ -85,17 +85,31 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
     await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
 
     // (Changed)
-    await pages.BulkPaymentPage.waitForBulkPaymentFormReady();
-    webComponents.waitForUXLoading([],page);
+    //await pages.BulkPaymentPage.waitForBulkPaymentFormReady();
+    await webComponents.waitForUXLoading([],page);
 
     // From Account
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.fromAccount);
-    await page.keyboard.type(fromAccount);
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
+    //await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.fromAccount);
+    //await page.keyboard.type(fromAccount);
+    //await page.keyboard.press('ArrowDown');
+    //await page.keyboard.press('Enter');
+
+    // (Changed)
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.fromAccount);
+    await webComponents.typeTextThroughKeyBoardAction(page,fromAccount);
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page,'ArrowDown');
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page,'Enter');
 
     // Reusable helper for add new payee
-    const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+    //const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+      //name: testData.Payroll.newPayeeName,
+      //nickName: testData.Payroll.newPayeeNickName,
+      //bankId: payeeBankID,
+      //accountNumber: testData.Payroll.newPayeeAcctNumber,
+    //});
+
+    // Reusable helper for add new payee
+    const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayeeWithAllDetails({
       name: testData.Payroll.newPayeeName,
       nickName: testData.Payroll.newPayeeNickName,
       bankId: payeeBankID,
@@ -106,15 +120,26 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
     createdPayees.push({ nickName, accountNumber });
 
     // Amount > max (validates inline error + banner error after Next)
-    await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.amount, testData.BulkPayment.moreThanMaxAmountIx);
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.showOptionalDetails);
-    await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
+    //await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.amount, testData.BulkPayment.moreThanMaxAmountIx);
+    //await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.showOptionalDetails);
+    //await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
+
+    // (Changed)
+    await webComponents.enterTextarea(pages.BulkPaymentPage.amount, testData.BulkPayment.moreThanMaxAmountIx);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.showOptionalDetails);
+    await webComponents.enterTextarea(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
 
     // Inline error
-    await expect(pages.BulkPaymentPage.amountInlineError).toContainText(testData.BulkPayment.BulkamountErrorTip);
+    //await expect(pages.BulkPaymentPage.amountInlineError).toContainText(testData.BulkPayment.BulkamountErrorTip);
+
+    // (Changed)
+    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.amountInlineError, testData.BulkPayment.amountErrorTip);
 
     // Try Next → expect top-level/banner error
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.nextButton);
+    //await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.nextButton);
+    
+    // (Changed)
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.nextButton);
 
     // Generic banner error container
     const globalError = page.locator([
@@ -127,8 +152,12 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
       '.invalid-feedback'                // Common form feedback
     ].join(', '));
 
-    await expect(globalError).toBeVisible({ timeout: 30000 });
-    await expect(globalError).toContainText(testData.BulkPayment.errorMessage);
+    //await expect(globalError).toBeVisible({ timeout: 30000 });
+    //await expect(globalError).toContainText(testData.BulkPayment.errorMessage);
+
+    // (Changed)
+    await webComponents.waitElementToBeVisibleCustomWait(globalError, 30000);
+    await webComponents.compareUIVsJsonValue(globalError, testData.BulkPayment.errorMessage);
   });
 
   // ─────────────────────────────────────────────────────────────────────────────
