@@ -1,4 +1,13 @@
 // tests/IN_BulkCollection.spec.ts
+/**
+       * Author: LC5764724 / Chetan Chavan
+       * Created Date: 23/02/26
+       * This Class "tests/PayTransfer/IN_BulkCollection.spec.ts"
+       * Description: This class has two test cases.
+       * 1) TC001_INBulkCollection - Create a Bulk collection with new Payee
+       * 2) TC002_INBulkCollection - Edit a Bulk Collection via Transfer Center
+       */
+
 import { test, expect, Page } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -64,25 +73,26 @@ test.describe.serial('IN_Bulk Collection', () => {
   }
   });
 
-  test('TC001_INBulkCollection - Create a Bulk collection with new Payee', async ({page}, testInfo) => {
+  test('TC001_INBulkCollection - Verify creating a Bulk collection with new Payee', async ({page}, testInfo) => {
       
-    //Navigate to Payments menu
+    //Step 1: Navigate to Payments menu
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     
-    //Authentication Pop-up
+    //Step 2: Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
 
+    //Step 3: Open Bulk Collection form
     await pages.BulkCollectionPage.safeClick(pages.BulkCollectionPage.bulkCollection);
     await pages.BulkCollectionPage.waitForBulkCollectionFormReady();
 
-     // From account (type + Enter, works for most typeahead controls)
+    //Step 4: From account Selection
      await pages.BulkCollectionPage.safeClick(pages.BulkCollectionPage.fromAccount);
      await page.keyboard.type(fromAccount);
      await page.keyboard.press('ArrowDown');
      await page.keyboard.press('Enter');
      
-    // UCIC
+    //Step 5: UCIC code input
     await pages.BulkCollectionPage.ucicCode.fill(testData.BulkCollection.UCICCode);
 
     // Reusable helper for add new payee
@@ -94,14 +104,14 @@ test.describe.serial('IN_Bulk Collection', () => {
         MandateID: testData.BulkCollection.MandateID,
         });
 
-    // Register for cleanup
+    // Register for payee cleanup
     createdPayees.push({ name, accountNumber });
 
-    // Amount & reference
+    //Step 6: Enter Amount & reference details
     await pages.BulkCollectionPage.amount.fill(testData.BulkCollection.amount);
     await pages.BulkCollectionPage.payeeRef.fill(testData.BulkCollection.referenceForPayee);
 
-    // Optional details
+    //Step 7: Enter Optional details
     await pages.BulkCollectionPage.showOptionDetailPayee1.click();
     await pages.BulkCollectionPage.messageToPayer.click();
     await pages.BulkCollectionPage.emailId0.fill(testData.BulkCollection.emailIdO);
@@ -111,27 +121,24 @@ test.describe.serial('IN_Bulk Collection', () => {
     await pages.BulkCollectionPage.emailId4.fill(testData.BulkCollection.emailId4);
     await pages.BulkCollectionPage.message.fill(testData.BulkCollection.message);
 
-    // Next → Preview → Submit
+    //Step 8: Next → Preview → Submit
     await pages.BulkCollectionPage.nextButton.click();
     await pages.BulkCollectionPage.waitForPreviewPageReady();
     await pages.BulkCollectionPage.submitButton.click();
     await pages.BulkCollectionPage.waitForSubmittedPageReady();
 
-    // If you just want the full banner text:
+    //Step 9: Capture full banner text and Reference ID:
     const referenceText = await pages.BulkCollectionPage.getReferenceText();
-    //console.log('Captured reference text:', referenceText);
-    // If you want only the EBLV… token:
     reference = await pages.BulkCollectionPage.getReferenceID();
-    //console.log('Captured referenceID:', reference);
 
-    //Click on finished button
+    //Step 10: Click on finished button
     await pages.BulkCollectionPage.finishButton.click();   
 
-    // Find it again in Transfer Center by reference
+    //Step 11: Search reference on Transfer Center page
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.BulkCollectionPage.waitForViewPaymentPageReady();
 
-    // Validate fields on view page (added for IDXP-812)
+    //Step 12: Validate fields on view page
     await checkViewPageAllField({
       page,
       pages,
@@ -142,19 +149,17 @@ test.describe.serial('IN_Bulk Collection', () => {
     });
   });
 
-  test('TC001_INBulkCollection - Edit a Bulk Collection via Transfer Center', async ({page}, testInfo) => {
+  test('TC002_INBulkCollection - Verify edit a Bulk Collection via Transfer Center', async ({page}, testInfo) => {
        
-     // Navigate to Payments menu
+     //Step 1: Navigate to Payments menu
      await pages.AccountTransferPage.waitForMenu();
      await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     
-     //Authentication Pop-up
+     //Step 2: Authentication Pop-up
      await pages.AccountTransferPage.handleAuthIfPresent("1111")
     
-     //console.log('Reference for edit test:', reference);
-    // Open the view by reference (or search)
+     //Step 3: Open the view by reference (or search)
     if (reference.trim().length > 0) {
-      console.log('Opening by reference:', reference);
       await pages.TransferCentersPage.searchAndOpenByReference(reference);
     } else {
       await pages.TransferCentersPage.openViewPaymentViaSearch(
@@ -165,34 +170,32 @@ test.describe.serial('IN_Bulk Collection', () => {
 
     await pages.BulkCollectionPage.waitForViewPaymentPageReady();
 
-    // Edit flow
+    //Step 4: Edit transaction
     await pages.BulkCollectionPage.editButton.click();
     await pages.BulkCollectionPage.waitForBulkCollectionFormReady();
     await pages.BulkCollectionPage.amount.fill(testData.BulkCollection.editAmount);
     await pages.BulkCollectionPage.showOptionDetailPayee1.click();
     await pages.BulkCollectionPage.message.fill(testData.BulkCollection.messageEdit);
 
-    // Next → Preview → Submit
+    //Step 5: Next → Preview → Submit
     await pages.BulkCollectionPage.nextButton.click();
     await pages.BulkCollectionPage.waitForPreviewPageReady();
     await pages.BulkCollectionPage.submitButton.click();
     await pages.BulkCollectionPage.waitForSubmittedPageReady();
 
-    // New reference if changed
+     //Step 6: Capture full banner text and Reference ID:
     const rawText = (await pages.BulkCollectionPage.getReferenceText()) ?? '';
-    //console.log('Edited Reference:', rawText);
-      // If you want only the EBLV… token:
     referenceEdit = await pages.BulkCollectionPage.getReferenceID();
-    //console.log('Edited referenceID:', referenceEdit);
   
-      //Click on finished button
-      await pages.BulkCollectionPage.finishButton.click();  
+    //Step 7: Click on finished button
+    await pages.BulkCollectionPage.finishButton.click();  
 
-    // Reopen view page
+    //Step 8: Search reference on Transfer Center page
     await pages.AccountTransferPage.paymentMenu.click();
     await pages.TransferCentersPage.searchAndOpenByReference(referenceEdit);
     await pages.BulkCollectionPage.waitForViewPaymentPageReady();
 
+    //Step 9: Validate fields on view page
     if (referenceEdit === reference) {
       await checkViewPageAllField({
         page,
@@ -203,14 +206,14 @@ test.describe.serial('IN_Bulk Collection', () => {
         referenceEdit
       });
     } else {
-      // At least verify amount is present
-      await expect(pages.BulkCollectionPage.amountValue).not.toHaveText('');
+    //If reference changed after edit, at least assert amount updated in list/details view as a sanity check
+    await expect(pages.BulkCollectionPage.amountValue).not.toHaveText('');
     }
   });
 });
 
 /**
- * Converted from `checkViewPageAllField(isEdit=false)`
+ * Helper utility to assert all fields on the view page, used by both create and edit tests. 
  */
 async function checkViewPageAllField(args: {
   page: Page;

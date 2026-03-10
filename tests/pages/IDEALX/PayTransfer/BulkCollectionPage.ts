@@ -320,8 +320,9 @@ export class BulkCollectionPage {
 webComponents = new WebComponents();
   
   /**
-     * Add a new payee flow (reusable in all tests).
-     * Mirrors the exact steps you currently perform, including clipboard paste.
+     * Author: LC5764724 / Chetan Chavan
+     * Created Date: 23/02/26
+     * Description: Add new payee flow (reusable utility for VN).
      */
   async addNewPayee(input: NewPayeeInput): Promise<NewPayeeResult> {
     const { name, DDAReferenceNo, bankId, accountNumber } = input;
@@ -357,8 +358,7 @@ webComponents = new WebComponents();
       return { name, accountNumber };
     }
 
-         /** Delete Payee fnction */
-  
+  /** Delete Payee fnction */
   async openBeneficiariesTabIfPresent(): Promise<boolean> {
     const count = await this.beneficiaryTab.count();
     if (count === 0) return false;
@@ -366,7 +366,6 @@ webComponents = new WebComponents();
     return true;
   }
 
-  
 async filterBeneficiaries(query: string) {
   await this.safeFill(this.beneficiaryFilter, '');
   await this.safeFill(this.beneficiaryFilter, query);
@@ -386,10 +385,6 @@ async deletePayeeGlobal(confirm = true) {
       await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: 10000 });
       await this.beneficiaryDelDismissButton.click();
     }
-  
-
-  // Wait for disappearance of a success banner OR row removal if you can detect it.
-  // Fallback: brief pause to let UI settle.
   await this.page.waitForTimeout(800);
 }
 
