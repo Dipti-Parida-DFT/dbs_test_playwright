@@ -108,6 +108,7 @@ test.describe('HK_ManagementPayroll (Playwright using PaymentsPages)', () => {
 
     // Step 1: Payment from => Select account from "Account" dropdown
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.PayrollPage.fromAccount,15_000);
+    await page.keyboard.type(fromAccount);
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
