@@ -153,6 +153,15 @@ export class WebComponents {
 
   }
 
+    /**
+     * Author: LC5741501
+     * Created Date: 16/02/26
+     * @param s String value
+     * @returns : It returns type
+     */
+    async stringIsNotNullOrBlank(s: string | null | undefined): Promise<boolean> {
+      return typeof s === 'string' && s.trim().length > 0;
+    }
 
 
   /**
@@ -202,8 +211,6 @@ export class WebComponents {
     }
     await page.waitForLoadState('networkidle').catch(() => {});
   }
-
-
 
 
 
