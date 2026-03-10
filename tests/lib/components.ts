@@ -119,6 +119,12 @@ export class WebComponents {
 
     console.log(`Text found: ${text.trim()}`);
   }
+  
+  
+  // utils/strings.ts
+  async stringIsNotNullOrBlank(s: string | null | undefined): Promise<boolean> {
+    return typeof s === 'string' && s.trim().length > 0;
+  }
 
 
 

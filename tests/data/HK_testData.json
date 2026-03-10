@@ -2,7 +2,7 @@
    "BulkCollection": {
         "SIT": {
             "loginCompanyId": "SHKLT008",
-            "loginUserId": "DBSAUTOHK002",
+            "loginUserIdHKMP": "DBSAUTOHKBLKCN01",
             "fromAccount": "783700301"
         }
     },
@@ -74,5 +74,56 @@
         "Rejected": "Rejected",
         "Failed": "Failed",
         "Cancelled": "Cancelled"
+    },
+    "ManagePayroll": {
+        "SIT": {
+            "loginCompanyId": "SHKLT008",
+            "loginUserIdHKMP": "DBSAUTOHKBLKCN01",
+            "fromAccount": "781024341"
+        }
+    },
+    "ManagePayrollPayer1": {
+        "newPayeeName": "ManagePayrollPayer1_Name001",
+        "newPayeeNickName": "ManagePayrollPayer1_NickName001",
+        "payeeBankID": "ALLA",
+        "newPayeeAcctNumber": "10102345",
+        "amount" : "1.00",
+        "amountEdited" : "",
+        "transactionCode": "22SalaryCredit",
+        "purposeCode": "",
+        "referenceForPayee": "TestReferenceForPayee",
+        "particulars": "Particulars1",
+        "paymentDetails": "TestPaymentDetails",
+        "emailId0": "Email0@dbs.com",
+        "emailId1": "Email1@dbs.com",
+        "emailId2": "Email2@dbs.com",
+        "emailId3": "Email3@dbs.com",
+        "emailId4": "Email4@dbs.com",
+        "emailMessage": "TestEmailMessage",
+
+        "internalReferenceUserProvided": "",
+        "batchIdValueUserProvided": ""
+    },
+    "ManagePayrollPayee1ValidationData": {
+        "fromAccountValue1": "781024341 (HKD)",
+        "fromAccountValue2": "SNAME 7810243",
+        "paymentTypeValue": "Hong Kong Management Payroll",
+        "amountDeductedValue": "HKD 1.00",
+        "amountDeductedEditedValue": "",
+      
+
+        "paymentSummaryLabel":"Payment summary:",
+        "totalPayeesLabel":"Total payees:",
+        "totalPayeesValue": "1",
+        "totalAmountLabel": "Total amount",
+        "totalAmountValue": "(HKD): 1.00",
+        "totalAmountValueEdited": "",
+
+        "bankNameLabelValue": "ALLAHABAD BANK",
+        "bankSwiftBicLabelValue": "0256",
+
+        
+        "purposeCodeLabelValue": "",
+        "transactionCodeLabelValue": "22 - Salary Credit"
     }
 }
