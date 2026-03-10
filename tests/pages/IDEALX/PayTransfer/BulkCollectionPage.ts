@@ -135,7 +135,7 @@ export class BulkCollectionPage {
 
     this.showOptionDetails = page.locator('(//span[text()="Show optional details"])[2]');
     this.collectionDetailValue = page.locator('//*[@id="bulk-view-paymentDetails_0"]');
-    this.emailList = page.locator('//button[@name="submit"]');
+    this.emailList = page.locator('//div[@id="bulk-view-email_0"]');
 
     this.emailmessageValue = page.locator('//*[@id="bulk-view-message_0"]');
     this.emailId0Value = page.locator('(//*[@id="bulk-view-email_0"]//span)[1]');
