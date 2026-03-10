@@ -1,0 +1,30 @@
+{
+    "Announcement": {
+        "SIT": {
+            "loginCompanyId": "SPVNSSM1",
+            "loginUserId": "SPVNSSM1S01",
+            "fromAccount": "66670000322",
+            "payeeBankID": "ACB"
+        },
+        "HK": {
+            "orgId": "SG2BE11",
+            "userId": "DBSQADIP01",
+            "pin": "1234"
+        },
+        "HK-2": {
+            "orgId": "SG2BE11",
+            "userId": "DBSQADIP01",
+            "pin": "1234"
+        },
+        "IN": {
+            "orgId": "IN-TF10",
+            "userId": "IN10MKER03",
+            "pin": "1234"
+        },
+        "IN-2": {
+            "orgId": "IN-TF10",
+            "userId": "IN10MKER02",
+            "pin": "1234"
+        }
+    }
+}
