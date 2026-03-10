@@ -557,9 +557,15 @@ async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
       await navigator.clipboard.writeText(text);
     }, accountNumber);
 
-    await this.page.keyboard.press('Control+V');
-    await this.page.keyboard.press('Enter');
-    await this.page.keyboard.press('Tab');
+    //(Changed)
+    //await this.page.keyboard.press('Control+V');
+    //await this.page.keyboard.press('Enter');
+    //await this.page.keyboard.press('Tab');
+    //await this.newPayeeAccountNumber.blur();
+
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page,'Control+V');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page,'Enter');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page,'Tab');
     await this.newPayeeAccountNumber.blur();
 
     //Click : Add Payee button

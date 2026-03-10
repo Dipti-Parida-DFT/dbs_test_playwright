@@ -98,20 +98,42 @@ export class WebComponents {
     * @param locator 
     * @param timeout 
   */
-  async waitElementToBeVisibleCustomWait(locator: Locator, timeout?: number) {
+  async waitElementToBeVisibleCustomWait(locator: any, timeout?: number) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
   }
+
+   /**
+    * Author: LC5741501
+    * Created Date: 09/03/26
+    * This method types the value provided through KeyBoard action
+    * @param page : Current page
+    * @param text : text to enter
+  */
+   async typeTextThroughKeyBoardAction(page: Page, text: string) {
+    await page.keyboard.type(text);
+  }
+
+    /**
+    * Author: LC5741501
+    * Created Date: 09/03/26
+    * This method types the value provided through KeyBoard action
+    * @param page : Current page
+    * @param text : text to enter
+  */
+    async pressGivenButtonThroughKeyBoardAction(page: Page, text: string) {
+      await page.keyboard.press(text);
+    }
 
   /**
    * Author: LC5741501
    * Created Date: 16/02/26
    * This method compaires the UI vs Json value
    * @param locator : Ui object
-   * @param referenceForPayee : Json Value
+   * @param givenData : Json Value
    */
-  async compareUIVsJsonValue(locator: Locator, referenceForPayee: any,) {
-    expect(locator).toContainText(referenceForPayee);
+  async compareUIVsJsonValue(locator: any, givenData: any,) {
+    expect(locator).toContainText(givenData);
   }
 
   /**
@@ -155,7 +177,10 @@ export class WebComponents {
   }
 
 
-  /** Generic UX loading guard: wait for common spinners/overlays then network idle. */
+  /** 
+   * Author: LC5741501
+   * Created Date: 09/03/26
+   * Generic UX loading guard: wait for common spinners/overlays then network idle. */
   async waitForUXLoading(extraSpinnerSelectors: string[] = [], page: Page) {
     const spinnerSelectors = [
       '//ng-busy/div',
