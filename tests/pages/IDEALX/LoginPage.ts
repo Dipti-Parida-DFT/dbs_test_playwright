@@ -10,6 +10,7 @@ export class LoginPage {
   readonly pinInput: Locator;
   readonly loginButton: Locator;
   readonly postLoginIndicator: Locator;
+  readonly authenticate: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -19,10 +20,11 @@ export class LoginPage {
     this.loginButton = page.locator('button:has-text("Login"), button[type="submit"]');
     // Use a unique selector for the Pay & Transfer nav item
     this.postLoginIndicator = page.locator('#nav-item-navBBTopPaymentsLinkText');
+    this.authenticate = page.locator('//button[@type="button" and @class="btn btn__primary"]');
   }
 
   async goto() {
-    await this.page.goto('https://10.8.58.138:8443/iws/ssologin');
+    await this.page.goto('https://i3bku3uatqeweb01.qe.dragonflyft.com:1443/iws/ssologin');
     //await this.page.setViewportSize({ width: 1920, height: 1080 })
   }
 
@@ -45,4 +47,13 @@ export class LoginPage {
   async loginWithDefaultCredentials() {
     await this.login();
   }
+
+  async handleAnnouncementIfPresent() {
+    const acknowledgeBtn = this.authenticate;
+    if (await acknowledgeBtn.isVisible({ timeout: 20_000 }).catch(() => false)) {
+        await acknowledgeBtn.click();
+        await this.page.waitForLoadState('networkidle');
+    }
+}
+ 
 }
