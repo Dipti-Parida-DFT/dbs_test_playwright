@@ -214,6 +214,45 @@ export class WebComponents {
 
 
 
+  
+/**
+ * Returns true if the element is visible in the UI; otherwise false.
+ *
+ * - If `timeout` is provided, the helper will WAIT up to that time for the
+ *   element to become visible.
+ * - If no `timeout` is provided, it performs an immediate check.
+ *
+ * @param page    Playwright Page (used when a string selector is passed)
+ * @param target  A Locator or a selector string
+ * @param options Optional timeout (ms) to wait for visibility
+ */
+  async  isElementVisible(
+    page: Page,
+    target: Locator | string,
+    options?: { timeout?: number }
+  ): Promise<boolean> {
+  const locator: Locator = typeof target === 'string' ? page.locator(target) : target;
+
+  // If the caller wants to wait for visibility up to a timeout, use waitFor.
+  if (options?.timeout && options.timeout > 0) {
+    try {
+      await locator.waitFor({ state: 'visible', timeout: options.timeout });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  // Immediate check (no waiting). Note that isVisible() does not accept a timeout.
+  try {
+    return await locator.isVisible();
+  } catch {
+    return false;
+  }
+}
+
+
+
   async robustClickElement(target: Locator, opts?: { timeout?: number; state?: 'visible' | 'attached'; retries?: number }) {
     const timeout = opts?.timeout ?? this.defaultTimeout;
     const state = opts?.state ?? 'visible';

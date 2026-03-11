@@ -1,3 +1,13 @@
+      /*
+       * Author: LC5741501
+       * Created Date: 10/03/26
+       * This Class "tests/PayTransfer/ID_BulkPayment.spec.ts"
+       * Description: This class has three test cases.
+       * 1) TC001_HK_BulkCollection - Create a Bulk collection with new Payer
+       * 2) TC002_HK_BulkCollection - Create a Bulk collection with Trasanction code add 38 and 98
+       */
+
+
 // tests/e2e/IDEALX/PayTransfer/VN_BulkPayment.spec.ts
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
@@ -10,7 +20,7 @@ import { WebComponents } from '../../../lib/components';
 let customBrowser: Browser;
 
 // --- Load JSON test data ---
-const testDataPath = path.resolve(__dirname, '../../../data/VN_testData.json');
+const testDataPath = path.resolve(__dirname, '../../../data/ID_testData.json');
 const testData = JSON.parse(fs.readFileSync(testDataPath, 'utf-8'));
 const loginCompanyId = testData.BulkPayment.SIT.loginCompanyId;
 const loginUserId    = testData.BulkPayment.SIT.loginUserId;
@@ -24,7 +34,7 @@ test.describe.configure({
   retries: Number(process.env.CASE_RETRY_TIMES ?? 0),
 });
 
-test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
+test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
   let pages: PaymentsPages;
   // Track created payees per test
   type CreatedPayee = { nickName?: string; accountNumber?: string };
@@ -61,36 +71,25 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
     }
     });
 
-  //We should write Add New Payee, capture reference as helper methods to avoid code duplication
-  // ─────────────────────────────────────────────────────────────────────────────
-  test('Cannot create Bulk Payment with item amount > 500000000 VND', async ({ page }) => {
+  
+  // TC001_ID_BulkPayment
+  test('Verify payee is not able to create Bulk Payment with item amount greater than 1000000000 IDR', async ({ page }) => {
+    
     // Payments → Transfer Center → BulkPayment
-    //await pages.AccountTransferPage.waitForMenu();
-    //(Changed)
     await webComponents.waitElementToBeVisibleCustomWait(pages.AccountTransferPage.paymentMenu, 60000);
 
-    //await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    //await pages.AccountTransferPage.paymentMenu.click(); 
     //(Changed)
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.AccountTransferPage.paymentMenu,15_000);
 
     //Authentication Pop-up (Changed)
-    //await pages.AccountTransferPage.handleAuthIfPresent("1111");
-    // (Changed)
     await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
 
-     // await pages.TransferCentersPage.waitForTransferCenterReady();
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
+    // await pages.TransferCentersPage.waitForTransferCenterReady();
+    //await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.bulkPayment);
 
     // (Changed)
-    //await pages.BulkPaymentPage.waitForBulkPaymentFormReady();
     await webComponents.waitForUXLoading([],page);
-
-    // From Account
-    //await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.fromAccount);
-    //await page.keyboard.type(fromAccount);
-    //await page.keyboard.press('ArrowDown');
-    //await page.keyboard.press('Enter');
 
     // (Changed)
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.fromAccount);
@@ -99,187 +98,205 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
     await webComponents.pressGivenButtonThroughKeyBoardAction(page,'Enter');
 
     // Reusable helper for add new payee
-    //const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
-      //name: testData.Payroll.newPayeeName,
-      //nickName: testData.Payroll.newPayeeNickName,
-      //bankId: payeeBankID,
-      //accountNumber: testData.Payroll.newPayeeAcctNumber,
-    //});
-
-    // Reusable helper for add new payee
     const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayeeWithAllDetails({
-      name: testData.Payroll.newPayeeName,
-      nickName: testData.Payroll.newPayeeNickName,
+      name: testData.BulkPayment.newPayeeName,
+      nickName: testData.BulkPayment.newPayeeNickName,
       bankId: payeeBankID,
-      accountNumber: testData.Payroll.newPayeeAcctNumber,
+      accountNumber: testData.BulkPayment.newPayeeAcctNumber,
     });
 
     // Register for cleanup
     createdPayees.push({ nickName, accountNumber });
 
-    // Amount > max (validates inline error + banner error after Next)
-    //await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.amount, testData.BulkPayment.moreThanMaxAmountIx);
-    //await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.showOptionalDetails);
-    //await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
-
     // (Changed)
-    await webComponents.enterTextarea(pages.BulkPaymentPage.amount, testData.BulkPayment.moreThanMaxAmountIx);
+    await webComponents.enterTextarea(pages.BulkPaymentPage.amount, testData.BulkPayment.moreThanMaxAmountLimit);
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.showOptionalDetails);
     await webComponents.enterTextarea(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
-
-    // Inline error
-    //await expect(pages.BulkPaymentPage.amountInlineError).toContainText(testData.BulkPayment.BulkamountErrorTip);
 
     // (Changed)
     await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.amountInlineError, testData.BulkPayment.amountErrorTip);
 
     // Try Next → expect top-level/banner error
-    //await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.nextButton);
     
     // (Changed)
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.nextButton);
 
-    // Generic banner error container
-    const globalError = page.locator([
-      '.alert.alert-error',
-      '.error', '.error-message', '.form-error',
-      '.toast', '.toast-error',          // generic toasts
-      '.alert', '.alert-danger',         // Bootstrap-like
-      '.ant-message', '.ant-message-error', '.ant-notification-notice', // Ant Design
-      '.MuiAlert-root',                  // Material UI
-      '.invalid-feedback'                // Common form feedback
-    ].join(', '));
+    await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.errorOneOrMorefieldsNotBeenProperlyFilled, 30000);
+    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.errorOneOrMorefieldsNotBeenProperlyFilled, testData.BulkPayment.errorMessage);
+    
 
-    //await expect(globalError).toBeVisible({ timeout: 30000 });
-    //await expect(globalError).toContainText(testData.BulkPayment.errorMessage);
-
-    // (Changed)
-    await webComponents.waitElementToBeVisibleCustomWait(globalError, 30000);
-    await webComponents.compareUIVsJsonValue(globalError, testData.BulkPayment.errorMessage);
   });
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  test('Create Bulk Payment with item amount equal to 500000000 VND', async ({ page }) => {
 
+  // TC002_ID_BulkPayment
+  test('Verify payee is able to create Bulk Payment with item amount equal to 1000000000 IDR', async ({ page }) => {
+    
     // Payments → Transfer Center → BulkPayment
-    await pages.AccountTransferPage.waitForMenu();
-    //await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    await pages.AccountTransferPage.paymentMenu.click();
+    await webComponents.waitElementToBeVisibleCustomWait(pages.AccountTransferPage.paymentMenu, 60000);
 
-    //Authentication Pop-up
-    await pages.AccountTransferPage.handleAuthIfPresent('1111');
+    //(Changed)
+    await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.AccountTransferPage.paymentMenu,15_000);
 
-     // await pages.TransferCentersPage.waitForTransferCenterReady();
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
-    await pages.BulkPaymentPage.waitForBulkPaymentFormReady();
+    //Authentication Pop-up (Changed)
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
 
-    // From Account
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.fromAccount);
-    await page.keyboard.type(fromAccount);
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
+    // await pages.TransferCentersPage.waitForTransferCenterReady();
+    //await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.bulkPayment);
+
+    // (Changed)
+    await webComponents.waitForUXLoading([],page);
+
+    // (Changed)
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.fromAccount);
+    await webComponents.typeTextThroughKeyBoardAction(page,fromAccount);
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page,'ArrowDown');
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page,'Enter');
 
     // Reusable helper for add new payee
-    const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
-      name: testData.Payroll.newPayeeName,
-      nickName: testData.Payroll.newPayeeNickName,
+    const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayeeWithAllDetails({
+      name: testData.BulkPayment.newPayeeName,
+      nickName: testData.BulkPayment.newPayeeNickName,
       bankId: payeeBankID,
-      accountNumber: testData.Payroll.newPayeeAcctNumber,
+      accountNumber: testData.BulkPayment.newPayeeAcctNumber,
     });
 
     // Register for cleanup
     createdPayees.push({ nickName, accountNumber });
 
-    // Amount > max (validates inline error + banner error after Next)
-    await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.amount, testData.BulkPayment.maxAmountIx);
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.showOptionalDetails);
-    await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
+    // (Changed)
+    await webComponents.enterTextarea(pages.BulkPaymentPage.amount, testData.BulkPayment.maxAmount);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.showOptionalDetails);
+    await webComponents.enterTextarea(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
+   
+    // Click on Next button
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.nextButton);
+    //await pages.PayrollPage.waitForPreviewPageReady();
 
-    // Next → Preview → Submit
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.nextButton);
-    await pages.BulkPaymentPage.waitForPreviewPageReady();
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.submitButton);
-    await pages.BulkPaymentPage.waitForSubmittedPageReady();
+     // (Changed)
+     await webComponents.waitForUXLoading([],page);
+     await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.submitButton, 75000);
 
-    // Capture reference and verify
-      // If you just want the full banner text:
+    // Click on Submit button
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.submitButton);
+    //await pages.PayrollPage.waitForSubmittedPageReady();
+    // (Changed)
+    await webComponents.waitForUXLoading([],page);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.finishedButton, 75000);
+  
+
+    // It returns the full banner text
     const referenceText = await pages.BulkPaymentPage.getReferenceText();
     console.log('Captured reference text:', referenceText);
-    // If you want only the EBLV… token:
+    // It extracts the EBLV… token/Refrence no
     const reference = await pages.BulkPaymentPage.getReferenceID();
     console.log('Captured referenceID:', reference);
 
-    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    await pages.TransferCentersPage.waitForTransferCenterReady();
+    // Click on Finish button
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.finishedButton);
+    //await pages.PayrollPage.waitForPayAndTransferPageReady();
+    
+    // (Changed)
+    await webComponents.waitForUXLoading([],page);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.payroll, 75000);
+
+    // Search Reference No
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.BulkPaymentPage.waitForViewPaymentPageReady();
 
-    await expect(pages.BulkPaymentPage.fromAccountViewLabel).toContainText(fromAccount);
-    //await expect(pages.BulkPaymentPage.amountView).toContainText(testData.BulkPayment.maxAmountIx);
+    await webComponents.waitForUXLoading([],page);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.fromAccountViewLabel, 75000);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.hashValueLabel, 75000);
+
+    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.amountView, testData.BulkPayment.maxAmountValidation);
+
+
   });
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  test('Create Bulk Payment with Total amount > 500000000 IDR', async ({ page }) => {
-    await pages.AccountTransferPage.waitForMenu();
-    await pages.AccountTransferPage.paymentMenu.click({ force: true });
-    await pages.AccountTransferPage.handleAuthIfPresent('1111');
 
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
-    await pages.BulkPaymentPage.waitForBulkPaymentFormReady();
+  // TC003_ID_BulkPayment
+  test('Verify payee is able to create Bulk Payment with existing payee and new payee with item amount equal to 1000000000 IDR', async ({ page }) => {
+    
+    // Payments → Transfer Center → BulkPayment
+    await webComponents.waitElementToBeVisibleCustomWait(pages.AccountTransferPage.paymentMenu, 60000);
 
-   // From Account
-   await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.fromAccount);
-   await page.keyboard.type(fromAccount);
-   await page.keyboard.press('Enter');
+    //(Changed)
+    await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.AccountTransferPage.paymentMenu,15_000);
+
+    //Authentication Pop-up (Changed)
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
+
+    // await pages.TransferCentersPage.waitForTransferCenterReady();
+    //await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.bulkPayment);
+
+    // (Changed)
+    await webComponents.waitForUXLoading([],page);
+
+    // (Changed)
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.fromAccount);
+    await webComponents.typeTextThroughKeyBoardAction(page,fromAccount);
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page,'ArrowDown');
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page,'Enter');
 
     // Reusable helper for add new payee
-    const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
-    name: testData.Payroll.newPayeeName,
-    nickName: testData.Payroll.newPayeeNickName,
-    bankId: payeeBankID,
-    accountNumber: testData.Payroll.newPayeeAcctNumber,
+    const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayeeWithAllDetails({
+      name: testData.BulkPayment.newPayeeName,
+      nickName: testData.BulkPayment.newPayeeNickName,
+      bankId: payeeBankID,
+      accountNumber: testData.BulkPayment.newPayeeAcctNumber,
+    });
+
+    // Register for cleanup
+    createdPayees.push({ nickName, accountNumber });
+
+    // (Changed)
+    await webComponents.enterTextarea(pages.BulkPaymentPage.amount, testData.BulkPayment.maxAmount);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.showOptionalDetails);
+    await webComponents.enterTextarea(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
+   
+    // Click on Next button
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.nextButton);
+    //await pages.PayrollPage.waitForPreviewPageReady();
+
+     // (Changed)
+     await webComponents.waitForUXLoading([],page);
+     await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.submitButton, 75000);
+
+    // Click on Submit button
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.submitButton);
+    //await pages.PayrollPage.waitForSubmittedPageReady();
+    // (Changed)
+    await webComponents.waitForUXLoading([],page);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.finishedButton, 75000);
+  
+
+    // It returns the full banner text
+    const referenceText = await pages.BulkPaymentPage.getReferenceText();
+    console.log('Captured reference text:', referenceText);
+    // It extracts the EBLV… token/Refrence no
+    const reference = await pages.BulkPaymentPage.getReferenceID();
+    console.log('Captured referenceID:', reference);
+
+    // Click on Finish button
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.finishedButton);
+    //await pages.PayrollPage.waitForPayAndTransferPageReady();
+    
+    // (Changed)
+    await webComponents.waitForUXLoading([],page);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.payroll, 75000);
+
+    // Search Reference No
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await pages.BulkPaymentPage.waitForViewPaymentPageReady();
+
+    await webComponents.waitForUXLoading([],page);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.fromAccountViewLabel, 75000);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.hashValueLabel, 75000);
+
+    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.amountView, testData.BulkPayment.maxAmountValidation);
+
+
   });
 
-  // Register for cleanup
-  createdPayees.push({ nickName, accountNumber });
-
-   //Amount = max
-   await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.amount, testData.BulkPayment.maxAmountIx);
-   await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.showOptionalDetails);
-   await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
-
-
-    // Add existing payee to exceed total
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.existingPayeeTabIx);
-    await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.existingPayeeFilter, testData.BulkPayment.bulkExistingPayee);
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.addButton);
-
-    // Increase total again
-    await pages.BulkPaymentPage.amount.first().fill(testData.BulkPayment.maxAmountIx);
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.showOptionalDetails);
-    await pages.BulkPaymentPage.paymentDetailsTextarea.first().fill(testData.BulkPayment.paymentDetails);
-
-    // Next → Preview → Submit
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.nextButton);
-    await pages.BulkPaymentPage.waitForPreviewPageReady();
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.submitButton);
-    await pages.BulkPaymentPage.waitForSubmittedPageReady();
-
-    // Capture reference and verify
-      // If you just want the full banner text:
-      const referenceText = await pages.BulkPaymentPage.getReferenceText();
-      console.log('Captured reference text:', referenceText);
-      // If you want only the EBLV… token:
-      const reference = await pages.BulkPaymentPage.getReferenceID();
-      console.log('Captured referenceID:', reference);
-  
-      await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-      await pages.TransferCentersPage.waitForTransferCenterReady();
-      await pages.TransferCentersPage.searchAndOpenByReference(reference);
-      await pages.BulkPaymentPage.waitForViewPaymentPageReady();
-  
-      await expect(pages.BulkPaymentPage.fromAccountViewLabel).toContainText(fromAccount);
-    // Add a status assertion if you have a stable selector exposed on view page.
-    // await expect(pages.BulkPaymentPage.transactionStatusValue).toContainText('EXPECTED_STATUS');
-  });
 });

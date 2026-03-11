@@ -1,45 +1,24 @@
 {
     "BulkPayment": {
         "SIT": {
-            "loginCompanyId": "SPVNSSM1",
-            "loginUserId": "SPVNSSM1S01",
-            "fromAccount": "66670000322",
-            "payeeBankID": "ACB"
+            "loginCompanyId": "ID2BFE1",
+            "loginUserId": "DBSAUTOID001",
+            "fromAccount": "0301593814",
+            "payeeBankID": "DBS INDONESIA"
         },
-        "maxAmountIx": "500000000",
-        "moreThanMaxAmountIx": "500000001",
+        "maxAmount": "1000000000",
+        "maxAmountValidation": "1,000,000,000",
+        "moreThanMaxAmountLimit": "1000000001",
         "amountIx": "200000000",
-        "maxAmount": "500,000,000",
         "moreThanMaxAmount": "500,000,001",
         "amount": "200,000,000",
         "bulkExistingPayee": "AutoTest1",
-        "newPayeeName": "7888833222 Name",
-        "newPayeeNickName": "7888833222 Name",
-        "newPayeeAcctNumber": "7888833222",
+        "newPayeeName": "TestIDBulkPaymentName",
+        "newPayeeNickName": "TestIDBulkPaymentNickName",
+        "newPayeeAcctNumber": "AccNo7888833222",
         "paymentDetails": "paymentDetails",
         "amountErrorTip": "Amount is invalid.",
         "BulkamountErrorTip": "Amount format is invalid.",
-        "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
-    },
-    "Payroll": {
-        "SIT": {
-            "loginCompanyId": "SPVNSSM1",
-            "loginUserId": "SPVNSSM1S01",
-            "fromAccount": "66670000322",
-            "payeeBankID": "ACB"
-        },
-        "maxAmountIx": "500000000",
-        "moreThanMaxAmountIx": "500000001",
-        "amountIx": "200000000",
-        "maxAmount": "500,000,000",
-        "moreThanMaxAmount": "500,000,001",
-        "amount": "200,000,000",
-        "bulkExistingPayee": "AutoTest1",
-        "newPayeeName": "8888833222 Name",
-        "newPayeeNickName": "8888833222 Name",
-        "newPayeeAcctNumber": "8888833222",
-        "paymentDetails": "paymentDetails",
-        "amountErrorTip": "Amount is invalid.",
         "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
     },
     "status": {
@@ -57,8 +36,5 @@
         "Rejected": "Rejected",
         "Failed": "Failed",
         "Cancelled": "Cancelled"
-    },
-    "paymentType": {
-        "VN_Custom": "VN - Customs Payment"
     }
 }

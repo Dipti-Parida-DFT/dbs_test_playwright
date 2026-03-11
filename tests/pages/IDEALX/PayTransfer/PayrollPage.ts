@@ -93,6 +93,7 @@ export class PayrollPage {
     this.managePayrollAlternate = page.locator('xpath=//*[@id="icon__mgmt_payroll_alternate"]');
     this.payrollAlternate = page.locator('xpath=//*[@id="icon__payroll_payment_alternate"]');
     this.vnPayrollIcon = page.locator('xpath=//*[@class="menu-item__icon icon icon__payroll_payment"]');
+    this.continueBtn = page.locator('xpath=//*[@id="cognitive-continue"]');
 
     // Core fields
     this.fromAccount = page.locator('xpath=//p-auto-complete[@formcontrolname="fromAccount"]');
@@ -335,6 +336,7 @@ export class PayrollPage {
   readonly managePayrollAlternate: Locator;
   readonly payrollAlternate: Locator;
   readonly vnPayrollIcon: Locator;
+  readonly continueBtn: Locator;
 
   readonly fromAccount: Locator;
   readonly paymentPriorityRadioGroup: Locator;
@@ -602,21 +604,30 @@ async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
   const { name, nickName, bankId, accountNumber } = input;
 
     // Click : New Payee Tab
-    await this.newPayeeTab.click();
+    //await this.newPayeeTab.click();
+    await this.webComponents.clickWhenVisibleAndEnabled(this.newPayeeTab);
+
+    if(await this.webComponents.isElementVisible(this.page, this.continueBtn, { timeout: 15000 })){
+      this.webComponents.clickWhenVisibleAndEnabled(this.continueBtn);
+    }
 
     // Enter : Payee Name
     await this.webComponents.enterTextarea(this.newPayeeName, name);
-    await this.page.keyboard.press('Tab');
+    //await this.page.keyboard.press('Tab');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
     await this.newPayeeName.blur();
+    
 
     // Enter : Payee nickname
     await this.webComponents.enterTextarea(this.newPayeeNickName, nickName);
-    await this.page.keyboard.press('Tab');
+    //await this.page.keyboard.press('Tab');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
     await this.newPayeeNickName.blur();
 
     // Enter : Payee bank ID
     await this.webComponents.enterTextarea(this.payeeBankId, bankId);
-    await this.page.keyboard.press('Enter');
+    //await this.page.keyboard.press('Enter');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Enter');
     await this.payeeBankId.blur();
     await this.webComponents.clickWhenVisibleAndEnabled(this.findBankIDButton);
     await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 45000 });
@@ -629,9 +640,9 @@ async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
       await navigator.clipboard.writeText(text);
     }, accountNumber);
 
-    await this.page.keyboard.press('Control+V');
-    await this.page.keyboard.press('Enter');
-    await this.page.keyboard.press('Tab');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Control+V');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Enter');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
     await this.newPayeeAccountNumber.blur();
 
     //Click : Add Payee button
