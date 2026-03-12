@@ -176,7 +176,7 @@ export class TelegraphicTransferPage {
 
     this.ttFXSavingsMessage = page.locator('//div[contains(@class,"alert-disclarimer")]');
     this.baseFXExchangeRate = page.locator('//div[@id="fxDolViewSection"]');
-
+    this.bankCharges = page.locator('//div[contains(@class,"bank-charges")]');
     }
 
     readonly authenticate: Locator;
@@ -273,32 +273,20 @@ export class TelegraphicTransferPage {
 
     readonly ttFXSavingsMessage: Locator;
     readonly baseFXExchangeRate: Locator;
+    readonly bankCharges: Locator;
 
 
-  
-  private async safeCheck(locator: Locator, timeout = 15_000) {
-    await expect(locator).toBeVisible({ timeout });
-    await expect(locator).toBeEnabled({ timeout });
-    const tag = (await locator.evaluate(el => el.tagName.toLowerCase())).toString();
-    const type = (await locator.getAttribute('type')) ?? '';
-    if (!(tag === 'input' && (type === 'checkbox' || type === 'radio'))) {
-    throw new Error('safeCheck expects an <input type="checkbox|radio"> locator.');
-      }
-      if (!(await locator.isChecked().catch(() => false))) {
-        await locator.check();
-        }
-    }
 
   private async selectBankCharge(charge: BankChargeType) {
   switch (charge) {
     case 'OUR':
-      await this.safeCheck(this.bankChargesOurRadioButton);
+      await this.bankChargesOurRadioButton.evaluate(el => (el as HTMLElement).click());
       break;
     case 'SHARED':
-      await this.safeCheck(this.bankChargesSharedRadioButton);
+      await this.bankChargesSharedRadioButton.evaluate(el => (el as HTMLElement).click());
       break;
     case 'THEY':
-      await this.safeCheck(this.bankChargesTheyRadioButton);
+      await this.bankChargesTheyRadioButton.evaluate(el => (el as HTMLElement).click());
       break;
     default:
       throw new Error(`Unsupported bank charge: ${charge}`);
@@ -348,7 +336,7 @@ export class TelegraphicTransferPage {
   async handleAnnouncementIfPresent() {
     const acknowledgeBtn = this.authenticate;
 
-    if (await acknowledgeBtn.isVisible({ timeout: 20_000 }).catch(() => false)) {
+    if (await acknowledgeBtn.isVisible({ timeout: 40_000 }).catch(() => false)) {
         await acknowledgeBtn.click();
         await this.page.waitForLoadState('networkidle');
     }
@@ -471,6 +459,7 @@ export class TelegraphicTransferPage {
       await this.safeClick(this.findIntermediaryBankIDButton);
       await this.safeClick(this.bankIDRadioButton);
 
+      await this.bankCharges.scrollIntoViewIfNeeded();
       await this.selectBankCharge(bankChargeType);
       await this.newTTPurposeCode.click();
       

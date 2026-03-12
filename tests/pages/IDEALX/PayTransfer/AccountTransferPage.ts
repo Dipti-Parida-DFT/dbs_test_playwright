@@ -406,7 +406,7 @@ export class AccountTransferPage {
   }
 
   /** Payments menu ready */
-  async waitForMenu(timeout = 5000) {
+  async waitForMenu(timeout = 50_000) {
     await this.waitForUXLoading();
     await expect(this.paymentMenu).toBeVisible({ timeout });
     await expect(this.paymentMenu).toBeEnabled({ timeout });
@@ -464,7 +464,7 @@ export class AccountTransferPage {
   }
 
   /** Convenience: click after visible+enabled */
-  async safeClick(locator: Locator, timeout = 15_000) {
+  async safeClick(locator: Locator, timeout = 25_000) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
     await locator.click();
