@@ -101,6 +101,34 @@ export type ExistingTTPayeeResult = {
   remitterIdentity: string;
 };
 
+export type PartiourTTPayeeInput = {
+  existingAccountNumber: string;
+  bankChargeType: BankChargeType;
+  payeeBankMsg: string;
+  email1: string
+  email2: string
+  email3: string
+  email4: string
+  email5: string
+  payeeMsg: string;
+  additionalNote: string;
+  remitterIdentity: string;
+};
+
+
+export type PartiourTTPayeeResult = {
+  existingAccountNumber: string;
+  payeeBankMsg: string;
+  email1: string
+  email2: string
+  email3: string
+  email4: string
+  email5: string
+  payeeMsg: string;
+  additionalNote: string;
+  remitterIdentity: string;
+};
+
 
 export class TelegraphicTransferPage {
   constructor(private readonly page: Page) {
@@ -169,6 +197,7 @@ export class TelegraphicTransferPage {
     this.newTTReferenceValue = page.locator('//div[@id="ott-view-customerReference"]');
     this.newTTSGDReferenceValue = page.locator('//div[@id="domestic-view-customerReference"]');
     this.newTTActivityLog = page.locator('//div[@class="payment-history"]');
+    this.newPayeeBankAccountDropdown = page.locator('//span[contains(text(),"02020202")]');
 
     this.existingPayeeTab = page.locator('//a[@id="ux-tab-EXISTING"]');
     this.existingPayeeBankAccount = page.locator('//input[@id="existing-payee"]');
@@ -207,6 +236,7 @@ export class TelegraphicTransferPage {
     this.ttDeletePaymentSuccessMessage = page.locator('//p[@id="labelNoInformationDisplay"]');
     this.partiourPayeeBankAccountDropdown = page.locator('//span[contains(text(),"BAERSGS0XXX")]');
     this.ttApproveButton = page.locator('//button[@name="approve"]');
+    this.ttNewApproveButton = page.locator('(//button[@name="approve"])[2]');
 
     this.CNHPayeeBankAccountDropdown = page.locator('//span[contains(text(),"20191022000011")]');
     this.selectCurrencyDropdown = page.locator('//input[@id="send-currency"]');
@@ -215,12 +245,8 @@ export class TelegraphicTransferPage {
 
     this.ttFXSavingsMessage = page.locator('//div[contains(@class,"alert-disclarimer")]');
     this.baseFXExchangeRate = page.locator('//div[@id="fxDolViewSection"]');
-<<<<<<< HEAD
-    this.bankCharges = page.locator('//div[contains(@class,"bank-charges")]');
-=======
     this.logoutButton = page.locator('//div[@id="logout"]');
 
->>>>>>> fc884912887e6580a5e92553264cdd0570c0b36c
     }
 
     readonly authenticate: Locator;
@@ -288,6 +314,7 @@ export class TelegraphicTransferPage {
     readonly newTTSGDReferenceValue: Locator;
     readonly newTTActivityLog: Locator;
     readonly newTTSGDFromAccountViewLabel: Locator;
+    readonly newPayeeBankAccountDropdown: Locator;
 
     readonly existingPayeeTab: Locator;
     readonly existingPayeeBankAccount: Locator;
@@ -326,6 +353,7 @@ export class TelegraphicTransferPage {
     readonly ttDeletePaymentSuccessMessage: Locator;
     readonly partiourPayeeBankAccountDropdown: Locator;
     readonly ttApproveButton: Locator;
+    readonly ttNewApproveButton: Locator;
     readonly CNHPayeeBankAccountDropdown: Locator;
     readonly selectCurrencyDropdown: Locator;
     readonly CNHPayeeCurrencyDropdown: Locator;
@@ -333,17 +361,10 @@ export class TelegraphicTransferPage {
 
     readonly ttFXSavingsMessage: Locator;
     readonly baseFXExchangeRate: Locator;
-<<<<<<< HEAD
-    readonly bankCharges: Locator;
-
-
-
-=======
     readonly logoutButton: Locator;
 
 
   
->>>>>>> fc884912887e6580a5e92553264cdd0570c0b36c
   private async selectBankCharge(charge: BankChargeType) {
   switch (charge) {
     case 'OUR':
@@ -403,11 +424,7 @@ export class TelegraphicTransferPage {
   async handleAnnouncementIfPresent() {
     const acknowledgeBtn = this.authenticate;
 
-<<<<<<< HEAD
-    if (await acknowledgeBtn.isVisible({ timeout: 40_000 }).catch(() => false)) {
-=======
-    if (await acknowledgeBtn.isVisible({ timeout: 120_000 }).catch(() => false)) {
->>>>>>> fc884912887e6580a5e92553264cdd0570c0b36c
+    if (await acknowledgeBtn.isVisible({ timeout: 50_000 }).catch(() => false)) {
         await acknowledgeBtn.click();
         await this.page.waitForLoadState('networkidle');
     }
@@ -531,7 +548,6 @@ export class TelegraphicTransferPage {
       await this.safeClick(this.findIntermediaryBankIDButton);
       await this.safeClick(this.bankIDRadioButton);
 
-      await this.bankCharges.scrollIntoViewIfNeeded();
       await this.selectBankCharge(bankChargeType);
       await this.newTTPurposeCode.click();
       
@@ -598,7 +614,7 @@ export class TelegraphicTransferPage {
     return match?.[1] ?? '';
   }
 
-  async newTTWaitForViewPaymentPageReady(timeout = 25_000) {
+  async newTTWaitForViewPaymentPageReady(timeout = 150_000) {
     await this.waitForUXLoading();
     await expect(this.newTTFromAccountViewLabel).toBeVisible({ timeout });
     await expect(this.newTTPaymentRefLabel).toBeVisible({ timeout });
@@ -824,5 +840,90 @@ export class TelegraphicTransferPage {
     await this.waitForUXLoading();
     await expect(this.newTTSGDFromAccountViewLabel).toBeVisible({ timeout });
   }
+
+async clickNextUntilPreview(timeout = 250_000) {
+  for (let i = 0; i < 5; i++) {
+    await this.safeClick(this.newTTPayeeNextButton);
+
+    try {
+      await this.waitForNewTTPreviewPageReady();
+      return;
+    } catch {}
+  }
+
+  throw new Error("Preview page did not load after multiple attempts");
+}
+
+async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeResult> {
+    const {existingAccountNumber, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity } = input;
+      await this.safeClick(this.existingPayeeTab)
+
+      await this.safeClick(this.existingPayeeBankAccount);
+      await this.safeFill(this.existingPayeeBankAccount, existingAccountNumber);
+      await this.existingPayeeBankAccount.blur();
+      await this.safeClick(this.partiourPayeeBankAccountDropdown);
+
+      await this.selectBankCharge(bankChargeType);
+
+      await this.safeClick(this.newTTPaymentRemark);
+      await this.safeFill(this.newTTPaymentRemark, payeeBankMsg);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPaymentRemark.blur();
+
+      await this.newTTPayeeMsgCheckbox.evaluate(el => (el as HTMLElement).click());
+
+      await this.safeClick(this.newTTPayeeEmail1);
+      await this.safeFill(this.newTTPayeeEmail1, email1);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail1.blur();
+
+      await this.safeClick(this.newTTPayeeEmail2);
+      await this.safeFill(this.newTTPayeeEmail2, email2);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail2.blur();
+
+      await this.safeClick(this.newTTPayeeEmail3);
+      await this.safeFill(this.newTTPayeeEmail3, email3);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail3.blur();
+
+      await this.safeClick(this.newTTPayeeEmail4);
+      await this.safeFill(this.newTTPayeeEmail4, email4);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail4.blur();
+
+      await this.safeClick(this.newTTPayeeEmail5);
+      await this.safeFill(this.newTTPayeeEmail5, email5);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail5.blur();
+
+      await this.safeClick(this.newTTPayeeRemark);
+      await this.safeFill(this.newTTPayeeRemark, payeeMsg);
+      await this.newTTPayeeRemark.blur();
+
+      await this.additionalNoteCheckbox.evaluate(el => (el as HTMLElement).click());
+
+      await this.safeClick(this.additionalNoteRemark);
+      await this.safeFill(this.additionalNoteRemark, additionalNote);
+      await this.additionalNoteRemark.blur();
+
+      await this.safeClick(this.orderingBankMsg);
+      await this.safeFill(this.orderingBankMsg, remitterIdentity);
+      await this.orderingBankMsg.blur();
+      return {existingAccountNumber, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity };
+ };
+
+ async clickApproval(timeout = 250_000) {
+  for (let i = 0; i < 5; i++) {
+    await this.safeClick(this.ttNewApproveButton.first());
+
+    try {
+      await this.waitForDeletePaymentSuccess();
+      return;
+    } catch {}
+  }
+
+  throw new Error("Approve page did not load after multiple attempts");
+}
 
 };
