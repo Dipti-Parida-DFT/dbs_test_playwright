@@ -27,6 +27,15 @@ export class BulkPaymentPage {
     this.billerServiceID = page.locator('xpath=//multi-level-dropdown[@name="billerServiceID"]');
     this.bankCharge = page.locator('xpath=//dbs-radio-group[@formcontrolname="bankCharge"]');
     this.amount = page.locator('xpath=//input[@name="payeeAmount"]');
+    this.amountPayee1 = page.locator('(//input[@name="payeeAmount"])[1]');
+    
+    //Addded Locator fo Bulk Payment  Author: LC5741501   * Created Date: 11/03/26
+    this.payeeResidentStatus = page.locator('xpath=//span[text()="Payee Resident Status"]/parent::div/following-sibling::div//span[@id="fromAccount"]');
+    this.payeeResidentOptionNonResident = page.locator('xpath=//span[text()="Non-Resident"]');
+    this.payeeCategory = page.locator('xpath=//span[text()="Payee category"]/parent::div/following-sibling::div//span[@id="fromAccount"]');
+    this.payeeCategoryOptionEnterprise = page.locator('xpath=//span[text()="Enterprise"]');
+    this.earliestAvailableDateCheckbox = page.locator('xpath=//span[text()="Earliest Available Date "]');
+
     this.payeeRef = page.locator('xpath=//input[@name="payeeRef"]');
     this.payeeParticulars = page.locator('xpath=//input[@name="payeeParticulars"]');
     this.paymentDetailsTextarea = page.locator('xpath=//textarea[@name="payeeDetails"]');
@@ -117,6 +126,7 @@ export class BulkPaymentPage {
     // View Page
     this.hashValue = page.locator('xpath=//*[@id="bulk-view-hashValue"]');
     this.fromAccountViewLabel = page.locator('xpath=//*[@id="bulk-view-accountNum"]');
+    this.fromAccountNameViewLabel = page.locator('xpath=//*[@id="bulk-view-accountName"]');
     this.balanceValue = page.locator('xpath=//*[@id="bulk-view-acctBalance"]');
     this.paymentTypeValue = page.locator('xpath=//span[@id="bulk-view-paymentType"]');
     this.paymentTypeC3Value = page.locator('xpath=//dbs-bp-view-summary-section/div[5]/span[2]/span[2]');
@@ -152,6 +162,7 @@ export class BulkPaymentPage {
     this.transactionStatusValue = page.locator('xpath=//*[@id="bulk-view-status_0"]');
     this.payeeStatusValue = page.locator('xpath=//*[@id="bulk-view-pendingStatus_0"]');
     this.amountView = page.locator('xpath=//*[@id="bulk-view-amount_0"]');
+    this.amountViewPayee2 = page.locator('xpath=//*[@id="bulk-view-amount_1"]');
     this.mandateDetailsView = page.locator('xpath=//*[@id="bulk-view-mandateDetail_0"]');
     this.stockCodeView = page.locator('xpath=//*[@id="bulk-view-stockCode_0"]');
     this.passBookView = page.locator('xpath=//*[@id="bulk-view-passBook_0"]');
@@ -267,6 +278,12 @@ export class BulkPaymentPage {
   readonly billerServiceID: Locator;
   readonly bankCharge: Locator;
   readonly amount: Locator;
+  readonly amountPayee1: Locator;
+  readonly payeeResidentStatus: Locator;
+  readonly payeeResidentOptionNonResident: Locator;
+  readonly payeeCategory: Locator;
+  readonly payeeCategoryOptionEnterprise: Locator;
+  readonly earliestAvailableDateCheckbox: Locator;
   readonly payeeRef: Locator;
   readonly payeeParticulars: Locator;
   readonly paymentDetailsTextarea: Locator;
@@ -349,6 +366,7 @@ export class BulkPaymentPage {
 
   readonly hashValue: Locator;
   readonly fromAccountViewLabel: Locator;
+  readonly fromAccountNameViewLabel: Locator;
   readonly balanceValue: Locator;
   readonly paymentTypeValue: Locator;
   readonly paymentTypeC3Value: Locator;
@@ -383,6 +401,7 @@ export class BulkPaymentPage {
   readonly transactionStatusValue: Locator;
   readonly payeeStatusValue: Locator;
   readonly amountView: Locator;
+  readonly amountViewPayee2: Locator;
   readonly mandateDetailsView: Locator;
   readonly stockCodeView: Locator;
   readonly passBookView: Locator;

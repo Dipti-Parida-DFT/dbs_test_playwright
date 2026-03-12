@@ -72,8 +72,8 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
     });
 
   
-  // TC001_ID_BulkPayment
-  test('Verify payee is not able to create Bulk Payment with item amount greater than 1000000000 IDR', async ({ page }) => {
+  // TC001_ID_BulkPayment Objective : 
+  test('TC001_ID_BulkPayment - Verify payee is not able to create Bulk Payment with item amount greater than 1000000000 IDR', async ({ page }) => {
     
     // Payments → Transfer Center → BulkPayment
     await webComponents.waitElementToBeVisibleCustomWait(pages.AccountTransferPage.paymentMenu, 60000);
@@ -128,8 +128,8 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
   });
 
 
-  // TC002_ID_BulkPayment
-  test('Verify payee is able to create Bulk Payment with item amount equal to 1000000000 IDR', async ({ page }) => {
+  // TC002_ID_BulkPayment Objective : 
+  test('TC002_ID_BulkPayment - Verify payee is able to create Bulk Payment with item amount equal to 1000000000 IDR', async ({ page }) => {
     
     // Payments → Transfer Center → BulkPayment
     await webComponents.waitElementToBeVisibleCustomWait(pages.AccountTransferPage.paymentMenu, 60000);
@@ -169,6 +169,17 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.showOptionalDetails);
     await webComponents.enterTextarea(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
    
+    // Select: Payee Resident Status (Additional Steps)
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeResidentStatus);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeResidentOptionNonResident);
+
+    // Select: Payee category (Additional Steps)
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeCategory);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeCategoryOptionEnterprise);
+
+    // Step 3: Click Payment date : Earliest Available (Additional Steps)
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.earliestAvailableDateCheckbox);
+    
     // Click on Next button
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.nextButton);
     //await pages.PayrollPage.waitForPreviewPageReady();
@@ -184,7 +195,6 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
     await webComponents.waitForUXLoading([],page);
     await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.finishedButton, 75000);
   
-
     // It returns the full banner text
     const referenceText = await pages.BulkPaymentPage.getReferenceText();
     console.log('Captured reference text:', referenceText);
@@ -194,7 +204,7 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
 
     // Click on Finish button
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.finishedButton);
-    //await pages.PayrollPage.waitForPayAndTransferPageReady();
+    await pages.PayrollPage.waitForPayAndTransferPageReady();
     
     // (Changed)
     await webComponents.waitForUXLoading([],page);
@@ -205,17 +215,23 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
     await pages.BulkPaymentPage.waitForViewPaymentPageReady();
 
     await webComponents.waitForUXLoading([],page);
-    await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.fromAccountViewLabel, 75000);
-    await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.hashValueLabel, 75000);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.fromAccountViewLabel, 120000);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.hashValueLabel, 120000);
+
+    // Validate Bulk Payment From Account, From AccountName, Your Account Will be deducted and Amount.
 
     await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.amountView, testData.BulkPayment.maxAmountValidation);
-
+    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.fromAccountViewLabel, testData.BulkPayment.fromAccountViewLabel);
+    
+    // (Additional Validation)
+    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.fromAccountNameViewLabel, testData.BulkPayment.fromAccountNameViewLabel);
+    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.deductAmountView, testData.BulkPayment.deductedAmount);
 
   });
 
 
-  // TC003_ID_BulkPayment
-  test('Verify payee is able to create Bulk Payment with existing payee and new payee with item amount equal to 1000000000 IDR', async ({ page }) => {
+  // TC003_ID_BulkPayment Objective : 
+  test('TC003_ID_BulkPayment - Verify payee(existing and new Payee) is able to create Bulk Payment with item amount equal to 1000000000 IDR', async ({ page }) => {
     
     // Payments → Transfer Center → BulkPayment
     await webComponents.waitElementToBeVisibleCustomWait(pages.AccountTransferPage.paymentMenu, 60000);
@@ -251,12 +267,31 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
     createdPayees.push({ nickName, accountNumber });
 
     // (Changed)
-    await webComponents.enterTextarea(pages.BulkPaymentPage.amount, testData.BulkPayment.maxAmount);
+    await webComponents.enterTextarea(pages.BulkPaymentPage.amount, testData.BulkPayment.maxAmountPayee1);
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.showOptionalDetails);
     await webComponents.enterTextarea(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
    
+    // Select: Payee Resident Status (Additional Steps)
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeResidentStatus);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeResidentOptionNonResident);
+
+    // Select: Payee category (Additional Steps)
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeCategory);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeCategoryOptionEnterprise);
+
+    // Step 3: Click Payment date : Earliest Available (Additional Steps)
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.earliestAvailableDateCheckbox);
+    
+    // Add Existing Payee
+    await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.BulkPaymentPage.existingPayeeTabIx);
+    await webComponents.enterTextarea(pages.BulkPaymentPage.existingPayeeFilter, testData.BulkPayment.existingPayee);
+    await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.BulkPaymentPage.addButton);
+
+    // Add Existing Payer: Amount
+    await webComponents.enterTextarea(pages.BulkPaymentPage.amountPayee1, testData.BulkPayment.maxAmountPayee2);
+     
     // Click on Next button
-    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.nextButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.nextButton);
     //await pages.PayrollPage.waitForPreviewPageReady();
 
      // (Changed)
@@ -270,7 +305,6 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
     await webComponents.waitForUXLoading([],page);
     await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.finishedButton, 75000);
   
-
     // It returns the full banner text
     const referenceText = await pages.BulkPaymentPage.getReferenceText();
     console.log('Captured reference text:', referenceText);
@@ -280,7 +314,7 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
 
     // Click on Finish button
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.finishedButton);
-    //await pages.PayrollPage.waitForPayAndTransferPageReady();
+    await pages.PayrollPage.waitForPayAndTransferPageReady();
     
     // (Changed)
     await webComponents.waitForUXLoading([],page);
@@ -291,11 +325,18 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
     await pages.BulkPaymentPage.waitForViewPaymentPageReady();
 
     await webComponents.waitForUXLoading([],page);
-    await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.fromAccountViewLabel, 75000);
-    await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.hashValueLabel, 75000);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.fromAccountViewLabel, 120000);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.hashValueLabel, 120000);
 
-    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.amountView, testData.BulkPayment.maxAmountValidation);
+    // Validate Bulk Payment From Account, From AccountName, Your Account Will be deducted and Amount.
 
+    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.amountView, testData.BulkPayment.maxAmountValidationPayee2);
+    
+    // (Additional Validation)
+    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.amountViewPayee2, testData.BulkPayment.maxAmountValidationPayee1);
+    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.fromAccountViewLabel, testData.BulkPayment.fromAccountViewLabel);
+    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.fromAccountNameViewLabel, testData.BulkPayment.fromAccountNameViewLabel);
+    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.deductAmountView, testData.BulkPayment.deductedAmount);
 
   });
 

@@ -204,8 +204,8 @@ export class WebComponents {
       const loc = sel.startsWith('/') ? page.locator(`xpath=${sel}`) : page.locator(sel);
       try {
         const first = loc.first();
-        if (await first.isVisible({ timeout: 400 }).catch(() => false)) {
-          await first.waitFor({ state: 'hidden', timeout: 15_000 });
+        if (await first.isVisible({ timeout: 500 }).catch(() => false)) {
+          await first.waitFor({ state: 'hidden', timeout: 45_000 });
         }
       } catch { /* ignore */ }
     }
