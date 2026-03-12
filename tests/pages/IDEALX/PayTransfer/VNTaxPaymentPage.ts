@@ -34,8 +34,8 @@ export class VNTaxPaymentPage {
     this.outstandingAmount = page.locator('xpath=//label[normalize-space()="Outstanding amount"]/following::span[1]');
     this.amountToPayVND = page.locator('xpath=//label[normalize-space()="Amount to pay"]/following::input[1]');
     this.submitButton = page.locator('xpath=//button[@name="submit"]');
+    this.additionalInfoSection = page.locator('xpath=//div[@class="additional-info"]');
     this.approveNowCheckbox = page.locator('xpath=//*[@id="approveNow"]');
-
     this.getChallengeTextButton = page.locator('xpath=//button[@name="get-challenge"]');
     this.getChallengeSMSButton = page.locator('xpath=//button[@name="get-challenge"]');
     this.challengeResponse = page.locator('xpath=//input[@name="responseCode"]');
@@ -186,6 +186,7 @@ export class VNTaxPaymentPage {
   readonly outstandingAmount: Locator;
   readonly amountToPayVND: Locator;
   readonly submitButton: Locator;
+  readonly additionalInfoSection: Locator;
   readonly approveNowCheckbox: Locator;
   readonly getChallengeTextButton: Locator;
   readonly getChallengeSMSButton: Locator;

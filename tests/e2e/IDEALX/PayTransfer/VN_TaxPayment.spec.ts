@@ -621,6 +621,53 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
     await pages.VNTaxPaymentPage.cancelButton.click();
   });
 
+  test('TC010_VNTax - Verify newly added fields under Additional Information section for non-sequential tax', async ({ page }) => {
+    // Step 1: Click on Pay & Transfer menu
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+
+    //Step 2: Authentication Pop-up
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+   
+    //Step 3: Click on VN Tax Payment icon
+    try {
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    } catch {
+      // Fallback: move to the next page/slide, then click
+      await pages.VNTaxPaymentPage.secondDot.click();
+      await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    }
+
+    //Step 4: Select From account 
+    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.fromAccount);
+    await page.keyboard.type(fromAccount);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    
+    //Step 5: Click on Apply Taxes button
+    await pages.VNTaxPaymentPage.applyTaxes.click();
+
+    //Step 6: Select first record from non-sequential tax list
+    const selectButton = page.getByRole('button', { name: /\+\s*Select/i });
+    await selectButton.nth(0).click();
+
+    //Step 7: Verify for selected record additional information section gets displayed with new fields - Tax period, Tax type, Tax office
+    const additionalInfo = pages.VNTaxPaymentPage.additionalInfoSection;
+    await expect(additionalInfo).toBeVisible({ timeout: 10000 });
+
+    await expect(additionalInfo.getByText('Vehicle identification number', { exact: true })).toBeVisible();
+    await expect(additionalInfo.getByText('Vehicle number', { exact: true })).toBeVisible();
+    await expect(additionalInfo.getByText('Vehicle description', { exact: true })).toBeVisible();
+    await expect(additionalInfo.getByText('Property record number', { exact: true })).toBeVisible();
+    await expect(additionalInfo.getByText('Payment due date', { exact: true })).toBeVisible();
+
+    //Step 8: Click Cancel
+    await pages.VNTaxPaymentPage.cancelButton.click();
+  });
+
 });
 
 test.describe('VN_TaxPayment (Verify Error message when no Org Tax Code Present)', () => {
