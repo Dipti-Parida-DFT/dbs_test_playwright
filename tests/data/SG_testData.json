@@ -2,7 +2,7 @@
   "TelegraphicTransfer": {
     "loginCompanyId": "SG2BFE1",
     "loginUserId": "DBSAUTOSG01",
-    "loginUserIdAlt": "SG2BFE1S13",
+    "loginUserIdAlt": "DBSAUTOSG02",
     "verifyUserId": "SG2BFE1S01",
 
     "fromAccountNP": "02020202",
@@ -11,12 +11,18 @@
 
     "payeeBankID": "AOFMMYK0XXX",
 
-    "paymentCurrency": "USD",
+    "payeeBankIDSGD": "DBSSSGS0XXX",
+
+    "paymentCurrency": "SGD",
     "myrPaymentCcy": "MYR",
     "inrPaymentCcy": "INR",
 
     "amountA1": "10",
+<<<<<<< HEAD
     "amountA2": "4100",
+=======
+    "amountA2": "4500",
+>>>>>>> fc884912887e6580a5e92553264cdd0570c0b36c
     "maxCNHAmount": "999999999.99",
     "maxCNHAmountValue": "999,999,999,999.99",
     "amountV": "3,100",
@@ -56,6 +62,7 @@
     "intermediaryBankId": "AOFMMYK0XXX",
 
     "purposeCode": "04000",
+    "purposeCodeSGD": "GSTX - Goods & Services Tax",
     "bankMessage": "PaymentDetails",
 
     "emailId0": "Email0@dbs.com",
