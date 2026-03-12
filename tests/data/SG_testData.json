@@ -18,11 +18,8 @@
     "inrPaymentCcy": "INR",
 
     "amountA1": "10",
-<<<<<<< HEAD
-    "amountA2": "4100",
-=======
     "amountA2": "4500",
->>>>>>> fc884912887e6580a5e92553264cdd0570c0b36c
+    "amountA3": "8500",
     "maxCNHAmount": "999999999.99",
     "maxCNHAmountValue": "999,999,999,999.99",
     "amountV": "3,100",
