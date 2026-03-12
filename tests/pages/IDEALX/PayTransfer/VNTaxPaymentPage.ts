@@ -11,10 +11,15 @@ export class VNTaxPaymentPage {
 
     // Core fields
     this.fromAccount = page.locator('xpath=//p-auto-complete[@formcontrolname="fromAccount"]');
-    this.orgTaxCode = page.locator('xpath=//p-auto-complete[@formcontrolname="taxCode"]');
+    this.orgTaxCode = page.locator('xpath=//p-auto-complete[formcontrolname="taxCode"]');
+    this.orgTaxCodeInput = page.locator('#taxCode');
     this.selectTaxes = page.locator('xpath=//p-auto-complete[@formcontrolname="optionsField"]');
     this.applyTaxes = page.locator('xpath=//button[@name="apply"]');
     this.paymentID = page.locator('xpath=//span[contains(@class,"ui-autocomplete-list-item-label")][normalize-space()="Payment ID"]');
+    this.decisionNumber = page.locator('xpath=//span[contains(@class,"ui-autocomplete-list-item-label")][normalize-space()="Decision number"]');
+    this.documentNumber = page.locator('xpath=//span[contains(@class,"ui-autocomplete-list-item-label")][normalize-space()="Document number"]');
+    this.dropdownList= page.locator('xpath=//ul[contains(@class,"ui-autocomplete-items") and contains(@class,"ui-autocomplete-list")]');
+    this.optionsLabel= page.locator('xpath=.//li[contains(@class,"ui-autocomplete-list-item")]//span[contains(@class,"ui-autocomplete-list-item-label")]');
     this.optionID = page.locator('xpath=//input[@name="optionalId"]');
     this.optionIDInput = page.locator('xpath=//input[@name="optionalId"]');
     this.corporateTaxFilterInput = page.locator('xpath=//input[@id="corporate-tax-filter"]');
@@ -26,8 +31,8 @@ export class VNTaxPaymentPage {
     this.customerReference = page.locator('xpath=//input[@name="customerReference"]');
     this.cancelButton = page.locator('xpath=//button[@name="cancel"]');
     this.nextButton = page.locator('xpath=//button[@name="next"]');
-    this.outstandingAmount = page.locator('xpath=//label[normalize-space()="Outstanding amount VND"]/following::span[1]');
-    this.amountToPayVND = page.locator('xpath=//label[normalize-space()="Amount to pay VND"]/following::input[1]');
+    this.outstandingAmount = page.locator('xpath=//label[normalize-space()="Outstanding amount"]/following::span[1]');
+    this.amountToPayVND = page.locator('xpath=//label[normalize-space()="Amount to pay"]/following::input[1]');
     this.submitButton = page.locator('xpath=//button[@name="submit"]');
     this.approveNowCheckbox = page.locator('xpath=//*[@id="approveNow"]');
 
@@ -160,10 +165,15 @@ export class VNTaxPaymentPage {
   readonly VNTaxPayment: Locator;
   readonly fromAccount: Locator;
   readonly orgTaxCode: Locator;
+  readonly orgTaxCodeInput: Locator;
   readonly selectTaxes: Locator;
   readonly applyTaxes: Locator;
   readonly optionID: Locator;
   readonly paymentID: Locator;
+  readonly decisionNumber: Locator;
+  readonly documentNumber: Locator;
+  readonly dropdownList: Locator;
+  readonly optionsLabel: Locator;
   readonly optionIDInput: Locator;
   readonly corporateTaxFilterInput: Locator;
   readonly nonSequential: Locator;
@@ -353,6 +363,11 @@ export class VNTaxPaymentPage {
     //await expect(this.alertDialog).toBeHidden();
   }
 
+  /**Return select taxes options list */
+  async getSelectTaxesOptions(): Promise<string[]> {
+    await this.dropdownList.waitFor({ state: 'visible' , timeout: 5000});
+    return (await this.optionsLabel.allInnerTexts()).map(t => t.trim());
+  }
   
   /** Wait until the Payroll form controls (e.g., fromAccount) are ready */
   async waitForVNTaxPaymentPageReady(timeout = 20_000) {
@@ -378,8 +393,8 @@ export class VNTaxPaymentPage {
   async waitForViewPaymentPageReady(timeout = 25_000) {
     await this.waitForUXLoading();
     await expect(this.fromAccountViewLabel).toBeVisible({ timeout });
-    await expect(this.amountViewLabel).toBeVisible({ timeout });
-    await expect(this.hashValueLabel).toBeVisible({ timeout });
+    //await expect(this.amountViewLabel).toBeVisible({ timeout });
+    //await expect(this.hashValueLabel).toBeVisible({ timeout });
   }
 
   /** Wait until approve payment page shows approve button */

@@ -404,7 +404,7 @@ export class AccountTransferPage {
   }
 
   /** Payments menu ready */
-  async waitForMenu(timeout = 5000) {
+  async waitForMenu(timeout = 10_000) {
     await this.waitForUXLoading();
     await expect(this.paymentMenu).toBeVisible({ timeout });
     await expect(this.paymentMenu).toBeEnabled({ timeout });

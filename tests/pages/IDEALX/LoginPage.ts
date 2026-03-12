@@ -10,8 +10,8 @@ export class LoginPage {
   readonly pinInput: Locator;
   readonly loginButton: Locator;
   readonly postLoginIndicator: Locator;
-  readonly authenticate: Locator;
-  readonly acknowledgeChkBox: Locator;
+  readonly acknowledgeButton: Locator;
+  readonly doNotShowChkBox: Locator;
   readonly closeButton: Locator;
 
   constructor(page: Page) {
@@ -21,26 +21,45 @@ export class LoginPage {
     this.pinInput = page.locator('input[type="password"], input[placeholder*="PIN" i]');
     this.loginButton = page.locator('button:has-text("Login"), button[type="submit"]');
     //Handle Acknowledgement pop-up if it appears
-    this.authenticate = page.locator('//button[normalize-space()="I acknowledge"]');
-    this.acknowledgeChkBox = page.locator('//label[@for="checkbox"]');
+    this.acknowledgeButton = page.locator('//button[normalize-space()="I acknowledge"]');
+    this.doNotShowChkBox = page.locator('//label[@for="checkbox"]');
     this.closeButton = page.locator('button:has(svg)');
     // Use a unique selector for the Pay & Transfer nav item
     this.postLoginIndicator = page.locator('#nav-item-navBBTopPaymentsLinkText');
   }
 
   async handleAnnouncementIfPresent() {
-    const acknowledgeBtn = this.authenticate;
- 
-    if (await acknowledgeBtn.isVisible({ timeout: 20_000 }).catch(() => false)) {
-        await this.acknowledgeChkBox.check();
-        await acknowledgeBtn.click();
-        await this.page.waitForLoadState('networkidle');
-        await this.closeButton.click();
-    }
+  // Assumes you're already on the page where the dialog may appear
+  const footer = this.page.locator('.announcement-footer');
+
+  // Try to detect quickly; return if not present (optional)
+  const appeared = await footer.waitFor({ state: 'visible', timeout: 1200 })
+    .then(() => true, () => false);
+
+if (appeared) {
+  // Locators inside the footer
+  const doNotShowLabel = footer.locator('label[for="checkbox"]');
+  const doNotShowInput = footer.locator('#checkbox');
+  const acknowledgeBtn = footer.getByRole('button', { name: 'I acknowledge' });
+
+  // Ensure all are visible/actionable
+  await Promise.all([
+    doNotShowLabel.waitFor({ state: 'visible', timeout: 3000 }),
+    acknowledgeBtn.waitFor({ state: 'visible', timeout: 3000 }),
+  ]);
+
+  // Click the visible label to toggle the (possibly hidden) input
+  await doNotShowLabel.check({ force: true });
+  await acknowledgeBtn.click({ force: true });
+}else {
+  console.log('Announcement dialog not present, proceeding with login.');
+}
+
+
   }
 
   async goto() {
-    await this.page.goto('https://10.8.58.138:8443/iws/ssologin');
+    await this.page.goto('https://i3bku3uatqeweb01.qe.dragonflyft.com:1443/iws/ssologin');
   }
 
   async login(orgId?: string, userId?: string, pin?: string) {

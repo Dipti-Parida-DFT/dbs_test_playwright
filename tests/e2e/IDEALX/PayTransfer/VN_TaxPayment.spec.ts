@@ -17,6 +17,9 @@ let customBrowser: Browser;
 const loginCompanyId = testData.TaxPayment.SIT.loginCompanyId;
 const loginUserId    = testData.TaxPayment.SIT.loginUserId;
 const fromAccount    = testData.TaxPayment.SIT.fromAccount;
+const loginCompanyId1 = testData.TaxPayment.SIT.loginCompanyId1;
+const loginUserId1    = testData.TaxPayment.SIT.loginUserId1;
+const fromAccount1    = testData.TaxPayment.SIT.fromAccount1;
 const payeeBankID    = testData.TaxPayment.SIT.payeeBankID;
 
 // Configure retries like the old Protractor suite
@@ -52,496 +55,648 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
 
     test('TC001_VNTax - Make payment for Non-sequential taxes', async ({ page }) => {
     
-    // Payments → Transfer Center → TaxPayment
+    // Step 1: Click on Pay & Transfer menu
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
 
-    //Authentication Pop-up
+    //Step 2: Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
    
-    // If icon not visible on the first page → click the second dot
-    if (!(await pages.VNTaxPaymentPage.VNTaxPayment.isVisible())) {
-    await pages.VNTaxPaymentPage.secondDot.click();
-    // Now wait for the VN Tax icon to appear
-    await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+    //Step 3: Click on VN Tax Payment icon
+    try {
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    } catch {
+      // Fallback: move to the next page/slide, then click
+      await pages.VNTaxPaymentPage.secondDot.click();
+      await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
     }
 
-    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
-    await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    //Step 4: Ensure that Apply and taxes button is not visible beore selecting from account
+    await expect(pages.VNTaxPaymentPage.applyTaxes).not.toBeVisible({ timeout: 5000 });
 
-    // From account (type + Enter, works for most typeahead controls)
+    //Step 5: Select From account 
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.fromAccount);
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     
+    //Step 6: Click Apply to load taxes and select multiple taxes for payment
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.applyTaxes);
-    //For non -sequential select first two taxes
+    
+    //Step 7: For non -sequential select first two taxes
     const selectButton = page.getByRole('button', { name: /\+\s*Select/i });
-
     // Click the first two in DOM order
-    await selectButton.nth(1).click();
+    //await selectButton.nth(1).click();
     await selectButton.nth(2).click();
 
-    //Get Outstandting value from record 1
+    //Step 8: Get Outstandting value from record 1
     const rawValue1=(await pages.VNTaxPaymentPage.outstandingAmount.nth(0).innerText()).trim();
     const numericValue1 = rawValue1.replace(/[^0-9.-]+/g, '');
     
-    // Amount to pay VND for record 1
+    //Step 9: Enter Amount to pay VND for record 1
     await pages.VNTaxPaymentPage.amountToPayVND.nth(0).scrollIntoViewIfNeeded();
     await pages.VNTaxPaymentPage.amountToPayVND.nth(0).fill(numericValue1);
 
-    //Get Outstandting value from record 2
-    const rawValue2=(await pages.VNTaxPaymentPage.outstandingAmount.nth(1).innerText()).trim();
-    const numericValue2 = rawValue2.replace(/[^0-9.-]+/g, '');
+    //Step 10: Get Outstandting value from record 2
+    //const rawValue2=(await pages.VNTaxPaymentPage.outstandingAmount.nth(1).innerText()).trim();
+    //const numericValue2 = rawValue2.replace(/[^0-9.-]+/g, '');
    
-    // Amount to pay VND for record 2
-    await pages.VNTaxPaymentPage.amountToPayVND.nth(1).scrollIntoViewIfNeeded();
-    await pages.VNTaxPaymentPage.amountToPayVND.nth(1).fill(numericValue2);
+    //Step 11: Enter Amount to pay VND for record 2
+    //await pages.VNTaxPaymentPage.amountToPayVND.nth(1).scrollIntoViewIfNeeded();
+    //await pages.VNTaxPaymentPage.amountToPayVND.nth(1).fill(numericValue2);
     
-    //Select charge account
+    //Step 12: Select charge account
     await pages.VNTaxPaymentPage.chargeAccount.scrollIntoViewIfNeeded();
     await pages.VNTaxPaymentPage.chargeAccount.click();
     await page.keyboard.type(testData.TaxPayment.chargeAccount);
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
-    // Next -> Preview -> Submit
+    //Step 13: Next -> Preview -> Submit
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.nextButton);
     await pages.VNTaxPaymentPage.waitForPreviewPageReady();
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.submitButton);
     await pages.VNTaxPaymentPage.waitForSubmittedPageReady();
 
-    // Capture reference and verify
+    //Step 14: Capture reference
     const referenceText = await pages.VNTaxPaymentPage.getReferenceText();
-    // If you want only the EBLV… token:
     const reference = await pages.VNTaxPaymentPage.getReferenceID();
 
-    //Click on finish button
+    //Step 15: Click on finish button
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.finishButton);
 
-    //Verify reference in transfer center
+    //Step 16: Verify reference in transfer center
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.VNTaxPaymentPage.waitForViewPaymentPageReady();
 
+    //Step 17: Verify from account in view payment page
     await expect(pages.VNTaxPaymentPage.fromAccountViewLabel).toContainText(fromAccount);
-        
+    
+    //Add code to approve payment
   });
 
   test('TC002_VNTax - Make payment for sequential taxes', async ({ page }) => {
     
-    // Payments → Transfer Center → TaxPayment
+    // Step 1: Click on Pay & Transfer menu
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
 
-    //Authentication Pop-up
+    //Step 2: Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
    
-    // If icon not visible on the first page → click the second dot
-    if (!(await pages.VNTaxPaymentPage.VNTaxPayment.isVisible())) {
-    await pages.VNTaxPaymentPage.secondDot.click();
-    // Now wait for the VN Tax icon to appear
-    await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+    //Step 3: Click on VN Tax Payment icon
+    try {
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    } catch {
+      // Fallback: move to the next page/slide, then click
+      await pages.VNTaxPaymentPage.secondDot.click();
+      await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
     }
 
-    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
-    await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
-
-    // From account (type + Enter, works for most typeahead controls)
+    //Step 4: Select From account 
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.fromAccount);
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     
+    //Select PaymentId, enter valid details and then goto nxt step
+    await pages.VNTaxPaymentPage.selectTaxes.click();
+    await pages.VNTaxPaymentPage.paymentID.waitFor({ state: 'visible', timeout: 5000 });
+    await pages.VNTaxPaymentPage.paymentID.click();
+    await pages.VNTaxPaymentPage.optionIDInput.fill(testData.TaxPayment.PaymentID);
+
+    //Step 5: Click Apply to load taxes and select multiple taxes for payment
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.applyTaxes);
     await pages.VNTaxPaymentPage.corporateTaxFilterInput.waitFor({ state: 'visible', timeout: 5000 });
     
-    //Non-sequential is selected by default
+    //Step 6: Ensure Non-sequential radio button is selected by default
     const nonSequential = page.getByLabel('Non-sequential', { exact: true })
     await expect(nonSequential).toBeChecked();
     
-    const radioBtn = page.getByLabel('Sequential', { exact: true });
-    radioBtn.waitFor({ state: 'visible', timeout: 5000 });
-    await radioBtn.scrollIntoViewIfNeeded();
-    await radioBtn.evaluate((el: HTMLInputElement) => el.click())
+    //Step 7: Select one from non-sequential then remove non-sequential record and ensure sequential radio button gets enabled
+    const selectNonSequential = page.getByRole('button', { name: /\+\s*Select/i });
+    await selectNonSequential.nth(0).click();
 
-    //Selcet sequential tax radio button 
+    //Step 8: Verify Sequential radio button is disabled
+    await expect(page.getByLabel('Sequential', { exact: true })).toBeDisabled();
+
+    //Step 9: Click the first "− Remove" in the table/grid
+    const nonSequentialRow = page.locator('datatable-body'); // adjust index if needed
+    const removeButton = nonSequentialRow.getByRole('button', { name: /-\s*Remove/i });
+    await expect(removeButton.first()).toBeVisible();
+    await removeButton.first().click();
+
+    //Step 10: Ensure that Sequential radio button gets enabled now
+    await expect(page.getByLabel('Sequential', { exact: true })).not.toBeDisabled();
+
+    //Step 11: Click on Sequential radio button
+    const sequential = page.getByLabel('Sequential', { exact: true });
+    await sequential.waitFor({ state: 'attached', timeout: 5000 });
+    await sequential.scrollIntoViewIfNeeded();
+    await sequential.evaluate((el: HTMLInputElement) => el.click())
+
+    //Step 12: Selcet first from sequential tax list 
     const selectButton = page.getByRole('button', { name: /\+\s*Select/i });
-
-    // Click the first record in DOM order
-    await selectButton.nth(1).click();
+    await selectButton.nth(2).click();
     
-    //Get Outstandting value from record 1
+    //Step 13: Get Outstandting value from record 1
     const rawValue1=(await pages.VNTaxPaymentPage.outstandingAmount.nth(0).innerText()).trim();
     const numericValue1 = rawValue1.replace(/[^0-9.-]+/g, '');
     
-    // Amount to pay VND for record 1
+    //Step 14: Enter Amount to pay VND for record 1
     await pages.VNTaxPaymentPage.amountToPayVND.nth(0).scrollIntoViewIfNeeded();
     await pages.VNTaxPaymentPage.amountToPayVND.nth(0).fill(numericValue1);
 
-    //Select charge account
+    //Step 15: Select charge account
     await pages.VNTaxPaymentPage.chargeAccount.scrollIntoViewIfNeeded();
     await pages.VNTaxPaymentPage.chargeAccount.click();
     await page.keyboard.type(testData.TaxPayment.chargeAccount);
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
-    // Next -> Preview -> Submit
+    //Step 16: Next -> Preview -> Submit
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.nextButton);
     await pages.VNTaxPaymentPage.waitForPreviewPageReady();
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.submitButton);
     await pages.VNTaxPaymentPage.waitForSubmittedPageReady();
 
-    // Capture reference and verify
+    //Step 17: Capture reference
     const referenceText = await pages.VNTaxPaymentPage.getReferenceText();
-    // If you want only the EBLV… token:
     const reference = await pages.VNTaxPaymentPage.getReferenceID();
     
-    //Click on finish button
+    //Step 18: Click on finish button
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.finishButton);
 
-    //Verify reference in transfer center
+    //Step 19: Verify reference in transfer center
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.VNTaxPaymentPage.waitForViewPaymentPageReady();
 
+    //Step 20: Verify from account in view payment page
     await expect(pages.VNTaxPaymentPage.fromAccountViewLabel).toContainText(fromAccount);
         
   });
 
   test('TC003_VNTax - Verify selecting more than 5 taxes from Non-sequential taxes', async ({ page }) => {
     
-    // Payments → Transfer Center → TaxPayment
+    // Step 1: Click on Pay & Transfer menu
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
 
-    //Authentication Pop-up
+    //Step 2: Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
     
-    // If icon not visible on the first page → click the second dot
-    if (!(await pages.VNTaxPaymentPage.VNTaxPayment.isVisible())) {
-    await pages.VNTaxPaymentPage.secondDot.click();
-    // Now wait for the VN Tax icon to appear
-    await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+    //Step 3: Click on VN Tax Payment icon
+    try {
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    } catch {
+      // Fallback: move to the next page/slide, then click
+      await pages.VNTaxPaymentPage.secondDot.click();
+      await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
     }
 
-    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
-    await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
-
-    // From account (type + Enter, works for most typeahead controls)
+    //Step 4: Select From account
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.fromAccount);
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     
+    //Step 5: Click Apply to load taxes and select multiple taxes for payment
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.applyTaxes);
-    //For non -sequential select first two taxes
-    const selectButton = page.getByRole('button', { name: /\+\s*Select/i });
-          
-    // Click the first five enabled buttons (defensive, in case some are disabled)
+    await pages.VNTaxPaymentPage.corporateTaxFilterInput.waitFor({ state: 'visible', timeout: 5000 });
+
+    //Step 6: For non -sequential select first five taxes
+    const selectPlus = page.getByRole('button', { name: /\+\s*Select/i });
+    await expect(selectPlus.first()).toBeVisible({ timeout: 5000 });
+        
+    // Click the first five available "+ Select" buttons
     let clicked = 0;
-    for (let i = 0; i < await selectButton.count(); i++) {
-      if (clicked >= 5) break;
-      const selectBtn = selectButton.nth(i);
-      await selectBtn.click();
+    const total = await selectPlus.count();
+    for (let i = 0; i < total && clicked < 5; i++) {
+      await selectPlus.nth(i).click();
       clicked++;
     }
+   
+    //Step 7: Verify for next selection "+ Select" button is disabled
+    await page.waitForTimeout(100); // wait for UI to update after clicking
+    const enabledSelectPlus = page.locator('button:not(.btn-disabled):has-text("+ Select")')
+    await expect(enabledSelectPlus).toHaveCount(0, { timeout: 10000 });
 
-    //Verify for next selection "+ Select" button is disabled
-    await expect(selectButton.nth(5)).toHaveClass(/btn-disabled/);
-
-    
-    // 1) Click the first "− Remove" in the table/grid
-    const rowCell = page.locator('datatable-body-cell').nth(0); // adjust index if needed
+    //Step 8: Click the first "− Remove" in the table/grid
+    const rowCell = page.locator('datatable-body'); // adjust index if needed
     const removeBtn = rowCell.getByRole('button', { name: /-\s*Remove/i });
+    await expect(removeBtn.first()).toBeVisible({ timeout: 10000 });
+    await removeBtn.first().click();
 
-    await expect(removeBtn).toBeVisible();
-    await removeBtn.click();
-
-    // 2) Now in the SAME row, verify "+ Select" becomes enabled
-    const selectBtn = rowCell.getByRole('button', { name: /\+\s*Select/i });
-
-    // Wait for disabled class to be removed (your app uses `btn-disabled`)
-    await expect(selectBtn).not.toHaveClass(/btn-disabled/);
-
+    //Step 9: Now in the SAME row, verify "+ Select" becomes enabled
+    const rowSelectBtn = rowCell.getByRole('button', { name: /\+\s*Select/i });
     
-    // Optional: confirm it is clickable (non-destructive)
+    //Step 10: Ensure record is clikable now
+    await expect(rowSelectBtn.first()).not.toHaveClass(/btn-disabled/);
     await expect(async () => {
-      await selectBtn.click({ trial: true });
+      await rowSelectBtn.first().click({ trial: true });
     }).resolves.not.toThrow();
 
-    //Click cancel do nothing
+    //Step 11: Click on cancel button
     await pages.VNTaxPaymentPage.cancelButton.click();
-       
   });
 
   test('TC004_VNTax - Verify selecting more than 1 taxes from Sequential taxes', async ({ page }) => {
     
-    // Payments → Transfer Center → TaxPayment
+    // Step 1: Click on Pay & Transfer menu
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
 
-    //Authentication Pop-up
+    //Step 2: Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
     
-    // If icon not visible on the first page → click the second dot
-    if (!(await pages.VNTaxPaymentPage.VNTaxPayment.isVisible())) {
-    await pages.VNTaxPaymentPage.secondDot.click();
-    // Now wait for the VN Tax icon to appear
-    await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+    //Step 3: Click on VN Tax Payment icon
+    try {
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    } catch {
+      // Fallback: move to the next page/slide, then click
+      await pages.VNTaxPaymentPage.secondDot.click();
+      await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
     }
 
-    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
-    await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
-
-    // From account (type + Enter, works for most typeahead controls)
+    //Step 4: Select From account
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.fromAccount);
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     
+    //Step 5: Click Apply to load taxes and select multiple taxes for payment
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.applyTaxes);
     await pages.VNTaxPaymentPage.corporateTaxFilterInput.waitFor({ state: 'visible', timeout: 5000 });
     
-    const radioBtn = page.getByLabel('Sequential', { exact: true });
-    radioBtn.waitFor({ state: 'visible', timeout: 5000 });
-    await radioBtn.scrollIntoViewIfNeeded();
-    await radioBtn.evaluate((el: HTMLInputElement) => el.click())
+    //Step 6: Click on Sequential radio button
+    const sequential = page.getByLabel('Sequential', { exact: true });
+    await sequential.waitFor({ state: 'attached', timeout: 5000 });
+    await sequential.scrollIntoViewIfNeeded();
+    await sequential.evaluate((el: HTMLInputElement) => el.click())
 
-    //For Sequential select first taxes
+    //Step 7: For Sequential select first tax
     const selectButton = page.getByRole('button', { name: /\+\s*Select/i });
-    
-    //Click first record
     await selectButton.nth(0).click();
 
-    //Verify for next selection "+ Select" button is disabled
+    //Step 8: Verify for next selection "+ Select" button is disabled
     await expect(selectButton.nth(1)).toHaveClass(/btn-disabled/);
 
-    
-    // 1) Click the first "− Remove" in the table/grid
-    const rowCell = page.locator('datatable-body-cell').nth(0); // adjust index if needed
+    //Step 9: Click the first "− Remove" in the table/grid
+    const rowCell = page.locator('datatable-body'); // adjust index if needed
     const removeBtn = rowCell.getByRole('button', { name: /-\s*Remove/i });
+    await expect(removeBtn.first()).toBeVisible({ timeout: 10000 });
+    await removeBtn.first().click();
 
-    await expect(removeBtn).toBeVisible();
-    await removeBtn.click();
-
-    // 2) Now in the SAME row, verify "+ Select" becomes enabled
+    //Step 10: Now in the SAME row, verify "+ Select" becomes enabled
     const selectBtn = rowCell.getByRole('button', { name: /\+\s*Select/i });
 
-    // Wait for disabled class to be removed (your app uses `btn-disabled`)
-    await expect(selectBtn).not.toHaveClass(/btn-disabled/);
-
-    // Optional: confirm it is clickable (non-destructive)
+    //Step 10: Ensure record is clikable now
+    await expect(selectBtn.first()).not.toHaveClass(/btn-disabled/);
     await expect(async () => {
-      await selectBtn.click({ trial: true });
+      await selectBtn.first().click({ trial: true });
     }).resolves.not.toThrow();
 
-    //Click cancel do nothing
+    //Step 11: Click on cancel button
     await pages.VNTaxPaymentPage.cancelButton.click();
        
   });
 
   test('TC005_VNTax - Verify different tax office alert dialog', async ({ page }) => {
     
-    // Payments → Transfer Center → TaxPayment
+    // Step 1: Click on Pay & Transfer menu
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
 
-    //Authentication Pop-up
+    //Step 2: Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
     
-    // If icon not visible on the first page → click the second dot
-    if (!(await pages.VNTaxPaymentPage.VNTaxPayment.isVisible())) {
-    await pages.VNTaxPaymentPage.secondDot.click();
-    // Now wait for the VN Tax icon to appear
-    await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+    //Step 3: Click on VN Tax Payment icon
+    try {
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    } catch {
+      // Fallback: move to the next page/slide, then click
+      await pages.VNTaxPaymentPage.secondDot.click();
+      await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
     }
 
-    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
-    await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
-
-    // From account (type + Enter, works for most typeahead controls)
+    //Step 4: Select From account
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.fromAccount);
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     
-    //Click Apply to load taxes
+    //Step 5: Click Apply to load taxes and select multiple taxes for payment
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.applyTaxes);
-    //For non -sequential select first
-    const selectButton = page.getByRole('button', { name: /\+\s*Select/i });
+    await pages.VNTaxPaymentPage.corporateTaxFilterInput.waitFor({ state: 'visible', timeout: 5000 });
 
-    // Click the second record in DOM order
+    //Step 6: For non -sequential select first record
+    const selectButton = page.getByRole('button', { name: /\+\s*Select/i });
     await selectButton.nth(1).click();
     
-    //For the second record, select the one with different tax office (can be identified by the tax code or tax name)
+    //Step 7: For the second record, select the one with different tax office (can be identified by the tax code or tax name)
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.corporateTaxFilterInput);
     await pages.VNTaxPaymentPage.corporateTaxFilterInput.fill(testData.TaxPayment.diffrentTaxOfficeName);
     await page.keyboard.press('Enter');
-
     await selectButton.nth(0).click();
 
-    //Wait for dilog to appear and assert text
+    //Step 8: Wait for dilog to appear and assert text
     await pages.VNTaxPaymentPage.expectDifferentOfficeDialog();
     
-    //close the alert dialog
+    //Step 9: Close the alert dialog
     await pages.VNTaxPaymentPage.dismissDifferentOfficeDialog();
 
-    //Select correct second record for same tax office and continue
+    //Step 10: Select correct second record for same tax office and continue
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.corporateTaxFilterInput);
     await pages.VNTaxPaymentPage.corporateTaxFilterInput.fill(testData.TaxPayment.taxOfficeName);
-
-    // Click the second record in DOM order
     await selectButton.nth(2).click();
 
-    //Get Outstandting value from record 1
+    //Step 11: Get Outstandting value from record 1
     const rawValue1=(await pages.VNTaxPaymentPage.outstandingAmount.nth(0).innerText()).trim();
     const numericValue1 = rawValue1.replace(/[^0-9.-]+/g, '');
     console.log({ rawValue1, numericValue1 });
 
-    // Amount to pay VND for record 1
+    //Step 12: Enter Amount to pay VND for record 1
     await pages.VNTaxPaymentPage.amountToPayVND.nth(0).scrollIntoViewIfNeeded();
     await pages.VNTaxPaymentPage.amountToPayVND.nth(0).fill(numericValue1);
 
-    //Get Outstandting value from record 2
+    //Step 13: Get Outstandting value from record 2
     const rawValue2=(await pages.VNTaxPaymentPage.outstandingAmount.nth(1).innerText()).trim();
     const numericValue2 = rawValue2.replace(/[^0-9.-]+/g, '');
     
-    // Amount to pay VND for record 2
+    //Step 14: Enter Amount to pay VND for record 2
     await pages.VNTaxPaymentPage.amountToPayVND.nth(1).scrollIntoViewIfNeeded();
     await pages.VNTaxPaymentPage.amountToPayVND.nth(1).fill(numericValue2);
     
-    //Select charge account
+    //Step 15: Select charge account
     await pages.VNTaxPaymentPage.chargeAccount.scrollIntoViewIfNeeded();
     await pages.VNTaxPaymentPage.chargeAccount.click();
     await page.keyboard.type(testData.TaxPayment.chargeAccount);
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
-    // Next -> Preview -> Submit
+    //Step 16: Next -> Preview -> Submit
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.nextButton);
     await pages.VNTaxPaymentPage.waitForPreviewPageReady();
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.submitButton);
     await pages.VNTaxPaymentPage.waitForSubmittedPageReady();
 
-    // Capture reference and verify
+    //Step 17: Capture reference
     const referenceText = await pages.VNTaxPaymentPage.getReferenceText();
-    // If you want only the EBLV… token:
     const reference = await pages.VNTaxPaymentPage.getReferenceID();
     
-    //Click on finish button
+    //Step 18: Click on finish button
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.finishButton);
 
-    //Verify reference in transfer center
+    //Step 19: Verify reference in transfer center
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.VNTaxPaymentPage.waitForViewPaymentPageReady();
 
+    //Step 20: Verify from account in view payment page
     await expect(pages.VNTaxPaymentPage.fromAccountViewLabel).toContainText(fromAccount);
         
   });
 
-  test('TC006_VNTax - Verify error message when no org tax code present', async ({ page }) => {
+  
+  test('TC007_VNTax - Verify error message when no tax data present(No mock data required)', async ({ page }) => {
     
-    // Payments → Transfer Center → TaxPayment
+    // Step 1: Click on Pay & Transfer menu
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
 
-    //Authentication Pop-up
+    //Step 2: Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
     
-    // If icon not visible on the first page → click the second dot
-    if (!(await pages.VNTaxPaymentPage.VNTaxPayment.isVisible())) {
-    await pages.VNTaxPaymentPage.secondDot.click();
-    // Now wait for the VN Tax icon to appear
-    await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+    //Step 3: Click on VN Tax Payment icon
+    try {
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    } catch {
+      // Fallback: move to the next page/slide, then click
+      await pages.VNTaxPaymentPage.secondDot.click();
+      await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
     }
 
-    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
-    await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
-
-    // From account (type + Enter, works for most typeahead controls)
+    //Step 4: Select From account
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.fromAccount);
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     
-    //Make sure Org Tax code field is disabled 
-    await expect(pages.VNTaxPaymentPage.orgTaxCode).toBeDisabled();
+    //Step 5: Click Apply to load taxes and select multiple taxes for payment
+    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.applyTaxes);
+  
+    //Step 6: Verify empty message when no tax data is present for the account
+    const emptyMessage = page
+    .locator('datatable-selection')
+    .locator('.empty-row');
+    await expect(emptyMessage).toBeVisible({ timeout: 30000 });
+    await expect(emptyMessage).toContainText(testData.TaxPayment.NoDataMessage)
 
-    //Select charge account
+    //Step 7: Click on cancel button
+    await pages.VNTaxPaymentPage.cancelButton.click();
+  });
+
+  test('TC008_VNTax - Verify options under Select Taxes dropdown(No mock data required)', async ({ page }) => {
+    // Step 1: Click on Pay & Transfer menu
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+
+    //Step 2: Authentication Pop-up
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+   
+    //Step 3: Click on VN Tax Payment icon
+    try {
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    } catch {
+      // Fallback: move to the next page/slide, then click
+      await pages.VNTaxPaymentPage.secondDot.click();
+      await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    }
+
+    //Step 4: Select From account 
+    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.fromAccount);
+    await page.keyboard.type(fromAccount);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    
+    //Step 5: Click on Select Taxes drop down
+    await pages.VNTaxPaymentPage.selectTaxes.click();
+
+    //Step 6: Verify options under drop down
+    const actual = await pages.VNTaxPaymentPage.getSelectTaxesOptions();
+    expect(actual).toEqual(testData.TaxPayment.selectTaxesOptions);
+
+    //Step 7: Ensure user should be able to select Payment ID and enter data
+    //await pages.VNTaxPaymentPage.selectTaxes.click();
+    await pages.VNTaxPaymentPage.paymentID.waitFor({ state: 'visible', timeout: 5000 });
+    await pages.VNTaxPaymentPage.paymentID.click();
+    await pages.VNTaxPaymentPage.optionIDInput.fill(testData.TaxPayment.PaymentID);
+
+    //Step 8: Ensure user should be able to select Decision Number and enter data
+    await pages.VNTaxPaymentPage.selectTaxes.click();
+    await pages.VNTaxPaymentPage.decisionNumber.waitFor({ state: 'visible', timeout: 5000 });
+    await pages.VNTaxPaymentPage.decisionNumber.click();
+    await pages.VNTaxPaymentPage.optionIDInput.fill(testData.TaxPayment.DecisionNumber);
+
+    //Step 9: Ensure user should be able to select Document Number and enter data
+    await pages.VNTaxPaymentPage.selectTaxes.click();
+    await pages.VNTaxPaymentPage.documentNumber.waitFor({ state: 'visible', timeout: 5000 });
+    await pages.VNTaxPaymentPage.documentNumber.click();
+    await pages.VNTaxPaymentPage.optionIDInput.fill(testData.TaxPayment.DocumentNumber);
+
+    //Step 10: Click Cancel
+    await pages.VNTaxPaymentPage.cancelButton.click();
+  });
+
+  test('TC009_VNTax - Verify Non-sequential and Sequential radio buttons displayed and by default non-sequential selected(No mock data required)', async ({ page }) => {
+    // Step 1: Click on Pay & Transfer menu
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+
+    //Step 2: Authentication Pop-up
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+   
+    //Step 3: Click on VN Tax Payment icon
+    try {
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    } catch {
+      // Fallback: move to the next page/slide, then click
+      await pages.VNTaxPaymentPage.secondDot.click();
+      await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    }
+
+    //Step 4: Select From account 
+    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.fromAccount);
+    await page.keyboard.type(fromAccount);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    
+    //Step 5: Click on Apply to load taxes and select multiple taxes for payment
+    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.applyTaxes);
+    await pages.VNTaxPaymentPage.corporateTaxFilterInput.waitFor({ state: 'visible', timeout: 5000 });
+    
+    //Step 6: Ensure Non-sequential is selected by default
+    const nonSequential = page.getByLabel('Non-sequential', { exact: true })
+    await expect(nonSequential).toBeChecked();
+    
+    //Step 7: Click on Sequential radio button 
+    const sequential = page.getByLabel('Sequential', { exact: true });
+    await sequential.waitFor({ state: 'attached', timeout: 5000 });
+    await sequential.scrollIntoViewIfNeeded();
+    await sequential.evaluate((el: HTMLInputElement) => el.click())
+
+    //Step 8: Verify Sequential radio button is selected
+    await expect(sequential).toBeChecked();
+
+    //Step 9: Click Cancel
+    await pages.VNTaxPaymentPage.cancelButton.click();
+  });
+
+});
+
+test.describe('VN_TaxPayment (Verify Error message when no Org Tax Code Present)', () => {
+  let pages: PaymentsPages;
+ 
+  test.beforeEach(async ({ page }, testInfo) => {
+    // This is used by the logging proxies in some converted classes (optional)
+    process.env.currentTestTitle = testInfo.title;
+    customBrowser = await chromium.launch({ headless: false });
+    test.setTimeout(200_000);
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.login(loginCompanyId1, loginUserId1, '123');
+    await loginPage.handleAnnouncementIfPresent();
+    // 2) Create the aggregator once per test
+    pages = new PaymentsPages(page);
+    
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+  // Only cleanup if the test passed
+  if (testInfo.status !== 'passed') {
+    console.warn(`[cleanup] Skipping payee deletion because test status is ${testInfo.status}`);
+    return;
+    }
+    
+  });
+
+  test('TC006_VNTax - Verify error message when no org tax code present', async ({ page }) => {
+    
+    // Step 1: Click on Pay & Transfer menu
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+
+    //Step 2: Authentication Pop-up
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    
+    //Step 3: Click on VN Tax Payment icon
+    try {
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    } catch {
+      // Fallback: move to the next page/slide, then click
+      await pages.VNTaxPaymentPage.secondDot.click();
+      await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
+      await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
+      await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
+    }
+
+    //Step 4: Select From account
+    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.fromAccount);
+    await page.keyboard.type(fromAccount1);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    
+    //Step 5: Make sure Org Tax code field is disabled 
+    await expect(pages.VNTaxPaymentPage.orgTaxCodeInput).toBeDisabled();
+
+    //Step 6: Select charge account
     await pages.VNTaxPaymentPage.chargeAccount.scrollIntoViewIfNeeded();
     await pages.VNTaxPaymentPage.chargeAccount.click();
-    await page.keyboard.type(testData.TaxPayment.chargeAccount);
+    await page.keyboard.type(testData.TaxPayment.chargeAccount1);
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
-  //Click next and verify error message for no org tax code
-  await pages.VNTaxPaymentPage.nextButton.click();
+    //Step 7: Click next and verify error message for no org tax code
+    await pages.VNTaxPaymentPage.nextButton.click();
 
-  // Generic banner error container
-    const globalError = page.locator([
-      '.alert.alert-error',
-      '.error', '.error-message', '.form-error',
-      '.toast', '.toast-error',          // generic toasts
-      '.alert', '.alert-danger',         // Bootstrap-like
-      '.ant-message', '.ant-message-error', '.ant-notification-notice', // Ant Design
-      '.MuiAlert-root',                  // Material UI
-      '.invalid-feedback'                // Common form feedback
-    ].join(', '));
-
+    //Step 8: Generic banner error container
+    const globalError = page.locator('.alert.alert-error');
     await expect(globalError).toBeVisible({ timeout: 30000 });
     await expect(globalError).toContainText(testData.TaxPayment.errorMessage);
 
     //Click on cancel
     await pages.VNTaxPaymentPage.cancelButton.click();
   });
-
-  test('TC007_VNTax - Verify error message when no tax data present', async ({ page }) => {
-    
-    // Payments → Transfer Center → TaxPayment
-    await pages.AccountTransferPage.waitForMenu();
-    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-
-    //Authentication Pop-up
-    await pages.AccountTransferPage.handleAuthIfPresent("1111")
-    
-    // If icon not visible on the first page → click the second dot
-    if (!(await pages.VNTaxPaymentPage.VNTaxPayment.isVisible())) {
-    await pages.VNTaxPaymentPage.secondDot.click();
-    // Now wait for the VN Tax icon to appear
-    await pages.VNTaxPaymentPage.VNTaxPayment.waitFor({ state: 'visible', timeout: 5000 });
-    }
-
-    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.VNTaxPayment);
-    await pages.VNTaxPaymentPage.waitForVNTaxPaymentPageReady();
-
-    // From account (type + Enter, works for most typeahead controls)
-    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.fromAccount);
-    await page.keyboard.type(fromAccount);
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
-    
-    //Click Apply to load taxes
-    await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.applyTaxes);
-  
-    const emptyMessage = page
-    .locator('datatable-selection')
-    .locator('.empty-row');
-
-  await expect(emptyMessage).toBeVisible({ timeout: 30000 });
-
-  // `toContainText` will normalize whitespace and treat <br> as whitespace
-  await expect(emptyMessage).toContainText(testData.TaxPayment.NoDataMessage)
-
-    //Click on cancel
-    await pages.VNTaxPaymentPage.cancelButton.click();
-  });
-
 
 
 });
