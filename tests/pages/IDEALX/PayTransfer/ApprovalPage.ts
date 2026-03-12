@@ -37,6 +37,12 @@ export class ApprovalPage {
     await locator.click();
   }
 
+  async safeClick(locator: Locator, timeout = 150_000) {
+    await expect(locator).toBeVisible({ timeout });
+    await expect(locator).toBeEnabled({ timeout });
+    await locator.click();
+  }
+
    async waitForUXLoading(extraSpinnerSelectors: string[] = []) {
     const spinnerSelectors = [
       '.ux-loading',
@@ -69,21 +75,21 @@ export class ApprovalPage {
   }
 
   async searchVerifyAndOpenByReference(reference: string) {
-    await this.waitForVerifyCenterReady();
     await this.safeFill(this.approvalVerifySearch, reference);
-    await this.waitForVerifyCenterReady();
-    await this.approveVerifyCheckbox.evaluate(el => (el as HTMLElement).click());
+    await this.page.waitForTimeout(5000); // Wait for search results to update
+    await this.safeFill(this.approvalVerifySearch, reference);
+    await this.approveVerifyCheckbox.first().evaluate(el => (el as HTMLElement).click());
     await expect(this.approveVerifyCheckBalance).toBeVisible({ timeout: 20_000 });
-    await this.saferClick(this.approveVerifyButton);
-    await this.saferClick(this.approveVerifySubmitButton);
-    await this.saferClick(this.approveVerifyFinishButton);
+    await this.safeClick(this.approveVerifyButton);
+    await this.safeClick(this.approveVerifySubmitButton);
+    await this.safeClick(this.approveVerifyFinishButton);
   }
 
-   async searchReleaseAndOpenByReference(reference: string) {
-    await this.waitForVerifyCenterReady();
+  async searchReleaseAndOpenByReference(reference: string) {
     await this.safeFill(this.approvalVerifySearch, reference);
-    await this.waitForVerifyCenterReady();
-    await this.approveVerifyCheckbox.evaluate(el => (el as HTMLElement).click());
+    await this.page.waitForTimeout(5000);
+    await this.safeFill(this.approvalVerifySearch, reference);
+    await this.approveVerifyCheckbox.first().evaluate(el => (el as HTMLElement).click());
     await expect(this.approveVerifyCheckBalance).toBeVisible({ timeout: 20_000 });
     await this.saferClick(this.approveReleaseButton);
     await this.saferClick(this.approveReleaseSubmitButton);
