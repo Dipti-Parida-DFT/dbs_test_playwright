@@ -157,9 +157,8 @@ export class PayrollPage {
     this.addNewPayeeButton = page.locator('xpath=//*[@name="add-payee"]');
     this.payeeBankId = page.locator('xpath=//*[@id="bulk-newPayee-bankId"]');
     this.findBankIDButton=page.locator('xpath=//*[@id="new-payee-bank-id-button"]');
-    //this.payeeBankSearchResults = page.locator('xpath=//*[@class="search-result-container"]');
     this.payeeBankSearchResults = page.locator('xpath=//table[@class="swift-results ng-star-inserted"]');
-    //this.payeeBankSearchResults = page.locator('xpath=//table[@class="swift-results ng-star-inserted"]/tr/td/label');
+    //this.payeeBankSearchResults = page.locator('xpath=//table[@class="swift-results ng-star-inserted"]/tr/td/label//input');
     this.enterBankDetailsManuallyButton = page.locator('xpath=//div[starts-with(@class, "manual clearfix")]');
     this.bsbCode = page.locator('xpath=//ShuRu[@name="bp-swift-select-bsbCode"]');
 
