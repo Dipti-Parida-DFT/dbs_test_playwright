@@ -1,11 +1,11 @@
 /**
-       * Author: LC5741501
-       * Created Date: 26/02/26
-       * Class path "tests/PayTransfer/HK_BulkCollection.spects"
-       * Description: This Specification contains the test cases related HongKong Bulk Collection
-       * 1) TC001_HK_BulkCollection - Verify creating a Bulk collection with new Payer
-       * 2) TC002_HK_BulkCollection - Verify creating a Bulk collection with new Payer(existing and new Payer)
-       */
+  * Author: LC5741501
+  * Created Date: 26/02/26
+  * Class path "tests/PayTransfer/HK_BulkCollection.spects"
+  * Description: This Specification contains the test cases related HongKong Bulk Collection
+  * 1) TC001_HK_BulkCollection - Verify creating a Bulk collection with new Payer
+  * 2) TC002_HK_BulkCollection - Verify creating a Bulk collection with new Payer(existing and new Payer)
+  */
 
 //Required Imports
 import { test, expect } from '@playwright/test';

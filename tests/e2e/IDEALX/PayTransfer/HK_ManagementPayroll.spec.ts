@@ -1,10 +1,10 @@
 /**
-       * Author: LC5741501
-       * Created Date: 03/03/2026
-       * Class path "tests/PayTransfer/HK_ManagementPayroll.spec.ts"
-       * Description: This Specification contains the test cases related HongKong Management Payroll
-       * 1) TC001_HK_ManagementPayroll - Verify creation of a Management Payroll with new Payee.
-       */
+  * Author: LC5741501
+  * Created Date: 03/03/2026
+  * Class path "tests/PayTransfer/HK_ManagementPayroll.spec.ts"
+  * Description: This Specification contains the test cases related HongKong Management Payroll
+  * 1) TC001_HK_ManagementPayroll - Verify creation of a Management Payroll with new Payee.
+  */
 
 //Required Imports
 import { test, expect } from '@playwright/test';

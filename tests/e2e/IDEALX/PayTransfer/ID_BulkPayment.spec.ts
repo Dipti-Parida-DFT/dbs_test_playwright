@@ -1,12 +1,12 @@
-      /*
-       * Author: LC5741501
-       * Created Date: 10/03/26
-       * Class path "tests/PayTransfer/ID_BulkPayment.spec.ts"
-       * Description: This Specification contains the test cases related Indonesia Bulk Payment
-       * 1) TC001_ID_BulkPayment - Verify payee is not able to create Bulk Payment with item amount greater than 1000000000 IDR
-       * 2) TC002_ID_BulkPayment - Verify payee is able to create Bulk Payment with item amount equal to 1000000000 IDR
-       * 3) TC003_ID_BulkPayment - Verify payee(existing and new Payee) is able to create Bulk Payment with item amount equal to 1000000000 IDR
-       */
+/*
+  * Author: LC5741501
+  * Created Date: 10/03/26
+  * Class path "tests/PayTransfer/ID_BulkPayment.spec.ts"
+  * Description: This Specification contains the test cases related Indonesia Bulk Payment
+  * 1) TC001_ID_BulkPayment - Verify payee is not able to create Bulk Payment with item amount greater than 1000000000 IDR
+  * 2) TC002_ID_BulkPayment - Verify payee is able to create Bulk Payment with item amount equal to 1000000000 IDR
+  * 3) TC003_ID_BulkPayment - Verify payee(existing and new Payee) is able to create Bulk Payment with item amount equal to 1000000000 IDR
+  */
 
 //Required Imports
 import { test, expect } from '@playwright/test';
@@ -86,7 +86,7 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
   test('TC001_ID_BulkPayment - Verify payee is not able to create Bulk Payment with item amount greater than 1000000000 IDR', async ({ page }) => {
     
     // Step 1: Navigate Payment & Transfer Menu.
-    await webComponents.waitElementToBeVisibleCustomWait(pages.AccountTransferPage.paymentMenu, 60000);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.AccountTransferPage.paymentMenu, 60_000);
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.AccountTransferPage.paymentMenu,15_000);
 
     // Step 2: Handle Authentication Pop-up.
@@ -110,7 +110,7 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
       accountNumber: testData.BulkPayment.newPayeeAcctNumber,
     });
 
-    // Register for cleanup
+    // Register for cleanup (Push: to add one or more elements to the end of the array)
     createdPayees.push({ nickName, accountNumber });
 
     // Step 6: Enter Amount

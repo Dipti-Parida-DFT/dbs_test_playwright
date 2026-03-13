@@ -1,11 +1,11 @@
 /**
-       * Author: LC5741501
-       * Created Date: 16/02/26
-       * Class path "tests/PayTransfer/SG_Payroll.spec.ts"
-       * Description: This Specification contains the test cases related Singapore Payroll Payment.
-       * 1) TC001_SGPayroll - Verify creation of a Payroll with new payee
-       * 2) TC002_SGPayroll - Verify Payroll can be edited with new payee
-       */
+  * Author: LC5741501
+  * Created Date: 16/02/26
+  * Class path "tests/PayTransfer/SG_Payroll.spec.ts"
+  * Description: This Specification contains the test cases related Singapore Payroll Payment.
+  * 1) TC001_SGPayroll - Verify creation of a Payroll with new payee
+  * 2) TC002_SGPayroll - Verify Payroll can be edited with new payee
+  */
 
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
