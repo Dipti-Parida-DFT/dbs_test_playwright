@@ -10,20 +10,28 @@
     "allure:generate": "allure generate allure-results --clean -o allure-report",
     "allure:open": "allure open allure-report",
     "test:report": "npm run allure:generate && npm run allure:open",
-    "test:e2e": "npx playwright test --project=e2e && test:report",
-    "test:api": "npx playwright test --project=api && test:report"
+    "test:e2e": "npx playwright test --project=e2e",
+    "test:api": "npx playwright test --project=api && test:report",
+    "bdd": "cucumber-js --require-module ts-node/register --require features/support/**/*.ts --require features/step-definitions/**/*.ts features/**/*.feature --publish-quiet",
+    "bdd:debug": "cucumber-js --require-module ts-node/register --require features/support/**/*.ts --require features/step-definitions/**/*.ts features/**/*.feature",
+    "bdd:headed": "cucumber-js --require-module ts-node/register --require features/support/**/*.ts --require features/step-definitions/**/*.ts --tags @headed features/**/*.feature",
+    "bdd:allure": "cucumber-js --require-module ts-node/register --require features/support/**/*.ts --require features/step-definitions/**/*.ts --format @shelex/allure-cucumberjs:./allure-results features/**/*.feature --publish-quiet",
+    "bdd:report": "npm run bdd:allure && npm run allure:generate && npm run allure:open"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@cucumber/cucumber": "^9.6.0",
     "@playwright/test": "^1.58.2",
     "@types/log4js": "^0.0.33",
     "@types/moment": "^2.11.29",
     "@types/node": "^25.0.3",
     "allure-commandline": "^2.36.0",
-    "allure-playwright": "^3.4.5"
+    "allure-playwright": "^3.4.5",
+    "ts-node": "^10.9.2",
+    "@shelex/allure-cucumberjs": "^2.1.0"
   },
   "dependencies": {
     "log4js": "^6.9.1",

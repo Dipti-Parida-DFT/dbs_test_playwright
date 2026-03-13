@@ -1,0 +1,1158 @@
+[
+  {
+    "description": "  As a user of the Apply page\n  I want to ensure affiliates can (or cannot) view the Debit Card section",
+    "elements": [
+      {
+        "description": "",
+        "id": "debit-card-affiliate-gating;sg-affiliate-can-view-debit-card-section",
+        "keyword": "Scenario",
+        "line": 8,
+        "name": "SG affiliate can view Debit Card section",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 11386661900
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 6,
+            "name": "the application is reachable",
+            "match": {
+              "location": "features\\step_definitions\\debitCard.steps.ts:7"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6858835100
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 9,
+            "name": "an SG affiliate is logged in",
+            "match": {
+              "location": "features\\step_definitions\\debitCard.steps.ts:13"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 13735341499
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 10,
+            "name": "they navigate to the Apply page",
+            "match": {
+              "location": "features\\step_definitions\\debitCard.steps.ts:33"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 50203157899
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 11,
+            "name": "the Debit Card section should be visible",
+            "match": {
+              "location": "features\\step_definitions\\debitCard.steps.ts:49"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 188997699
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 740318400
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "debit-card-affiliate-gating;non-sg-affiliate-cannot-view-debit-card-section",
+        "keyword": "Scenario",
+        "line": 13,
+        "name": "Non-SG affiliate cannot view Debit Card section",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 9984190799
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 6,
+            "name": "the application is reachable",
+            "match": {
+              "location": "features\\step_definitions\\debitCard.steps.ts:7"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 5819105400
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 14,
+            "name": "a non-SG affiliate is logged in",
+            "match": {
+              "location": "features\\step_definitions\\debitCard.steps.ts:23"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 12761691300
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 15,
+            "name": "they authenticate and navigate to the Apply page",
+            "match": {
+              "location": "features\\step_definitions\\debitCard.steps.ts:40"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 26170305700
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 16,
+            "name": "the Debit Card section should not be visible",
+            "match": {
+              "location": "features\\step_definitions\\debitCard.steps.ts:54"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 33541900
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 355325699
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "debit-card-affiliate-gating",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Debit Card affiliate gating",
+    "tags": [],
+    "uri": "features\\IDEALX\\Apply\\DebitCard.feature"
+  },
+  {
+    "description": "  Bulk Collection flows for Hong Kong",
+    "elements": [
+      {
+        "description": "",
+        "id": "hk-bulk-collection;create-a-bulk-collection-with-new-payer",
+        "keyword": "Scenario",
+        "line": 7,
+        "name": "Create a Bulk collection with new Payer",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 9528250199
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "the HK user is authenticated and on the Bulk Collection form",
+            "match": {
+              "location": "features\\step_definitions\\hk_bulkcollection.steps.ts:14"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 48974823800
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "the user creates a new payer with full details and submits",
+            "match": {
+              "location": "features\\step_definitions\\hk_bulkcollection.steps.ts:22"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 46728175099
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "the created collection should be visible in Transfer Center and pass validation",
+            "match": {
+              "location": "features\\step_definitions\\hk_bulkcollection.steps.ts:55"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6079799100
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 319045900
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "hk-bulk-collection;create-a-bulk-collection-with-transaction-code-add-38-and-98",
+        "keyword": "Scenario",
+        "line": 11,
+        "name": "Create a Bulk collection with Transaction code add 38 and 98",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 9574820899
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "the HK user is authenticated and on the Bulk Collection form",
+            "match": {
+              "location": "features\\step_definitions\\hk_bulkcollection.steps.ts:14"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 48817325699
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 12,
+            "name": "the user composes a batch mixing existing and new payers with transaction codes 38 and 98 and submits",
+            "match": {
+              "location": "features\\step_definitions\\hk_bulkcollection.steps.ts:65"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 43517211599
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 13,
+            "name": "the batch should be validated in the view page and removed as part of cleanup",
+            "match": {
+              "location": "features\\step_definitions\\hk_bulkcollection.steps.ts:100"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6595139800
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 322096699
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "hk-bulk-collection",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "HK Bulk Collection",
+    "tags": [],
+    "uri": "features\\IDEALX\\PayTransfer\\HK_BulkCollection.feature"
+  },
+  {
+    "description": "  Management payroll flows for Hong Kong",
+    "elements": [
+      {
+        "description": "",
+        "id": "hk-management-payroll;create-management-payroll-with-new-change-account-number-payee",
+        "keyword": "Scenario",
+        "line": 7,
+        "name": "Create Management Payroll with new change Account number payee",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 9161020300
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "the HK user is authenticated and on the Management Payroll page",
+            "match": {
+              "location": "features\\step_definitions\\hk_managementpayroll.steps.ts:13"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 37309889800
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "the user creates a management payroll with a new payee and relevant particulars and submits",
+            "match": {
+              "location": "features\\step_definitions\\hk_managementpayroll.steps.ts:21"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 49913695900,
+              "error_message": "page.evaluate: NotAllowedError: Failed to execute 'writeText' on 'Clipboard': Write permission denied.\n    at PayrollPage.addNewPayeeWithAllDetails (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\pages\\IDEALX\\PayTransfer\\PayrollPage.ts:628:21)\n    at async CustomWorld.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\step_definitions\\hk_managementpayroll.steps.ts:33:29)"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "the created payroll should be searchable in Transfer Center and its details should match expected values",
+            "match": {
+              "location": "features\\step_definitions\\hk_managementpayroll.steps.ts:65"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 596106900
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "hk-management-payroll",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "HK Management Payroll",
+    "tags": [],
+    "uri": "features\\IDEALX\\PayTransfer\\HK_ManagementPayroll.feature"
+  },
+  {
+    "description": "  Bulk Collection flows for India",
+    "elements": [
+      {
+        "description": "",
+        "id": "in-bulk-collection;verify-creating-a-bulk-collection-with-new-payee",
+        "keyword": "Scenario",
+        "line": 7,
+        "name": "Verify creating a Bulk collection with new Payee",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 9512396000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "the user is authenticated and on the Pay & Transfer menu",
+            "match": {
+              "location": "features\\step_definitions\\common.steps.ts:9"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 129602193700,
+              "error_message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"to.be.visible\" with timeout 60000ms\u001b[22m\n\u001b[2m  - waiting for locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\u001b[22m\n\n    at Proxy.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\node_modules\\playwright\\lib\\matchers\\expect.js:213:24)\n    at AccountTransferPage.waitForMenu (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\pages\\IDEALX\\PayTransfer\\AccountTransferPage.ts:408:36)\n    at async CustomWorld.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\step_definitions\\common.steps.ts:38:3)"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "the user opens Bulk Collection form, adds a new payee and provides optional details and submits",
+            "match": {
+              "location": "features\\step_definitions\\in_bulkcollection.steps.ts:13"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "the created Bulk collection should be locatable by reference and its view page fields should match expected values",
+            "match": {
+              "location": "features\\step_definitions\\in_bulkcollection.steps.ts:55"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 757042399
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "in-bulk-collection;verify-edit-a-bulk-collection-via-transfer-center",
+        "keyword": "Scenario",
+        "line": 11,
+        "name": "Verify edit a Bulk Collection via Transfer Center",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 9657418300
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "the user is authenticated and on the Pay & Transfer menu",
+            "match": {
+              "location": "features\\step_definitions\\common.steps.ts:9"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 129437824100,
+              "error_message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"to.be.visible\" with timeout 60000ms\u001b[22m\n\u001b[2m  - waiting for locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\u001b[22m\n\n    at Proxy.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\node_modules\\playwright\\lib\\matchers\\expect.js:213:24)\n    at AccountTransferPage.waitForMenu (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\pages\\IDEALX\\PayTransfer\\AccountTransferPage.ts:408:36)\n    at async CustomWorld.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\step_definitions\\common.steps.ts:38:3)"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 12,
+            "name": "an existing Bulk collection is available",
+            "match": {
+              "location": "features\\step_definitions\\in_bulkcollection.steps.ts:69"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 13,
+            "name": "the user edits the collection via Transfer Center and resubmits",
+            "match": {
+              "location": "features\\step_definitions\\in_bulkcollection.steps.ts:75"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 14,
+            "name": "the edited collection should reflect the updated values in the view page",
+            "match": {
+              "location": "features\\step_definitions\\in_bulkcollection.steps.ts:89"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 780591899
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "in-bulk-collection",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "IN Bulk Collection",
+    "tags": [],
+    "uri": "features\\IDEALX\\PayTransfer\\IN_BulkCollection.feature"
+  },
+  {
+    "description": "  Payroll flows for Singapore region",
+    "elements": [
+      {
+        "description": "",
+        "id": "sg-payroll;create-payroll-alternate-with-new-payee",
+        "keyword": "Scenario",
+        "line": 7,
+        "name": "Create Payroll Alternate with new payee",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 9630686000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "the SG user is authenticated and on the Pay & Transfer menu",
+            "match": {
+              "location": "features\\step_definitions\\sg_payroll.steps.ts:13"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 45142580599
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "the user creates a payroll alternate with a new payee and submits",
+            "match": {
+              "location": "features\\step_definitions\\sg_payroll.steps.ts:21"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 29557147100,
+              "error_message": "page.evaluate: NotAllowedError: Failed to execute 'writeText' on 'Clipboard': Write permission denied.\n    at PayrollPage.addNewPayeeWithAllDetails (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\pages\\IDEALX\\PayTransfer\\PayrollPage.ts:628:21)\n    at async CustomWorld.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\step_definitions\\sg_payroll.steps.ts:33:39)"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "the payroll should be available in Transfer Center and its details should match expected values",
+            "match": {
+              "location": "features\\step_definitions\\sg_payroll.steps.ts:53"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 529650400
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "sg-payroll;edit-payroll-alternate-via-transfer-center",
+        "keyword": "Scenario",
+        "line": 11,
+        "name": "Edit Payroll Alternate via Transfer Center",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 10179241800
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "the SG user is authenticated and on the Pay & Transfer menu",
+            "match": {
+              "location": "features\\step_definitions\\sg_payroll.steps.ts:13"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 39475251900
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 12,
+            "name": "an existing payroll has been created",
+            "match": {
+              "location": "features\\step_definitions\\sg_payroll.steps.ts:60"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 2148399,
+              "error_message": "TypeError: this.runStep is not a function\n    at CustomWorld.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\step_definitions\\sg_payroll.steps.ts:62:14)"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 13,
+            "name": "the user edits the payroll via Transfer Center and resubmits",
+            "match": {
+              "location": "features\\step_definitions\\sg_payroll.steps.ts:66"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 14,
+            "name": "the edited payroll should show updated values in Transfer Center",
+            "match": {
+              "location": "features\\step_definitions\\sg_payroll.steps.ts:80"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1113207799
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "sg-payroll",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "SG Payroll",
+    "tags": [],
+    "uri": "features\\IDEALX\\PayTransfer\\SG_Payroll.feature"
+  },
+  {
+    "description": "  Bulk Payment flows for Vietnam",
+    "elements": [
+      {
+        "description": "",
+        "id": "vn-bulk-payment;cannot-create-bulk-payment-with-item-amount->-500000000-vnd",
+        "keyword": "Scenario",
+        "line": 7,
+        "name": "Cannot create Bulk Payment with item amount > 500000000 VND",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 9502902600
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "the user is authenticated and on the Pay & Transfer menu",
+            "match": {
+              "location": "features\\step_definitions\\common.steps.ts:9"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 129749769599,
+              "error_message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"to.be.visible\" with timeout 60000ms\u001b[22m\n\u001b[2m  - waiting for locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\u001b[22m\n\n    at Proxy.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\node_modules\\playwright\\lib\\matchers\\expect.js:213:24)\n    at AccountTransferPage.waitForMenu (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\pages\\IDEALX\\PayTransfer\\AccountTransferPage.ts:408:36)\n    at async CustomWorld.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\step_definitions\\common.steps.ts:38:3)"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "the user opens Bulk Payment form and adds a new payee with amount above limit",
+            "match": {
+              "location": "features\\step_definitions\\vn_bulkpayment.steps.ts:14"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "inline and banner error messages should be displayed",
+            "match": {
+              "location": "features\\step_definitions\\vn_bulkpayment.steps.ts:40"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 831859600
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "vn-bulk-payment;create-bulk-payment-with-item-amount-equal-to-500000000-vnd",
+        "keyword": "Scenario",
+        "line": 11,
+        "name": "Create Bulk Payment with item amount equal to 500000000 VND",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 9454017600
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "the user is authenticated and on the Pay & Transfer menu",
+            "match": {
+              "location": "features\\step_definitions\\common.steps.ts:9"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 129647782999,
+              "error_message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"to.be.visible\" with timeout 60000ms\u001b[22m\n\u001b[2m  - waiting for locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\u001b[22m\n\n    at Proxy.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\node_modules\\playwright\\lib\\matchers\\expect.js:213:24)\n    at AccountTransferPage.waitForMenu (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\pages\\IDEALX\\PayTransfer\\AccountTransferPage.ts:408:36)\n    at async CustomWorld.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\step_definitions\\common.steps.ts:38:3)"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 12,
+            "name": "the user opens Bulk Payment form and adds a new payee with amount equal to max and submits",
+            "match": {
+              "location": "features\\step_definitions\\vn_bulkpayment.steps.ts:54"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 13,
+            "name": "the submitted payment can be searched by reference and validated",
+            "match": {
+              "location": "features\\step_definitions\\vn_bulkpayment.steps.ts:87"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 811822699
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "vn-bulk-payment;create-bulk-payment-with-total-amount->-500000000-idr",
+        "keyword": "Scenario",
+        "line": 15,
+        "name": "Create Bulk Payment with Total amount > 500000000 IDR",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 9974108699
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "the user is authenticated and on the Pay & Transfer menu",
+            "match": {
+              "location": "features\\step_definitions\\common.steps.ts:9"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 127736014500,
+              "error_message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"to.be.visible\" with timeout 60000ms\u001b[22m\n\u001b[2m  - waiting for locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\u001b[22m\n\n    at Proxy.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\node_modules\\playwright\\lib\\matchers\\expect.js:213:24)\n    at AccountTransferPage.waitForMenu (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\pages\\IDEALX\\PayTransfer\\AccountTransferPage.ts:408:36)\n    at async CustomWorld.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\step_definitions\\common.steps.ts:38:3)"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 16,
+            "name": "the user adds multiple payees so total exceeds the limit and submits",
+            "match": {
+              "location": "features\\step_definitions\\vn_bulkpayment.steps.ts:97"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 17,
+            "name": "the submitted payment should be retrievable and validated",
+            "match": {
+              "location": "features\\step_definitions\\vn_bulkpayment.steps.ts:139"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1557376699
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "vn-bulk-payment",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "VN Bulk Payment",
+    "tags": [],
+    "uri": "features\\IDEALX\\PayTransfer\\VN_BulkPayment.feature"
+  },
+  {
+    "description": "  Validate Payroll behaviour for Vietnam region",
+    "elements": [
+      {
+        "description": "",
+        "id": "vn-payroll;cannot-create-payroll-with-item-amount->-500000000-vnd",
+        "keyword": "Scenario",
+        "line": 7,
+        "name": "Cannot create Payroll with item amount > 500000000 VND",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 13526118699
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "the user is authenticated and on the Pay & Transfer menu",
+            "match": {
+              "location": "features\\step_definitions\\common.steps.ts:9"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 128561401000,
+              "error_message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"to.be.visible\" with timeout 60000ms\u001b[22m\n\u001b[2m  - waiting for locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\u001b[22m\n\n    at Proxy.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\node_modules\\playwright\\lib\\matchers\\expect.js:213:24)\n    at AccountTransferPage.waitForMenu (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\pages\\IDEALX\\PayTransfer\\AccountTransferPage.ts:408:36)\n    at async CustomWorld.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\step_definitions\\common.steps.ts:38:3)"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "the user opens Payroll form and adds a new payee",
+            "match": {
+              "location": "features\\step_definitions\\vn_payroll.steps.ts:13"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "sets an amount greater than the allowed maximum",
+            "match": {
+              "location": "features\\step_definitions\\vn_payroll.steps.ts:34"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 10,
+            "name": "an inline error and a banner error should be shown",
+            "match": {
+              "location": "features\\step_definitions\\vn_payroll.steps.ts:40"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 758270699
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "vn-payroll;create-payroll-with-item-amount-equal-to-500000000-vnd",
+        "keyword": "Scenario",
+        "line": 12,
+        "name": "Create Payroll with item amount equal to 500000000 VND",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 9578361500
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "the user is authenticated and on the Pay & Transfer menu",
+            "match": {
+              "location": "features\\step_definitions\\common.steps.ts:9"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 127812159400,
+              "error_message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"to.be.visible\" with timeout 60000ms\u001b[22m\n\u001b[2m  - waiting for locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\u001b[22m\n\n    at Proxy.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\node_modules\\playwright\\lib\\matchers\\expect.js:213:24)\n    at AccountTransferPage.waitForMenu (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\pages\\IDEALX\\PayTransfer\\AccountTransferPage.ts:408:36)\n    at async CustomWorld.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\step_definitions\\common.steps.ts:38:3)"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 13,
+            "name": "the user opens Payroll form and adds a new payee",
+            "match": {
+              "location": "features\\step_definitions\\vn_payroll.steps.ts:13"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 14,
+            "name": "sets an amount equal to the maximum and submits",
+            "match": {
+              "location": "features\\step_definitions\\vn_payroll.steps.ts:53"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 15,
+            "name": "the payment should be created and retrievable by reference",
+            "match": {
+              "location": "features\\step_definitions\\vn_payroll.steps.ts:68"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 598798100
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "vn-payroll;create-payroll-with-total-amount->-500000000-idr",
+        "keyword": "Scenario",
+        "line": 17,
+        "name": "Create payroll with Total amount > 500000000 IDR",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 7455633299
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "the user is authenticated and on the Pay & Transfer menu",
+            "match": {
+              "location": "features\\step_definitions\\common.steps.ts:9"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 130598779899,
+              "error_message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"to.be.visible\" with timeout 60000ms\u001b[22m\n\u001b[2m  - waiting for locator('//*[@id=\"nav-item-navBBTopPaymentsLinkText\"]')\u001b[22m\n\n    at Proxy.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\node_modules\\playwright\\lib\\matchers\\expect.js:213:24)\n    at AccountTransferPage.waitForMenu (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\pages\\IDEALX\\PayTransfer\\AccountTransferPage.ts:408:36)\n    at async CustomWorld.<anonymous> (C:\\DBS\\Test Automation\\dbs-test-playwright\\features\\step_definitions\\common.steps.ts:38:3)"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 18,
+            "name": "the user composes a payroll with multiple items that exceed the total limit",
+            "match": {
+              "location": "features\\step_definitions\\vn_payroll.steps.ts:80"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 19,
+            "name": "the payment should be submitted and visible in Transfer Center",
+            "match": {
+              "location": "features\\step_definitions\\vn_payroll.steps.ts:126"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 760089599
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "vn-payroll",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "VN Payroll",
+    "tags": [],
+    "uri": "features\\IDEALX\\PayTransfer\\VN_Payroll.feature"
+  }
+]

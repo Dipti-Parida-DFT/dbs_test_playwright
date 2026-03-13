@@ -41,7 +41,7 @@ export class LoginPage {
   await webComponents.enterText(this.userIdInput, creds.userId);
   await webComponents.enterText(this.pinInput, creds.pin);
   await this.loginButton.click();
-  await this.page.waitForTimeout(70000); // Wait for potential redirects
+  await this.page.waitForTimeout(10000); // Wait for potential redirects
   }
 
   async loginWithDefaultCredentials() {
