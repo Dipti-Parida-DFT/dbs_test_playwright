@@ -97,7 +97,7 @@ test('TC001_SG_TelegraphicTransfer - Create A TT Payment With New Payee', async 
   await pages.TelegraphicTransferPage.waitForCurrency();
   await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.amountInput);
   await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.amountInput, testData.TelegraphicTransfer.amountA1);
-
+  await pages.TelegraphicTransferPage.handleMYRContinueIfPresent();
   // Step 2: Payment from => Click "New payee" tab and enters details
   await pages.TelegraphicTransferPage.addNewTTPayee({
     name:                     testData.TelegraphicTransfer.name,
