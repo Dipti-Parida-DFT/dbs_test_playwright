@@ -788,7 +788,7 @@ test('TC016_SG_TelegraphicTransfer - Release A TT Payment Via My Release', async
   await pages.TransferCentersPage.waitForTransferCenterReady();
   await pages.TransferCentersPage.searchAndOpenByReference(copyreference);
   await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
-  await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText('Approved');
+  await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText('Completed');
 });
 
 test('TC017_SG_TelegraphicTransfer - DOL User Create A TT Payment With Showing FX Savings Message Old UI', async ({ page }) => {
