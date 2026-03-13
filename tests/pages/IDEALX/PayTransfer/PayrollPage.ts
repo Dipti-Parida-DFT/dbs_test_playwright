@@ -629,7 +629,7 @@ async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
     await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Enter');
     await this.payeeBankId.blur();
     await this.webComponents.clickWhenVisibleAndEnabled(this.findBankIDButton);
-    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 45000 });
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
     await this.payeeBankSearchResults.first().click();
     await this.webComponents.clickWhenVisibleAndEnabled(this.newPayeeAccountNumber);
 

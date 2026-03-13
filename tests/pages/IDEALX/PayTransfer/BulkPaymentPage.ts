@@ -99,7 +99,7 @@ export class BulkPaymentPage {
     this.approveButton = page.locator('xpath=//button[@name="approve"]');
     this.pushButton = page.locator('xpath=//button[@id="push-btn"]');
     this.amountInlineError = page.locator('xpath=//bp-payee-amount//span[starts-with(@class, "dbs-validation-error")]');
-    this.errorOneOrMorefieldsNotBeenProperlyFilled = page.locator('xpath=//span[text()="One or more of the fields below have not been properly filled up. Please amend and submit again."]');
+    this.errorOneOrMorefieldsNotFilled = page.locator('xpath=//span[text()="One or more of the fields below have not been properly filled up. Please amend and submit again."]');
     
     // Delete
     this.deleteButton = page.locator('xpath=//button[@name="delete"]');
@@ -342,7 +342,7 @@ export class BulkPaymentPage {
   readonly approveButton: Locator;
   readonly pushButton: Locator;
   readonly amountInlineError: Locator;
-  readonly errorOneOrMorefieldsNotBeenProperlyFilled : Locator;
+  readonly errorOneOrMorefieldsNotFilled : Locator;
 
   readonly deleteButton: Locator;
   readonly deleteDialogButton: Locator;

@@ -1,14 +1,14 @@
       /*
        * Author: LC5741501
        * Created Date: 10/03/26
-       * This Class "tests/PayTransfer/ID_BulkPayment.spec.ts"
-       * Description: This class has three test cases.
-       * 1) TC001_HK_BulkCollection - Create a Bulk collection with new Payer
-       * 2) TC002_HK_BulkCollection - Create a Bulk collection with Trasanction code add 38 and 98
+       * Class path "tests/PayTransfer/ID_BulkPayment.spec.ts"
+       * Description: This Specification contains the test cases related Indonesia Bulk Payment
+       * 1) TC001_ID_BulkPayment - Verify payee is not able to create Bulk Payment with item amount greater than 1000000000 IDR
+       * 2) TC002_ID_BulkPayment - Verify payee is able to create Bulk Payment with item amount equal to 1000000000 IDR
+       * 3) TC003_ID_BulkPayment - Verify payee(existing and new Payee) is able to create Bulk Payment with item amount equal to 1000000000 IDR
        */
 
-
-// tests/e2e/IDEALX/PayTransfer/VN_BulkPayment.spec.ts
+//Required Imports
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -17,6 +17,7 @@ import { LoginPage } from '../../../pages/IDEALX/LoginPage';
 import { chromium, Browser } from 'playwright';
 import { WebComponents } from '../../../lib/components';
 
+//Variable declaration for Browser
 let customBrowser: Browser;
 
 // --- Load JSON test data ---
@@ -27,19 +28,24 @@ const loginUserId    = testData.BulkPayment.SIT.loginUserId;
 const fromAccount    = testData.BulkPayment.SIT.fromAccount;
 const payeeBankID    = testData.BulkPayment.SIT.payeeBankID;
 
+//Initialize Web Component class
 const webComponents = new WebComponents();
 
-
+// Configure retries
 test.describe.configure({
   retries: Number(process.env.CASE_RETRY_TIMES ?? 0),
 });
 
+// Actions for beforEach and afterEach test hooks
 test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
   let pages: PaymentsPages;
   // Track created payees per test
   type CreatedPayee = { nickName?: string; accountNumber?: string };
   let createdPayees: CreatedPayee[] = [];
 
+   /**
+   * This method run's before every testcase execution to launch the browser/page
+   */ 
   test.beforeEach(async ({ page }, testInfo) => {
     process.env.currentTestTitle = testInfo.title;
 
@@ -52,6 +58,10 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
     pages = new PaymentsPages(page);
   });
 
+   /**
+   * This method run's after every testcase execution to do the 
+   * cleanup activity or to close any open connections
+   */ 
   test.afterEach(async ({ page }, testInfo) => {
     // Only cleanup if the test passed
     if (testInfo.status !== 'passed') {
@@ -72,32 +82,27 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
     });
 
   
-  // TC001_ID_BulkPayment Objective : 
+  // TC001_ID_BulkPayment: 1000,000,001 > 1000,000,000(100 crore)
   test('TC001_ID_BulkPayment - Verify payee is not able to create Bulk Payment with item amount greater than 1000000000 IDR', async ({ page }) => {
     
-    // Payments → Transfer Center → BulkPayment
+    // Step 1: Navigate Payment & Transfer Menu.
     await webComponents.waitElementToBeVisibleCustomWait(pages.AccountTransferPage.paymentMenu, 60000);
-
-    //(Changed)
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.AccountTransferPage.paymentMenu,15_000);
 
-    //Authentication Pop-up (Changed)
+    // Step 2: Handle Authentication Pop-up.
     await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
 
-    // await pages.TransferCentersPage.waitForTransferCenterReady();
-    //await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
+    // Step 3: Click Bulk Payment option.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.bulkPayment);
-
-    // (Changed)
     await webComponents.waitForUXLoading([],page);
 
-    // (Changed)
+    // Step 4: Select account from "Account" dropdown.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.fromAccount);
     await webComponents.typeTextThroughKeyBoardAction(page,fromAccount);
     await webComponents.pressGivenButtonThroughKeyBoardAction(page,'ArrowDown');
     await webComponents.pressGivenButtonThroughKeyBoardAction(page,'Enter');
 
-    // Reusable helper for add new payee
+    // Step 5: Add "New payee".
     const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayeeWithAllDetails({
       name: testData.BulkPayment.newPayeeName,
       nickName: testData.BulkPayment.newPayeeNickName,
@@ -108,52 +113,46 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
     // Register for cleanup
     createdPayees.push({ nickName, accountNumber });
 
-    // (Changed)
+    // Step 6: Enter Amount
     await webComponents.enterTextarea(pages.BulkPaymentPage.amount, testData.BulkPayment.moreThanMaxAmountLimit);
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.showOptionalDetails);
+
+    // Step 7: Enter Payment and other optional details 
     await webComponents.enterTextarea(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
 
-    // (Changed)
+    // Step 8: Validate Error: "Amount is invalid." (1000000001)
     await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.amountInlineError, testData.BulkPayment.amountErrorTip);
 
-    // Try Next → expect top-level/banner error
-    
-    // (Changed)
+    // Step 9: Click Next button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.nextButton);
 
-    await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.errorOneOrMorefieldsNotBeenProperlyFilled, 30000);
-    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.errorOneOrMorefieldsNotBeenProperlyFilled, testData.BulkPayment.errorMessage);
+    // Step 10: Validate Error: "One or more of the fields below have not been properly filled up. Please amend and submit again."
+    await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.errorOneOrMorefieldsNotFilled, 30000);
+    await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.errorOneOrMorefieldsNotFilled, testData.BulkPayment.errorMessage);
     
-
   });
 
-
-  // TC002_ID_BulkPayment Objective : 
+  // TC002_ID_BulkPayment: 1000,000,000(100 crore) with 1 Payee
   test('TC002_ID_BulkPayment - Verify payee is able to create Bulk Payment with item amount equal to 1000000000 IDR', async ({ page }) => {
     
-    // Payments → Transfer Center → BulkPayment
+    // Step 1: Navigate Payment & Transfer Menu.
     await webComponents.waitElementToBeVisibleCustomWait(pages.AccountTransferPage.paymentMenu, 60000);
-
-    //(Changed)
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.AccountTransferPage.paymentMenu,15_000);
 
-    //Authentication Pop-up (Changed)
+    // Step 2: Handle Authentication Pop-up.
     await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
 
-    // await pages.TransferCentersPage.waitForTransferCenterReady();
-    //await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
+    // Step 3: Click Bulk Payment option.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.bulkPayment);
-
-    // (Changed)
     await webComponents.waitForUXLoading([],page);
 
-    // (Changed)
+    // Step 4: Select account from "Account" dropdown.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.fromAccount);
     await webComponents.typeTextThroughKeyBoardAction(page,fromAccount);
     await webComponents.pressGivenButtonThroughKeyBoardAction(page,'ArrowDown');
     await webComponents.pressGivenButtonThroughKeyBoardAction(page,'Enter');
 
-    // Reusable helper for add new payee
+    // Step 5: Add "New payee".
     const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayeeWithAllDetails({
       name: testData.BulkPayment.newPayeeName,
       nickName: testData.BulkPayment.newPayeeNickName,
@@ -164,53 +163,48 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
     // Register for cleanup
     createdPayees.push({ nickName, accountNumber });
 
-    // (Changed)
+    // Step 6: Enter Amount
     await webComponents.enterTextarea(pages.BulkPaymentPage.amount, testData.BulkPayment.maxAmount);
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.showOptionalDetails);
+
+    // Step 7: Enter Payment details
     await webComponents.enterTextarea(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
    
-    // Select: Payee Resident Status (Additional Steps)
+    // Step 8: Select: Resident Status (Additional Steps)
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeResidentStatus);
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeResidentOptionNonResident);
 
-    // Select: Payee category (Additional Steps)
+    // Step 9: Select: Payee Category (Additional Steps)
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeCategory);
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeCategoryOptionEnterprise);
 
-    // Step 3: Click Payment date : Earliest Available (Additional Steps)
+    // Step 10: Click Payment date : Earliest Available (Additional Steps)
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.earliestAvailableDateCheckbox);
     
-    // Click on Next button
+    // Step 11: Click Next button.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.nextButton);
-    //await pages.PayrollPage.waitForPreviewPageReady();
+    await webComponents.waitForUXLoading([],page);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.submitButton, 75000);
 
-     // (Changed)
-     await webComponents.waitForUXLoading([],page);
-     await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.submitButton, 75000);
-
-    // Click on Submit button
+    // Step 12: Click Submit button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.submitButton);
-    //await pages.PayrollPage.waitForSubmittedPageReady();
-    // (Changed)
     await webComponents.waitForUXLoading([],page);
     await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.finishedButton, 75000);
   
-    // It returns the full banner text
+    // Step 13: Search Reference No and Open.
     const referenceText = await pages.BulkPaymentPage.getReferenceText();
     console.log('Captured reference text:', referenceText);
     // It extracts the EBLV… token/Refrence no
     const reference = await pages.BulkPaymentPage.getReferenceID();
     console.log('Captured referenceID:', reference);
 
-    // Click on Finish button
+    // Step 14: Click Finish button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.finishedButton);
     await pages.PayrollPage.waitForPayAndTransferPageReady();
-    
-    // (Changed)
     await webComponents.waitForUXLoading([],page);
     await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.payroll, 75000);
 
-    // Search Reference No
+    // Step 15: Search Reference No and Open.
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.BulkPaymentPage.waitForViewPaymentPageReady();
 
@@ -218,44 +212,37 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
     await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.fromAccountViewLabel, 120000);
     await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.hashValueLabel, 120000);
 
-    // Validate Bulk Payment From Account, From AccountName, Your Account Will be deducted and Amount.
-
+    // Step 16: Validate Amount.
     await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.amountView, testData.BulkPayment.maxAmountValidation);
     await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.fromAccountViewLabel, testData.BulkPayment.fromAccountViewLabel);
     
-    // (Additional Validation)
+    // Step 17: Validate fromAccountName and deductAmount. (Additional Validation)
     await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.fromAccountNameViewLabel, testData.BulkPayment.fromAccountNameViewLabel);
     await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.deductAmountView, testData.BulkPayment.deductedAmount);
 
   });
 
-
-  // TC003_ID_BulkPayment Objective : 
+  // TC003_ID_BulkPayment: 1000,000,000(100 crore) with 2 Payee
   test('TC003_ID_BulkPayment - Verify payee(existing and new Payee) is able to create Bulk Payment with item amount equal to 1000000000 IDR', async ({ page }) => {
     
-    // Payments → Transfer Center → BulkPayment
+    //Step 1: Navigate Payment & Transfer Menu.
     await webComponents.waitElementToBeVisibleCustomWait(pages.AccountTransferPage.paymentMenu, 60000);
-
-    //(Changed)
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.AccountTransferPage.paymentMenu,15_000);
 
-    //Authentication Pop-up (Changed)
+    //Step 2: Handle Authentication Pop-up.
     await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
 
-    // await pages.TransferCentersPage.waitForTransferCenterReady();
-    //await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
+    // Step 3: Click Bulk Payment option.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.bulkPayment);
-
-    // (Changed)
     await webComponents.waitForUXLoading([],page);
 
-    // (Changed)
+    // Step 4: Select account from "Account" dropdown.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.fromAccount);
     await webComponents.typeTextThroughKeyBoardAction(page,fromAccount);
     await webComponents.pressGivenButtonThroughKeyBoardAction(page,'ArrowDown');
     await webComponents.pressGivenButtonThroughKeyBoardAction(page,'Enter');
 
-    // Reusable helper for add new payee
+    // Step 5: Add "New payee".
     const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayeeWithAllDetails({
       name: testData.BulkPayment.newPayeeName,
       nickName: testData.BulkPayment.newPayeeNickName,
@@ -266,61 +253,56 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
     // Register for cleanup
     createdPayees.push({ nickName, accountNumber });
 
-    // (Changed)
+    // Step 6: Enter Amount
     await webComponents.enterTextarea(pages.BulkPaymentPage.amount, testData.BulkPayment.maxAmountPayee1);
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.showOptionalDetails);
+    
+    // Step 7: Enter Payment details
     await webComponents.enterTextarea(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
    
-    // Select: Payee Resident Status (Additional Steps)
+    // Step 8: Select: Resident Status (Additional Steps)
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeResidentStatus);
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeResidentOptionNonResident);
 
-    // Select: Payee category (Additional Steps)
+    // Step 9: Select: Payee Category (Additional Steps)
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeCategory);
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.payeeCategoryOptionEnterprise);
 
-    // Step 3: Click Payment date : Earliest Available (Additional Steps)
+    // Step 10: Click Payment date : Earliest Available (Additional Steps)
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.earliestAvailableDateCheckbox);
     
-    // Add Existing Payee
+    // Step 11: Add Existing Payee
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.BulkPaymentPage.existingPayeeTabIx);
     await webComponents.enterTextarea(pages.BulkPaymentPage.existingPayeeFilter, testData.BulkPayment.existingPayee);
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.BulkPaymentPage.addButton);
 
-    // Add Existing Payer: Amount
+    // Step 12: Add Existing Payer: Amount
     await webComponents.enterTextarea(pages.BulkPaymentPage.amountPayee1, testData.BulkPayment.maxAmountPayee2);
      
-    // Click on Next button
+    // Step 13: Click Next button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.nextButton);
-    //await pages.PayrollPage.waitForPreviewPageReady();
+    await webComponents.waitForUXLoading([],page);
+    await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.submitButton, 75000);
 
-     // (Changed)
-     await webComponents.waitForUXLoading([],page);
-     await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.submitButton, 75000);
-
-    // Click on Submit button
+    // Step 14: Click Submit button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.submitButton);
-    //await pages.PayrollPage.waitForSubmittedPageReady();
-    // (Changed)
     await webComponents.waitForUXLoading([],page);
     await webComponents.waitElementToBeVisibleCustomWait(pages.BulkPaymentPage.finishedButton, 75000);
   
-    // It returns the full banner text
+    // Step 15: Search Reference No and Open.
     const referenceText = await pages.BulkPaymentPage.getReferenceText();
     console.log('Captured reference text:', referenceText);
     // It extracts the EBLV… token/Refrence no
     const reference = await pages.BulkPaymentPage.getReferenceID();
     console.log('Captured referenceID:', reference);
 
-    // Click on Finish button
+    // Step 16: Click Finish button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.finishedButton);
     await pages.PayrollPage.waitForPayAndTransferPageReady();
-    
-    // (Changed)
     await webComponents.waitForUXLoading([],page);
     await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.payroll, 75000);
 
-    // Search Reference No
+    // Step 17: Search Reference No and Open.
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.BulkPaymentPage.waitForViewPaymentPageReady();
 
@@ -328,11 +310,12 @@ test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
     await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.fromAccountViewLabel, 120000);
     await webComponents.waitElementToBeVisibleCustomWait(pages.PayrollPage.hashValueLabel, 120000);
 
+    // Step 18: Validate Refrence No details.
     // Validate Bulk Payment From Account, From AccountName, Your Account Will be deducted and Amount.
-
     await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.amountView, testData.BulkPayment.maxAmountValidationPayee2);
     
-    // (Additional Validation)
+    // Step 19: (Additional Validation)
+    // Validate Bulk Payment From Account, From AccountName, Your Account Will be deducted and Amount.
     await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.amountViewPayee2, testData.BulkPayment.maxAmountValidationPayee1);
     await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.fromAccountViewLabel, testData.BulkPayment.fromAccountViewLabel);
     await webComponents.compareUIVsJsonValue(pages.BulkPaymentPage.fromAccountNameViewLabel, testData.BulkPayment.fromAccountNameViewLabel);

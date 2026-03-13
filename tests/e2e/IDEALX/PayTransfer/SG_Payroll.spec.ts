@@ -1,13 +1,12 @@
 /**
        * Author: LC5741501
        * Created Date: 16/02/26
-       * This Class "tests/PayTransfer/SG_Payroll.spec.ts"
-       * Description: This class has two test cases.
-       * 1) TC001_SGPayroll - Create SG Payroll Alternate with new payee
-       * 2) TC002_SGPayroll - Edit Payroll Alternate via Transfer Center
+       * Class path "tests/PayTransfer/SG_Payroll.spec.ts"
+       * Description: This Specification contains the test cases related Singapore Payroll Payment.
+       * 1) TC001_SGPayroll - Verify creation of a Payroll with new payee
+       * 2) TC002_SGPayroll - Verify Payroll can be edited with new payee
        */
 
-// tests/PayTransfer/SG_Payroll.spec.ts
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -43,11 +42,12 @@ const loginUserId    = testData.Payroll.SIT.loginUserId;
 const fromAccount    = testData.Payroll.SIT.fromAccount;
 const payeeBankID    = testData.Payroll.SIT.payeeBankID;
 
-// Configure retries like the old Protractor suite
+// Configure retries
 test.describe.configure({
   retries: Number(process.env.CASE_RETRY_TIMES ?? 0),
 });
 
+// Actions for beforEach and afterEach test hooks
 test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
   let pages: PaymentsPages;
   // Track created payees per test
@@ -94,27 +94,26 @@ test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
   });
 
   //TC001_SGPayroll
-  test('TC001_SGPayroll - Create Payroll Alternate with new payee', async ({ page }) => {
-    // Payments → Transfer Center → Payroll
-    // paymentMenu => Pay & Transfer (Left option)
-    
+  test('TC001_SGPayroll - Verify creation of a Payroll with new payee', async ({ page }) => {
+
+    //Step 1: Navigate Payment & Transfer Menu.
     await pages.AccountTransferPage.waitForMenu();
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.AccountTransferPage.paymentMenu,15_000);
 
-    //Authentication Pop-up 
+    //Step 2: Handle Authentication Pop-up.
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
 
-    // Click Payroll option on top
+    // Step 3: Click Payroll option.
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.PayrollPage.payroll,15_000);
     await pages.PayrollPage.waitForPayrollFormReady();
 
-    // Step 1: Payment from => Select account from "Account" dropdown
+    // Step 4: Select account from "Account" dropdown.
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.PayrollPage.fromAccount,15_000);
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
-    // Step 2: Payment from => Click "New payee" tab and enters details
+    // Step 5: Add "New payee".
     const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayeeWithAllDetails({
       name: testData.Payroll.newPayeeName,
       nickName: testData.Payroll.newPayeeNickName,
@@ -125,66 +124,63 @@ test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
     // Register for cleanup
     createdPayees.push({ nickName, accountNumber });
 
-    // Step 2: Enter Amount (SGD) and other optional details for 
-    // Reference for payee, Payment details to the payee bank, 
-    // Message to the payee, Email, Email Message
+    // Step 6: Enter Amount (SGD) and other optional details for 
+    // Reference for payee, Payment details to the payee bank, Message to the payee, Email, Email Message
     await pages.PayrollPage.enterNewPayeeAmountAndOptionalDetails(testData);
 
-    // Step 3: Payment date
-
-    // Click checkbox : Earliest Available Date
+    // Step 7: Select Payment date.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.earliestAvailableDateCheckbox);
     
-    //Step 4: Payment date : Enter Internal reference = true(It will add the value from Json) , Batch ID
+    // Step 8: Enter Internal reference
     await pages.PayrollPage.enterTransactionReferences(testData, internalReferenceBoolean);
 
-    // Click on Next button
+    // Step 9: Click Next button.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.nextButton);
     await pages.PayrollPage.waitForPreviewPageReady();
 
-    // Click on Submit button
+    // Step 10: Click Submit button.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.submitButton);
     await pages.PayrollPage.waitForSubmittedPageReady();
 
-    // Click on Finish button
+    // Step 11: Click Finish button
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.finishButton);
     await pages.PayrollPage.waitForPayAndTransferPageReady();
 
-    // Search Reference No in Transfer Center
+    // Step 12: Search Reference No.
     await pages.TransferCentersPage.searchAndOpenByReference(testData.Payroll.internalReference);
     await pages.PayrollPage.waitForViewPaymentPageReady();
     
+    // Step 13: Validate the Reference No details.
     //This method validates the existing PayeeOrRefrenceNo Details.
     await pages.PayrollPage.validatePayeeOrRefrenceNoDetailsOfPayroll(testData,internalReferenceAutoGenerated=false, testData.Payroll.internalReference, amountSGDIsEdit=false, yourAccountDeductedEdited=false);
     
-    //This method deletes the existing opened PayeeOrRefrenceNo Details.
+    // Step 14: This method deletes the existing opened PayeeOrReferenceNo.
     await pages.PayrollPage.deleteOpenPayeeOrReferenceNo(testData,internalReferenceAutoGenerated=false, testData.Payroll.internalReference);
 
   });
 
 
   //TC002_SGPayroll
-  test('TC002_SGPayroll - Edit Payroll Alternate via Transfer Center', async ({ page }) => {
-    // Payments → Transfer Center → Payroll
-    // paymentMenu => Pay & Transfer (Left option)
+  test('TC002_SGPayroll - Verify Payroll can be edited with new payee', async ({ page }) => {
     
+    //Step 1: Navigate Payment & Transfer Menu.
     await pages.AccountTransferPage.waitForMenu();
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.AccountTransferPage.paymentMenu,15_000);
 
-    //Authentication Pop-up 
+    //Step 2: Handle Authentication Pop-up.
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
 
-    // Click Payroll option on top
+    // Step 3: Click Payroll option.
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.PayrollPage.payroll,15_000);
     await pages.PayrollPage.waitForPayrollFormReady();
 
-    // Step 1: Payment from => Select account from "Account" dropdown
+    // Step 4: Select account from "Account" dropdown.
     await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.PayrollPage.fromAccount,15_000);
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
-    // Step 2: Payment from => Click "New payee" tab and enters details
+    // Step 5: Add "New payee".
     const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayeeWithAllDetails({
       name: testData.Payroll.newPayeeName,
       nickName: testData.Payroll.newPayeeNickName,
@@ -195,67 +191,65 @@ test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
     // Register for cleanup
     createdPayees.push({ nickName, accountNumber });
 
-    // Step 2: Enter Amount (SGD) and other optional details for 
-    // Reference for payee, Payment details to the payee bank, 
-    // Message to the payee, Email, Email Message
+    // Step 6:  Enter Amount (SGD) and other optional details for 
+    // Reference for payee, Payment details to the payee bank, Message to the payee, Email, Email Message
     await pages.PayrollPage.enterNewPayeeAmountAndOptionalDetails(testData);
 
-    // Step 3: Payment date
-
-    // Click checkbox : Earliest Available Date
+    // Step 7: Select Payment date.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.earliestAvailableDateCheckbox);
     
-    //Step 4: Payment date : Enter Internal reference = true(It will add the value from Json) , Batch ID
+    // Step 8: Enter Internal reference= Enter Internal reference = true(It will add the value from Json) , Batch ID
     await pages.PayrollPage.enterTransactionReferences(testData, internalReferenceBoolean=false);
 
-    // Click on Next button
+    // Step 9: Click Next button.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.nextButton);
     await pages.PayrollPage.waitForPreviewPageReady();
 
-    // Click on Submit button
+    // Step 10: Click Submit button.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.submitButton);
     await pages.PayrollPage.waitForSubmittedPageReady();
 
-    // Its capture the full banner text:
+    // Step 11: Get Reference No.
     const referenceText = await pages.PayrollPage.getReferenceText();
     console.log('Captured reference text:', referenceText);
     // It Extract the reference no EBLV… token:
     const reference = await pages.PayrollPage.getReferenceID();
     console.log('Captured referenceID:', reference);
 
-    // Click on Finish button
+    // Step 12: Click Finish button
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.finishButton);
     await pages.PayrollPage.waitForPayAndTransferPageReady();
 
-    // Find it again in Transfer Center by reference
+    // Step 13: Search and open Reference No details.
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.PayrollPage.waitForViewPaymentPageReady();
     
-    // This method validates the existing PayeeOrRefrenceNo Details.
+    // Step 14: Validate the Reference No details.
     await pages.PayrollPage.validatePayeeOrRefrenceNoDetailsOfPayroll(testData,internalReferenceAutoGenerated=true, reference, amountSGDIsEdit=false, yourAccountDeductedEdited=false);
 
+    // Step 15: Edit the Amount.
     await pages.PayrollPage.editAmountSGD(testData);
 
-    // Click on Next button
+    // Step 16: Click Next button.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.nextButton);
     await pages.PayrollPage.waitForPreviewPageReady();
 
-    // Click on Submit button
+    // Step 17: Click Submit button.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.submitButton);
     await pages.PayrollPage.waitForSubmittedPageReady();
 
-    // Click on Finish button
+    // Step 18: Click Finish button
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.finishButton);
     await pages.PayrollPage.waitForPayAndTransferPageReady();
 
-    // Find it again in Transfer Center by reference
+    // Step 19: Search and open Reference No details.
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.PayrollPage.waitForViewPaymentPageReady();
 
-    // This method validates the existing PayeeOrRefrenceNo Details. Validates values after editing the Amount..
+    // Step 20: Validate the Reference No details with Edited Amount
     await pages.PayrollPage.validatePayeeOrRefrenceNoDetailsOfPayroll(testData,internalReferenceAutoGenerated=true, reference,amountSGDIsEdit=true,yourAccountDeductedEdited=true);
     
-    //This method deletes the existing opened PayeeOrRefrenceNo Details.
+    // Step 21: This method deletes the existing opened PayeeOrReferenceNo.
     await pages.PayrollPage.deleteOpenPayeeOrReferenceNo(testData,internalReferenceAutoGenerated=true, reference);
 
   });
