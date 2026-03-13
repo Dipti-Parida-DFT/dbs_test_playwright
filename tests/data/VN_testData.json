@@ -49,6 +49,7 @@
             "fromAccount": "66670000322",
             "loginCompanyId1": "VN00001",
             "loginUserId1": "DBSAUTOVN02",
+            "loginUserId2": "SPVNSSM1S01",
             "fromAccount1": "88888888"
         },
         "selectTaxesOptions": ["Select an option", "Payment ID", "Decision number", "Document number"],
