@@ -55,7 +55,6 @@ export {
   eACHPaymentPage,
   IBPSPaymentPage,
   RTOLPaymentPage, */
-  BulkCollectionPage
 };
 
 export class PaymentsPages {
