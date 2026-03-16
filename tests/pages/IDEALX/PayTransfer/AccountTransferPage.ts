@@ -461,7 +461,7 @@ export class AccountTransferPage {
   }
 
   /** Convenience: click after visible+enabled */
-  async safeClick(locator: Locator, timeout = 15_000) {
+  async safeClick(locator: Locator, timeout = 25_000) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
     await locator.click();

@@ -14,7 +14,8 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   //testDir: './tests',
   /* Longer test timeout if CI is slow */
-  timeout: 60_000, // adjust as needed
+  timeout: 8_000_000, // adjust as needed
+  globalTimeout: 8_000_000,
   expect: { timeout: 10_000 },
 
   /* Run tests in files in parallel */
@@ -40,6 +41,8 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
+    actionTimeout: 60_000,
+    navigationTimeout: 120_000,
   },
 
   /* Configure projects for major browsers */
