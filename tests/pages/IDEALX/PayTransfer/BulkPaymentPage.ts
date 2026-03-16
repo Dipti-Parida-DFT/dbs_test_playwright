@@ -504,7 +504,7 @@ export class BulkPaymentPage {
       await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
       await this.payeeBankSearchResults.first().click();
       await this.safeClick(this.newPayeeAccountNumber);
-  
+      
       // Preserve your clipboard -> paste behavior
       await this.page.evaluate(async (text) => {
         await navigator.clipboard.writeText(text);

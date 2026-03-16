@@ -6,8 +6,6 @@ import path from 'node:path';
 import { NavigatePages, PaymentsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
 
-
-// --- Load JSON test data ---
 const testDataPath = path.resolve(__dirname, '../../../data/VN_testData.json');
 const  testData  = JSON.parse(fs.readFileSync(testDataPath, 'utf-8'));
 import { chromium, Browser } from 'playwright';
@@ -842,9 +840,7 @@ test.describe('VN_TaxPayment (Approval flow)', () => {
 
     //Step 16: Capture reference
     const referenceText = await pages.VNTaxPaymentPage.getReferenceText();
-    console.log("Reference Text: ", referenceText);
     const reference = await pages.VNTaxPaymentPage.getReferenceID();
-    console.log("Reference ID: ", reference);
 
     //Step 17: Click on finish button
     await pages.VNTaxPaymentPage.safeClick(pages.VNTaxPaymentPage.finishButton);

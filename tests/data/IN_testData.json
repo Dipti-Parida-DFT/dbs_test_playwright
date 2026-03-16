@@ -1,0 +1,58 @@
+{
+    "login": {
+        "loginCompanyId": "IN2BFE1",
+        "loginUserId": "DBSAUTOIN01",
+        "verifyUserId": "DBSAUTOIN01"
+    },
+    "status": {
+        "Approved": "Approved",
+        "PendingApproval": "Pending Approval",
+        "PartialApproved": "Partial Approved",
+        "PendingRelease": "Pending Release",
+        "PendingVerification": "Pending Verification",
+        "PartialCompleted": "Partial Completed",
+        "Received": "Received",
+        "Completed": "Completed",
+        "Saved": "Saved",
+        "Submitted": "Submitted",
+        "BankRejected": "Bank Rejected",
+        "Rejected": "Rejected",
+        "Failed": "Failed",
+        "Cancelled": "Cancelled",
+        "PendingSupportingDocument":"Pending Supporting Document"
+    },
+    "paymentType": {
+        "IN_NEFT": "IN - NEFT Payment",
+        "IN_RTGS": "IN - RTGS Payment",
+        "IM_IMPS": "IN - IMPS Payment"
+    },
+    "BulkCollection": {
+        "SIT": {
+            "loginCompanyId": "IN2BFE1",
+            "loginUserId": "DBSAUTOIN01",
+            "fromAccount": "466588832"
+        },
+        "amount": "10",
+        "editAmount": "100",
+        "UCICCode": "123456789009876545",
+        "newPayeeName": "Bulk Collection NewPayer Name 11111",
+        "payeeBankAccountNumber": "12345600000",
+        "DDAreference": "DDAReferenceDDARefer",
+        "referenceForPayee": "referenceForPayerreferenceForP",
+        "payeeBankID": "26490200",
+        "emailIdO": "Email0@dbs.com",
+        "emailId1": "Email1@dbs.com",
+        "emailId2": "Email2@dbs.com",
+        "emailId3": "Email3@dbs.com",
+        "emailId4": "Email4@dbs.com",
+        "message": "message",
+        "messageEdit": "messageEdit",
+        "paymentType": "India Bulk Collection",
+        "payeeBankName": "DEPOSITORY(PTE)LIMITE",
+        "MandateID": "",
+        "totalItem": "1"
+    }
+    
+  
+    
+}

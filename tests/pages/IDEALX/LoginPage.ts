@@ -20,11 +20,9 @@ export class LoginPage {
     this.userIdInput = page.locator('input[name="userId"], input[placeholder*="User" i]');
     this.pinInput = page.locator('input[type="password"], input[placeholder*="PIN" i]');
     this.loginButton = page.locator('button:has-text("Login"), button[type="submit"]');
-    //Handle Acknowledgement pop-up if it appears
     this.acknowledgeButton = page.locator('//button[normalize-space()="I acknowledge"]');
     this.doNotShowChkBox = page.locator('//label[@for="checkbox"]');
     this.closeButton = page.locator('button:has(svg)');
-    // Use a unique selector for the Pay & Transfer nav item
     this.postLoginIndicator = page.locator('#nav-item-navBBTopPaymentsLinkText');
   }
 
@@ -58,6 +56,8 @@ if (appeared) {
 
   }
 
+ 
+
   async goto() {
     await this.page.goto('https://i3bku3uatqeweb01.qe.dragonflyft.com:1443/iws/ssologin');
   }
@@ -75,10 +75,13 @@ if (appeared) {
   await webComponents.enterText(this.userIdInput, creds.userId);
   await webComponents.enterText(this.pinInput, creds.pin);
   await this.loginButton.click();
-  await this.page.waitForTimeout(120000); // Wait for potential redirects
+  await this.page.waitForTimeout(70000); // Wait for potential redirects
   }
 
   async loginWithDefaultCredentials() {
     await this.login();
   }
+
+ 
 }
+ 

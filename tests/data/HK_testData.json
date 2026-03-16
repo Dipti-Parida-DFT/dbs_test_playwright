@@ -1,0 +1,129 @@
+{
+   "BulkCollection": {
+        "SIT": {
+            "loginCompanyId": "SHKLT008",
+            "loginUserIdHKMP": "DBSAUTOHKBLKCN01",
+            "fromAccount": "783700301"
+        }
+    },
+    "BulkCollectionValidationData": {
+        "toAccountNumberLabel": "783700301 (USD)",
+        "toAccountNameLabel": "NAME OF ACCT NO:7837003010",
+        "paymentType": "Hong Kong Bulk Collection",
+        "totalAmount": "USD 1.00",
+        "totalAmountConsolidated": "USD 3.00",
+        "creditType":"Itemized Credit",
+        "creditTypeConsolidated":"Consolidated Credit",
+        "collectionSummaryLabel": "Collection summary:",
+        "totalPayersLabel": "Total payers:",
+        "totalPayersLabelValue": "1",
+        "totalPayersConsolidatedLabelValue": "2",
+        "totalAmountLabel": "Total amount",
+        "totalAmountLabelValue": "(USD): 1.00",
+        "totalAmountConsolidatedLabelValue": "(USD): 3.00",
+        "bankNameValue": "ALLAHABAD BANK",
+        "bankCode": "0256",
+        "transactionDeleted": "Transaction deleted" 
+    },
+    "BulkCollectionValidationDataPayer2": {
+        "bankNameValue": "BANCO DE ORO UNIBANK, INC, HK BRANC",
+        "bankCode": "0067",
+        "transactionDeleted": "Transaction deleted" 
+    },
+    "payer1": {
+        "newPayeeName": "Test_Payer_Name001",
+        "payeeBankID": "ALLA",
+        "newPayeeAcctNumber": "10102345",
+        "DDAReference": "DDARef001",
+        "mandateID": "MandateID001",
+        "amount" : "1.00",
+        "transactionCode": "92 - Direct Debit(Merchant Payment)",
+        "transactionCodeTc002": "98 - Direct Debit(Merchant Payment - Consolidated posting)",
+        "purposeOfPayment": "Merchant Initiated Bills Payment",
+        "particulars": "Particulars1",
+        "collectionDetails": "CollectionDetailsTest01",
+        "emailId0": "Email0@dbs.com",
+        "emailId1": "Email1@dbs.com",
+        "emailId2": "Email2@dbs.com",
+        "emailId3": "Email3@dbs.com",
+        "emailId4": "Email4@dbs.com",
+        "emailMessage": "TestEmailMessage"
+    },
+    "payer2": {
+        "newPayeeName": "AutoTestBulkCollection",
+        "newPayeeNickName": "AutoTestBulkCollectionNickName",
+        "newPayeeAcctNumber": "010123456",
+        "DDAReference": "DDA reference002",
+        "mandateID": "Mandate ID002",
+        "amount" : "2.00",
+        "transactionCode": "38 - Direct Debit(Consolidated posting)",
+        "particulars": "Particulars2"    
+    },
+    "status": {
+        "Approved": "Approved",
+        "PendingApproval": "Pending Approval",
+        "PartialApproved": "Partial Approved",
+        "PendingRelease": "Pending Release",
+        "PendingVerification": "Pending Verification",
+        "PartialCompleted": "Partial Completed",
+        "Received": "Received",
+        "Completed": "Completed",
+        "Saved": "Saved",
+        "Submitted": "Submitted",
+        "BankRejected": "Bank Rejected",
+        "Rejected": "Rejected",
+        "Failed": "Failed",
+        "Cancelled": "Cancelled"
+    },
+    "ManagePayroll": {
+        "SIT": {
+            "loginCompanyId": "SHKLT008",
+            "loginUserIdHKMP": "DBSAUTOHKBLKCN01",
+            "fromAccount": "781024341"
+        }
+    },
+    "ManagePayrollPayer1": {
+        "newPayeeName": "ManagePayrollPayer1_Name001",
+        "newPayeeNickName": "ManagePayrollPayer1_NickName001",
+        "payeeBankID": "ALLA",
+        "newPayeeAcctNumber": "10102345",
+        "amount" : "1.00",
+        "amountEdited" : "",
+        "transactionCode": "22SalaryCredit",
+        "purposeCode": "",
+        "referenceForPayee": "TestReferenceForPayee",
+        "particulars": "Particulars1",
+        "paymentDetails": "TestPaymentDetails",
+        "emailId0": "Email0@dbs.com",
+        "emailId1": "Email1@dbs.com",
+        "emailId2": "Email2@dbs.com",
+        "emailId3": "Email3@dbs.com",
+        "emailId4": "Email4@dbs.com",
+        "emailMessage": "TestEmailMessage",
+
+        "internalReferenceUserProvided": "",
+        "batchIdValueUserProvided": ""
+    },
+    "ManagePayrollPayee1ValidationData": {
+        "fromAccountValue1": "781024341 (HKD)",
+        "fromAccountValue2": "SNAME 7810243",
+        "paymentTypeValue": "Hong Kong Management Payroll",
+        "amountDeductedValue": "HKD 1.00",
+        "amountDeductedEditedValue": "",
+      
+
+        "paymentSummaryLabel":"Payment summary:",
+        "totalPayeesLabel":"Total payees:",
+        "totalPayeesValue": "1",
+        "totalAmountLabel": "Total amount",
+        "totalAmountValue": "(HKD): 1.00",
+        "totalAmountValueEdited": "",
+
+        "bankNameLabelValue": "ALLAHABAD BANK",
+        "bankSwiftBicLabelValue": "0256",
+
+        
+        "purposeCodeLabelValue": "",
+        "transactionCodeLabelValue": "22 - Salary Credit"
+    }
+}

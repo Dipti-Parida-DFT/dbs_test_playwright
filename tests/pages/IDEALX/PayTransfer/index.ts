@@ -5,14 +5,17 @@ import { AccountTransferPage } from './AccountTransferPage';
 import { TransferCentersPage } from './TransferCenterPage';
 import { PayrollPage } from './PayrollPage';
 import { BulkPaymentPage } from './BulkPaymentPage';
+import { BulkCollectionPage } from './BulkCollectionPage';
 import { VNTaxPaymentPage } from './VNTaxPaymentPage';
+
 
 export {
   AccountTransferPage,
   TransferCentersPage,
   PayrollPage,
   BulkPaymentPage,
- 
+  BulkCollectionPage,
+  VNTaxPaymentPage
 };
 
 export class PaymentsPages {
@@ -20,6 +23,7 @@ export class PaymentsPages {
   public TransferCentersPage: TransferCentersPage;
   public PayrollPage: PayrollPage;
   public BulkPaymentPage: BulkPaymentPage;
+  public BulkCollectionPage: BulkCollectionPage;
   public VNTaxPaymentPage: VNTaxPaymentPage;
   
   constructor(private readonly page: Page) {
@@ -27,8 +31,8 @@ export class PaymentsPages {
     this.TransferCentersPage = new TransferCentersPage(page);
     this.PayrollPage = new PayrollPage(page);
     this.BulkPaymentPage = new BulkPaymentPage(page);
+    this.BulkCollectionPage = new BulkCollectionPage(page);
     this.VNTaxPaymentPage = new VNTaxPaymentPage(page);
-
     
   }
 }
