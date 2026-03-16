@@ -646,14 +646,20 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     
-    //Step 5: Click on Apply Taxes button
+    //Step 5: Ensure OrgTaxCode is not null or empty
+    const orgTaxCodeValue = await pages.VNTaxPaymentPage.orgTaxCode.inputValue();
+    if (!orgTaxCodeValue) {
+      throw new Error('OrgTaxCode is empty or not set. Cannot proceed with applying taxes.');
+    }
+
+    //Step 6: Click on Apply Taxes button
     await pages.VNTaxPaymentPage.applyTaxes.click();
 
-    //Step 6: Select first record from non-sequential tax list
+    //Step 7: Select first record from non-sequential tax list
     const selectButton = page.getByRole('button', { name: /\+\s*Select/i });
     await selectButton.nth(0).click();
 
-    //Step 7: Verify for selected record additional information section gets displayed with new fields - Tax period, Tax type, Tax office
+    //Step 8: Verify for selected record additional information section gets displayed with new fields - Tax period, Tax type, Tax office
     const additionalInfo = pages.VNTaxPaymentPage.additionalInfoSection;
     await expect(additionalInfo).toBeVisible({ timeout: 10000 });
 
@@ -663,7 +669,7 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
     await expect(additionalInfo.getByText('Property record number', { exact: true })).toBeVisible();
     await expect(additionalInfo.getByText('Payment due date', { exact: true })).toBeVisible();
 
-    //Step 8: Click Cancel
+    //Step 9: Click Cancel
     await pages.VNTaxPaymentPage.cancelButton.click();
   });
 });
