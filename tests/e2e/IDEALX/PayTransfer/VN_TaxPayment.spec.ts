@@ -647,7 +647,13 @@ test.describe('VN_TaxPayment (Playwright using PaymentsPages)', () => {
     await page.keyboard.press('Enter');
     
     //Step 5: Ensure OrgTaxCode is not null or empty
-    const orgTaxCodeValue = await pages.VNTaxPaymentPage.orgTaxCode.inputValue();
+    await pages.VNTaxPaymentPage.orgTaxCode.waitFor({ state: 'visible', timeout: 5000 });
+    const token=pages.VNTaxPaymentPage.orgTaxCode
+    .locator('.ui-autocomplete-token-label')
+    .first();
+    await expect(token).toHaveText(/\S/, { timeout: 5000 });
+    const orgTaxCodeValue = (await token.innerText()).trim();
+    console.log('OrgTaxCode value:', orgTaxCodeValue);
     if (!orgTaxCodeValue) {
       throw new Error('OrgTaxCode is empty or not set. Cannot proceed with applying taxes.');
     }

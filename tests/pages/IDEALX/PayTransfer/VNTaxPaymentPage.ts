@@ -11,7 +11,7 @@ export class VNTaxPaymentPage {
 
     // Core fields
     this.fromAccount = page.locator('xpath=//p-auto-complete[@formcontrolname="fromAccount"]');
-    this.orgTaxCode = page.locator('xpath=//p-auto-complete[formcontrolname="taxCode"]');
+    this.orgTaxCode = page.locator('xpath=//p-auto-complete[@formcontrolname="taxCode"]');
     this.orgTaxCodeInput = page.locator('#taxCode');
     this.selectTaxes = page.locator('xpath=//p-auto-complete[@formcontrolname="optionsField"]');
     this.applyTaxes = page.locator('xpath=//button[@name="apply"]');
