@@ -12,6 +12,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { NavigatePages, PaymentsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
+import { CONSTANT } from '../../../lib/constant';
+import { TIMEOUT } from '../../../lib/timeouts';
 
 //Initialize Web Component class
 const webComponents = new WebComponents();
@@ -49,69 +51,70 @@ test.describe.configure({
 
 // Actions for beforEach and afterEach test hooks
 test.describe('HK_ManagementPayroll (Playwright using PaymentsPages)', () => {
-  let pages: PaymentsPages;
-  // Track created payees per test
-  type CreatedPayee = { nickName?: string; accountNumber?: string };
-  let createdPayees: CreatedPayee[] = [];
-   
-  /**
-   * This method run's before every testcase execution to launch the browser/page
-   */ 
-  test.beforeEach(async ({ page }, testInfo) => {
-    // This is used by the logging proxies in some converted classes (optional)
-    process.env.currentTestTitle = testInfo.title;
-    customBrowser = await chromium.launch({ headless: false });
-    test.setTimeout(200_000);
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
-    await loginPage.login(loginCompanyId, loginUserId, '123');
-    // 2) Create the aggregator once per test
-    pages = new PaymentsPages(page);
-    
-  });
-
-  /**
-   * This method run's after every testcase execution to do the 
-   * cleanup activity or to close any open connections
-   */ 
-  test.afterEach(async ({ page }, testInfo) => {
-  // Only cleanup if the test passed
-  if (testInfo.status !== 'passed') {
-    console.warn(`[cleanup] Skipping payee deletion because test status is ${testInfo.status}`);
-    return;
-    }
-    
-  // Best-effort cleanup; never fail the test because cleanup failed
-  for (const p of createdPayees) {
-    try {
-      const key = p.nickName ?? p.accountNumber ?? '';
-      await pages.PayrollPage.deletePayeeByFilter(key, /* confirm */ true);
-      console.log(`[cleanup] Deleted payee with key: ${key}`);
-    } catch (err) {
-      console.warn('[cleanup] Failed to delete a payee:', err);
-    }
-  }
+   let pages: PaymentsPages;
+    // Track created payees per test
+    type CreatedPayee = { nickName?: string; accountNumber?: string };
+    let createdPayees: CreatedPayee[] = [];
+  
+     /**
+     * This method run's before every testcase execution to launch the browser/page
+     */ 
+    test.beforeEach(async ({ page }, testInfo) => {
+      process.env.currentTestTitle = testInfo.title;
+  
+      //customBrowser = await chromium.launch({ headless: false });
+      test.setTimeout(TIMEOUT.MAX);
+      const loginPage = new LoginPage(page);
+      await loginPage.goto();
+      await loginPage.login(loginCompanyId, loginUserId, (String(CONSTANT.pin)));
+  
+      pages = new PaymentsPages(page);
+    });
+  
+     /**
+     * This method run's after every testcase execution to do the 
+     * cleanup activity or to close any open connections
+     */ 
+    test.afterEach(async ({ page }, testInfo) => {
+      // Only cleanup if the test passed
+      if (testInfo.status !== 'passed') {
+        console.warn(`[cleanup] Skipping payee deletion because test status is ${testInfo.status}`);
+        return;
+        }
+        
+      // Best-effort cleanup; never fail the test because cleanup failed
+      for (const p of createdPayees) {
+        try {
+          const key = p.nickName ?? p.accountNumber ?? '';
+          await pages.PayrollPage.deletePayeeByFilter(key, /* confirm */ true);
+          console.log(`[cleanup] Deleted payee with key: ${key}`);
+        } catch (err) {
+          console.warn('[cleanup] Failed to delete a payee:', err);
+        }
+      }
   });
 
   //TC001_HK_ManagementPayroll
   test('TC001_HK_ManagementPayroll - Verify creation of a Management Payroll with new Payee', async ({ page }) => {
   
     //Step 1: Navigate Payment & Transfer Menu.
-    await pages.AccountTransferPage.waitForMenu();
-    await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.AccountTransferPage.paymentMenu,15_000);
+    await webComponents.waitForUXLoading([],page);
+    await webComponents.waitElementToBeVisible(pages.AccountTransferPage.paymentMenu);
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
 
     //Step 2: Handle Authentication Pop-up.
-    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
 
     // Step 3: Click Management Payroll option.
-    await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.PayrollPage.managePayroll,15_000);
-    await pages.PayrollPage.waitForPayrollFormReady();
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.managePayroll);
+    await webComponents.waitForUXLoading([],page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.fromAccount);
 
     // Step 4: Select account from "Account" dropdown.
-    await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.PayrollPage.fromAccount,15_000);
-    await page.keyboard.type(fromAccount);
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.fromAccount);
+    await webComponents.typeTextThroughKeyBoardAction(page,fromAccount);
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page,'ArrowDown');
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page,'Enter');
 
     // Step 5: Add "New payee".
     const {accountNumber }  = await pages.PayrollPage.addNewPayeeWithAllDetails({
@@ -140,18 +143,19 @@ test.describe('HK_ManagementPayroll (Playwright using PaymentsPages)', () => {
         emailMessage: testData.ManagePayrollPayer1.emailMessage
       });
 
-    // Step 7: Select Payment date.
-    // Click checkbox : Earliest Available Date
+    // Step 7: Select Payment date. Click checkbox : Earliest Available Date
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.earliestAvailableDateCheckbox);
     
     // Step 8: Click Next button.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.nextButton);
-    await pages.PayrollPage.waitForPreviewPageReady();
+    await webComponents.waitForUXLoading([],page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.submitButton);
 
     // Step 9: Click Submit button.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.submitButton);
-    await pages.PayrollPage.waitForSubmittedPageReady();
-
+    await webComponents.waitForUXLoading([],page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.finishButton);
+    
     // Step 10: Get the full banner text.
     const referenceText = await pages.PayrollPage.getReferenceText();
     console.log('Captured reference text:', referenceText);
@@ -161,11 +165,15 @@ test.describe('HK_ManagementPayroll (Playwright using PaymentsPages)', () => {
 
     // Step 11: Click Finish button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.finishButton);
-    await pages.PayrollPage.waitForPayAndTransferPageReady();
+    await webComponents.waitForUXLoading([],page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.payroll);
     
     // Step 12: Search Reference No and Open.
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
-    await pages.PayrollPage.waitForViewPaymentPageReady();
+    await webComponents.waitForUXLoading([],page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.fromAccountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.amountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.hashValueLabel);
     
     // Step 13: Validate the Reference No details.
     await pages.PayrollPage.validatePayeeOrRefrenceNoDetails({

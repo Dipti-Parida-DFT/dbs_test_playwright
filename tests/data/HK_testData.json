@@ -11,6 +11,10 @@
         "toAccountNameLabel": "NAME OF ACCT NO:7837003010",
         "paymentType": "Hong Kong Bulk Collection",
         "totalAmount": "USD 1.00",
+        "totalAmountEditedValue": "",
+        "internalReferenceUserProvided": "",
+        "batchIdValueUserProvided": "",
+        "totalAmountValueEdited": "",
         "totalAmountConsolidated": "USD 3.00",
         "creditType":"Itemized Credit",
         "creditTypeConsolidated":"Consolidated Credit",
@@ -31,16 +35,21 @@
         "transactionDeleted": "Transaction deleted" 
     },
     "payer1": {
+        "amountPayer2Tc002": "",
         "newPayeeName": "Test_Payer_Name001",
         "payeeBankID": "ALLA",
         "newPayeeAcctNumber": "10102345",
         "DDAReference": "DDARef001",
         "mandateID": "MandateID001",
         "amount" : "1.00",
+        "amountEdited" : "",
+        "transactionCodeSelect": "92DirectDebitMerchantPayment",
         "transactionCode": "92 - Direct Debit(Merchant Payment)",
         "transactionCodeTc002": "98 - Direct Debit(Merchant Payment - Consolidated posting)",
         "purposeOfPayment": "Merchant Initiated Bills Payment",
         "particulars": "Particulars1",
+        "particularsPayer1": "Yes",
+        "collectionDetailsPayer1": "Yes",
         "collectionDetails": "CollectionDetailsTest01",
         "emailId0": "Email0@dbs.com",
         "emailId1": "Email1@dbs.com",
@@ -50,6 +59,7 @@
         "emailMessage": "TestEmailMessage"
     },
     "payer2": {
+        "amountPayer2Tc002": "YES",
         "newPayeeName": "AutoTestBulkCollection",
         "newPayeeNickName": "AutoTestBulkCollectionNickName",
         "newPayeeAcctNumber": "010123456",
@@ -57,7 +67,9 @@
         "mandateID": "Mandate ID002",
         "amount" : "2.00",
         "transactionCode": "38 - Direct Debit(Consolidated posting)",
-        "particulars": "Particulars2"    
+        "particularsPayer1": "",
+        "particulars": "Particulars2",
+        "collectionDetailsPayer1": ""
     },
     "status": {
         "Approved": "Approved",

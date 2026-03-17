@@ -12,6 +12,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { NavigatePages, PaymentsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
+import { CONSTANT } from '../../../lib/constant';
+import { TIMEOUT } from '../../../lib/timeouts';
 
 // create lib => components.ts object
 const webComponents = new WebComponents();
@@ -50,68 +52,77 @@ test.describe.configure({
 // Actions for beforEach and afterEach test hooks
 test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
   let pages: PaymentsPages;
-  // Track created payees per test
-  type CreatedPayee = { nickName?: string; accountNumber?: string };
-  let createdPayees: CreatedPayee[] = [];
-   
-  /**
-   * This method run's before every testcase execution to launch the browser/page
-   */ 
-  test.beforeEach(async ({ page }, testInfo) => {
-    // This is used by the logging proxies in some converted classes (optional)
-    process.env.currentTestTitle = testInfo.title;
-    customBrowser = await chromium.launch({ headless: false });
-    test.setTimeout(200_000);
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
-    await loginPage.login(loginCompanyId, loginUserId, '123');
-    // 2) Create the aggregator once per test
-    pages = new PaymentsPages(page);
-    
-  });
-
-  /**
-   * This method run's after every testcase execution to do the 
-   * cleanup activity or to close any open connections
-   */ 
-  test.afterEach(async ({ page }, testInfo) => {
-  // Only cleanup if the test passed
-  if (testInfo.status !== 'passed') {
-    console.warn(`[cleanup] Skipping payee deletion because test status is ${testInfo.status}`);
-    return;
-    }
-    
-  // Best-effort cleanup; never fail the test because cleanup failed
-  for (const p of createdPayees) {
-    try {
-      const key = p.nickName ?? p.accountNumber ?? '';
-      await pages.PayrollPage.deletePayeeByFilter(key, /* confirm */ true);
-      console.log(`[cleanup] Deleted payee with key: ${key}`);
-    } catch (err) {
-      console.warn('[cleanup] Failed to delete a payee:', err);
-    }
-  }
+    // Track created payees per test
+    type CreatedPayee = { nickName?: string; accountNumber?: string };
+    let createdPayees: CreatedPayee[] = [];
+  
+    /**
+    * This method run's before every testcase execution to launch the browser/page
+    */
+    test.beforeEach(async ({ page }, testInfo) => {
+      process.env.currentTestTitle = testInfo.title;
+  
+      //customBrowser = await chromium.launch({ headless: false });
+      test.setTimeout(TIMEOUT.MAX);
+      const loginPage = new LoginPage(page);
+      await loginPage.goto();
+      await loginPage.login(loginCompanyId, loginUserId, (String(CONSTANT.pin)));
+  
+      pages = new PaymentsPages(page);
+    });
+  
+    /**
+    * This method run's after every testcase execution to do the 
+    * cleanup activity or to close any open connections
+    */
+    test.afterEach(async ({ page }, testInfo) => {
+      // Only cleanup if the test passed
+      if (testInfo.status !== 'passed') {
+        console.warn(`[cleanup] Skipping payee deletion because test status is ${testInfo.status}`);
+        return;
+      }
+  
+      // Best-effort cleanup; never fail the test because cleanup failed
+      for (const p of createdPayees) {
+        try {
+          const key = p.nickName ?? p.accountNumber ?? '';
+          await pages.PayrollPage.deletePayeeByFilter(key, /* confirm */ true);
+          console.log(`[cleanup] Deleted payee with key: ${key}`);
+        } catch (err) {
+          console.warn('[cleanup] Failed to delete a payee:', err);
+        }
+      }
   });
 
   //TC001_SGPayroll
   test('TC001_SGPayroll - Verify creation of a Payroll with new payee', async ({ page }) => {
 
     //Step 1: Navigate Payment & Transfer Menu.
-    await pages.AccountTransferPage.waitForMenu();
-    await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.AccountTransferPage.paymentMenu,15_000);
+    //await pages.AccountTransferPage.waitForMenu();
+    //await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.AccountTransferPage.paymentMenu);
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
 
     //Step 2: Handle Authentication Pop-up.
-    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    //await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
 
     // Step 3: Click Payroll option.
-    await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.PayrollPage.payroll,15_000);
-    await pages.PayrollPage.waitForPayrollFormReady();
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.payroll);
+    //await pages.PayrollPage.waitForPayrollFormReady();
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.fromAccount);
 
     // Step 4: Select account from "Account" dropdown.
-    await webComponents.clickWhenVisibleAndEnabledCustomWait(pages.PayrollPage.fromAccount,15_000);
-    await page.keyboard.type(fromAccount);
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.fromAccount);
+    //await page.keyboard.type(fromAccount);
+    //await page.keyboard.press('ArrowDown');
+    //await page.keyboard.press('Enter');
+    await webComponents.typeTextThroughKeyBoardAction(page, fromAccount);
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'ArrowDown');
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'Enter');
+
 
     // Step 5: Add "New payee".
     const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayeeWithAllDetails({
@@ -126,7 +137,21 @@ test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
 
     // Step 6: Enter Amount (SGD) and other optional details for 
     // Reference for payee, Payment details to the payee bank, Message to the payee, Email, Email Message
-    await pages.PayrollPage.enterNewPayeeAmountAndOptionalDetails(testData);
+    //await pages.PayrollPage.enterNewPayeeAmountAndOptionalDetailsOLD(testData);
+
+       // Step 6: Enter Amount (SGD) and other optional details for 
+    // Reference for payee, Payment details to the payee bank, Message to the payee, Email, Email Message
+    await pages.PayrollPage.enterNewPayeeAmountAndOptionalDetails({
+      amount: testData.Payroll.amount,
+      referenceForPayee: testData.Payroll.referenceForPayee,
+      paymentDetails: testData.Payroll.paymentDetails,
+      emailId0: testData.Payroll.emailId0,
+      emailId1: testData.Payroll.emailId1,
+      emailId2: testData.Payroll.emailId2,
+      emailId3: testData.Payroll.emailId3,
+      emailId4: testData.Payroll.emailId4,
+      emailMessage: testData.Payroll.emailMessage
+    });
 
     // Step 7: Select Payment date.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.earliestAvailableDateCheckbox);
@@ -136,11 +161,15 @@ test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
 
     // Step 9: Click Next button.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.nextButton);
-    await pages.PayrollPage.waitForPreviewPageReady();
+    //await pages.PayrollPage.waitForPreviewPageReady();
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.submitButton);
 
     // Step 10: Click Submit button.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.submitButton);
-    await pages.PayrollPage.waitForSubmittedPageReady();
+    //await pages.PayrollPage.waitForSubmittedPageReady();
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.finishButton);
 
     // Step 11: Click Finish button
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.finishButton);
@@ -148,12 +177,21 @@ test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
 
     // Step 12: Search Reference No.
     await pages.TransferCentersPage.searchAndOpenByReference(testData.Payroll.internalReference);
-    await pages.PayrollPage.waitForViewPaymentPageReady();
+    //await pages.PayrollPage.waitForViewPaymentPageReady();
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.fromAccountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.amountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.hashValueLabel);
+    
+    // Step 13: Validate the Reference No details.
+    //This method validates the existing PayeeOrRefrenceNo Details.
+    await pages.PayrollPage.validatePayeeOrRefrenceNoDetailsOfPayrollOLD(testData,internalReferenceAutoGenerated=false, testData.Payroll.internalReference, amountSGDIsEdit=false, yourAccountDeductedEdited=false);
     
     // Step 13: Validate the Reference No details.
     //This method validates the existing PayeeOrRefrenceNo Details.
     await pages.PayrollPage.validatePayeeOrRefrenceNoDetailsOfPayroll(testData,internalReferenceAutoGenerated=false, testData.Payroll.internalReference, amountSGDIsEdit=false, yourAccountDeductedEdited=false);
-    
+
+
     // Step 14: This method deletes the existing opened PayeeOrReferenceNo.
     await pages.PayrollPage.deleteOpenPayeeOrReferenceNo(testData,internalReferenceAutoGenerated=false, testData.Payroll.internalReference);
 

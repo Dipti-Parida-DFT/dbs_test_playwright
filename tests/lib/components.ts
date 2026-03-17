@@ -1,7 +1,10 @@
 import { Page, Locator, expect } from '@playwright/test';
+import { TIMEOUT } from './timeouts';
+import { CONSTANT } from './constant';
+
 export class WebComponents {
 
-  constructor(private readonly defaultTimeout = 30_000) { }
+  constructor(private readonly defaultTimeout = TIMEOUT.MEDIUM) { }
 
   async clickElement(selector: any, p0: { state: string; timeout: number; }) {
     await selector.isVisible();
@@ -14,7 +17,7 @@ export class WebComponents {
   }
 
 
-  async enterText(target: Locator, value: string, timeout = this.defaultTimeout) {
+  async enterText(target: Locator, value: string, timeout = TIMEOUT.MEDIUM) {
     await target.waitFor({ state: 'visible', timeout });
     await target.fill(value, { timeout });
   }
@@ -29,14 +32,14 @@ export class WebComponents {
     
     const appears = await authDialog.waitFor({
       state: 'visible',
-      timeout: 60000
+      timeout: TIMEOUT.LONG
     }).then(() => true).catch(() => false);
     //console.log('Authentication dialog appears:', appears);
     if (appears) {
-      await securityAccessCode.fill('1111');
+      await securityAccessCode.fill(String(CONSTANT.securityAccessCode));
       await authenticateButton.click();
       //console.log('Handled authentication dialog with code:', code);
-      await authDialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+      await authDialog.waitFor({ state: 'hidden', timeout: TIMEOUT.MIN }).catch(() => {});
     }
   }
 
@@ -49,11 +52,11 @@ export class WebComponents {
    * @param locator 
    * @param timeout 
    */
-  async clickWhenVisibleAndEnabledCustomWait(locator: Locator, timeout?: number) {
-    await expect(locator).toBeVisible({ timeout });
-    await expect(locator).toBeEnabled({ timeout });
-    await locator.click();
-  }
+  //async clickWhenVisibleAndEnabledCustomWait(locator: Locator, timeout?: number) {
+    //await expect(locator).toBeVisible({ timeout });
+    //await expect(locator).toBeEnabled({ timeout });
+    //await locator.click();
+  //}
 
   /**
    * Author: LC5741501
@@ -62,7 +65,7 @@ export class WebComponents {
    * @param locator 
    * @param timeout 
    */
-  async clickWhenVisibleAndEnabled(locator: Locator, timeout = 55_000) {
+  async clickWhenVisibleAndEnabled(locator: Locator, timeout = TIMEOUT.LONG) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
     await locator.click();
@@ -86,7 +89,19 @@ export class WebComponents {
 * @param locator 
 * @param timeout 
 */
-  async waitElementToBeVisible(locator: Locator, timeout = 15_000) {
+  async waitElementToBeVisible(locator: Locator, timeout = TIMEOUT.LONG) {
+    await expect(locator).toBeVisible({ timeout });
+    await expect(locator).toBeEnabled({ timeout });
+  }
+
+    /**
+* Author: LC5741501
+* Created Date: 16/03/26
+* This method validates element is visible in UI or not
+* @param locator 
+* @param timeout 
+*/
+  async waitDashboardToBeVisible(locator: Locator, timeout = TIMEOUT.EXTREME) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
   }
@@ -98,10 +113,10 @@ export class WebComponents {
     * @param locator 
     * @param timeout 
   */
-  async waitElementToBeVisibleCustomWait(locator: any, timeout?: number) {
-    await expect(locator).toBeVisible({ timeout });
-    await expect(locator).toBeEnabled({ timeout });
-  }
+  //async waitElementToBeVisibleCustomWait(locator: any, timeout?: number) {
+    //await expect(locator).toBeVisible({ timeout });
+    //await expect(locator).toBeEnabled({ timeout });
+  //}
 
    /**
     * Author: LC5741501
@@ -144,7 +159,7 @@ export class WebComponents {
    * @param value 
    * @param timeout 
    */
-  async enterTextarea(locator: Locator, value: string, timeout = 15_000) {
+  async enterTextarea(locator: Locator, value: string, timeout = TIMEOUT.MIN) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
     await locator.click();
@@ -205,7 +220,7 @@ export class WebComponents {
       try {
         const first = loc.first();
         if (await first.isVisible({ timeout: 500 }).catch(() => false)) {
-          await first.waitFor({ state: 'hidden', timeout: 45_000 });
+          await first.waitFor({ state: 'hidden', timeout: TIMEOUT.EXTREME });
         }
       } catch { /* ignore */ }
     }
@@ -269,7 +284,7 @@ export class WebComponents {
         if (attempt === retries) throw err;
         attempt++;
         // Optional small backoff
-        await target.page().waitForTimeout(300);
+        await target.page().waitForTimeout(TIMEOUT.MIN);
       }
     }
   }

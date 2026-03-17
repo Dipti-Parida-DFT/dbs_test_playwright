@@ -1,6 +1,7 @@
 import { Page, Locator } from '@playwright/test';
 import { WebComponents } from '../../lib/components';
 import loginCredentials from '../../data/loginCredentials.json';
+import { TIMEOUT } from '../../lib/timeouts';
 const DEFAULT_REGION = 'Singapore';
 
 export class LoginPage {
@@ -10,6 +11,7 @@ export class LoginPage {
   readonly pinInput: Locator;
   readonly loginButton: Locator;
   readonly postLoginIndicator: Locator;
+  readonly dashboard: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -17,6 +19,8 @@ export class LoginPage {
     this.userIdInput = page.locator('input[name="userId"], input[placeholder*="User" i]');
     this.pinInput = page.locator('input[type="password"], input[placeholder*="PIN" i]');
     this.loginButton = page.locator('button:has-text("Login"), button[type="submit"]');
+    this.dashboard = page.locator('xpath=//span[normalize-space(text())="Dashboard"]');
+
     // Use a unique selector for the Pay & Transfer nav item
     this.postLoginIndicator = page.locator('#nav-item-navBBTopPaymentsLinkText');
   }
@@ -40,7 +44,8 @@ export class LoginPage {
   await webComponents.enterText(this.userIdInput, creds.userId);
   await webComponents.enterText(this.pinInput, creds.pin);
   await this.loginButton.click();
-  await this.page.waitForTimeout(70000); // Wait for potential redirects
+  await webComponents.waitDashboardToBeVisible(this.dashboard); // Wait for Pay & Transfer is visible till (20_0000)
+  //await this.page.waitForTimeout(TIMEOUT.MAX); // Wait for potential redirects
   }
 
   async loginWithDefaultCredentials() {
