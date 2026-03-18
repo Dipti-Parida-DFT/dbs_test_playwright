@@ -1,6 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { TIMEOUT } from './timeouts';
-import { CONSTANT } from './constant';
+import { CONSTANTS } from './constants';
 
 export class WebComponents {
 
@@ -36,7 +36,7 @@ export class WebComponents {
     }).then(() => true).catch(() => false);
     //console.log('Authentication dialog appears:', appears);
     if (appears) {
-      await securityAccessCode.fill(String(CONSTANT.securityAccessCode));
+      await securityAccessCode.fill(String(CONSTANTS.SECURITYACCESSCODE));
       await authenticateButton.click();
       //console.log('Handled authentication dialog with code:', code);
       await authDialog.waitFor({ state: 'hidden', timeout: TIMEOUT.MIN }).catch(() => {});
@@ -204,7 +204,8 @@ export class WebComponents {
   /** 
    * Author: LC5741501
    * Created Date: 09/03/26
-   * Generic UX loading guard: wait for common spinners/overlays then network idle. */
+   * Generic UX loading guard: wait for common spinners/overlays then network idle. 
+   */
   async waitForUXLoading(extraSpinnerSelectors: string[] = [], page: Page) {
     const spinnerSelectors = [
       '//ng-busy/div',
@@ -219,7 +220,7 @@ export class WebComponents {
       const loc = sel.startsWith('/') ? page.locator(`xpath=${sel}`) : page.locator(sel);
       try {
         const first = loc.first();
-        if (await first.isVisible({ timeout: 500 }).catch(() => false)) {
+        if (await first.isVisible({ timeout: TIMEOUT.MAX }).catch(() => false)) {
           await first.waitFor({ state: 'hidden', timeout: TIMEOUT.EXTREME });
         }
       } catch { /* ignore */ }
@@ -227,12 +228,10 @@ export class WebComponents {
     await page.waitForLoadState('networkidle').catch(() => {});
   }
 
-
-
-  
 /**
+ * Author: LC5741501
+ * Created Date: 09/03/26
  * Returns true if the element is visible in the UI; otherwise false.
- *
  * - If `timeout` is provided, the helper will WAIT up to that time for the
  *   element to become visible.
  * - If no `timeout` is provided, it performs an immediate check.

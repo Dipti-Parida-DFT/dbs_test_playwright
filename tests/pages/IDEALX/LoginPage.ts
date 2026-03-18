@@ -2,6 +2,7 @@ import { Page, Locator } from '@playwright/test';
 import { WebComponents } from '../../lib/components';
 import loginCredentials from '../../data/loginCredentials.json';
 import { TIMEOUT } from '../../lib/timeouts';
+import { CONSTANTS } from '../../lib/constants';
 const DEFAULT_REGION = 'Singapore';
 
 export class LoginPage {
@@ -26,26 +27,47 @@ export class LoginPage {
   }
 
   async goto() {
-    await this.page.goto('https://10.8.58.138:8443/iws/ssologin');
-    //await this.page.goto('https://i3bku3uatqeweb01.qe.dragonflyft.com:1443/iws/ssologin ');
-    //await this.page.setViewportSize({ width: 1920, height: 1080 })
+    // 1) Normalize env to uppercase safely
+    const env = (CONSTANTS.ENV ?? '').toUpperCase();
+
+    // 2) Pick the right URL based on env
+    let url: string;
+    switch (env) {
+      case 'SIT':
+        url = CONSTANTS.SITURL;
+        break;
+
+      case 'UAT':
+        url = CONSTANTS.UATURL;
+        break;
+
+      case 'PROD':
+        url = CONSTANTS.PRODURL;
+        break;
+
+      default:
+        throw new Error(`Unsupported ENV value: "${env}". Expected SIT | UAT | PROD.`);
+    }
+
+    // 3) Navigate with sensible waits/timeouts
+    await this.page.goto(url, { waitUntil: 'domcontentloaded', timeout: TIMEOUT.LONG });
   }
 
   async login(orgId?: string, userId?: string, pin?: string) {
-  const webComponents = new WebComponents();
-  const defaultCreds = loginCredentials[DEFAULT_REGION];
-  const creds = {
-    orgId: orgId ?? defaultCreds.orgId,
-    userId: userId ?? defaultCreds.userId,
-    pin: pin ?? defaultCreds.pin
-  };
+    const webComponents = new WebComponents();
+    const defaultCreds = loginCredentials[DEFAULT_REGION];
+    const creds = {
+      orgId: orgId ?? defaultCreds.orgId,
+      userId: userId ?? defaultCreds.userId,
+      pin: pin ?? defaultCreds.pin
+    };
 
-  await webComponents.enterText(this.orgIdInput, creds.orgId);
-  await webComponents.enterText(this.userIdInput, creds.userId);
-  await webComponents.enterText(this.pinInput, creds.pin);
-  await this.loginButton.click();
-  await webComponents.waitDashboardToBeVisible(this.dashboard); // Wait for Pay & Transfer is visible till (20_0000)
-  //await this.page.waitForTimeout(TIMEOUT.MAX); // Wait for potential redirects
+    await webComponents.enterText(this.orgIdInput, creds.orgId);
+    await webComponents.enterText(this.userIdInput, creds.userId);
+    await webComponents.enterText(this.pinInput, creds.pin);
+    await this.loginButton.click();
+    await webComponents.waitDashboardToBeVisible(this.dashboard); // Wait for Pay & Transfer is visible till (20_0000)
+    //await this.page.waitForTimeout(TIMEOUT.MAX); // Wait for potential redirects
   }
 
   async loginWithDefaultCredentials() {

@@ -13,7 +13,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { NavigatePages, PaymentsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
-import { CONSTANT } from '../../../lib/constant';
+import { CONSTANTS } from '../../../lib/constants';
 import { TIMEOUT } from '../../../lib/timeouts';
 
 //Initialize Web Component class
@@ -68,7 +68,7 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
     test.setTimeout(TIMEOUT.MAX);
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await loginPage.login(loginCompanyId, loginUserId, (String(CONSTANT.pin)));
+    await loginPage.login(loginCompanyId, loginUserId, (String(CONSTANTS.PIN)));
 
     pages = new PaymentsPages(page);
   });
