@@ -247,6 +247,21 @@ export class TelegraphicTransferPage {
     this.baseFXExchangeRate = page.locator('//div[@id="fxDolViewSection"]');
     this.logoutButton = page.locator('//div[@id="logout"]');
 
+    this.newHKPayeeBankAccountDropdown = page.locator('//span[contains(text(),"87654567898")]');
+    this.CNYcurrency = page.locator('//span[text()="CNY"]');
+    this.existingHKPayeeBankAccountDropdown = page.locator('//span[contains(text(),"ABNACNS0888")]');
+    this.unixErrorMessage = page.locator('//div[contains(@class,"alert alert-error")]');
+    this.intermediaryCNYLocation = page.locator('//span[text()="MAINLAND CHINA"]');
+    this.intermediaryCNYbankID = page.locator('//span[contains(text(),"DBSSCNS0XXX")]');
+    this.newHKPurposeCodeDropdown = page.locator('//span[contains(text(),"Goods trade")]');
+    this.fromAccountCurrencyDropdown = page.locator('//p-auto-complete[@formcontrolname="currency"]');
+    this.fromAccountINRCurrencyDropdown = page.locator('//span[contains(text(),"INR")]');
+    this.existingINRPayeeBankAccountDropdown = page.locator('//span[contains(text(),"44321348")]');
+    this.intermediaryINRLocation = page.locator('//span[text()="INDIA"]');
+    this.intermediaryINRbankID = page.locator('(//span[contains(text(),"CNRBINB0TDC")])[2]');
+    this.newINRPurposeCodeDropdown = page.locator('//span[contains(text(),"Indian Companies")]');
+    this.payeeMessageDetail = page.locator('//span[@id="payment-details-to-payee"]');
+    this.purposeCodeText = page.locator('//span[@id="label-purpose-code"]');
     }
 
     readonly authenticate: Locator;
@@ -363,6 +378,21 @@ export class TelegraphicTransferPage {
     readonly baseFXExchangeRate: Locator;
     readonly logoutButton: Locator;
 
+    readonly newHKPayeeBankAccountDropdown: Locator;
+    readonly CNYcurrency: Locator;
+    readonly existingHKPayeeBankAccountDropdown: Locator;
+    readonly unixErrorMessage: Locator;
+    readonly intermediaryCNYLocation: Locator;
+    readonly intermediaryCNYbankID: Locator;
+    readonly newHKPurposeCodeDropdown: Locator;
+    readonly fromAccountCurrencyDropdown: Locator;
+    readonly fromAccountINRCurrencyDropdown: Locator;
+    readonly existingINRPayeeBankAccountDropdown: Locator;
+    readonly intermediaryINRLocation: Locator;
+    readonly intermediaryINRbankID: Locator;
+    readonly newINRPurposeCodeDropdown: Locator;
+    readonly payeeMessageDetail: Locator;
+    readonly purposeCodeText: Locator;
 
   
   private async selectBankCharge(charge: BankChargeType) {
@@ -925,5 +955,9 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
 
   throw new Error("Approve page did not load after multiple attempts");
 }
+
+ async waitForCNYCurrency(timeout = 1000) {
+    return await this.CNYcurrency.isVisible({ timeout }).catch(() => false);
+  }
 
 };
