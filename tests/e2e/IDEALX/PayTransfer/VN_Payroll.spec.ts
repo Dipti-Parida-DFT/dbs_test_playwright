@@ -1,4 +1,14 @@
 // tests/VN_Payroll.spec.ts
+/**
+       * Author: LC5764724 / Chetan Chavan
+       * Created Date: 23/02/26
+       * This Class "tests/PayTransfer/VN_Payroll.spec.ts"
+       * Description: This class has two test cases.
+       * 1) TC001_VNPayroll - Cannot create Payroll with item amount > 500000000 VND
+       * 2) TC002_VNPayroll - Create Payroll with item amount equal to 500000000 VND
+       * 3) TC003_VNPayroll - Create payroll with Total amount > 500000000 VND
+*/
+
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -63,21 +73,20 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
   }
   });
 
-  
-  test('Cannot create Payroll with item amount > 500000000 VND', async ({ page }) => {
+  test('TC001_VNPayroll - Cannot create Payroll with item amount > 500000000 VND', async ({ page }) => {
     
-    // Payments → Transfer Center → Payroll
+    // Step 1: Click on Pay & Transfer menu
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
 
-    //Authentication Pop-up
+    //Step 2: Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
-    //await pages.TransferCentersPage.waitForTransferCenterReady();
 
+    //Step 3: Click on VN Payroll icon
     await pages.PayrollPage.safeClick(pages.PayrollPage.payroll);
     await pages.PayrollPage.waitForPayrollFormReady();
 
-    // From account (type + Enter, works for most typeahead controls)
+    //Step 4: Select From account
     await pages.PayrollPage.safeClick(pages.PayrollPage.fromAccount);
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('ArrowDown');
@@ -95,15 +104,15 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
   // Register for cleanup
   createdPayees.push({ nickName, accountNumber });
 
-    // Amount > max + details
+    //Step 5: Enter Amount > max + details
     await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.moreThanMaxAmountIx);
     await pages.PayrollPage.safeClick(pages.PayrollPage.showOptionalDetails);
     await pages.PayrollPage.safeFill(pages.PayrollPage.paymentDetailsTextarea, testData.Payroll.paymentDetails);
 
-    // Inline error
+    //Step 6: Validate Inline error
     await expect(pages.PayrollPage.amountInlineError).toContainText(testData.Payroll.amountErrorTip);
 
-    // Try Next → expect top-level/banner error
+    //Step 7: Next → Validate banner error
     await pages.PayrollPage.safeClick(pages.PayrollPage.nextButton);
         
     const globalError = page.locator([
@@ -121,19 +130,20 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     
   });
 
-  test('Create Payroll with item amount equal to 500000000 VND', async ({ page }) => {
-    // Payments → Transfer Center → Payroll
+  test('TC002_VNPayroll - Create Payroll with item amount equal to 500000000 VND', async ({ page }) => {
+    
+    // Step 1: Click on Pay & Transfer menu
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    //await pages.TransferCentersPage.waitForTransferCenterReady();
 
-    //Authentication Pop-up
+    //Step 2: Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
 
+    //Step 3: Click on VN Payroll icon
     await pages.PayrollPage.safeClick(pages.PayrollPage.payroll);
     await pages.PayrollPage.waitForPayrollFormReady();
 
-    // From account
+    //Step 4: Select From account
     await pages.PayrollPage.safeClick(pages.PayrollPage.fromAccount);
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('ArrowDown');
@@ -150,46 +160,45 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     // Register for cleanup
     createdPayees.push({ nickName, accountNumber });
 
-    // Amount = max; add details and submit
+    //Step 5: Enter Amount = max + details
     await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.maxAmountIx);
     await pages.PayrollPage.safeClick(pages.PayrollPage.showOptionalDetails);
     await pages.PayrollPage.safeFill(pages.PayrollPage.paymentDetailsTextarea, testData.Payroll.paymentDetails);
 
+    //Step 6: Next → Preview → Submit
     await pages.PayrollPage.safeClick(pages.PayrollPage.nextButton);
     await pages.PayrollPage.waitForPreviewPageReady();
     await pages.PayrollPage.safeClick(pages.PayrollPage.submitButton);
     await pages.PayrollPage.waitForSubmittedPageReady();
 
-    // If you just want the full banner text:
+    //Step 7: Capture reference
     const referenceText = await pages.PayrollPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
-    // If you want only the EBLV… token:
     const reference = await pages.PayrollPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
 
-    // Find it again in Transfer Center by reference
+    //Step 8: Verify reference in transfer center
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.PayrollPage.waitForViewPaymentPageReady();
 
-    // Assertions
+    //Step 9: Verify from account in view payment page
     await expect(pages.PayrollPage.fromAccountViewLabel).toContainText(fromAccount);
     await expect(pages.PayrollPage.amountViewLabel).toContainText(testData.Payroll.maxAmount);
   });
 
-  test('Create payroll with Total amount > 500000000 IDR', async ({ page }) => {
-    // Payments → Transfer Center → Payroll
+  test('TC003_VNPayroll - Create payroll with Total amount > 500000000 VND', async ({ page }) => {
+    
+    // Step 1: Click on Pay & Transfer menu
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    //await pages.TransferCentersPage.waitForTransferCenterReady();
 
-    //Authentication Pop-up
+    //Step 2: Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
 
+    //Step 3: Click on Bulk Payment icon
     await pages.PayrollPage.safeClick(pages.PayrollPage.payroll);
     await pages.PayrollPage.waitForPayrollFormReady();
 
-    // From account
+    //Step 4: Select From account
     await pages.PayrollPage.safeClick(pages.PayrollPage.fromAccount);
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('Enter');
@@ -205,38 +214,38 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     // Register for cleanup
     createdPayees.push({ nickName, accountNumber });
 
+    //Step 5: Enter Amount = max for first item + details
     await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.maxAmountIx);
     await pages.PayrollPage.safeClick(pages.PayrollPage.showOptionalDetails);
     await pages.PayrollPage.safeFill(pages.PayrollPage.paymentDetailsTextarea, testData.Payroll.paymentDetails);
 
-    // Add an existing payee to exceed total
+    //Step 6: Add an existing payee to exceed total
     await pages.PayrollPage.safeClick(pages.PayrollPage.existingPayeeTabHeader);
     await pages.PayrollPage.safeFill(pages.PayrollPage.existingPayeeFilter, testData.Payroll.bulkExistingPayee);
     await pages.PayrollPage.safeClick(pages.PayrollPage.addExistingPayeeButton);
 
+    //Step 7: Enter Amount = max for second item + details
     await pages.PayrollPage.amount.first().fill(testData.Payroll.maxAmountIx);
     await pages.PayrollPage.safeClick(pages.PayrollPage.showOptionalDetails);
     await pages.PayrollPage.paymentDetailsTextarea.first().fill(testData.Payroll.paymentDetails);
 
-    // Next → Preview → Submit
+    //Step 8: Next → Preview → Submit
     await pages.PayrollPage.safeClick(pages.PayrollPage.nextButton);
     await pages.PayrollPage.waitForPreviewPageReady();
     await pages.PayrollPage.safeClick(pages.PayrollPage.submitButton);
     await pages.PayrollPage.waitForSubmittedPageReady();
 
-    // Capture reference and verify
-      // If you just want the full banner text:
+    //Step 9: Capture reference
     const referenceText = await pages.PayrollPage.getReferenceText();
-    //console.log('Captured reference text:', referenceText);
-    // If you want only the EBLV… token:
     const reference = await pages.PayrollPage.getReferenceID();
-    //console.log('Captured referenceID:', reference);
 
+    //Step 10: Verify reference in transfer center
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.PayrollPage.waitForViewPaymentPageReady();
+    
+    //Step 11: Verify from account in view payment page
     await expect(pages.PayrollPage.fromAccountViewLabel).toContainText(fromAccount);
-     
   });
 });

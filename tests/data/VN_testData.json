@@ -24,7 +24,7 @@
     "Payroll": {
         "SIT": {
             "loginCompanyId": "SPVNSSM1",
-            "loginUserId": "SPVNSSM1S01",
+            "loginUserId": "DBSAUTOVN01",
             "fromAccount": "66670000322",
             "payeeBankID": "ACB"
         },
@@ -41,6 +41,29 @@
         "paymentDetails": "paymentDetails",
         "amountErrorTip": "Amount is invalid.",
         "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
+    },
+    "TaxPayment": {
+        "SIT": {
+            "loginCompanyId": "SPVNSSM1",
+            "loginUserId": "DBSAUTOVN01",
+            "fromAccount": "66670000322",
+            "loginCompanyId1": "VN00001",
+            "loginUserId1": "DBSAUTOVN02",
+            "loginUserId2": "SPVNSSM1S01",
+            "fromAccount1": "88888888"
+        },
+        "selectTaxesOptions": ["Select an option", "Payment ID", "Decision number", "Document number"],
+        "PaymentID" : "LTB17500000000113/TB-CCT",
+        "DecisionNumber" : "456763332",
+        "DocumentNumber" : "233456577",
+        "chargeAccount" : "66670000322",
+        "chargeAccount1" : "88888888",
+        "taxOfficeName": "Tax office Test",
+        "diffrentTaxOfficeName": "Tax office Test QA",
+        "differentTaxOfficeError": "You can only select taxes from the same tax office in the same payment.",
+        "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again.",
+        "NoDataMessage": "No information found. Our search with the General Department of Taxation (GDT) did not yield any data."
+
     },
     "status": {
         "Approved": "Approved",

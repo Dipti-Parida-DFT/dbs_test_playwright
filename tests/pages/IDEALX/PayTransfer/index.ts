@@ -8,6 +8,8 @@ import { BulkPaymentPage } from './BulkPaymentPage';
 import { TelegraphicTransferPage } from './TelegraphicTransferPage';
 import { ApprovalPage } from './ApprovalPage';
 import { BulkCollectionPage } from './BulkCollectionPage';
+import { VNTaxPaymentPage } from './VNTaxPaymentPage';
+
 
 export {
   AccountTransferPage,
@@ -17,44 +19,7 @@ export {
   TelegraphicTransferPage,
   ApprovalPage,
   BulkCollectionPage,
- /* LVTPaymentPage,
-  AutoPayPaymentPage,
-  PaymentViaPartnerBankPage,
-  
-  TelegraphicTransferPage,
-  IntraCompanyTransferPage,
-  FastPaymentPage,
-  
-  NewFastCollectionPage,
-  BulkCollectionPage,
-  
-  MEPSPaymentPage,
-  NewBillPaymentPage,
-  PaymentTemplatesPage,
-  BeneficiaryPage,
-  CrossBoarderACHPage,
-  HVTPaymentPage,
-  CNAPSPaymentPage,
-  HKCHATSPaymentPage,
-  FPSPaymentPage,
-  RTGSPaymentPage,
-  SKNPaymentPage,
-  ITTPage,
-  NEFTPaymentPage,
-  FixedDepositPlacementPage,
-  PartnerBankPaymentPage,
-  TWACHBulkPaymentPage,
-  CustomPaymentPage,
-  VNLvtPage,
-  TWFISCPaymentPage,
-  PaymentLimit,
-  ChequePaymentPage,
-  DemandDraftPaymentPage,
-  MT101PaymentPage,
-  GiroPaymentPage,
-  eACHPaymentPage,
-  IBPSPaymentPage,
-  RTOLPaymentPage, */
+  VNTaxPaymentPage
 };
 
 export class PaymentsPages {
@@ -65,6 +30,7 @@ export class PaymentsPages {
   public TelegraphicTransferPage: TelegraphicTransferPage;
   public ApprovalPage: ApprovalPage;
   public BulkCollectionPage: BulkCollectionPage;
+  public VNTaxPaymentPage: VNTaxPaymentPage;
   
   constructor(private readonly page: Page) {
     this.AccountTransferPage = new AccountTransferPage(page);
@@ -74,5 +40,7 @@ export class PaymentsPages {
     this.TelegraphicTransferPage = new TelegraphicTransferPage(page);
     this.ApprovalPage = new ApprovalPage(page);
     this.BulkCollectionPage = new BulkCollectionPage(page);
+    this.VNTaxPaymentPage = new VNTaxPaymentPage(page);
+    
   }
 }

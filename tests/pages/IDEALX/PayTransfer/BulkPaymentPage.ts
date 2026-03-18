@@ -139,7 +139,7 @@ export class BulkPaymentPage {
 
     // Payee 1 (view)
     this.payeeNameValue = page.locator('xpath=//*[@id="bulk-view-name_0"]');
-    this.payeeNickNameValue = page.locator('xpath=//*[@id="bulk-view-nickName_0"]');
+    this.newPayeeNickName = page.locator('xpath=//*[@id="bulk-view-nickName_0"]');
     this.payeeBankName = page.locator('xpath=//*[@id="bulk-view-payeeBankName_0"]');
     this.payeeBranchBankName = page.locator('xpath=//*[@id="bulk-view-payeeBranchName_0"]');
     this.payeeBankSwiftBic = page.locator('xpath=//*[@id="bulk-view-bankDetailsMsgDisplay_0"]');
@@ -369,7 +369,7 @@ export class BulkPaymentPage {
   readonly totalAmountValue: Locator;
 
   readonly payeeNameValue: Locator;
-  readonly payeeNickNameValue: Locator;
+  readonly newPayeeNickName: Locator;
   readonly payeeBankName: Locator;
   readonly payeeBranchBankName: Locator;
   readonly payeeBankSwiftBic: Locator;

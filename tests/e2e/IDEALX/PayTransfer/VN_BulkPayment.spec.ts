@@ -1,4 +1,13 @@
 // tests/e2e/IDEALX/PayTransfer/VN_BulkPayment.spec.ts
+/**
+       * Author: LC5764724 / Chetan Chavan
+       * Created Date: 23/02/26
+       * This Class "tests/PayTransfer/VN_BulkPayment.spec.ts"
+       * Description: This class has two test cases.
+       * 1) TC001_VNBulkPayment - Cannot create Bulk Payment with item amount > 500000000 VND
+       * 2) TC002_VNBulkPayment - Create Bulk Payment with item amount equal to 500000000 VND
+       * 3) TC003_VNBulkPayment - Create Bulk Payment with Total amount > 500000000 IDR
+*/
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -60,20 +69,20 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
 
   //We should write Add New Payee, capture reference as helper methods to avoid code duplication
   // ─────────────────────────────────────────────────────────────────────────────
-  test('Cannot create Bulk Payment with item amount > 500000000 VND', async ({ page }) => {
-    // Payments → Transfer Center → BulkPayment
+  test('TC001_VNBulkPayment - Cannot create Bulk Payment with item amount > 500000000 VND', async ({ page }) => {
+    
+    // Step 1: Click on Pay & Transfer menu
     await pages.AccountTransferPage.waitForMenu();
-    //await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     await pages.AccountTransferPage.paymentMenu.click();
 
-    //Authentication Pop-up
+    //Step 2: Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent('1111');
 
-     // await pages.TransferCentersPage.waitForTransferCenterReady();
+    //Step 3: Click on Bulk Payment icon
     await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
     await pages.BulkPaymentPage.waitForBulkPaymentFormReady();
 
-    // From Account
+    //Step 4: Select From account 
     await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.fromAccount);
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('ArrowDown');
@@ -90,15 +99,15 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
     // Register for cleanup
     createdPayees.push({ nickName, accountNumber });
 
-    // Amount > max (validates inline error + banner error after Next)
+    //Step 5: Enter Amount > max (validates inline error + banner error after Next)
     await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.amount, testData.BulkPayment.moreThanMaxAmountIx);
     await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.showOptionalDetails);
     await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
 
-    // Inline error
+    //Step 6: Validate Inline error message
     await expect(pages.BulkPaymentPage.amountInlineError).toContainText(testData.BulkPayment.BulkamountErrorTip);
 
-    // Try Next → expect top-level/banner error
+    //Step 7: Next → Validate banner error
     await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.nextButton);
 
     // Generic banner error container
@@ -117,21 +126,20 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
   });
 
   // ─────────────────────────────────────────────────────────────────────────────
-  test('Create Bulk Payment with item amount equal to 500000000 VND', async ({ page }) => {
+  test('TC002_VNBulkPayment - Create Bulk Payment with item amount equal to 500000000 VND', async ({ page }) => {
 
-    // Payments → Transfer Center → BulkPayment
+    // Step 1: Click on Pay & Transfer menu
     await pages.AccountTransferPage.waitForMenu();
-    //await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     await pages.AccountTransferPage.paymentMenu.click();
 
-    //Authentication Pop-up
+    //Step 2: Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent('1111');
 
-     // await pages.TransferCentersPage.waitForTransferCenterReady();
+    //Step 3: Click on Bulk Payment icon
     await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
     await pages.BulkPaymentPage.waitForBulkPaymentFormReady();
 
-    // From Account
+    //Step 4: Select From account 
     await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.fromAccount);
     await page.keyboard.type(fromAccount);
     await page.keyboard.press('ArrowDown');
@@ -148,96 +156,95 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
     // Register for cleanup
     createdPayees.push({ nickName, accountNumber });
 
-    // Amount > max (validates inline error + banner error after Next)
+    //Step 5: Enter Amount > max (validates inline error + banner error after Next)
     await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.amount, testData.BulkPayment.maxAmountIx);
     await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.showOptionalDetails);
     await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
 
-    // Next → Preview → Submit
+    //Step 6: Next → Preview → Submit
     await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.nextButton);
     await pages.BulkPaymentPage.waitForPreviewPageReady();
     await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.submitButton);
     await pages.BulkPaymentPage.waitForSubmittedPageReady();
 
-    // Capture reference and verify
-      // If you just want the full banner text:
+    //Step 7: Capture reference
     const referenceText = await pages.BulkPaymentPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
-    // If you want only the EBLV… token:
     const reference = await pages.BulkPaymentPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
 
+    //Step 8: Verify reference in transfer center
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.BulkPaymentPage.waitForViewPaymentPageReady();
 
+    //Step 9: Verify from account in view payment page
     await expect(pages.BulkPaymentPage.fromAccountViewLabel).toContainText(fromAccount);
-    //await expect(pages.BulkPaymentPage.amountView).toContainText(testData.BulkPayment.maxAmountIx);
   });
 
   // ─────────────────────────────────────────────────────────────────────────────
-  test('Create Bulk Payment with Total amount > 500000000 IDR', async ({ page }) => {
-    await pages.AccountTransferPage.waitForMenu();
-    await pages.AccountTransferPage.paymentMenu.click({ force: true });
-    await pages.AccountTransferPage.handleAuthIfPresent('1111');
+  test('TC003_VNBulkPayment - Create Bulk Payment with Total amount > 500000000 IDR', async ({ page }) => {
+  // Step 1: Click on Pay & Transfer menu
+  await pages.AccountTransferPage.waitForMenu();
+  await pages.AccountTransferPage.paymentMenu.click({ force: true });
 
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
-    await pages.BulkPaymentPage.waitForBulkPaymentFormReady();
+  //Step 2: Authentication Pop-up
+  await pages.AccountTransferPage.handleAuthIfPresent('1111');
 
-   // From Account
-   await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.fromAccount);
-   await page.keyboard.type(fromAccount);
-   await page.keyboard.press('Enter');
+  //Step 3: Click on Bulk Payment icon
+  await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.bulkPayment);
+  await pages.BulkPaymentPage.waitForBulkPaymentFormReady();
 
-    // Reusable helper for add new payee
-    const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
-    name: testData.Payroll.newPayeeName,
-    nickName: testData.Payroll.newPayeeNickName,
-    bankId: payeeBankID,
-    accountNumber: testData.Payroll.newPayeeAcctNumber,
-  });
+  //Step 4: Select From account 
+  await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.fromAccount);
+  await page.keyboard.type(fromAccount);
+  await page.keyboard.press('Enter');
+
+  // Reusable helper for add new payee
+  const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+  name: testData.Payroll.newPayeeName,
+  nickName: testData.Payroll.newPayeeNickName,
+  bankId: payeeBankID,
+  accountNumber: testData.Payroll.newPayeeAcctNumber,
+});
 
   // Register for cleanup
   createdPayees.push({ nickName, accountNumber });
 
-   //Amount = max
+   //Step 5: Enter Amount = max
    await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.amount, testData.BulkPayment.maxAmountIx);
    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.showOptionalDetails);
    await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
 
 
-    // Add existing payee to exceed total
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.existingPayeeTabIx);
-    await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.existingPayeeFilter, testData.BulkPayment.bulkExistingPayee);
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.addButton);
+  //Step 6: Add existing payee to exceed total
+  await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.existingPayeeTabIx);
+  await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.existingPayeeFilter, testData.BulkPayment.bulkExistingPayee);
+  await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.addButton);
 
-    // Increase total again
-    await pages.BulkPaymentPage.amount.first().fill(testData.BulkPayment.maxAmountIx);
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.showOptionalDetails);
-    await pages.BulkPaymentPage.paymentDetailsTextarea.first().fill(testData.BulkPayment.paymentDetails);
+  //Step 7: Increase total again
+  await pages.BulkPaymentPage.amount.first().fill(testData.BulkPayment.maxAmountIx);
+  await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.showOptionalDetails);
+  await pages.BulkPaymentPage.paymentDetailsTextarea.first().fill(testData.BulkPayment.paymentDetails);
 
-    // Next → Preview → Submit
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.nextButton);
-    await pages.BulkPaymentPage.waitForPreviewPageReady();
-    await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.submitButton);
-    await pages.BulkPaymentPage.waitForSubmittedPageReady();
+  //Step 8: Next → Preview → Submit
+  await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.nextButton);
+  await pages.BulkPaymentPage.waitForPreviewPageReady();
+  await pages.BulkPaymentPage.safeClick(pages.BulkPaymentPage.submitButton);
+  await pages.BulkPaymentPage.waitForSubmittedPageReady();
 
-    // Capture reference and verify
-      // If you just want the full banner text:
-      const referenceText = await pages.BulkPaymentPage.getReferenceText();
-      console.log('Captured reference text:', referenceText);
-      // If you want only the EBLV… token:
-      const reference = await pages.BulkPaymentPage.getReferenceID();
-      console.log('Captured referenceID:', reference);
-  
-      await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-      await pages.TransferCentersPage.waitForTransferCenterReady();
-      await pages.TransferCentersPage.searchAndOpenByReference(reference);
-      await pages.BulkPaymentPage.waitForViewPaymentPageReady();
-  
-      await expect(pages.BulkPaymentPage.fromAccountViewLabel).toContainText(fromAccount);
-    // Add a status assertion if you have a stable selector exposed on view page.
-    // await expect(pages.BulkPaymentPage.transactionStatusValue).toContainText('EXPECTED_STATUS');
+    //Step 9: Capture reference
+    const referenceText = await pages.BulkPaymentPage.getReferenceText();
+    console.log('Captured reference text:', referenceText);
+    const reference = await pages.BulkPaymentPage.getReferenceID();
+    console.log('Captured referenceID:', reference);
+
+    //Step 10: Verify reference in transfer center
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await pages.BulkPaymentPage.waitForViewPaymentPageReady();
+
+    //Step 11: Verify from account in view payment page
+    await expect(pages.BulkPaymentPage.fromAccountViewLabel).toContainText(fromAccount);
   });
 });
