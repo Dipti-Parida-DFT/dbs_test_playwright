@@ -29,6 +29,8 @@ export class PayrollPage {
 
     // Core fields
     this.fromAccount = page.locator('xpath=//p-auto-complete[@formcontrolname="fromAccount"]');
+    this.bankChargesYou = page.locator('xpath=//input[@name="bankCharge" and @value="O"]');
+    this.bankChargesYourPayee = page.locator('xpath=//input[@name="bankCharge" and @value="P"]');
     this.paymentPriorityRadioGroup = page.locator('xpath=//dbs-radio-group[@formcontrolname="transfer_priority_radio"]');
     this.billerServiceDropdown = page.locator('xpath=//multi-level-dropdown[@name="billerServiceID"]');
     this.amount = page.locator('xpath=//input[@name="payeeAmount"]');
@@ -267,6 +269,8 @@ export class PayrollPage {
   readonly vnPayrollIcon: Locator;
 
   readonly fromAccount: Locator;
+  readonly bankChargesYou: Locator;
+  readonly bankChargesYourPayee: Locator;
   readonly paymentPriorityRadioGroup: Locator;
   readonly billerServiceDropdown: Locator;
   readonly amount: Locator;
