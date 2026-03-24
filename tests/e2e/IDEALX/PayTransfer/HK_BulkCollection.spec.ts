@@ -55,7 +55,7 @@ test.describe.configure({
 test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
   let pages: PaymentsPages;
   // Track created payees per test
-  type CreatedPayee = { nickName?: string; accountNumber?: string };
+  type CreatedPayee = { name?: string; accountNumber?: string };
   let createdPayees: CreatedPayee[] = [];
 
   /**
@@ -87,7 +87,7 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
     // Best-effort cleanup; never fail the test because cleanup failed
     for (const p of createdPayees) {
       try {
-        const key = p.nickName ?? p.accountNumber ?? '';
+        const key = p.name ?? p.accountNumber ?? '';
         await pages.PayrollPage.deletePayeeByFilter(key, /* confirm */ true);
         console.log(`[cleanup] Deleted payee with key: ${key}`);
       } catch (err) {
@@ -124,7 +124,7 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.creditTypeValueItemizedCredit);
 
     // Step 6: Add "New payer".
-    const { accountNumber } = await pages.BulkCollectionPage.addNewPayerWithAllDetails({
+    const { name, accountNumber } = await pages.BulkCollectionPage.addNewPayerWithAllDetails({
       name: testData.payer1.newPayeeName,
       bankId: payeeBankID,
       accountNumber: testData.payer1.newPayeeAcctNumber,
@@ -133,7 +133,7 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
     });
 
     // Register for cleanup
-    createdPayees.push({ accountNumber });
+    createdPayees.push({ name, accountNumber });
 
     // Step 7: Enter Amount (SGD), Transaction code, Purpose of Payment and other optional details for 
     // Particulars, Collection details to the payer bank, Message to the payee, Emails, Emails Message
@@ -274,7 +274,7 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
     });
 
     // Step 8: Add "New payer".
-    const { accountNumber } = await pages.BulkCollectionPage.addNewPayerWithAllDetails({
+    const { name, accountNumber } = await pages.BulkCollectionPage.addNewPayerWithAllDetails({
       name: testData.payer1.newPayeeName,
       bankId: payeeBankID,
       accountNumber: testData.payer1.newPayeeAcctNumber,
@@ -283,7 +283,7 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
     });
 
     // Register for cleanup
-    createdPayees.push({ accountNumber });
+    createdPayees.push({ name, accountNumber });
 
     // Step 9: Enter Amount (SGD), Transaction code, Purpose of Payment and other optional details for 
     // Particulars, Collection details to the payer bank, Message to the payee, Emails, Emails Message

@@ -101,7 +101,7 @@ export type NewPayee1ValidationData = {
 
 
 export type NewPayeeResult = {
-  nickName: string;
+  name: string;
   accountNumber: string;
 };
 
@@ -612,7 +612,7 @@ export class PayrollPage {
     await this.page.keyboard.press('Tab');
     await this.newPayeeAccountNumber.blur();
     await this.safeClick(this.addNewPayeeButton);
-    return { nickName, accountNumber };
+    return { name, accountNumber };
   }
 
 
@@ -660,7 +660,7 @@ export class PayrollPage {
 
     //Click : Add Payee button
     await this.webComponents.clickWhenVisibleAndEnabled(this.addNewPayeeButton);
-    return { nickName, accountNumber };
+    return { name, accountNumber };
   }
 
   /**
@@ -711,7 +711,7 @@ export class PayrollPage {
 
     //Click : Add Payee button
     await this.webComponents.clickWhenVisibleAndEnabled(this.addNewPayeeButton);
-    return { nickName, accountNumber };
+    return { name, accountNumber };
   }
 
 

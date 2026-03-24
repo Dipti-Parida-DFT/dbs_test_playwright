@@ -11,7 +11,7 @@ export type NewPayeeInput = {
 
 
 export type NewPayeeResult = {
-  nickName: string;
+  name: string;
   accountNumber: string;
 };
 
@@ -550,7 +550,7 @@ export class BulkPaymentPage {
     await this.page.keyboard.press('Tab');
     await this.newPayeeAccountNumber.blur();
     await this.safeClick(this.addNewPayeeButton);
-    return { nickName, accountNumber };
+    return { name, accountNumber };
   }
 
   /** Delete Payee fnction */

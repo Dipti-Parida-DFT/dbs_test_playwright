@@ -53,7 +53,7 @@ test.describe.configure({
 test.describe('HK_ManagementPayroll (Playwright using PaymentsPages)', () => {
   let pages: PaymentsPages;
   // Track created payees per test
-  type CreatedPayee = { nickName?: string; accountNumber?: string };
+  type CreatedPayee = { name?: string; accountNumber?: string };
   let createdPayees: CreatedPayee[] = [];
 
   /**
@@ -85,7 +85,7 @@ test.describe('HK_ManagementPayroll (Playwright using PaymentsPages)', () => {
     // Best-effort cleanup; never fail the test because cleanup failed
     for (const p of createdPayees) {
       try {
-        const key = p.nickName ?? p.accountNumber ?? '';
+        const key = p.name ?? p.accountNumber ?? '';
         await pages.PayrollPage.deletePayeeByFilter(key, /* confirm */ true);
         console.log(`[cleanup] Deleted payee with key: ${key}`);
       } catch (err) {
@@ -117,7 +117,7 @@ test.describe('HK_ManagementPayroll (Playwright using PaymentsPages)', () => {
     await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'Enter');
 
     // Step 5: Add "New payee".
-    const { accountNumber } = await pages.PayrollPage.addNewPayeeWithAllDetails({
+    const { name, accountNumber } = await pages.PayrollPage.addNewPayeeWithAllDetails({
       name: testData.ManagePayrollPayer1.newPayeeName,
       nickName: testData.ManagePayrollPayer1.newPayeeNickName,
       bankId: testData.ManagePayrollPayer1.payeeBankID,
@@ -125,7 +125,7 @@ test.describe('HK_ManagementPayroll (Playwright using PaymentsPages)', () => {
     });
 
     // Register for cleanup
-    createdPayees.push({ accountNumber });
+    createdPayees.push({ name, accountNumber });
 
     // Step 6: Enter Amount (SGD), Transaction code, Purpose of Payment and other optional details for 
     // Particulars, Collection details to the payer bank, Message to the payee, Emails, Emails Message
