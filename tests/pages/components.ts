@@ -18,7 +18,7 @@ const joinXPath = (base: string, tail: string) => {
 
 /** Base component wrapper (formerly WebComponent). */
 export class BaseComponent {
-  constructor(protected readonly page: Page, public readonly locator: Locator, public readonly selector: string) {}
+  constructor(protected readonly page: Page, public readonly locator: Locator, public readonly selector: string) { }
 
   /** Default per-action timeout (replaces huoQuChaoShi) */
   protected timeout(): number {
@@ -59,7 +59,7 @@ export class BaseComponent {
 
   /** Get text content (replaces huoQuNeiRong) */
   async getText(timeout = this.timeout()) {
-    await this.locator.waitFor({ state: 'visible', timeout }).catch(() => {});
+    await this.locator.waitFor({ state: 'visible', timeout }).catch(() => { });
     const txt = await this.locator.textContent().catch(() => null);
     if (txt && txt.trim()) return txt.trim();
 
@@ -70,19 +70,19 @@ export class BaseComponent {
 
   /** Get value attribute (replaces huoQuZhi) */
   async getValue(timeout = this.timeout()) {
-    await this.locator.waitFor({ state: 'attached', timeout }).catch(() => {});
+    await this.locator.waitFor({ state: 'attached', timeout }).catch(() => { });
     return (await this.locator.getAttribute('value').catch(() => null)) ?? '';
   }
 
   /** Get id attribute (replaces huoQuId) */
   async getId(timeout = this.timeout()) {
-    await this.locator.waitFor({ state: 'attached', timeout }).catch(() => {});
+    await this.locator.waitFor({ state: 'attached', timeout }).catch(() => { });
     return (await this.locator.getAttribute('id').catch(() => null)) ?? '';
   }
 
   /** Get attribute (replaces huoQuAttribute) */
   async getAttribute(name: string, timeout = this.timeout()) {
-    await this.locator.waitFor({ state: 'attached', timeout }).catch(() => {});
+    await this.locator.waitFor({ state: 'attached', timeout }).catch(() => { });
     return (await this.locator.getAttribute(name).catch(() => null)) ?? '';
   }
 
@@ -95,7 +95,7 @@ export class BaseComponent {
 
   /** Selected (replaces isElementXuanZhe) */
   async isSelected(timeout = this.timeout()) {
-    await this.locator.waitFor({ state: 'visible', timeout }).catch(() => {});
+    await this.locator.waitFor({ state: 'visible', timeout }).catch(() => { });
     const el = await this.locator.elementHandle();
     if (!el) return false;
     return await el.evaluate((node) => (node as HTMLInputElement).checked ?? false);
@@ -133,7 +133,7 @@ export class BaseComponent {
 /** Button component (formerly Button) */
 export class Button extends BaseComponent {
   async isDisabled(timeout = this.timeout()) {
-    await this.locator.waitFor({ state: 'attached', timeout }).catch(() => {});
+    await this.locator.waitFor({ state: 'attached', timeout }).catch(() => { });
     const disabledAttr = await this.locator.getAttribute('disabled');
     // Some frameworks set disabled="true", some just presence
     return disabledAttr === 'true' || disabledAttr === 'disabled' || (await this.locator.isDisabled().catch(() => false));
@@ -194,7 +194,7 @@ export class TextInput extends BaseComponent {
   }
 
   async valueContains(expected: string, timeout = this.timeout()) {
-    await this.locator.waitFor({ state: 'attached', timeout }).catch(() => {});
+    await this.locator.waitFor({ state: 'attached', timeout }).catch(() => { });
     const val = await this.getValue();
     return val.trim().includes((expected ?? '').trim());
   }
@@ -235,9 +235,9 @@ export class HtmlSelect extends TextInput {
       if (txt && !txt.includes('--')) {
         const val = (await options.nth(i).getAttribute('value')) ?? undefined;
         if (val) {
-            await this.locator.selectOption(val);
+          await this.locator.selectOption(val);
         } else {
-            throw new Error(`Invalid value for selectOption: ${val}`);
+          throw new Error(`Invalid value for selectOption: ${val}`);
         }
         return;
       }
@@ -317,7 +317,7 @@ export class DatePicker extends AutoCompleteSelect {
       await candidate.click();
     } else {
       // As a fallback, press Enter to accept current
-      await container.press('Enter').catch(() => {});
+      await container.press('Enter').catch(() => { });
     }
   }
 
@@ -334,8 +334,8 @@ export class DatePicker extends AutoCompleteSelect {
     // Try Year, Month, Day tokens in that order if present
     const [day, mon, year] = this.parsedDate;
     if (year) await this.pickPart(container as Locator, year);
-    if (mon)  await this.pickPart(container as Locator, mon);
-    if (day)  await this.pickPart(container as Locator, day);
+    if (mon) await this.pickPart(container as Locator, mon);
+    if (day) await this.pickPart(container as Locator, day);
   }
 
   /** Month/Year only (formerly select2) */
@@ -348,19 +348,19 @@ export class DatePicker extends AutoCompleteSelect {
     const container = (await calendar.count()) > 0 ? calendar.first() : this.page;
     const [mon, year] = this.parsedDate;
     if (year) await this.pickPart(container as Locator, year);
-    if (mon)  await this.pickPart(container as Locator, mon);
+    if (mon) await this.pickPart(container as Locator, mon);
   }
 
   async isDisabled(timeout = this.timeout()) {
     const child = this.locator.locator('xpath=.//div//input|.//input');
-    await child.waitFor({ state: 'attached', timeout }).catch(() => {});
+    await child.waitFor({ state: 'attached', timeout }).catch(() => { });
     const disabled = await child.getAttribute('disabled');
     return disabled === 'true' || disabled === 'disabled' || (await child.isDisabled().catch(() => false));
   }
 
   async getDate(timeout = this.timeout()) {
     const child = this.locator.locator('xpath=.//div//input|.//input');
-    await child.waitFor({ state: 'attached', timeout }).catch(() => {});
+    await child.waitFor({ state: 'attached', timeout }).catch(() => { });
     return (await child.getAttribute('value').catch(() => null)) ?? '';
   }
 }
@@ -483,7 +483,7 @@ export class HorizontalMenu extends Button {
     const count = await siblings.count();
     for (let i = 0; i < count; i++) {
       const sibBtn = siblings.nth(i);
-      await sibBtn.click().catch(() => {});
+      await sibBtn.click().catch(() => { });
       if (await this.exists(300)) break;
     }
 

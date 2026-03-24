@@ -27,7 +27,7 @@ test.describe.configure({
 test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
   let pages: PaymentsPages;
   // Track created payees per test
-  type CreatedPayee = { nickName?: string; accountNumber?: string };
+  type CreatedPayee = { name?: string; accountNumber?: string };
   let createdPayees: CreatedPayee[] = [];
    
 
@@ -54,7 +54,7 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
   // Best-effort cleanup; never fail the test because cleanup failed
   for (const p of createdPayees) {
     try {
-      const key = p.nickName ?? p.accountNumber ?? '';
+      const key = p.name ?? p.accountNumber ?? '';
       await pages.PayrollPage.deletePayeeByFilter(key, /* confirm */ true);
       console.log(`[cleanup] Deleted payee with key: ${key}`);
     } catch (err) {
@@ -83,7 +83,7 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
     await page.keyboard.press('Enter');
     
     // Reusable helper for add new payee
-    const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+    const { name, accountNumber }  = await pages.PayrollPage.addNewPayee({
       name: testData.Payroll.newPayeeName,
       nickName: testData.Payroll.newPayeeNickName,
       bankId: payeeBankID,
@@ -91,7 +91,7 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
     });
 
     // Register for cleanup
-    createdPayees.push({ nickName, accountNumber });
+    createdPayees.push({ name, accountNumber });
 
     // Step 5: Enter Amount > max + details
     await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.moreThanMaxAmountIx);
@@ -139,7 +139,7 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
     await page.keyboard.press('Enter');
 
     // Reusable helper for add new payee
-        const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+        const { name, accountNumber }  = await pages.PayrollPage.addNewPayee({
           name: testData.Payroll.newPayeeName,
           nickName: testData.Payroll.newPayeeNickName,
           bankId: payeeBankID,
@@ -147,7 +147,7 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
         });
 
       // Register for cleanup
-      createdPayees.push({ nickName, accountNumber });
+      createdPayees.push({ name, accountNumber });
 
     // Step 5: Enter Amount = max + details
     await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.maxAmountIx);
@@ -193,7 +193,7 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
     await page.keyboard.press('Enter');
 
     // Reusable helper for add new payee
-      const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+      const { name, accountNumber }  = await pages.PayrollPage.addNewPayee({
         name: testData.Payroll.newPayeeName,
         nickName: testData.Payroll.newPayeeNickName,
         bankId: payeeBankID,
@@ -201,7 +201,7 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
       });
 
     // Register for cleanup
-    createdPayees.push({ nickName, accountNumber });
+    createdPayees.push({ name, accountNumber });
 
     // Step 5: Enter Amount = max for first item + details
     await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.maxAmountIx);

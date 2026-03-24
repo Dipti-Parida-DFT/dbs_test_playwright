@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from '@playwright/test';
-import { WebComponents } from '../../../lib/components';
+import { WebComponents } from '../../../lib/webComponents';
 
 export class PayTransferPage {
   private readonly page: Page;
@@ -29,7 +29,7 @@ export class PayTransferPage {
     this.authenticateNowButton = page.locator('//button[contains(text(),"Authenticate now")]');
     this.nextPageContainerOption = page.locator('//li[@class="page-point ng-star-inserted"]');
   }
-  
+
   /**
    * Navigates to Pay & Transfer and authenticates with the provided access code.
    * Waits until the left navigation / next page container becomes ready.

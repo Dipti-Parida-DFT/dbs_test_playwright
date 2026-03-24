@@ -38,5 +38,34 @@
         "newPayeeAcctNumber": "123456000001",
         "amountErrorTip": "Amount is invalid.",
         "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
+    },
+    "BulkPayment": {
+        "SIT": {
+            "loginCompanyId": "ID2BFE1",
+            "loginUserId": "DBSAUTOID001",
+            "fromAccount": "0301593814",
+            "payeeBankID": "DBS INDONESIA"
+        },
+        "maxAmount": "1000000000",
+        "maxAmountPayee1": "600000000",
+        "maxAmountPayee2": "400000000",
+        "maxAmountValidation": "1,000,000,000",
+        "maxAmountValidationPayee1": "600,000,000",
+        "maxAmountValidationPayee2": "400,000,000",
+        "moreThanMaxAmountLimit": "1000000001",
+        "deductedAmount": "IDR 1,000,000,000",
+        "fromAccountViewLabel":"0301593814 (IDR)",
+        "fromAccountNameViewLabel":"NAME OF ACCT NO:0301593814",
+        "existingPayee": "NICKEYAIR2",
+        "newPayeeName": "TestIDBulkPaymentName",
+        "newPayeeNickName": "TestIDBulkPaymentNickName",
+        "newPayeeAcctNumber": "AccNo7888833222",
+        "paymentDetails": "paymentDetails",
+        "amountErrorTip": "Amount is invalid.",
+        "BulkamountErrorTip": "Amount format is invalid.",
+        "transactionDeleted": "Transaction deleted",
+        "internalReferenceUserProvided": "",
+        "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
     }
-  }
+   
+}
