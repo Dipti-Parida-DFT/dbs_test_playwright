@@ -7,45 +7,6 @@ import { PayrollPage } from './PayrollPage';
 import { BulkPaymentPage } from './BulkPaymentPage';
 import { BulkCollectionPage } from './BulkCollectionPage';
 
-/*import { LVTPaymentPage } from './LVTPaymentPage';
-import { AutoPayPaymentPage } from './AutoPayPaymentPage';
-import { PaymentViaPartnerBankPage } from './PaymentViaPartnerBankPage';
-// NOTE: file name adjusted to Playwright version we created earlier.
-
-import { TelegraphicTransferPage } from './TelegraphicTransferPage';
-import { IntraCompanyTransferPage } from './IntraCompanyTransferPage';
-import { FastPaymentPage } from './FastPaymentPage'; 
-
-import { NewFastCollectionPage } from './NewFastCollectionPage';
-import { BulkCollectionPage } from './BulkCollectionPage';
-
-import { MEPSPaymentPage } from './MEPSPaymentPage';
-import { NewBillPaymentPage } from './NewBillPaymentPage';
-import { PaymentTemplatesPage } from './PaymentTemplatesPage';
-import { BeneficiaryPage } from './BeneficiaryPage';
-import { CrossBoarderACHPage } from './CrossBoarderACHPage';
-import { HVTPaymentPage } from './HVTPaymentPage';
-import { CNAPSPaymentPage } from './CNAPSPaymentPage';
-import { HKCHATSPaymentPage } from './HKCHATSPaymentPage';
-import { FPSPaymentPage } from './FPSPaymentPage';
-import { RTGSPaymentPage } from './RTGSPaymentPage';
-import { SKNPaymentPage } from './SKNPaymentPage';
-import { ITTPage } from './ITTPage';
-import { NEFTPaymentPage } from './NEFTPaymentPage';
-import { FixedDepositPlacementPage } from './FixedDepositPlacementPage';
-import { PartnerBankPaymentPage } from './PartnerBankPaymentPage';
-import { TWACHBulkPaymentPage } from './TWACHBulkPaymentPage';
-import { CustomPaymentPage } from './CustomPaymentPage';
-import { VNLvtPage } from './VNLvtPage';
-import { TWFISCPaymentPage } from './TWFISCPaymentPage';
-import { PaymentLimit } from './PaymentLimit';
-import { ChequePaymentPage } from './ChequePaymentPage';
-import { DemandDraftPaymentPage } from './DemandDraftPaymentPage';
-import { MT101PaymentPage } from './MT101PaymentPage';
-import { GiroPaymentPage } from './GiroPaymentPage';
-import { eACHPaymentPage } from './eACHPaymentPage';
-import { IBPSPaymentPage } from './IBPSPaymentPage';
-import { RTOLPaymentPage } from './RTOLPaymentPage'; */
 
 export {
   AccountTransferPage,

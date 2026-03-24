@@ -15,7 +15,7 @@ import path from 'node:path';
 import { NavigatePages, PaymentsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
 import { chromium, Browser } from 'playwright';
-import { WebComponents } from '../../../lib/components';
+import { WebComponents } from '../../../lib/webComponents';
 import { CONSTANTS } from '../../../lib/constants';
 import { TIMEOUT } from '../../../lib/timeouts';
 

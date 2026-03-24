@@ -1,6 +1,6 @@
 // tests/pages/IDEALX/PayTransfer/BulkPaymentPage.ts
 import { Page, Locator, expect } from '@playwright/test';
-import { WebComponents } from '../../../lib/components';
+import { WebComponents } from '../../../lib/webComponents';
 
 export type NewPayeeInput = {
   name: string;

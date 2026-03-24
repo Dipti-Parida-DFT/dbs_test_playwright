@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test';
-import { WebComponents } from '../../lib/components';
+import { WebComponents } from '../../lib/webComponents';
 import loginCredentials from '../../data/loginCredentials.json';
 import { TIMEOUT } from '../../lib/timeouts';
 import { CONSTANTS } from '../../lib/constants';

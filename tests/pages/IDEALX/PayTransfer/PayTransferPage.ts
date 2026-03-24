@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from '@playwright/test';
-import { WebComponents } from '../../../lib/components';
+import { WebComponents } from '../../../lib/webComponents';
 
 export class PayTransferPage {
   private readonly page: Page;

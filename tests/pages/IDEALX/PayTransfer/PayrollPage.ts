@@ -1,6 +1,6 @@
 // pages/PayrollPage.ts
 import { Page, Locator, expect } from '@playwright/test';
-import { WebComponents } from '../../../lib/components';
+import { WebComponents } from '../../../lib/webComponents';
 import { TIMEOUT } from '../../../lib/timeouts';
 
 export type NewPayeeInput = {
