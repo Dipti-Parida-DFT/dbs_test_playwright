@@ -1,8 +1,8 @@
 {
     "login": {
-        "loginCompanyId": "SPID05",
-        "loginUserId": "SPID05V01",
-        "verifyUserId": "SPID05V01"
+        "loginCompanyId": "SPID02",
+        "loginUserId": "SPID02V01",
+        "verifyUserId": "SPID02V01"
     },
     "status": {
         "Approved": "Approved",
@@ -22,9 +22,9 @@
     },
     "Payroll": {
         "SIT": {
-            "loginCompanyId": "SPID05",
-            "loginUserId": "SPID05V01",
-            "fromAccount": "1500088008",
+            "loginCompanyId": "SPID02",
+            "loginUserId": "SPID02V01",
+            "fromAccount": "1500825313",
             "payeeBankID": "494"
         },
         "maxAmount": "1,000,000,000",

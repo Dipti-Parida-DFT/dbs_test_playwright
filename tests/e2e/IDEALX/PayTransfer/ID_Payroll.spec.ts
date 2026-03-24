@@ -24,7 +24,7 @@ test.describe.configure({
   retries: Number(process.env.CASE_RETRY_TIMES ?? 0),
 });
 
-test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
+test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
   let pages: PaymentsPages;
   // Track created payees per test
   type CreatedPayee = { nickName?: string; accountNumber?: string };
