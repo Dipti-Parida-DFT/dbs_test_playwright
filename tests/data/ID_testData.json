@@ -23,6 +23,8 @@
         "paymentDetails": "paymentDetails",
         "amountErrorTip": "Amount is invalid.",
         "BulkamountErrorTip": "Amount format is invalid.",
+        "transactionDeleted": "Transaction deleted",
+        "internalReferenceUserProvided": "",
         "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
     },
     "status": {

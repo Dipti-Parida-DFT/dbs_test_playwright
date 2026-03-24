@@ -14,6 +14,11 @@ export type NewPayeeResult = {
   accountNumber: string;
 };
 
+export type deleteOpenPayeeOrReferenceNo = {
+  transactionDeleted: string;
+  internalReference: string;
+};
+
 export type NewPayee1Data = {
   amountPayer2Tc002: string;
   amount: string;
@@ -110,7 +115,7 @@ export type NewAndExistingPayerValidationData = {
   email2LabelValue: string;
   email3LabelValue: string;
   email4LabelValue: string;
-  email5LabelValue: string; 
+  email5LabelValue: string;
   //Payer 2
   newPayeeName: string;
   newPayeeNickName: string;
@@ -123,7 +128,7 @@ export type NewAndExistingPayerValidationData = {
   statusPayer2: string;
   amountPayer2: string;
   transactionCodePayer2: string;
-  particularsPayer2: string; 
+  particularsPayer2: string;
 };
 
 
@@ -447,13 +452,13 @@ export class BulkCollectionPage {
    * This method Enters Step 2: Payment to Amount and other opetional fields 
    */
   async enterNewPayeeAllOtherDetails(input: NewPayee1Data) {
-    const { amountPayer2Tc002, amount, transactionCode, purposeOfPayment, particularsPayer1, particulars, collectionDetailsPayer1,collectionDetails, email1, email2, email3,
+    const { amountPayer2Tc002, amount, transactionCode, purposeOfPayment, particularsPayer1, particulars, collectionDetailsPayer1, collectionDetails, email1, email2, email3,
       email4, email5, emailMessage } = input;
 
     // Step 2: Enter Amount (SGD) = add Amount
     if (await this.webComponents.stringIsNotNullOrBlank(amountPayer2Tc002)) {
       await this.webComponents.enterTextarea(this.amount1stPosition, amount);
-    }else{
+    } else {
       await this.webComponents.enterTextarea(this.amount, amount);
     }
 
@@ -511,7 +516,7 @@ export class BulkCollectionPage {
     // Step 2: If true(value present): Enter Particulars
     if (await this.webComponents.stringIsNotNullOrBlank(particularsPayer1)) {
       await this.webComponents.enterTextarea(this.particular1stPosition, particulars);
-    }else{
+    } else {
       await this.webComponents.enterTextarea(this.particular, particulars);
     }
 
@@ -521,17 +526,17 @@ export class BulkCollectionPage {
     // Enter Collection details to the payer bank
     if (await this.webComponents.stringIsNotNullOrBlank(collectionDetailsPayer1)) {
       await this.webComponents.enterTextarea(this.collectionDetailsPayer1, collectionDetails);
-    }else{
+    } else {
       await this.webComponents.enterTextarea(this.collectionDetails, collectionDetails);
     }
 
     // Click : "Message to the payee" checkbox
     if (await this.webComponents.stringIsNotNullOrBlank(collectionDetailsPayer1)) {
       await this.webComponents.clickWhenVisibleAndEnabled(this.msgToPayer1);
-    }else{
+    } else {
       await this.webComponents.clickWhenVisibleAndEnabled(this.msgToPayer);
     }
-    
+
     // Enter : Emails 1
     await this.webComponents.enterTextarea(this.emailId0, email1);
     // Enter : Emails 2
@@ -596,25 +601,6 @@ export class BulkCollectionPage {
 
   }
 
-  /**
-   * Author : LC5741501
-   * Created Date: 20/02/2026
-   * @param testData : is a Json object
-   * This method Enters Step 2: Amount and other opetional fields 
-   */
-  async enterExtistingPayerAmountTransactionCodeAndParticularsOLD(testData) {
-
-    // Step 2: Enter Amount (SGD) = add Amount
-    await this.webComponents.enterTextarea(this.amount, testData.payer2.amount);
-
-    // Step 2: Select: Transaction code
-    await this.webComponents.clickWhenVisibleAndEnabled(this.transactionCode);
-    await this.webComponents.clickWhenVisibleAndEnabled(this.transactionCode38DirecDebit);
-
-    // Enter: Particulars(Optional)
-    await this.webComponents.enterTextarea(this.particular, testData.payer2.particulars);
-
-  }
 
   /**
    * Author : LC5741501
@@ -800,156 +786,6 @@ export class BulkCollectionPage {
 
   }
 
-  /**
-     * Author : LC5741501
-     * This method validates the 2nd Payer details: Expected
-     * values(JSON) Vs Actual Selected Payers Or Reference No (from UI) 
-     */
-  async validatePayer2ConsolidateValueInBulkCollectionOLD(testData, reference) {
-
-    // Assertions
-    // 1) Hash value : Auto generated hence checking value is Not Null
-    await this.webComponents.verifyUIElementTextIsNotNull(this.hashValue);
-
-    // 2) To : Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.toAccountNumberLabel, testData.BulkCollectionValidationData.toAccountNumberLabel);
-    await this.webComponents.compareUIVsJsonValue(this.toAccountNameLabel, testData.BulkCollectionValidationData.toAccountNameLabel);
-
-    // 3) Payment Type : Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.paymentTypeValue, testData.BulkCollectionValidationData.paymentType);
-
-    // 4) Total amount : Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.totalAmountValue, testData.BulkCollectionValidationData.totalAmountConsolidated);
-
-    // 5) Credit Type : Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.viewCreditValue, testData.BulkCollectionValidationData.creditTypeConsolidated);
-
-    //6) Payment Date: checking value is Not Null
-    await this.webComponents.verifyUIElementTextIsNotNull(this.paymentDate);
-
-    // 7) Internal reference : Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.referenceValue, reference);
-
-    // 8) Batch ID : Auto Generated Validate it should not Null
-    await this.webComponents.verifyUIElementTextIsNotNull(this.batchIDValue);
-
-    // 9) Filter is Visible 
-    await this.webComponents.waitElementToBeVisible(this.viewPayrollFilter);
-
-    // Below validation from 10 to 14 is a additional validation
-    // 10) Collection summary : Validate UI Vs Json (Payment summary Label)
-    await this.webComponents.compareUIVsJsonValue(this.collectionSummaryLabel, testData.BulkCollectionValidationData.collectionSummaryLabel);
-
-    // 11) Total Payees Label : Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.totalPayeesLabel, testData.BulkCollectionValidationData.totalPayersLabel);
-
-    // 12) Total Payees Value : Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.totalPayeesValue, testData.BulkCollectionValidationData.totalPayersConsolidatedLabelValue);
-
-    // 13) Total Amount Label : Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.totalAmountLabel, testData.BulkCollectionValidationData.totalAmountLabel);
-
-    // 14) Total Amount Value : Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.totalAmountUSDValue, testData.BulkCollectionValidationData.totalAmountConsolidatedLabelValue);
-
-    // Payer1 Validation
-
-    // 15) Payee/Nickname : Validate (Payee Name) UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.payerNameValue, testData.payer1.newPayeeName);
-
-    // 16) Payee/Nickname : Validate (Nickname) UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.payerNickNameValue, testData.payer1.newPayeeName);
-
-    // 17) Bank/SWIFT BIC: Validate (Bank) UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.bankNameValue, testData.BulkCollectionValidationData.bankNameValue);
-
-    // 18) Bank/SWIFT BIC: Validate (SWIFT) UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.bankCodeValue, testData.BulkCollectionValidationData.bankCode);
-
-    // 19) Account number: Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.accountNumberValue, testData.payer1.newPayeeAcctNumber);
-
-    // 20) Account number DDA reference: Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.DDAReferenceValue, testData.payer1.DDAReference);
-
-    // 21) Mandate ID: Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.mandateIdValue, testData.payer1.mandateID);
-
-    // 22) Status (PendingApproval) : Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.status, testData.status.PendingApproval);
-
-    // 23) Amount (SGD): Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.amountValue, testData.payer1.amount);
-
-    // 24) Transaction Code (92 - Direct Debit(Merchant Payment)) : Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.transactionCodeView, testData.payer1.transactionCodeTc002);
-
-    // 25) Purpose of Payment (Merchant Initiated Bills Payment): Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.purposeOfPaymentValue, testData.payer1.purposeOfPayment);
-
-    // 26) Particulars: Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.particularsValue, testData.payer1.particulars);
-
-    // Click : showOptionalViewButton1
-    await this.webComponents.clickWhenVisibleAndEnabled(this.showOptionDetails);
-
-    // 27) CollectionDetailValue: Validate UI Vs Json (Additional Validation)
-    await this.webComponents.compareUIVsJsonValue(this.collectionDetailValue, testData.payer1.collectionDetails);
-
-    // 28) Message to payee (optional): Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.emailmessageValue, testData.payer1.emailMessage);
-
-    // 29)Emails 1 to 5 : Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.emailId0Value, testData.payer1.emailId0);
-    await this.webComponents.compareUIVsJsonValue(this.emailId1Value, testData.payer1.emailId1);
-    await this.webComponents.compareUIVsJsonValue(this.emailId2Value, testData.payer1.emailId2);
-    await this.webComponents.compareUIVsJsonValue(this.emailId3Value, testData.payer1.emailId3);
-    await this.webComponents.compareUIVsJsonValue(this.emailId4Value, testData.payer1.emailId4);
-
-    // Note: Below all Validation are (Additional Validation) for Payer2
-
-    // 30) Payee/Nickname : Validate (Payee Name) UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.payer2NameValue, testData.payer2.newPayeeName);
-
-    // 31) Payee/Nickname : Validate (Nickname) UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.payer2NickNameValue, testData.payer2.newPayeeNickName);
-
-    // 32) Bank/SWIFT BIC: Validate (Bank) UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.bankNamePayer2Value, testData.BulkCollectionValidationDataPayer2.bankNameValue);
-
-    // 33) Bank/SWIFT BIC: Validate (SWIFT) UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.bankCodePayer2Value, testData.BulkCollectionValidationDataPayer2.bankCode);
-
-    // 34) Account number: Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.accountNumberPayer2Value, testData.payer2.newPayeeAcctNumber);
-
-    // 35) Account number DDA reference: Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.DDAReferencePayer2Value, testData.payer2.DDAReference);
-
-    // 36) Mandate ID: Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.mandateIdPayer2Value, testData.payer2.mandateID);
-
-    // 37) Status (PendingApproval) : Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.statusPayer2, testData.status.PendingApproval);
-
-    // 38) Amount (SGD): Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.amountPayer2Value, testData.payer2.amount);
-
-    // 39) Transaction Code (92 - Direct Debit(Merchant Payment)) : Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.transactionCodePayer2View, testData.payer2.transactionCode);
-
-    // 40) Particulars: Validate UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.particularsPayer2Value, testData.payer2.particulars);
-
-
-    // 41) Next approver Section : Visible
-    await this.webComponents.waitElementToBeVisible(this.activityLogSection);
-
-    // 42) Approval Details Section : Visible
-    await this.webComponents.waitElementToBeVisible(this.approvalDetails);
-
-  }
-
 
   /**
      * Author : LC5741501
@@ -957,15 +793,15 @@ export class BulkCollectionPage {
      * values(JSON) Vs Actual Selected Payers Or Reference No (from UI) 
      */
   async validatePayer2ConsolidateValueInBulkCollection(input: NewAndExistingPayerValidationData, reference) {
-      const { toAccountNumberLabel,toAccountNameLabel,paymentTypeValue,totalAmountConsolidated,creditTypeConsolidated,
-        referenceValueUserProvided,batchIdValueUserProvided,collectionSummaryLabel,totalPayeesLabel,
-        totalPayersConsolidatedLabelValue,totalAmountLabel,totalAmountConsolidatedLabelValue,totalAmountValueEdited,
-        payeeNameLabelValue,payeeNicknameLabelValue,bankNameLabelValue,bankSwiftBicLabelValue,accountNumberLabelValue,
-        DDAReference,mandateID,statusLabelValue,amountLabelValue,amountEditedLabelValue,transactionLabelValue,
-        purposeCodeLabelValue,particularsLabelValue,collectionDetailsLabelValue,emailMessageLabelValue,
-        email1LabelValue,email2LabelValue,email3LabelValue,email4LabelValue,email5LabelValue, newPayeeName,
-        newPayeeNickName,bankNameValue,bankCodePayer2Value,newPayeeAcctNumber,DDAReferencePayer2,mandateIDPayer2,
-        bankCode,statusPayer2,amountPayer2,transactionCodePayer2,particularsPayer2} = input;
+    const { toAccountNumberLabel, toAccountNameLabel, paymentTypeValue, totalAmountConsolidated, creditTypeConsolidated,
+      referenceValueUserProvided, batchIdValueUserProvided, collectionSummaryLabel, totalPayeesLabel,
+      totalPayersConsolidatedLabelValue, totalAmountLabel, totalAmountConsolidatedLabelValue, totalAmountValueEdited,
+      payeeNameLabelValue, payeeNicknameLabelValue, bankNameLabelValue, bankSwiftBicLabelValue, accountNumberLabelValue,
+      DDAReference, mandateID, statusLabelValue, amountLabelValue, amountEditedLabelValue, transactionLabelValue,
+      purposeCodeLabelValue, particularsLabelValue, collectionDetailsLabelValue, emailMessageLabelValue,
+      email1LabelValue, email2LabelValue, email3LabelValue, email4LabelValue, email5LabelValue, newPayeeName,
+      newPayeeNickName, bankNameValue, bankCodePayer2Value, newPayeeAcctNumber, DDAReferencePayer2, mandateIDPayer2,
+      bankCode, statusPayer2, amountPayer2, transactionCodePayer2, particularsPayer2 } = input;
 
     // Assertions
     // 1) Hash value : Auto generated hence checking value is Not Null
@@ -1033,10 +869,10 @@ export class BulkCollectionPage {
     // Payer1 Validation
 
     // 15) Payee/Nickname : Validate (Payee Name) UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.payerNameValue,payeeNameLabelValue);
+    await this.webComponents.compareUIVsJsonValue(this.payerNameValue, payeeNameLabelValue);
 
     // 16) Payee/Nickname : Validate (Nickname) UI Vs Json
-    await this.webComponents.compareUIVsJsonValue(this.payerNickNameValue,payeeNicknameLabelValue);
+    await this.webComponents.compareUIVsJsonValue(this.payerNickNameValue, payeeNicknameLabelValue);
 
     // 17) Bank/SWIFT BIC: Validate (Bank) UI Vs Json
     await this.webComponents.compareUIVsJsonValue(this.bankNameValue, bankNameLabelValue);
@@ -1062,16 +898,16 @@ export class BulkCollectionPage {
     // 23) Amount (SGD): Validate UI Vs Json
     // If amountEditedLabelValue : is edited validate the edited value
     // else validate the no edited value of amount
-    if(await this.webComponents.stringIsNotNullOrBlank(amountEditedLabelValue)){
-        await this.webComponents.compareUIVsJsonValue(this.amountValue, amountEditedLabelValue);
-    }else{
-        await this.webComponents.compareUIVsJsonValue(this.amountValue, amountLabelValue);
-    }   
+    if (await this.webComponents.stringIsNotNullOrBlank(amountEditedLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.amountValue, amountEditedLabelValue);
+    } else {
+      await this.webComponents.compareUIVsJsonValue(this.amountValue, amountLabelValue);
+    }
 
     // 24) Transaction Code (92 - Direct Debit(Merchant Payment)) : Validate UI Vs Json
     await this.webComponents.compareUIVsJsonValue(this.transactionCodeView, transactionLabelValue);
 
-    
+
 
     // 25) Purpose of Payment (Merchant Initiated Bills Payment): Validate UI Vs Json
     await this.webComponents.compareUIVsJsonValue(this.purposeOfPaymentValue, purposeCodeLabelValue);
@@ -1139,11 +975,11 @@ export class BulkCollectionPage {
   }
 
   /**
-      * Author : LC5741501
-      * This method delete's the PayerOrReference No
-      */
-  async deleteOpenPayerOrReferenceNo(testData, reference) {
-
+   * Author : LC5741501
+   * This method delete's the PayeeOrReference No
+   */
+  async deleteOpenPayerOrReferenceNo(input: deleteOpenPayeeOrReferenceNo, reference) {
+    const { transactionDeleted, internalReference } = input;
     // Click : Delete button
     await this.webComponents.clickWhenVisibleAndEnabled(this.deleteButonPayroll);
 
@@ -1152,11 +988,16 @@ export class BulkCollectionPage {
 
     //Validate : Transaction Deleted Popup Label
     await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabel);
-    await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabel, testData.BulkCollectionValidationData.transactionDeleted);
+    await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabel, transactionDeleted);
 
     // Validate : Refrence No is present in the deleted message
-    await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabelMsg);
-    await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabelMsg, reference);
+    if (await this.webComponents.stringIsNotNullOrBlank(internalReference)) {
+      await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabelMsg);
+      await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabelMsg, internalReference);
+    } else {
+      await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabelMsg);
+      await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabelMsg, reference);
+    }
 
   }
 

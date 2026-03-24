@@ -228,7 +228,10 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
     }, reference);
 
     // Step 15: This method deletes the existing opened PayeeOrReferenceNo.
-    await pages.BulkCollectionPage.deleteOpenPayerOrReferenceNo(testData, reference);
+    await pages.BulkCollectionPage.deleteOpenPayerOrReferenceNo({
+      transactionDeleted: testData.BulkCollectionValidationData.transactionDeleted,
+      internalReference: testData.BulkCollectionValidationData.internalReferenceUserProvided
+    }, reference);
 
   });
 
@@ -237,26 +240,20 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
   test('TC002_HK_BulkCollection - Verify creation of a Bulk collection with new and existing payer', async ({ page }) => {
 
     //Step 1: Navigate Payment & Transfer Menu.
-    //await pages.AccountTransferPage.waitForMenu();
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.AccountTransferPage.paymentMenu);
     await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
 
     //Step 2: Handle Authentication Pop-up.
-    //await pages.AccountTransferPage.handleAuthIfPresent("1111")
     await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
 
     // Step 3: Click Bulk Collection option.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.bulkCollection);
-    //await pages.BulkCollectionPage.waitForBulkCollectionFormReady();
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.BulkCollectionPage.fromAccount);
 
     // Step 4: Select account from "Account" dropdown.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.fromAccount);
-    //await page.keyboard.type(fromAccount);
-    //await page.keyboard.press('ArrowDown');
-    //await page.keyboard.press('Enter');
     await webComponents.typeTextThroughKeyBoardAction(page, fromAccount);
     await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'ArrowDown');
     await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'Enter');
@@ -268,9 +265,6 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
     // Step 6: Add Existing Payer.
     await webComponents.enterTextarea(pages.BulkCollectionPage.filterExistingPayee, testData.payer2.newPayeeName);
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.addButton);
-
-    // Step 7: Add Existing Payer: Amount, Transaction code and Particulars
-    //await pages.BulkCollectionPage.enterExtistingPayerAmountTransactionCodeAndParticularsOLD(testData);
 
     // Step 7: Add Existing Payer: Amount, Transaction code and Particulars
     await pages.BulkCollectionPage.enterExtistingPayerAmountTransactionCodeAndParticulars({
@@ -290,11 +284,6 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
 
     // Register for cleanup
     createdPayees.push({ accountNumber });
-
-    // Step 9: Enter Amount (SGD), Transaction code, Purpose of Payment and other optional details for 
-    // Particulars, Collection details to the payer bank, Message to the payee, Emails, Emails Message.
-    //await pages.BulkCollectionPage.enterNewPayerAmountOptionalDetailsWhenExistingPayerAdded(testData);
-
 
     // Step 9: Enter Amount (SGD), Transaction code, Purpose of Payment and other optional details for 
     // Particulars, Collection details to the payer bank, Message to the payee, Emails, Emails Message
@@ -320,13 +309,11 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
 
     // Step 11: Click Next button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.nextButton);
-    //await pages.BulkCollectionPage.waitForPreviewPageReady();
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.BulkCollectionPage.submitButton);
 
     // Step 12: Click Submit button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.submitButton);
-    //await pages.BulkCollectionPage.waitForSubmittedPageReady();
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.BulkCollectionPage.finishButton);
 
@@ -339,20 +326,15 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
 
     // Step 14: Click Finish button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.finishButton);
-    //await pages.BulkCollectionPage.waitForPayAndTransferPageReady();
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.BulkCollectionPage.bulkCollection);
 
     // Step 15: Search Reference No and Open.
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
-    //await pages.BulkCollectionPage.waitForViewPaymentPageReady();
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.BulkCollectionPage.hashValue);
     await webComponents.waitElementToBeVisible(pages.BulkCollectionPage.toAccountNumberLabel);
     await webComponents.waitElementToBeVisible(pages.BulkCollectionPage.paymentTypeValue);
-
-    // Step 14: Validate the Reference No details.
-    //await pages.BulkCollectionPage.validatePayer2ConsolidateValueInBulkCollectionOLD(testData, reference);
 
     // Step 16: Validate the Reference No details.
     await pages.BulkCollectionPage.validatePayer2ConsolidateValueInBulkCollection({
@@ -410,7 +392,10 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
     }, reference);
 
     // Step 17: This method deletes the existing opened PayeeOrReferenceNo.
-    await pages.BulkCollectionPage.deleteOpenPayerOrReferenceNo(testData, reference);
+    await pages.BulkCollectionPage.deleteOpenPayerOrReferenceNo({
+      transactionDeleted: testData.BulkCollectionValidationData.transactionDeleted,
+      internalReference: testData.BulkCollectionValidationData.internalReferenceUserProvided
+    }, reference);
 
   });
 

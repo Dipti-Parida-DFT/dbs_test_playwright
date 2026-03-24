@@ -147,7 +147,9 @@ export class WebComponents {
    * @param locator : Ui object
    * @param givenData : Json Value
    */
-  async compareUIVsJsonValue(locator: any, givenData: any,) {
+  async compareUIVsJsonValue(locator: any, givenData: any,timeout = TIMEOUT.MIN) {
+    await expect(locator).toBeVisible({ timeout });
+    await expect(locator).toBeEnabled({ timeout });
     expect(locator).toContainText(givenData);
   }
 

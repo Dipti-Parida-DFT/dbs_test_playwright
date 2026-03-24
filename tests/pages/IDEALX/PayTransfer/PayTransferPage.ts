@@ -29,7 +29,7 @@ export class PayTransferPage {
     this.authenticateNowButton = page.locator('//button[contains(text(),"Authenticate now")]');
     this.nextPageContainerOption = page.locator('//li[@class="page-point ng-star-inserted"]');
   }
-  
+
   /**
    * Navigates to Pay & Transfer and authenticates with the provided access code.
    * Waits until the left navigation / next page container becomes ready.

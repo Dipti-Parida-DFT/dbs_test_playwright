@@ -1,5 +1,6 @@
 // tests/pages/IDEALX/PayTransfer/BulkPaymentPage.ts
 import { Page, Locator, expect } from '@playwright/test';
+import { WebComponents } from '../../../lib/components';
 
 export type NewPayeeInput = {
   name: string;
@@ -12,6 +13,11 @@ export type NewPayeeInput = {
 export type NewPayeeResult = {
   nickName: string;
   accountNumber: string;
+};
+
+export type deleteOpenPayeeOrReferenceNo = {
+  transactionDeleted: string;
+  internalReference: string;
 };
 
 export class BulkPaymentPage {
@@ -28,7 +34,7 @@ export class BulkPaymentPage {
     this.bankCharge = page.locator('xpath=//dbs-radio-group[@formcontrolname="bankCharge"]');
     this.amount = page.locator('xpath=//input[@name="payeeAmount"]');
     this.amountPayee1 = page.locator('(//input[@name="payeeAmount"])[1]');
-    
+
     //Addded Locator fo Bulk Payment  Author: LC5741501   * Created Date: 11/03/26
     this.payeeResidentStatus = page.locator('xpath=//span[text()="Payee Resident Status"]/parent::div/following-sibling::div//span[@id="fromAccount"]');
     this.payeeResidentOptionNonResident = page.locator('xpath=//span[text()="Non-Resident"]');
@@ -100,7 +106,7 @@ export class BulkPaymentPage {
     this.pushButton = page.locator('xpath=//button[@id="push-btn"]');
     this.amountInlineError = page.locator('xpath=//bp-payee-amount//span[starts-with(@class, "dbs-validation-error")]');
     this.errorOneOrMorefieldsNotFilled = page.locator('xpath=//span[text()="One or more of the fields below have not been properly filled up. Please amend and submit again."]');
-    
+
     // Delete
     this.deleteButton = page.locator('xpath=//button[@name="delete"]');
     this.deleteDialogButton = page.locator('xpath=//*[@id="dialogDelete"]');
@@ -118,10 +124,14 @@ export class BulkPaymentPage {
 
     //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
     this.beneficiaryTab = page.locator('xpath=//span[normalize-space()="Payee / Beneficiaries"]');
-    this.beneficiaryFilter= page.locator('xpath=//input[@id="approve-filter"]');
-    this.beneficiaryDelButton= page.locator('xpath=//button[@name="payee-delete"]');
-    this.beneficiaryDelCnfButton= page.locator('xpath=//button[@id="dialogDelete"]');
-    this.beneficiaryDelDismissButton= page.locator('xpath=//button[@name="cancel"]');
+    this.beneficiaryFilter = page.locator('xpath=//input[@id="approve-filter"]');
+    this.beneficiaryDelButton = page.locator('xpath=//button[@name="payee-delete"]');
+    this.beneficiaryDelCnfButton = page.locator('xpath=//button[@id="dialogDelete"]');
+    this.beneficiaryDelDismissButton = page.locator('xpath=//button[@name="cancel"]');
+
+    this.transactionDeletedPopupLabel = page.locator('xpath=//h2[text()="Transaction deleted"]');
+    this.transactionDeletedPopupLabelMsg = page.locator('xpath=//p[@id="dialogMessage"]/span');
+
 
     // View Page
     this.hashValue = page.locator('xpath=//*[@id="bulk-view-hashValue"]');
@@ -342,7 +352,7 @@ export class BulkPaymentPage {
   readonly approveButton: Locator;
   readonly pushButton: Locator;
   readonly amountInlineError: Locator;
-  readonly errorOneOrMorefieldsNotFilled : Locator;
+  readonly errorOneOrMorefieldsNotFilled: Locator;
 
   readonly deleteButton: Locator;
   readonly deleteDialogButton: Locator;
@@ -363,6 +373,8 @@ export class BulkPaymentPage {
   readonly beneficiaryDelButton: Locator;
   readonly beneficiaryDelCnfButton: Locator;
   readonly beneficiaryDelDismissButton: Locator;
+  readonly transactionDeletedPopupLabel: Locator;
+  readonly transactionDeletedPopupLabelMsg: Locator;
 
   readonly hashValue: Locator;
   readonly fromAccountViewLabel: Locator;
@@ -500,6 +512,8 @@ export class BulkPaymentPage {
 
   // ────────────────────────────── Waits / Actions ──────────────────────────────
 
+  // create lib => components.ts object
+  webComponents = new WebComponents();
 
   /**
      * Add a new payee flow (reusable in all tests).
@@ -507,40 +521,40 @@ export class BulkPaymentPage {
      */
   async addNewPayee(input: NewPayeeInput): Promise<NewPayeeResult> {
     const { name, nickName, bankId, accountNumber } = input;
-  
-      await this.newPayeeTab.click();
-      await this.safeClick(this.newPayeeName);
-      await this.safeFill(this.newPayeeName, name);
-      await this.page.keyboard.press('Tab');
-      await this.newPayeeName.blur();
-      // await this.safeClick(this.newPayeeNickName);
-      // await this.safeFill(this.newPayeeNickName, nickName);
-      await this.page.keyboard.press('Tab');
-      //await this.newPayeeNickName.blur();
-      await this.payeeBankId.click();
-      await this.payeeBankId.fill(bankId);
-      await this.page.keyboard.press('Enter');
-      await this.payeeBankId.blur();
-      await this.safeClick(this.findBankIDButton);
-      await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
-      await this.payeeBankSearchResults.first().click();
-      await this.safeClick(this.newPayeeAccountNumber);
-      
-      // Preserve your clipboard -> paste behavior
-      await this.page.evaluate(async (text) => {
-        await navigator.clipboard.writeText(text);
-      }, accountNumber);
-  
-      await this.page.keyboard.press('Control+V');
-      await this.page.keyboard.press('Enter');
-      await this.page.keyboard.press('Tab');
-      await this.newPayeeAccountNumber.blur();
-      await this.safeClick(this.addNewPayeeButton);
-      return { nickName, accountNumber };
-    }
 
-     /** Delete Payee fnction */
-  
+    await this.newPayeeTab.click();
+    await this.safeClick(this.newPayeeName);
+    await this.safeFill(this.newPayeeName, name);
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeName.blur();
+    // await this.safeClick(this.newPayeeNickName);
+    // await this.safeFill(this.newPayeeNickName, nickName);
+    await this.page.keyboard.press('Tab');
+    //await this.newPayeeNickName.blur();
+    await this.payeeBankId.click();
+    await this.payeeBankId.fill(bankId);
+    await this.page.keyboard.press('Enter');
+    await this.payeeBankId.blur();
+    await this.safeClick(this.findBankIDButton);
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
+    await this.payeeBankSearchResults.first().click();
+    await this.safeClick(this.newPayeeAccountNumber);
+
+    // Preserve your clipboard -> paste behavior
+    await this.page.evaluate(async (text) => {
+      await navigator.clipboard.writeText(text);
+    }, accountNumber);
+
+    await this.page.keyboard.press('Control+V');
+    await this.page.keyboard.press('Enter');
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeAccountNumber.blur();
+    await this.safeClick(this.addNewPayeeButton);
+    return { nickName, accountNumber };
+  }
+
+  /** Delete Payee fnction */
+
   async openBeneficiariesTabIfPresent(): Promise<boolean> {
     const count = await this.beneficiaryTab.count();
     if (count === 0) return false;
@@ -548,19 +562,19 @@ export class BulkPaymentPage {
     return true;
   }
 
-  
-async filterBeneficiaries(query: string) {
-  await this.safeFill(this.beneficiaryFilter, '');
-  await this.safeFill(this.beneficiaryFilter, query);
-  await this.beneficiaryFilter.press('Enter'); // try enter
-  await this.beneficiaryFilter.blur();         // and blur, in case enter isn't enough
-  // Small debounce for filter to apply
-  await this.page.waitForTimeout(500);
-}
+
+  async filterBeneficiaries(query: string) {
+    await this.safeFill(this.beneficiaryFilter, '');
+    await this.safeFill(this.beneficiaryFilter, query);
+    await this.beneficiaryFilter.press('Enter'); // try enter
+    await this.beneficiaryFilter.blur();         // and blur, in case enter isn't enough
+    // Small debounce for filter to apply
+    await this.page.waitForTimeout(500);
+  }
 
 
-async deletePayeeGlobal(confirm = true) {
-  
+  async deletePayeeGlobal(confirm = true) {
+
     await this.safeClick(this.beneficiaryDelButton);
     if (confirm) {
       await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: 10000 });
@@ -569,27 +583,27 @@ async deletePayeeGlobal(confirm = true) {
       await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: 10000 });
       await this.beneficiaryDelDismissButton.click();
     }
-  
-
-  // Wait for disappearance of a success banner OR row removal if you can detect it.
-  // Fallback: brief pause to let UI settle.
-  await this.page.waitForTimeout(800);
-}
 
 
-beneficiaryRowsByText(text: string): Locator {
-  // Scope to the datatable body rows to avoid picking elements from the right pane
-  return this.page
-    .locator('.payee-transaction-list ngx-datatable datatable-body datatable-row-wrapper datatable-body-row')
-    .filter({ hasText: text });
-}
-  
- async deletePayeeInRow(textKey: string, confirm = true) {
-  const row = this.beneficiaryRowsByText(textKey).first();
-  await expect(row).toBeVisible({ timeout: 15000 });
+    // Wait for disappearance of a success banner OR row removal if you can detect it.
+    // Fallback: brief pause to let UI settle.
+    await this.page.waitForTimeout(800);
+  }
 
-  const rowDeleteButton = row.locator('xpath=.//button[@name="payee-delete"]');
-  await this.safeClick(rowDeleteButton);
+
+  beneficiaryRowsByText(text: string): Locator {
+    // Scope to the datatable body rows to avoid picking elements from the right pane
+    return this.page
+      .locator('.payee-transaction-list ngx-datatable datatable-body datatable-row-wrapper datatable-body-row')
+      .filter({ hasText: text });
+  }
+
+  async deletePayeeInRow(textKey: string, confirm = true) {
+    const row = this.beneficiaryRowsByText(textKey).first();
+    await expect(row).toBeVisible({ timeout: 15000 });
+
+    const rowDeleteButton = row.locator('xpath=.//button[@name="payee-delete"]');
+    await this.safeClick(rowDeleteButton);
 
     if (confirm) {
       await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: 10000 });
@@ -601,7 +615,7 @@ beneficiaryRowsByText(text: string): Locator {
       await this.beneficiaryDelDismissButton.click();
       await expect(row).toBeVisible(); // still there
     }
-}
+  }
 
   async deletePayeeByFilter(textKey?: string, confirm = true) {
     const opened = await this.openBeneficiariesTabIfPresent();
@@ -619,7 +633,7 @@ beneficiaryRowsByText(text: string): Locator {
     }
   }
 
-  
+
   /**
      * Returns the raw banner text (trimmed). If you only need EBLV…,
      * use getReferenceToken() below.
@@ -630,7 +644,7 @@ beneficiaryRowsByText(text: string): Locator {
   }
 
   //Extract reference ID
-  
+
   async getReferenceID(): Promise<string> {
     const raw = await this.getReferenceText();
     const match = raw.match(/\b(EB[A-Z0-9-]+)\b/i);
@@ -661,7 +675,7 @@ beneficiaryRowsByText(text: string): Locator {
     await this.waitForUXLoading();
     await expect(this.fromAccountViewLabel).toBeVisible({ timeout });
     await expect(this.hashValue).toBeVisible({ timeout });
-    await this.page.waitForTimeout(500).catch(() => {});
+    await this.page.waitForTimeout(500).catch(() => { });
   }
 
   /** Former: jiazhaiForApprovePaymentPage() – Approve button visible. */
@@ -720,7 +734,7 @@ beneficiaryRowsByText(text: string): Locator {
     await this.waitForViewPaginationReady();
     await tabButton.click({ force: true });
     // In the old code it validated that viewLoadedLabel disappeared; keep a soft check here.
-    await this.viewLoadedLabel.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+    await this.viewLoadedLabel.waitFor({ state: 'visible', timeout: 5000 }).catch(() => { });
   }
 
   /** Former: checkPaginationForShowAllTab() */
@@ -758,6 +772,33 @@ beneficiaryRowsByText(text: string): Locator {
 
   // ────────────────────────────── Utilities ──────────────────────────────
 
+  /**
+   * Author : LC5741501
+   * This method delete's the PayeeOrReference No
+   */
+  async deleteOpenPayerOrReferenceNo(input: deleteOpenPayeeOrReferenceNo, reference) {
+    const { transactionDeleted, internalReference } = input;
+    // Click : Delete button
+    await this.webComponents.clickWhenVisibleAndEnabled(this.deleteButton);
+
+    // Click : Delete button (Confirm delete Popup)
+    await this.webComponents.clickWhenVisibleAndEnabled(this.beneficiaryDelCnfButton);
+
+    //Validate : Transaction Deleted Popup Label
+    await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabel);
+    await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabel, transactionDeleted);
+
+    // Validate : Refrence No is present in the deleted message
+    if (await this.webComponents.stringIsNotNullOrBlank(internalReference)) {
+      await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabelMsg);
+      await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabelMsg, internalReference);
+    } else {
+      await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabelMsg);
+      await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabelMsg, reference);
+    }
+
+  }
+
   /** Generic UX loading guard: wait for common spinners/overlays then network idle. */
   async waitForUXLoading(extraSpinnerSelectors: string[] = []) {
     const spinnerSelectors = [
@@ -778,7 +819,7 @@ beneficiaryRowsByText(text: string): Locator {
         }
       } catch { /* ignore */ }
     }
-    await this.page.waitForLoadState('networkidle').catch(() => {});
+    await this.page.waitForLoadState('networkidle').catch(() => { });
   }
 
   /** Safe click: visible + enabled + click */
