@@ -18,22 +18,22 @@ import { LoginPage } from '../../../pages/IDEALX/LoginPage';
 
 // --- Load JSON test data ---
 const testDataPath = path.resolve(__dirname, '../../../data/IN_testData.json');
-const  testData  = JSON.parse(fs.readFileSync(testDataPath, 'utf-8'));
+const testData = JSON.parse(fs.readFileSync(testDataPath, 'utf-8'));
 import { chromium, Browser } from 'playwright';
 
 let customBrowser: Browser;
 
 
 const loginCompanyId = testData.BulkCollection.SIT.loginCompanyId;
-const loginUserId    = testData.BulkCollection.SIT.loginUserId;
-const fromAccount    = testData.BulkCollection.SIT.fromAccount;
-const payeeBankID    = testData.BulkCollection.payeeBankID;
+const loginUserId = testData.BulkCollection.SIT.loginUserId;
+const fromAccount = testData.BulkCollection.SIT.fromAccount;
+const payeeBankID = testData.BulkCollection.payeeBankID;
 
 test.describe.serial('IN_Bulk Collection', () => {
   let pages: PaymentsPages;
   // this from OnlineCreate, then Reject/Edit/Delete
   let reference = "";
-  let referenceEdit='';
+  let referenceEdit = '';
   // Track created payees per test
   type CreatedPayee = { name?: string; accountNumber?: string };
   let createdPayees: CreatedPayee[] = [];
@@ -51,34 +51,34 @@ test.describe.serial('IN_Bulk Collection', () => {
     pages = new PaymentsPages(page);
   });
 
-  test.afterEach(async ({}, testInfo) => {
-  // Only cleanup if the test passed
-  if (testInfo.status !== 'passed') {
-    //console.warn(`[cleanup] Skipping payee deletion because test status is ${testInfo.status}`);
-    return;
+  test.afterEach(async ({ }, testInfo) => {
+    // Only cleanup if the test passed
+    if (testInfo.status !== 'passed') {
+      //console.warn(`[cleanup] Skipping payee deletion because test status is ${testInfo.status}`);
+      return;
     }
-    
-  if (!pages) return;
 
-  // Best-effort cleanup; never fail the test because cleanup failed
+    if (!pages) return;
+
+    // Best-effort cleanup; never fail the test because cleanup failed
     for (const p of createdPayees) {
       try {
         const key = p.name ?? p.accountNumber ?? '';
         if (!key) continue;
         await pages.BulkCollectionPage.deletePayeeByFilter(key, /* confirm */ true);
         console.log(`[cleanup] Deleted payee with key: ${key}`);
-    } catch (err) {
-      console.warn('[cleanup] Failed to delete a payee:', err);
+      } catch (err) {
+        console.warn('[cleanup] Failed to delete a payee:', err);
+      }
     }
-  }
   });
 
-  test('TC001_INBulkCollection - Verify creating a Bulk collection with new Payee', async ({page}, testInfo) => {
-      
+  test('TC001_INBulkCollection - Verify creating a Bulk collection with new Payee', async ({ page }, testInfo) => {
+
     //Step 1: Navigate to Payments menu
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    
+
     //Step 2: Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
 
@@ -87,22 +87,22 @@ test.describe.serial('IN_Bulk Collection', () => {
     await pages.BulkCollectionPage.waitForBulkCollectionFormReady();
 
     //Step 4: From account Selection
-     await pages.BulkCollectionPage.safeClick(pages.BulkCollectionPage.fromAccount);
-     await page.keyboard.type(fromAccount);
-     await page.keyboard.press('ArrowDown');
-     await page.keyboard.press('Enter');
-     
+    await pages.BulkCollectionPage.safeClick(pages.BulkCollectionPage.fromAccount);
+    await page.keyboard.type(fromAccount);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
     //Step 5: UCIC code input
     await pages.BulkCollectionPage.ucicCode.fill(testData.BulkCollection.UCICCode);
 
     // Reusable helper for add new payee
-    const { name, accountNumber }  = await pages.BulkCollectionPage.addNewPayee({
-        name: testData.BulkCollection.newPayeeName,
-        DDAReferenceNo: testData.BulkCollection.DDAreference,
-        bankId: payeeBankID,
-        accountNumber: testData.BulkCollection.payeeBankAccountNumber,
-        MandateID: testData.BulkCollection.MandateID,
-        });
+    const { name, accountNumber } = await pages.BulkCollectionPage.addNewPayee({
+      name: testData.BulkCollection.newPayeeName,
+      DDAReferenceNo: testData.BulkCollection.DDAreference,
+      bankId: payeeBankID,
+      accountNumber: testData.BulkCollection.payeeBankAccountNumber,
+      MandateID: testData.BulkCollection.MandateID,
+    });
 
     // Register for payee cleanup
     createdPayees.push({ name, accountNumber });
@@ -132,7 +132,7 @@ test.describe.serial('IN_Bulk Collection', () => {
     reference = await pages.BulkCollectionPage.getReferenceID();
 
     //Step 10: Click on finished button
-    await pages.BulkCollectionPage.finishButton.click();   
+    await pages.BulkCollectionPage.finishButton.click();
 
     //Step 11: Search reference on Transfer Center page
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
@@ -149,16 +149,16 @@ test.describe.serial('IN_Bulk Collection', () => {
     });
   });
 
-  test('TC002_INBulkCollection - Verify edit a Bulk Collection via Transfer Center', async ({page}, testInfo) => {
-       
-     //Step 1: Navigate to Payments menu
-     await pages.AccountTransferPage.waitForMenu();
-     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    
-     //Step 2: Authentication Pop-up
-     await pages.AccountTransferPage.handleAuthIfPresent("1111")
-    
-     //Step 3: Open the view by reference (or search)
+  test('TC002_INBulkCollection - Verify edit a Bulk Collection via Transfer Center', async ({ page }, testInfo) => {
+
+    //Step 1: Navigate to Payments menu
+    await pages.AccountTransferPage.waitForMenu();
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+
+    //Step 2: Authentication Pop-up
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+
+    //Step 3: Open the view by reference (or search)
     if (reference.trim().length > 0) {
       await pages.TransferCentersPage.searchAndOpenByReference(reference);
     } else {
@@ -183,12 +183,12 @@ test.describe.serial('IN_Bulk Collection', () => {
     await pages.BulkCollectionPage.submitButton.click();
     await pages.BulkCollectionPage.waitForSubmittedPageReady();
 
-     //Step 6: Capture full banner text and Reference ID:
+    //Step 6: Capture full banner text and Reference ID:
     const rawText = (await pages.BulkCollectionPage.getReferenceText()) ?? '';
     referenceEdit = await pages.BulkCollectionPage.getReferenceID();
-  
+
     //Step 7: Click on finished button
-    await pages.BulkCollectionPage.finishButton.click();  
+    await pages.BulkCollectionPage.finishButton.click();
 
     //Step 8: Search reference on Transfer Center page
     await pages.AccountTransferPage.paymentMenu.click();
@@ -206,8 +206,8 @@ test.describe.serial('IN_Bulk Collection', () => {
         referenceEdit
       });
     } else {
-    //If reference changed after edit, at least assert amount updated in list/details view as a sanity check
-    await expect(pages.BulkCollectionPage.amountValue).not.toHaveText('');
+      //If reference changed after edit, at least assert amount updated in list/details view as a sanity check
+      await expect(pages.BulkCollectionPage.amountValue).not.toHaveText('');
     }
   });
 });

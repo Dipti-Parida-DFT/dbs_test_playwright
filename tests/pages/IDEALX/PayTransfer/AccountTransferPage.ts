@@ -351,7 +351,7 @@ export class AccountTransferPage {
     if (appears) {
       await this.securityAccessCode.fill(code);
       await this.authenticateButton.click();
-      await this.authDialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+      await this.authDialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => { });
     }
   }
 

@@ -46,10 +46,10 @@ export abstract class Page {
 
     // Match your original XPaths (unchanged selectors)
     this.uxSuccessMsg = page.locator('xpath=//top-panel/div/div[starts-with(@class, "alert alert-success")]/ul');
-    this.uxErrorMsg   = page.locator('xpath=//top-panel/div/div[starts-with(@class, "alert alert-error")]/ul');
+    this.uxErrorMsg = page.locator('xpath=//top-panel/div/div[starts-with(@class, "alert alert-error")]/ul');
     this.uxIxErrorMsgLegacy = page.locator('xpath=//dbs-top-panel/div/div[starts-with(@class, "alert alert-error")]');
     this.uxIxErrorMsg = page.locator('xpath=//div[@class="alert__container--error ng-star-inserted"]');
-    this.uxInfoMsg    = page.locator('xpath=//top-panel/div/div[starts-with(@class, "alert alert-info")]/ul');
+    this.uxInfoMsg = page.locator('xpath=//top-panel/div/div[starts-with(@class, "alert alert-info")]/ul');
     this.idealXInfoMsg = page.locator('xpath=//dbs-top-panel/div/div[starts-with(@class, "alert alert-info")]/ul');
     this.recurringInfoMsg = page.locator('xpath=//dbs-top-panel/div/div[starts-with(@class, "alert alert-info")]/ul');
     this.auditConfirmationInfoMsg = page.locator('xpath=//div[@id="referNoDiv"]/label[2]');
@@ -117,7 +117,7 @@ export abstract class Page {
 
   /** Get combined text (lowercased) of a message container */
   protected async getText(locator: Locator, timeout = 8_000): Promise<string> {
-    await locator.waitFor({ state: 'visible', timeout }).catch(() => {});
+    await locator.waitFor({ state: 'visible', timeout }).catch(() => { });
     const txt = await locator.textContent().catch(() => null);
     return (txt ?? '').trim();
   }

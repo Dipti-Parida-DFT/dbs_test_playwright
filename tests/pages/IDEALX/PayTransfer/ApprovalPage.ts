@@ -17,17 +17,17 @@ export class ApprovalPage {
     this.approveReleaseSubmitButton = page.locator('//button[@name="txn-preview-verify-release"]');
 
   }
-    readonly approvalMenu: Locator;
-    readonly approvalVerifyTab: Locator;
-    readonly approvalVerifySearch: Locator;
-    readonly approveVerifyCheckbox: Locator;
-    readonly approveVerifyCheckBalance: Locator;
-    readonly approveVerifyButton: Locator;
-    readonly approveVerifySubmitButton: Locator;
-    readonly approveVerifyFinishButton: Locator;
-    readonly approveReleaseTab: Locator;
-    readonly approveReleaseButton: Locator;
-    readonly approveReleaseSubmitButton: Locator;
+  readonly approvalMenu: Locator;
+  readonly approvalVerifyTab: Locator;
+  readonly approvalVerifySearch: Locator;
+  readonly approveVerifyCheckbox: Locator;
+  readonly approveVerifyCheckBalance: Locator;
+  readonly approveVerifyButton: Locator;
+  readonly approveVerifySubmitButton: Locator;
+  readonly approveVerifyFinishButton: Locator;
+  readonly approveReleaseTab: Locator;
+  readonly approveReleaseButton: Locator;
+  readonly approveReleaseSubmitButton: Locator;
 
 
   async saferClick(locator: Locator, timeout = 20_000) {
@@ -43,7 +43,7 @@ export class ApprovalPage {
     await locator.click();
   }
 
-   async waitForUXLoading(extraSpinnerSelectors: string[] = []) {
+  async waitForUXLoading(extraSpinnerSelectors: string[] = []) {
     const spinnerSelectors = [
       '.ux-loading',
       '.loading',
@@ -94,6 +94,6 @@ export class ApprovalPage {
     await this.saferClick(this.approveReleaseButton);
     await this.saferClick(this.approveReleaseSubmitButton);
     await this.saferClick(this.approveVerifyFinishButton);
-    }
+  }
 
 }
