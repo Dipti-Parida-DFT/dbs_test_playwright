@@ -27,6 +27,34 @@
         "internalReferenceUserProvided": "",
         "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
     },
+    "ManagePayrollAlternate": {
+        "SIT": {
+            "loginCompanyId": "ID2BFE1",
+            "loginUserId": "DBSAUTOID002",
+            "fromAccount": "3320000019",
+            "payeeBankID": "DBS INDONESIA"
+        },
+        "maxAmount": "1000000000",
+        "maxAmountPayee1": "600000000",
+        "maxAmountPayee2": "400000000",
+        "maxAmountValidation": "1,000,000,000",
+        "maxAmountValidationPayee1": "600,000,000",
+        "maxAmountValidationPayee2": "400,000,000",
+        "moreThanMaxAmountLimit": "1000000001",
+        "deductedAmount": "IDR 1,000,000,000",
+        "fromAccountViewLabel":"3320000019 (IDR)",
+        "fromAccountNameViewLabel":"XXXX XXXXX XXXXXXX, XX",
+        "existingPayee": "NICKEYAIR2",
+        "newPayeeName": "TestIDBulkPaymentName",
+        "newPayeeNickName": "TestIDBulkPaymentNickName",
+        "newPayeeAcctNumber": "AccNo10013496406",
+        "paymentDetails": "paymentDetails",
+        "amountErrorTip": "Amount is invalid.",
+        "BulkamountErrorTip": "Amount format is invalid.",
+        "transactionDeleted": "Transaction deleted",
+        "internalReferenceUserProvided": "",
+        "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
+   },
     "status": {
         "Approved": "Approved",
         "PendingApproval": "Pending Approval",
