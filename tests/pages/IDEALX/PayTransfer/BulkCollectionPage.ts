@@ -9,9 +9,9 @@ export type NewPayeeInput = {
   MandateID: string,
 };
 
-
 export type NewPayeeResult = {
   accountNumber: string;
+  name: string;
 };
 
 export type deleteOpenPayeeOrReferenceNo = {
@@ -182,6 +182,7 @@ export class BulkCollectionPage {
     this.showOptionDetailPayee1 = page.locator('//div[@id="temp-bulk-create-optDetail_0"]');
     this.collectionDetailsPayer1 = page.locator('(//textarea[@name="payeeDetails"])[1]');
     this.collectionDetails = page.locator('//textarea[@name="payeeDetails"]');
+    this.messageToPayer = page.locator('//span[text()="5 notifications "]');
     this.msgToPayer = page.locator('//span[text()="5 notifications "]');
     this.msgToPayer1 = page.locator('(//span[text()="5 notifications "])[1]');
     this.emailId0 = page.locator('//*[@name="email-0"]');
@@ -224,6 +225,9 @@ export class BulkCollectionPage {
     this.payer2NickNameValue = page.locator('//*[@id="bulk-view-nickName_1"]');
 
     this.bankNameValue = page.locator('//*[@id="bulk-view-payeeBankName_0"]');
+
+    this.payerBankName = page.locator('//*[@id="bulk-view-payeeBankName_0"]');
+    this.bankNameValue = page.locator('//*[@id="bulk-view-payeeBankName_0"]');
     this.bankNamePayer2Value = page.locator('//*[@id="bulk-view-payeeBankName_1"]');
 
     this.bankCodeValue = page.locator('//*[@id="bulk-view-bankDetailsMsgDisplay_0"]');
@@ -256,7 +260,7 @@ export class BulkCollectionPage {
 
     this.showOptionDetails = page.locator('(//span[text()="Show optional details"])[2]');
     this.collectionDetailValue = page.locator('//*[@id="bulk-view-paymentDetails_0"]');
-    this.emailList = page.locator('//button[@name="submit"]');
+    this.emailList = page.locator('//div[@id="bulk-view-email_0"]');
 
     this.emailmessageValue = page.locator('//*[@id="bulk-view-message_0"]');
     this.emailId0Value = page.locator('(//*[@id="bulk-view-email_0"]//span)[1]');
@@ -272,6 +276,26 @@ export class BulkCollectionPage {
     this.deleteButonConfirmDeletePopup = page.locator('xpath=//button[@id="dialogDelete"]');
     this.transactionDeletedPopupLabel = page.locator('xpath=//h2[text()="Transaction deleted"]');
     this.transactionDeletedPopupLabelMsg = page.locator('xpath=//p[@id="dialogMessage"]/span');
+
+    //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
+    this.beneficiaryTab = page.locator('xpath=//span[normalize-space()="Payee / Beneficiaries"]');
+    this.beneficiaryFilter = page.locator('xpath=//input[@id="approve-filter"]');
+    this.beneficiaryDelButton = page.locator('xpath=//button[@name="payee-delete"]');
+    this.beneficiaryDelCnfButton = page.locator('xpath=//button[@id="dialogDelete"]');
+    this.beneficiaryDelDismissButton = page.locator('xpath=//button[@name="cancel"]');
+
+    // IN Bulk Collection
+    this.ucicCode = page.locator('xpath=//input[@name="ucicCode"]');
+    this.ucicCodeValue = page.locator('xpath=//*[@id="bulk-view-ucicCode"]');
+    this.payeeRef = page.locator('xpath=//*[@name="payeeRef"]');
+    this.message = page.locator('xpath=//textarea[@name="adviceContent"]');
+    this.editButton = page.locator('xpath=//*[@id="bulk-view-edit"]');
+    this.showOptionView = page.locator('xpath=//*[@id="bulk-viewTemp-optDetail_0"]');
+    this.balanceValue = page.locator('xpath=//*[@id="bulk-view-acctBalance"]');
+    this.colTotalPayee = page.locator('xpath=//*[@id="view-bulk-totalItem"]');
+    this.colTotalAmount = page.locator('xpath=//*[@id="view-bulk-totalAmount"]');
+    this.refForPayeeValue = page.locator('xpath=//dbs-view-transfer-list[1]//*[@id="reference-for-payee"]');
+
 
   }
 
@@ -312,6 +336,7 @@ export class BulkCollectionPage {
   readonly showOptionDetailPayee1: Locator;
   readonly collectionDetails: Locator;
   readonly collectionDetailsPayer1: Locator;
+  readonly messageToPayer: Locator;
   readonly msgToPayer: Locator;
   readonly msgToPayer1: Locator;
   readonly emailId0: Locator;
@@ -352,6 +377,7 @@ export class BulkCollectionPage {
   readonly payerNickNameValue: Locator;
   readonly payer2NickNameValue: Locator;
 
+  readonly payerBankName: Locator;
   readonly bankNameValue: Locator;
   readonly bankNamePayer2Value: Locator;
 
@@ -401,15 +427,148 @@ export class BulkCollectionPage {
   readonly transactionDeletedPopupLabel: Locator;
   readonly transactionDeletedPopupLabelMsg: Locator;
 
+  //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
+  readonly beneficiaryTab: Locator;
+  readonly beneficiaryFilter: Locator;
+  readonly beneficiaryDelButton: Locator;
+  readonly beneficiaryDelCnfButton: Locator;
+  readonly beneficiaryDelDismissButton: Locator;
+
+  // IN Bulk Collection
+  readonly ucicCode: Locator;
+  readonly ucicCodeValue: Locator;
+  readonly payeeRef: Locator;
+  readonly message: Locator;
+  readonly editButton: Locator;
+  readonly showOptionView: Locator;
+  readonly balanceValue: Locator;
+  readonly colTotalPayee: Locator;
+  readonly colTotalAmount: Locator;
+  readonly refForPayeeValue: Locator;
+
   // create lib => components.ts object
   webComponents = new WebComponents();
 
+  /**
+     * Author: LC5764724 / Chetan Chavan
+     * Created Date: 23/02/26
+     * Description: Add new payee flow (reusable utility for VN).
+     */
+  async addNewPayee(input: NewPayeeInput): Promise<NewPayeeResult> {
+    const { name, DDAReferenceNo, bankId, accountNumber } = input;
+
+    await this.newPayerTab.click();
+    await this.safeClick(this.newPayeeName);
+    await this.safeFill(this.newPayeeName, name);
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeName.blur();
+    await this.payerBankID.click();
+    await this.payerBankID.fill(bankId);
+    await this.page.keyboard.press('Enter');
+    await this.payerBankID.blur();
+    await this.safeClick(this.findBankIDButton);
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
+    await this.payeeBankSearchResults.first().click();
+    await this.safeClick(this.newPayerAccountNumber);
+
+    // Preserve your clipboard -> paste behavior
+    await this.page.evaluate(async (text) => {
+      await navigator.clipboard.writeText(text);
+    }, accountNumber);
+
+    await this.page.keyboard.press('Control+V');
+    await this.page.keyboard.press('Enter');
+    await this.page.keyboard.press('Tab');
+    await this.newPayerAccountNumber.blur();
+    await this.DDARef.click();
+    await this.DDARef.fill(DDAReferenceNo);
+    await this.page.keyboard.press('Enter');
+    await this.DDARef.blur();
+    await this.safeClick(this.addPayer);
+    return { name, accountNumber };
+  }
+
+  /** Delete Payee fnction */
+  async openBeneficiariesTabIfPresent(): Promise<boolean> {
+    const count = await this.beneficiaryTab.count();
+    if (count === 0) return false;
+    await this.safeClick(this.beneficiaryTab);
+    return true;
+  }
+
+  async filterBeneficiaries(query: string) {
+    await this.safeFill(this.beneficiaryFilter, '');
+    await this.safeFill(this.beneficiaryFilter, query);
+    await this.beneficiaryFilter.press('Enter'); // try enter
+    await this.beneficiaryFilter.blur();         // and blur, in case enter isn't enough
+    // Small debounce for filter to apply
+    await this.page.waitForTimeout(500);
+  }
+
+  async deletePayeeGlobal(confirm = true) {
+
+    await this.safeClick(this.beneficiaryDelButton);
+    if (confirm) {
+      await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: 10000 });
+      await this.beneficiaryDelCnfButton.click();
+    } else {
+      await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: 10000 });
+      await this.beneficiaryDelDismissButton.click();
+    }
+    await this.page.waitForTimeout(800);
+  }
+
+  beneficiaryRowsByText(text: string): Locator {
+    // Scope to the datatable body rows to avoid picking elements from the right pane
+    return this.page
+      .locator('.payee-transaction-list ngx-datatable datatable-body datatable-row-wrapper datatable-body-row')
+      .filter({ hasText: text });
+  }
+
+  async deletePayeeInRow(textKey: string, confirm = true) {
+    const row = this.beneficiaryRowsByText(textKey).first();
+    await expect(row).toBeVisible({ timeout: 15000 });
+
+    const rowDeleteButton = row.locator('xpath=.//button[@name="payee-delete"]');
+    await this.safeClick(rowDeleteButton);
+
+    if (confirm) {
+      await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: 10000 });
+      await this.beneficiaryDelCnfButton.click();
+      // Wait until the row disappears to confirm deletion
+      await expect(row).toHaveCount(0, { timeout: 15000 });
+    } else {
+      await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: 10000 });
+      await this.beneficiaryDelDismissButton.click();
+      await expect(row).toBeVisible(); // still there
+    }
+  }
+
+  async deletePayeeByFilter(textKey?: string, confirm = true) {
+    const opened = await this.openBeneficiariesTabIfPresent();
+    if (!opened) {
+      console.warn('[cleanup] Beneficiaries tab not present on this page; skipping delete.');
+      return;
+    }
+
+    if (textKey && textKey.trim()) {
+      await this.filterBeneficiaries(textKey);
+      await this.deletePayeeInRow(textKey, confirm);
+    } else {
+      // When you can’t filter by a unique string, we use the global delete button.
+      await this.deletePayeeGlobal(confirm);
+    }
+  }
+  // create lib => components.ts object
+  //webComponents = new WebComponents();
+
+
 
   /**
-   * Author : LC5741501
-   * Created Date: 17/02/2026
-   * This Method "addNewPayeeWithDetails" : Add's a new payee with all details (reusable in all tests).
-   */
+ * Author : LC5741501
+ * Created Date: 17/02/2026
+ * This Method "addNewPayeeWithDetails" : Add's a new payee with all details (reusable in all tests).
+ */
   async addNewPayerWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
     const { name, bankId, accountNumber, DDAReferenceNo, MandateID } = input;
 
@@ -442,7 +601,7 @@ export class BulkCollectionPage {
 
     //Click : Add Payee button
     await this.webComponents.clickWhenVisibleAndEnabled(this.addPayer);
-    return { accountNumber };
+    return { name, accountNumber };
   }
 
   /**
@@ -1098,6 +1257,24 @@ export class BulkCollectionPage {
     }
     await this.page.waitForLoadState('networkidle');
   }
+  /** Safe click: visible + enabled + click */
+  async safeClick(locator: Locator, timeout = 15_000) {
+    await expect(locator).toBeVisible({ timeout });
+    await expect(locator).toBeEnabled({ timeout });
+    await locator.click();
+  }
+
+  /** Safe fill: visible then fill */
+  async safeFill(locator: Locator, value: string, timeout = 15_000) {
+    await expect(locator).toBeVisible({ timeout });
+    await locator.fill(value ?? '');
+  }
+
+  /** Quick visible probe */
+  async isVisible(locator: Locator, timeout = 1000) {
+    return locator.isVisible({ timeout }).catch(() => false);
+  }
+
 
 
 }

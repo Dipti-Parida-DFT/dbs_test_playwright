@@ -63,7 +63,7 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
   }
   });
 
-  //We should write Add New Payee, capture reference as helper methods to avoid code duplication
+  
   test('Cannot create Payroll with item amount > 500000000 VND', async ({ page }) => {
     
     // Payments → Transfer Center → Payroll

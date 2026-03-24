@@ -8,7 +8,6 @@ export class TransferCentersPage {
     // --- Core filters / list / actions ---
     this.transferCenterFilter = page.locator('xpath=//*[@id="transferCenter-filter"]');
     this.referenceLink = page.locator("xpath=//button[@id='transaction-list-reference_0']");
-    //this.referenceLink = page.locator('xpath=//*[contains(@id, "transactionList")]'); // more flexible to handle pagination
     this.showAdditionalFilterButton = page.locator('xpath=//*[@id="transactionAdditionalFilter"]/label');
     this.paymentTypeAutoComplete = page.locator("xpath=//p-auto-complete[@formcontrolname='paymentType']");
     this.organisationListResult = page.locator("xpath=//advance-search-transaction/div/form/div/div[2]/div[2]/p-auto-complete/div/div[2]/ul/li[1]/div/span");
@@ -115,7 +114,6 @@ export class TransferCentersPage {
   async waitForTransferCenterReady(timeout = 199_000) {
     await this.waitForUXLoading();
     await expect(this.transferCenterFilter).toBeVisible({ timeout });
-    //await expect(this.transferCenterFilter).toBeEnabled({ timeout });
   }
 
   /** Former: jiazhai2() — slower readiness (network + visibility) */
@@ -123,14 +121,11 @@ export class TransferCentersPage {
     await this.waitForUXLoading();
     await this.page.waitForLoadState('networkidle');
     await expect(this.transferCenterFilter).toBeVisible({ timeout });
-    //await expect(this.transferCenterFilter).toBeEnabled({ timeout });
   }
 
   /** Former: quyemianjiancha(reference) — filter by reference and open the first match */
   async searchAndOpenByReference(reference: string) {
-    await this.waitForTransferCenterReady();
     await this.safeFill(this.transferCenterFilter, reference);
-    await this.waitForTransferCenterReady();
     await this.safeClick(this.referenceLink);
   }
 
