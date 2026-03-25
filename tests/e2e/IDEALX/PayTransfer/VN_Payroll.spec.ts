@@ -64,7 +64,7 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
   });
 
   
-  test('Cannot create Payroll with item amount > 500000000 VND', async ({ page }) => {
+  test('TC001_VNPayroll Cannot create Payroll with item amount > 500000000 VND', async ({ page }) => {
     
     // Payments → Transfer Center → Payroll
     await pages.AccountTransferPage.waitForMenu();
@@ -114,18 +114,20 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
       '.ant-message', '.ant-message-error', '.ant-notification-notice', // Ant Design
       '.MuiAlert-root',                  // Material UI
       '.invalid-feedback'                // Common form feedback
-    ].join(', '));
+    ].join(', '), {
+      hasText: testData.Payroll.errorMessage
+    }
+    );
 
     await expect(globalError).toBeVisible({ timeout: 30000 });
     await expect(globalError).toContainText(testData.Payroll.errorMessage);
     
   });
 
-  test('Create Payroll with item amount equal to 500000000 VND', async ({ page }) => {
+  test('TC002_VNPayroll Create Payroll with item amount equal to 500000000 VND', async ({ page }) => {
     // Payments → Transfer Center → Payroll
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    //await pages.TransferCentersPage.waitForTransferCenterReady();
 
     //Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
@@ -160,12 +162,8 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await pages.PayrollPage.safeClick(pages.PayrollPage.submitButton);
     await pages.PayrollPage.waitForSubmittedPageReady();
 
-    // If you just want the full banner text:
     const referenceText = await pages.PayrollPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
-    // If you want only the EBLV… token:
     const reference = await pages.PayrollPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
 
     // Find it again in Transfer Center by reference
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
@@ -177,11 +175,10 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await expect(pages.PayrollPage.amountViewLabel).toContainText(testData.Payroll.maxAmount);
   });
 
-  test('Create payroll with Total amount > 500000000 IDR', async ({ page }) => {
+  test('TC003_VNPayroll Create payroll with Total amount > 500000000 IDR', async ({ page }) => {
     // Payments → Transfer Center → Payroll
     await pages.AccountTransferPage.waitForMenu();
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    //await pages.TransferCentersPage.waitForTransferCenterReady();
 
     //Authentication Pop-up
     await pages.AccountTransferPage.handleAuthIfPresent("1111")
@@ -224,19 +221,13 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await pages.PayrollPage.safeClick(pages.PayrollPage.submitButton);
     await pages.PayrollPage.waitForSubmittedPageReady();
 
-    // Capture reference and verify
-      // If you just want the full banner text:
     const referenceText = await pages.PayrollPage.getReferenceText();
-    //console.log('Captured reference text:', referenceText);
-    // If you want only the EBLV… token:
     const reference = await pages.PayrollPage.getReferenceID();
-    //console.log('Captured referenceID:', reference);
 
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.PayrollPage.waitForViewPaymentPageReady();
     await expect(pages.PayrollPage.fromAccountViewLabel).toContainText(fromAccount);
-     
   });
 });

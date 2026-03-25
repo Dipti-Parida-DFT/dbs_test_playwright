@@ -112,7 +112,11 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
       '.ant-message', '.ant-message-error', '.ant-notification-notice', // Ant Design
       '.MuiAlert-root',                  // Material UI
       '.invalid-feedback'                // Common form feedback
-    ].join(', '));
+    ].join(', ')
+    , {
+      hasText: testData.Payroll.errorMessage
+    }
+    );
 
     await expect(globalError).toBeVisible({ timeout: 30000 });
     await expect(globalError).toContainText(testData.Payroll.errorMessage);
@@ -210,7 +214,7 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
 
     // Step 6: Add an existing payee to exceed total
     await pages.PayrollPage.safeClick(pages.PayrollPage.existingPayeeTabHeader);
-    await pages.PayrollPage.safeFill(pages.PayrollPage.existingPayeeFilter, testData.Payroll.bulkExistingPayee);
+    await pages.PayrollPage.safeFill(pages.PayrollPage.existingPayeeFilter, testData.Payroll.payrollExistingPayee);
     await pages.PayrollPage.safeClick(pages.PayrollPage.addExistingPayeeButton);
 
      // Step 7: Enter Amount = max for second item + details
