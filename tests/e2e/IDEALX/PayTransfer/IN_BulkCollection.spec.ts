@@ -37,7 +37,6 @@ test.describe.serial('IN_Bulk Collection', () => {
   // Track created payees per test
   type CreatedPayee = { name?: string; accountNumber?: string };
   let createdPayees: CreatedPayee[] = [];
-
   test.beforeEach(async ({ page }, testInfo) => {
     // This is used by the logging proxies in some converted classes (optional)
     process.env.currentTestTitle = testInfo.title;
