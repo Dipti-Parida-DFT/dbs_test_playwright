@@ -124,6 +124,7 @@ export class PayrollPage {
     this.paymentPriorityRadioGroup = page.locator('xpath=//dbs-radio-group[@formcontrolname="transfer_priority_radio"]');
     this.billerServiceDropdown = page.locator('xpath=//multi-level-dropdown[@name="billerServiceID"]');
     this.amount = page.locator('xpath=//input[@name="payeeAmount"]');
+    this.amountPayee1 = page.locator('(//input[@name="payeeAmount"])[1]');
     this.payeeParticulars = page.locator('xpath=//*[@name="payeeParticulars"]');
     this.payeeRef = page.locator('xpath=//input[@name="payeeRef"]');
     this.payeeNationalId = page.locator('xpath=//ShuRu[@name="payeeNationalID"]');
@@ -134,6 +135,12 @@ export class PayrollPage {
     this.payeeSenderFreeText = page.locator('xpath=//ShuRu[@name="payeeFreeText4Sender"]');
     this.paymentDetailsTextarea = page.locator('xpath=//textarea[@name="payeeDetails"]');
     this.messageToThePayeeCheckBox = page.locator('xpath=//span[text()="5 notifications "]');
+    this.payeeResidentStatus = page.locator('xpath=//span[text()="Payee Resident Status"]/parent::div/following-sibling::div//span[@id="fromAccount"]');
+    this.payeeResidentOptionNonResident = page.locator('xpath=//span[text()="Non-Resident"]');
+    this.payeeResidentOptionResident = page.locator('xpath=//span[text()="Resident"]');
+    this.payeeCategory = page.locator('xpath=//span[text()="Payee category"]/parent::div/following-sibling::div//span[@id="fromAccount"]');
+    this.payeeCategoryOptionEnterprise = page.locator('xpath=//span[text()="Enterprise"]');
+    this.payeeCategoryOptionGovernment = page.locator('xpath=//span[text()="Government"]');
     this.internalReference = page.locator('xpath=//input[@name="batchReference"]');
     this.batchID = page.locator('xpath=//input[@name="batch-id"]');
     this.savePayeeCheckBox = page.locator('xpath=//input[@name="savePayee"]/following-sibling::label/div/span');
@@ -166,6 +173,7 @@ export class PayrollPage {
     this.saveAsDraftButton = page.locator('xpath=//button[@name="save-as-draft"]');
 
     this.amountInlineError = page.locator('xpath=//bp-payee-amount//span[starts-with(@class, "dbs-validation-error")]');
+    this.errorOneOrMorefieldsNotFilled = page.locator('xpath=//span[text()="One or more of the fields below have not been properly filled up. Please amend and submit again."]');
     this.deletePayeeButton = page.locator('xpath=//*[@id="delete_"]');
     this.newFPSPayeeOption = page.locator('xpath=//*[@id="labelNewPayee-panel"]/dbs-radio-group/div/dbs-radio[2]/div/label/div');
     this.hkFpsIdRadio = page.locator('xpath=//*[@id="labelNewPayee-panel"]/div/bulk-new-fps-payee/div/section/div/div[1]/span[2]/dbs-radio-group/div/dbs-radio[3]/div/label');
@@ -174,6 +182,7 @@ export class PayrollPage {
     // New Payee
     this.newPayeeTab = page.locator('xpath=//*[@id="ux-tab-labelNewPayee"]');
     this.existingPayeeTabHeader = page.locator('xpath=//*[@id="ux-tab-labelExistingPayee"]');
+    this.existingPayeeFilter = page.locator('xpath=//input[@name="payee-selector"]');
     this.payNowTab = page.locator('xpath=//*[@id="ux-tab-labelPayNow"]');
     this.newPayeeName = page.locator('xpath=//*[@name="new-payee-payeeName"]');
     this.newPayeeNickName = page.locator('xpath=//input[@name="new-payee-nick-name"]');
@@ -367,6 +376,7 @@ export class PayrollPage {
   readonly paymentPriorityRadioGroup: Locator;
   readonly billerServiceDropdown: Locator;
   readonly amount: Locator;
+  readonly amountPayee1: Locator;
   readonly payeeParticulars: Locator;
   readonly payeeRef: Locator;
   readonly payeeNationalId: Locator;
@@ -377,6 +387,12 @@ export class PayrollPage {
   readonly payeeSenderFreeText: Locator;
   readonly paymentDetailsTextarea: Locator;
   readonly messageToThePayeeCheckBox: Locator;
+  readonly payeeResidentStatus: Locator;
+  readonly payeeResidentOptionNonResident: Locator;
+  readonly payeeResidentOptionResident: Locator;
+  readonly payeeCategory: Locator;
+  readonly payeeCategoryOptionEnterprise: Locator;
+  readonly payeeCategoryOptionGovernment: Locator;
   readonly internalReference: Locator;
   readonly batchID: Locator;
   readonly beneficiaryAdvisingToggle: Locator;
@@ -407,6 +423,7 @@ export class PayrollPage {
   readonly templateName: Locator;
   readonly saveAsDraftButton: Locator;
   readonly amountInlineError: Locator;
+  readonly errorOneOrMorefieldsNotFilled: Locator;
   readonly deletePayeeButton: Locator;
   readonly newFPSPayeeOption: Locator;
   readonly hkFpsIdRadio: Locator;
