@@ -1,8 +1,8 @@
 {
     "login": {
         "loginCompanyId": "SPID02",
-        "loginUserId": "SPID02V01",
-        "verifyUserId": "SPID02V01"
+        "loginUserId": "DBSAUTOID01",
+        "verifyUserId": "DBSAUTOID01"
     },
     "status": {
         "Approved": "Approved",
@@ -23,7 +23,7 @@
     "Payroll": {
         "SIT": {
             "loginCompanyId": "SPID02",
-            "loginUserId": "SPID02V01",
+            "loginUserId": "DBSAUTOID01",
             "fromAccount": "1500825313",
             "payeeBankID": "494"
         },

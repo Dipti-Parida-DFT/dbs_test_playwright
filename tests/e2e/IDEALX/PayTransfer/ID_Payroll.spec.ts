@@ -2,10 +2,10 @@
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
-
 import { NavigatePages, PaymentsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
-
+import { CONSTANTS } from '../../../lib/constants';
+import { TIMEOUT } from '../../../lib/timeouts';
 
 // --- Load JSON test data ---
 const testDataPath = path.resolve(__dirname, '../../../data/ID_testData.json');
@@ -35,10 +35,10 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
     // This is used by the logging proxies in some converted classes (optional)
     process.env.currentTestTitle = testInfo.title;
     customBrowser = await chromium.launch({ headless: false });
-    test.setTimeout(200_000);
+    test.setTimeout(TIMEOUT.MAX);
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await loginPage.login(loginCompanyId, loginUserId, '123');
+    await loginPage.login(loginCompanyId, loginUserId, (String(CONSTANTS.PIN)));
     // 2) Create the aggregator once per test
     pages = new PaymentsPages(page);
     
@@ -70,7 +70,7 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
 
     // Step 2: Authentication Pop-up
-    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    await pages.AccountTransferPage.handleAuthIfPresent(String(CONSTANTS.SECURITYACCESSCODE))
 
     // Step 3: Click on VN Payroll icon
     await pages.PayrollPage.safeClick(pages.PayrollPage.payroll);
@@ -118,7 +118,7 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
     }
     );
 
-    await expect(globalError).toBeVisible({ timeout: 30000 });
+    await expect(globalError).toBeVisible({ timeout: TIMEOUT.LONG });
     await expect(globalError).toContainText(testData.Payroll.errorMessage);
     
   });
@@ -130,7 +130,7 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
 
     // Step 2: Authentication Pop-up
-    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    await pages.AccountTransferPage.handleAuthIfPresent(String(CONSTANTS.SECURITYACCESSCODE))
 
     // Step 3: Click on VN Payroll icon
     await pages.PayrollPage.safeClick(pages.PayrollPage.payroll);
@@ -184,7 +184,7 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
 
     // Step 2: Authentication Pop-up
-    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    await pages.AccountTransferPage.handleAuthIfPresent(String(CONSTANTS.SECURITYACCESSCODE))
 
     // Step 3: Click on VN Payroll icon
     await pages.PayrollPage.safeClick(pages.PayrollPage.payroll);

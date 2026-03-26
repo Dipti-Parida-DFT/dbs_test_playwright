@@ -343,7 +343,7 @@ export class AccountTransferPage {
 
 
   //** wait for Authenticate dialogue if present */
-  async handleAuthIfPresent(code = '1111') {
+  async handleAuthIfPresent(code: string) {
     const appears = await this.authDialog.waitFor({
       state: 'visible',
       timeout: 60000
