@@ -1,5 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { WebComponents } from '../../../lib/webComponents';
+import { TIMEOUT } from '../../../lib/timeouts';
 
 export type NewPayeeInput = {
   name: string;
@@ -276,6 +277,7 @@ export class BulkCollectionPage {
     this.deleteButonConfirmDeletePopup = page.locator('xpath=//button[@id="dialogDelete"]');
     this.transactionDeletedPopupLabel = page.locator('xpath=//h2[text()="Transaction deleted"]');
     this.transactionDeletedPopupLabelMsg = page.locator('xpath=//p[@id="dialogMessage"]/span');
+    this.transferSavedPopupLabel = page.locator('xpath=//h2[text()="Transfer saved"]');
 
     //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
     this.beneficiaryTab = page.locator('xpath=//span[normalize-space()="Payee / Beneficiaries"]');
@@ -426,6 +428,7 @@ export class BulkCollectionPage {
   readonly deleteButonConfirmDeletePopup: Locator;
   readonly transactionDeletedPopupLabel: Locator;
   readonly transactionDeletedPopupLabelMsg: Locator;
+  readonly transferSavedPopupLabel: Locator;
 
   //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
   readonly beneficiaryTab: Locator;
@@ -586,7 +589,7 @@ export class BulkCollectionPage {
     await this.payerBankID.blur();
 
     await this.webComponents.clickWhenVisibleAndEnabled(this.findBankIDButton);
-    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: TIMEOUT.MIN });
     await this.payeeBankSearchResults.first().click();
 
     // Click : Payee bank account number
@@ -1187,7 +1190,7 @@ export class BulkCollectionPage {
     * Created Date: 26/02/26
     * Wait until the Bulk Collection form Load 
     * (e.g., wait for the locator "fromAccount" toBeVisibale) are ready */
-  async waitForBulkCollectionFormReady(timeout = 20_000) {
+  async waitForBulkCollectionFormReady(timeout = TIMEOUT.MEDIUM) {
     await this.waitForUXLoading();
     await expect(this.fromAccount).toBeVisible({ timeout });
     await expect(this.fromAccount).toBeEnabled({ timeout });
@@ -1197,7 +1200,7 @@ export class BulkCollectionPage {
    * Author: LC5741501
    * Created Date: 26/02/26
    * Wait until preview page is ready (submit button visible/enabled) */
-  async waitForPreviewPageReady(timeout = 20_000) {
+  async waitForPreviewPageReady(timeout = TIMEOUT.MEDIUM) {
     await this.waitForUXLoading();
     await expect(this.submitButton).toBeVisible({ timeout });
     await expect(this.submitButton).toBeEnabled({ timeout });
@@ -1207,7 +1210,7 @@ export class BulkCollectionPage {
    * Author: LC5741501
    * Created Date: 26/02/26
    * Wait until submitted page is ready (finish button visible) */
-  async waitForSubmittedPageReady(timeout = 20_000) {
+  async waitForSubmittedPageReady(timeout = TIMEOUT.MEDIUM) {
     await this.waitForUXLoading();
     await expect(this.finishButton).toBeVisible({ timeout });
   }
@@ -1216,13 +1219,13 @@ export class BulkCollectionPage {
    * Author: LC5741501
    * Created Date: 26/02/26
    * Wait until PayAndTransfer page is ready (Bulk Collection button visible) */
-  async waitForPayAndTransferPageReady(timeout = 20_000) {
+  async waitForPayAndTransferPageReady(timeout = TIMEOUT.MEDIUM) {
     await this.waitForUXLoading();
     await expect(this.bulkCollection).toBeVisible({ timeout });
   }
 
   /** Wait until view payment page has loaded key labels */
-  async waitForViewPaymentPageReady(timeout = 55_000) {
+  async waitForViewPaymentPageReady(timeout = TIMEOUT.LONG) {
     await this.waitForUXLoading();
     await expect(this.hashValue).toBeVisible({ timeout });
     await expect(this.toAccountNumberLabel).toBeVisible({ timeout });
@@ -1248,8 +1251,8 @@ export class BulkCollectionPage {
     for (const sel of spinnerSelectors) {
       const spinner = this.page.locator(sel).first();
       try {
-        if (await spinner.isVisible({ timeout: 500 }).catch(() => false)) {
-          await spinner.waitFor({ state: 'hidden', timeout: 15_000 });
+        if (await spinner.isVisible({ timeout: TIMEOUT.MIN }).catch(() => false)) {
+          await spinner.waitFor({ state: 'hidden', timeout: TIMEOUT.MIN });
         }
       } catch {
         /* ignore */
