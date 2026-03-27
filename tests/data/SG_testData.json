@@ -189,5 +189,61 @@
     "deductAmt": "SGD 16.32",
     "deductAmt1": "8.16",
     "paymentType": "Singapore Account Transfer"
-  }
+  },
+  "ManagePayroll": {
+        "SIT": {
+            "loginCompanyId": "SG2BFE1",
+            "loginUserIdHKMP": "DBSAUTOSG0001",
+            "fromAccount": "03030303Na"
+        }
+    },
+    "ManagePayrollPayee1": {
+        "newPayeeName": "SGManagePayrollPayee1_Name01",
+        "newPayeeNickName": "SGManagePayrollPayee1_NickName01",
+        "payeeBankID": "ABERDEEN",
+        "newPayeeAcctNumber": "10017001238",
+        "payeeCategory": "RenameAsRequiredPaul",
+        "sgManagePayrollTemplate": "SGManagePayrollTemplateMax500",
+        "savePayeeCheckbox": "",
+        "amount" : "1.00",
+        "amountMaxForSGTemplate" : "500.01",
+        "amountMaxForTemplateError" : "The amount entered exceeds the maximum amount specified in the template.",
+        "amountPartialApprove" : "90000001",
+        "amountPartialApproveSG" : "90,000,001.00",
+        "purposeOfPayment" : "BusinessExpense!AccountManagement",
+        "amountEdited" : "",
+        "transactionCode": "",
+        "purposeCode": "ACCT - Account Management",
+        "referenceForPayee": "TestReferenceForPayee",
+        "particulars": "",
+        "paymentDetails": "TestPaymentDetails",
+        "emailId0": "Email0@dbs.com",
+        "emailId1": "Email1@dbs.com",
+        "emailId2": "Email2@dbs.com",
+        "emailId3": "Email3@dbs.com",
+        "emailId4": "Email4@dbs.com",
+        "emailMessage": "TestEmailMessage",
+        "internalReferenceUserProvided": "",
+        "transactionDeleted": "Transaction deleted",
+        "batchIdValueUserProvided": ""
+    },
+    "ManagePayrollPayee1ValidationData": {
+        "fromAccountValue1": "03030303 (SGD)",
+        "fromAccountValue2": "03030303Name",
+        "paymentTypeValue": "Singapore Management Payroll",
+        "amountDeductedValue": "SGD 1.00",
+        "amountDeductedValueSG": "SGD 90,000,001.00",
+        "amountDeductedEditedValue": "",
+        "paymentSummaryLabel":"Payment summary:",
+        "totalPayeesLabel":"Total payees:",
+        "totalPayeesValue": "1",
+        "totalAmountLabel": "Total amount",
+        "totalAmountValue": "(SGD): 1.00",
+        "totalAmountValueSG": "(SGD): 90,000,001.00",
+        "totalAmountValueEdited": "",
+        "bankNameLabelValue": "ABERDEEN ASSET MANAGEMENT ASIA LIMI",
+        "bankSwiftBicLabelValue": "ABFMSGS0XXX",
+        "purposeCodeLabelValue": "",
+        "transactionCodeLabelValue": ""
+    }
 }

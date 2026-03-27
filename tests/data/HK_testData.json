@@ -122,8 +122,7 @@
         "paymentTypeValue": "Hong Kong Management Payroll",
         "amountDeductedValue": "HKD 1.00",
         "amountDeductedEditedValue": "",
-      
-
+    
         "paymentSummaryLabel":"Payment summary:",
         "totalPayeesLabel":"Total payees:",
         "totalPayeesValue": "1",
@@ -134,7 +133,6 @@
         "bankNameLabelValue": "ALLAHABAD BANK",
         "bankSwiftBicLabelValue": "0256",
 
-        
         "purposeCodeLabelValue": "",
         "transactionCodeLabelValue": "22 - Salary Credit"
     },
