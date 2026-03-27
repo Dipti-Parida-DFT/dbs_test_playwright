@@ -184,6 +184,8 @@ export class PayrollPage {
 
 
     this.nextButton = page.locator('xpath=//button[@name="next"]');
+    this.amountMaxForTemplateError = page.locator('xpath=//span[text()="The amount entered exceeds the maximum amount specified in the template."]');
+
     this.submitButton = page.locator('xpath=//button[@name="submit"]');
     this.approveButton = page.locator('xpath=//*[@name="approve"]');
     this.acceptAndApproveButton = page.locator('xpath=//button[@class="btn btn__primary ng-star-inserted"]');
@@ -448,6 +450,7 @@ export class PayrollPage {
 
 
   readonly nextButton: Locator;
+  readonly amountMaxForTemplateError: Locator;
   readonly submitButton: Locator;
   readonly approveButton: Locator;
   readonly acceptAndApproveButton: Locator;

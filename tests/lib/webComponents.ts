@@ -82,6 +82,19 @@ export class WebComponents {
     await locator.evaluate((el: HTMLElement) => { el.click() });
   }
 
+  
+/**
+ *  Author: LC5741501
+ * Created Date: 16/02/26
+ * Performs a hard (forced) click on the given locator.
+ * Useful when normal click fails due to overlays or UI issues.
+ */
+async hardClick(locator: Locator): Promise<void> {
+  await locator.waitFor({ state: 'visible' });
+  await locator.click({ force: true });
+}
+
+
   /**
 * Author: LC5741501
 * Created Date: 16/02/26
@@ -311,6 +324,17 @@ export class WebComponents {
     return `${value1 ?? ''}${value2 ?? ''}`;
   }
 
+  /** 
+     * Author: LC5741501
+     * Created Date: 27/03/26
+     * @param locator : Locator
+     * This stops execution at that step for the given time.
+     * Use only when it really required when DOM is taking time to load
+     * Note: Not recommended for normal automation (can cause flaky tests).
+     */
+  async hardWait(page: Page): Promise<void> {
+    await page.waitForTimeout(TIMEOUT.VERYMIN); // waits for 5 seconds
+  }
 
   async robustClickElement(target: Locator, opts?: { timeout?: number; state?: 'visible' | 'attached'; retries?: number }) {
     const timeout = opts?.timeout ?? this.defaultTimeout;
