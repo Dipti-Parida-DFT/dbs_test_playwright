@@ -68,55 +68,6 @@ export class LoginPage {
   await webComponents.waitDashboardToBeVisible(this.dashboard);
   }
 
-/*
-  async gotoSAM() {
-   // await this.page.goto('https://10.8.59.68:8443/samweb/csr/loginSSO');
-    await this.page.goto(
-      'https://10.8.59.68:8443/samweb/csr/loginSSO',
-      {
-        waitUntil: 'domcontentloaded',
-        timeout: 30000,
-      }
-    );
-  }
-  
-  async loginSAM(samUserID?: string) {
-    const webComponents = new WebComponents();
-    const defaultCreds = loginCredentials["SAM"];
-    const creds = {
-      samUserID: samUserID ?? defaultCreds.samUserID,
-      samPWD: defaultCreds.samPWD,
-      samSAC: defaultCreds.samSAC
-    };
-  
-    await webComponents.enterText(this.samUserIDInput, creds.samUserID);
-    await webComponents.enterText(this.samPwdInput, creds.samPWD);
-    await webComponents.enterText(this.samSecurityAccessCodeInput, creds.samSAC);
-    await this.samLoginButton.click();
-    //Delete below snippet
-    this.page.on('popup', p => {
-      console.log('New popup URL:', p.url());
-    });
-    
-    this.page.on('framenavigated', f => {
-      console.log('Frame navigated:', f.url());
-    });
-
-    await this.page.waitForTimeout(5000);
-    console.log('Current URL:', this.page.url());
-
-    await this.page.waitForFunction(() => {
-      return document.cookie.includes('JSESSIONID') ||
-             document.cookie.includes('SAM');
-    }, { timeout: 60000 });
-
-    
-    //await frame.getByText('Application Manager').waitFor();
-
-    //Do not delete this
-    await this.SAMPostLoginIndicator.waitFor({ state: 'visible', timeout: 50000 });  
-  }
-*/
   async loginWithDefaultCredentials() {
     await this.login();
   }

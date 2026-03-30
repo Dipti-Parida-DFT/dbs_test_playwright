@@ -6,7 +6,7 @@ export class SchedulesPage {
     this.searchHomeButton = page.locator('//input[@name="search"]');
     this.selectAffiliate = page.locator('//select[@name="selectAffiliate"]');
     this.submitAffiliate = page.locator('//input[@name="submit_affiliate"]');
-    this.topOperationsLink = page.locator('//a[@title="Setup System Operations and Events"]');
+    this.topOperationsLink = page.locator('(//a[@title="Setup System Operations and Events"])[1]');
     //this.topOperationsLink = page.locator('//a[text()="OPERATIONS" and @href="/samweb/csr/common/auditactivity/csr/reports"]');
     // Schedule navigation
     this.scheduleLink = page.locator('//a[contains(@href,"csr/common/schedule/bom/procSchdAdmin")]');
