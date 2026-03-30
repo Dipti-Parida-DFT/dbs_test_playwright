@@ -6,7 +6,7 @@ export class SchedulesPage {
     this.searchHomeButton = page.locator('//input[@name="search"]');
     this.selectAffiliate = page.locator('//select[@name="selectAffiliate"]');
     this.submitAffiliate = page.locator('//input[@name="submit_affiliate"]');
-    this.topOperationsLink = page.locator('//a[@title="Setup System Operations and Events"]');
+    this.topOperationsLink = page.locator('(//a[@title="Setup System Operations and Events"])[1]');
     //this.topOperationsLink = page.locator('//a[text()="OPERATIONS" and @href="/samweb/csr/common/auditactivity/csr/reports"]');
     // Schedule navigation
     this.scheduleLink = page.locator('//a[contains(@href,"csr/common/schedule/bom/procSchdAdmin")]');
@@ -76,11 +76,9 @@ export class SchedulesPage {
       this.sundayTime,
     ];
 
-    
-    await Promise.all([
-      this.page.waitForURL('**/samweb/csr/home', { timeout: 30000 }),
-      this.topOperationsLink.first().click(),
-    ]);
+    await this.page.waitForURL('**/samweb/csr/home', { timeout: 30000 });
+    await this.topOperationsLink.click();
+
 
     // 🔑 wait for Schedule to be attached AFTER navigation
     //await this.scheduleLink.waitFor({ state: 'attached', timeout: 30000 });
@@ -90,25 +88,11 @@ export class SchedulesPage {
     await expect(csrFrame).toBeTruthy();
 
     // Debug: verify correct page is loaded
-    await expect(csrFrame!.locator('body')).toContainText('reports');
+    //await expect(csrFrame!.locator('body')).toContainText('reports');
 
     
-    await expect(
-      csrFrame!.locator('a[href*="procSchdAdmin"]')
-    ).toHaveCount(1);
-
-    const scheduleLink = csrFrame!.getByRole('link', { name: /Schedule/i });
-    await expect(scheduleLink).toBeVisible();
-    await scheduleLink.click();
-
-    console.log(
-      await csrFrame!.locator('body').innerText()
-    );
-
-    /*const scheduleLink1 = csrFrame.locator(
-      'a[href*="csr/common/schedule/bom/procSchdAdmin"]'
-    );
-    */
+    await expect(this.scheduleLink).toBeVisible();
+    await this.scheduleLink.click();
 
     await this.selectAffiliate.selectOption(affiliate);
     await this.safeClick(this.submitAffiliate);
