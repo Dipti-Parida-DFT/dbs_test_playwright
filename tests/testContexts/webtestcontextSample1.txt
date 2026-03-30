@@ -1,0 +1,89 @@
+You are an expert Playwright TypeScript automation engineer.
+
+GOAL:
+Convert/refactor the following legacy test script into a Playwright TypeScript test using @playwright/test.
+Preserve the exact business flow and assertions, but update structure, awaits, and expectations to Playwright best practices.
+
+CONTEXT:
+- We already have Page Objects under `_PaymentsPages` (AccountTransferPage, TransferCentersPage, PayrollPage).
+- Keep using those Page Objects and their existing methods.
+- Convert Mocha `it(...)` style to Playwright `test(...)` style.
+- Replace any custom assertion utility `ensure(...).textbaohan(...)` with Playwright `expect(...)` equivalents.
+- Keep support for SIT/UAT branching and testData values.
+
+IMPORTANT RULES:
+1) Do NOT use hard waits (no setTimeout, no sleep). Use Playwright auto-wait and expect assertions.
+2) Fix incorrect Promise.all usage: DO NOT put `await` inside Promise.all array items. Use `Promise.all([ expect1, expect2, ... ])` without awaiting each element first.
+3) Ensure the flow remains:
+   - open payment menu
+   - load transfer center
+   - either search by reference2 OR go to view payment via search (SG - Management payroll, PendingApproval)
+   - view payment page load
+   - click Copy
+   - load copy page
+   - clear amount, input new amount
+   - Next -> Preview -> Submit -> Submitted
+   - read Reference ID to reference3
+   - go back to payment menu
+   - search reference3
+   - view payment page load
+   - assert From Account, Amount, and Transaction Status
+
+4) Handle variables:
+   - reference2 is input (string)
+   - reference3 is produced after submit
+   - SIT is boolean (env-based)
+   - testData contains ManagePayrollDBS and status values
+
+5) Map custom helper methods if needed:
+   - jiazhai() / jiazhaiForViewPaymentPage() / jiazhaiForPreviewPage() / jiazhaiForSubmittedPage() => should behave like waits; keep calls as-is.
+   - qingChu() => clear
+   - ShuRu(value) => fill/type
+   - jsClick() => click via JS; prefer normal click if stable, but keep jsClick if needed
+   - huoQuIdealxInfoReferenceID() => returns string reference id
+
+OUTPUT REQUIREMENTS:
+A) Provide the final Playwright TypeScript test code as a single runnable spec file content.
+B) Include the import statements and any needed fixture setup assumptions.
+C) If you need to create a small helper wrapper or update one method (e.g., to return a string), show the minimal change.
+
+SCRIPT TO CONVERT (keep behavior identical):
+
+it('Copy ManagePayrollDBS via Transfer Center', async function () {
+  await _PaymentsPages.AccountTransferPage.paymentMenu.click();
+  await _PaymentsPages.TransferCentersPage.jiazhai();
+  if (0 !== reference2.trim().length) {
+      await _PaymentsPages.TransferCentersPage.quyemianjiancha(reference2);
+  } else {
+      await _PaymentsPages.TransferCentersPage.goToViewPaymentPageViaSearch(
+        "SG - Management payroll",
+        testData.status.PendingApproval
+      );
+  }
+  await _PaymentsPages.PayrollPage.jiazhaiForViewPaymentPage();
+  await _PaymentsPages.PayrollPage.copyButton.jsClick();
+  await _PaymentsPages.PayrollPage.jiazhai();
+  await _PaymentsPages.PayrollPage.amount.qingChu();
+  await _PaymentsPages.PayrollPage.amount.ShuRu(testData.ManagePayrollDBS.amountVIX);
+  await _PaymentsPages.PayrollPage.nextButton.click();
+  await _PaymentsPages.PayrollPage.jiazhaiForPreviewPage();
+  await _PaymentsPages.PayrollPage.submitButton.click();
+  await _PaymentsPages.PayrollPage.jiazhaiForSubmittedPage();
+  await _PaymentsPages.PayrollPage.huoQuIdealxInfoReferenceID().then(text => {
+      reference3 = text;
+  });
+  await _PaymentsPages.AccountTransferPage.paymentMenu.click();
+  await _PaymentsPages.TransferCentersPage.quyemianjiancha(reference3);
+  await _PaymentsPages.PayrollPage.jiazhaiForViewPaymentPage();
+
+  await Promise.all([
+      await ensure(_PaymentsPages.PayrollPage.fromAccountView)
+        .textbaohan(SIT ? testData.ManagePayrollDBS.SIT.fromAccount : testData.ManagePayrollDBS.UAT.fromAccount),
+      await ensure(_PaymentsPages.PayrollPage.amountView)
+        .textbaohan(testData.ManagePayrollDBS.amountV),
+      await ensure(_PaymentsPages.PayrollPage.transactionStatusValue)
+        .textbaohan(testData.status.PendingVerification),
+  ]);
+});
+
+Now generate the Playwright TS version.

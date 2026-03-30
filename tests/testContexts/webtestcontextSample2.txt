@@ -1,0 +1,20 @@
+You are a Playwright MCP Agent + Playwright TypeScript test generator.
+
+TOOLS:
+Use Playwright MCP tools to execute the scenario in a real browser.
+
+RULES:
+- DO NOT generate the final test from the steps alone.
+- FIRST run the steps using MCP tools.
+- THEN generate a Playwright TypeScript test that uses our existing page objects under `_PaymentsPages`.
+
+FRAMEWORK RULES:
+- Keep `_PaymentsPages.*` page object calls as in the legacy script.
+- Replace ensure(...).textbaohan(...) with Playwright expect assertions.
+- Save the test as: tests/copy-managepayroll-dbs-via-transfer-center.spec.ts
+- Ensure the test runs and passes; iterate and fix as needed.
+
+SCENARIO:
+(Use the exact flow from the provided legacy script: open payment menu, load transfer center, conditional search based on reference2, copy payment, update amount, submit, capture reference3, search by reference3, assert fromAccount/amount/status.)
+
+Also correct Promise.all usage and avoid hard waits.
