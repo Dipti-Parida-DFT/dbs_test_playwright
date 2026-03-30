@@ -251,7 +251,7 @@ export class PayrollPage {
     //this.showOptionalDetails = page.locator('xpath=//span[@id="show-optional-details-0"]');
 
     // Links / schedules / search
-    this.idPayrollScheduleLink = page.locator('xpath=//a[contains(@href,"/csr/common/schedule/bom") and text()="Indonesia Payroll"]');
+    this.IDPayrollScheduleLink = page.locator('xpath=//a[contains(@href,"/csr/common/schedule/bom") and text()="Indonesia Payroll"]');
     this.searchButton = page.locator('xpath=//*[@name="search"]');
     this.pendingModifyApprovalLink = page.locator('xpath=//a[contains(@href,"/csr/common/schedule/bom/procSchdApprove") and text()="Pending Modify Approval"]');
 
@@ -474,7 +474,7 @@ export class PayrollPage {
   
 
   // Links / search / export
-  readonly idPayrollScheduleLink: Locator;
+  readonly IDPayrollScheduleLink: Locator;
   readonly searchButton: Locator;
   readonly pendingModifyApprovalLink: Locator;
   readonly exportCsvButton: Locator;

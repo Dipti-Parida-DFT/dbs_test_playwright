@@ -3,8 +3,10 @@ import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { NavigatePages, PaymentsPages } from '../../../pages/IDEALX/index';
+import { NavigatePages, PaymentsPages, ApprovalsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
+import { OperationsPages } from '../../../pages/SAM';
+import moment from "moment";
 
 
 // --- Load JSON test data ---
@@ -19,12 +21,23 @@ const loginUserId    = testData.Payroll.SIT.loginUserId;
 const fromAccount    = testData.Payroll.SIT.fromAccount;
 const payeeBankID    = testData.Payroll.SIT.payeeBankID;
 
+//SAM Login Data
+const testDataSAMPath = path.resolve(__dirname, '../../../data/SAM_testData.json');
+const testDataSAM = JSON.parse(fs.readFileSync(testDataSAMPath, 'utf-8'));
+let day = new Date().getDay();
+let currentDate = moment(new Date()).format("DD MMM YYYY");
+let _ApprovalsPages: ApprovalsPages;
+let _OperationsPages: OperationsPages;
+let reference = "";
+let reference1 = "";
+let approvalReference = '';
+
 // Configure retries like the old Protractor suite
 test.describe.configure({
   retries: Number(process.env.CASE_RETRY_TIMES ?? 0),
 });
 
-test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
+test.describe('ID_Payroll (Create Payments)', () => {
   let pages: PaymentsPages;
   // Track created payees per test
   type CreatedPayee = { nickName?: string; accountNumber?: string };
@@ -32,7 +45,8 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
    
 
   test.beforeEach(async ({ page }, testInfo) => {
-    // This is used by the logging proxies in some converted classes (optional)
+    _ApprovalsPages = new ApprovalsPages(page);
+    _OperationsPages = new OperationsPages(page);
     process.env.currentTestTitle = testInfo.title;
     customBrowser = await chromium.launch({ headless: false });
     test.setTimeout(200_000);
@@ -41,7 +55,6 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await loginPage.login(loginCompanyId, loginUserId, '123');
     // 2) Create the aggregator once per test
     pages = new PaymentsPages(page);
-    
   });
 
   test.afterEach(async ({ page }, testInfo) => {
@@ -225,8 +238,8 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     await pages.PayrollPage.waitForSubmittedPageReady();
 
     //Step 9: Capture reference
-    const referenceText = await pages.PayrollPage.getReferenceText();
-    const reference = await pages.PayrollPage.getReferenceID();
+    //const referenceText = await pages.PayrollPage.getReferenceText();
+    reference = await pages.PayrollPage.getReferenceID();
 
     // Step 10: Verify reference in transfer center
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
@@ -237,4 +250,197 @@ test.describe('VN_Payroll (Playwright using PaymentsPages)', () => {
     // Step 11: Verify from account in view payment page
     await expect(pages.PayrollPage.fromAccountViewLabel).toContainText(fromAccount);
   });
+
+});
+
+test.describe('ID_Payroll (Approve and Release Payment)', () => {
+  let pages: PaymentsPages;
+
+  test.beforeEach(async ({ context, page }, testInfo) => {
+    _ApprovalsPages = new ApprovalsPages(page);
+    _OperationsPages = new OperationsPages(page);
+    process.env.currentTestTitle = testInfo.title;
+    customBrowser = await chromium.launch({ headless: false });
+    pages = new PaymentsPages(page);
+
+    await context.clearCookies();
+    await context.clearPermissions();
+    await customBrowser.newContext({
+      serviceWorkers: 'block' as any, // TS workaround
+    });
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+    
+  });
+
+  test('TC004_IDPayroll - Approve payroll after cutoff time via My Approval', async ({page}) => {
+    test.setTimeout(180000);
+    //Logout from Idealx first
+    const loginPage = new LoginPage(page); 
+    /*await pages.AccountTransferPage.waitForMenu();
+    await loginPage.IdealxLogoutButton.scrollIntoViewIfNeeded();
+    await loginPage.IdealxLogoutButton.click(); */
+
+    /**
+     * Step 1: Login as SAM Admin 1 and set today as a holiday (empty cutoff)
+     */
+    
+    await loginPage.gotoSAM();
+    await loginPage.loginSAM(testDataSAM.loginSAMID.ASADM1);
+
+    // Set today as holiday by setting empty cutoff time for DBSID schedule
+    await _OperationsPages.schedulesPage.editCutOffTime(
+      testDataSAM.selectAffiliateByValue.DBSID,
+      pages.PayrollPage.IDPayrollScheduleLink,
+      day,
+      '' // holiday = no cutoff time
+    );
+    
+    await loginPage.SAMLogoutButton.click();
+    /**
+     * Step 2: Login as SAM Admin 2 and approve the schedule
+     */
+    await loginPage.gotoSAM();
+    await loginPage.loginSAM(testDataSAM.loginSAMID.ASADM2);
+    
+    await _OperationsPages.schedulesPage.approveCutOffTime(
+      testDataSAM.selectAffiliateByValue.DBSID,
+      pages.PayrollPage.pendingModifyApprovalLink
+    );
+
+    await loginPage.SAMLogoutButton.click();
+    
+    /**
+     * Step 3: Login to IDEALX (Maker already created payroll earlier)
+     */
+    await loginPage.goto();
+    await loginPage.login(loginCompanyId, loginUserId, '123');
+  
+    // Step 2: Authentication Pop-up
+    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+
+    /**
+     * Step 4: Open My Approval
+     */
+    await _ApprovalsPages.ApprovalPage.safeClick(_ApprovalsPages.ApprovalPage.approvalMenu);
+    await _ApprovalsPages.ApprovalPage.waitForApprovalPageReady();
+  
+    /**
+     * Step 5: Filter by reference (if available)
+     */
+    if (reference.trim().length > 0) {
+      await _ApprovalsPages.ApprovalPage.safeFill(_ApprovalsPages.ApprovalPage.byTransactionFilter, reference);
+    } else {
+      await _ApprovalsPages.ApprovalPage.safeClick(_ApprovalsPages.ApprovalPage.showAdditionalFilter);
+      await _ApprovalsPages.ApprovalPage.paymentTypeList.selectOption('ID - Payroll');
+      await pages.PayrollPage.safeClick(pages.PayrollPage.searchButton);
+    }
+  
+    /**
+     * Step 6: Capture reference from approval list
+     */
+    reference1 = (await _ApprovalsPages.ApprovalPage.transactionReferenceLink.textContent())?.trim() ?? '';
+  
+    /**
+     * Step 7: Approve transaction
+     */
+    await _ApprovalsPages.ApprovalPage.transactionList.first().click;
+    await _ApprovalsPages.ApprovalPage.safeClick(pages.PayrollPage.approveButton);
+  
+    /**
+     * Step 8: Handle challenge (OTP)
+     */
+   // await pages.PayrollPage.waitForApprovalChallengeReady();
+    await pages.PayrollPage.safeClick(pages.PayrollPage.pushApprovalOption);
+    await pages.PayrollPage.safeClick(pages.PayrollPage.getChallengeSMSButton);
+    await pages.PayrollPage.safeFill(pages.PayrollPage.challengeResponse, '12312312');
+    await pages.PayrollPage.safeClick(pages.PayrollPage.approveButton);
+  
+    /**
+     * Step 9: Verify transaction in Transfer Center
+     */
+    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    await pages.TransferCentersPage.searchAndOpenByReference(reference1);
+  
+    await expect(
+      pages.PayrollPage.paymentDate
+    ).not.toContainText(currentDate);
+  });
+
+  test('TC005_IDPayroll - Release payroll payment via My Release', async ({ page }) => {
+
+    /**
+     * Step 1: Login to IDEALX
+     */
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.login(loginCompanyId, loginUserId, '123'); 
+  
+    /**
+     * Step 2: Open My Release
+     */
+    await _ApprovalsPages.ApprovalPage.safeClick(
+      _ApprovalsPages.ApprovalPage.approvalMenu
+    );
+    await _ApprovalsPages.ApprovalPage.waitForApprovalPageReady();
+  
+    /**
+     * Step 3: Release payroll transaction and capture reference
+     */
+    approvalReference =
+      await _ApprovalsPages.MyVerificationAndReleasePage.releaseSingleTransaction(
+        reference,
+        reference1,
+        'ID - Payroll'
+      );
+  
+    /**
+     * Step 4: Verify transaction in Transfer Center
+     */
+    await pages.AccountTransferPage.safeClick(
+      pages.AccountTransferPage.paymentMenu
+    );
+  
+    await pages.TransferCentersPage.searchAndOpenByReference(
+      approvalReference
+    );
+  
+    await expect(
+      pages.PayrollPage.transactionStatusLabel1
+    ).not.toContainText(
+      new RegExp(
+        `${testData.status.Approved}|${testData.status.Received}|${testData.status.Completed}|${testData.status.BankRejected}`
+      )
+    );
+  
+    await expect(pages.PayrollPage.paymentDate).not.toContainText(currentDate);
+  
+    /**
+     * Step 5: Login as SAM Admin 1 and set today as working day
+     */
+    await loginPage.gotoSAM();
+    await loginPage.loginSAM(testDataSAM.loginSAMID.ASADM1);
+  
+    await _OperationsPages.schedulesPage.editCutOffTime(
+      testDataSAM.selectAffiliateByValue.DBSID,
+      pages.PayrollPage.IDPayrollScheduleLink,
+      day,
+      testDataSAM.schedule.CutoffTime01
+    );
+  
+    /**
+     * Step 6: Login as SAM Admin 2 and approve the schedule
+     */
+    await loginPage.gotoSAM();
+    await loginPage.loginSAM(testDataSAM.loginSAMID.ASADM2);
+  
+    await _OperationsPages.schedulesPage.approveCutOffTime(
+      testDataSAM.selectAffiliateByValue.DBSID,
+      pages.PayrollPage.pendingModifyApprovalLink
+
+    );
+  });
+
+
 });

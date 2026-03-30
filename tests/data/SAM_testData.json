@@ -1,0 +1,331 @@
+{
+    "loginSAMID": {
+      "ASADM1": "ASADM1",
+      "ASADM2": "ASADM2",
+      "DBSCM1": "BSCM1",
+      "DBSCM2": "BSCM2"
+    },
+    "selectAffiliate": {
+      "DBSAU": "DBS - Aust",
+      "DBSCN": "DBS CHINA",
+      "DBSHK": "DBS HONG KONG",
+      "DBSHKBR": "DBS HONGKONG BRANCH",
+      "DBSIN": "DBS INDIA",
+      "DBSID": "DBS INDONESIA",
+      "DBSMO": "DBS MACAU",
+      "DBSSG": "DBS Singapore",
+      "DBSTW": "DBS TAIWAN DBU",
+      "DBSTWOBU": "DBS TAIWAN OBU",
+      "DBSUK": "DBS UK",
+      "DBSVN": "DBS Vietnam",
+      "DBSDUBAI": "DBS DUBAI",
+      "DBSJP": "DBS JAPAN"
+    },
+    "status": {
+      "Approved": "Approved",
+      "PendingModifyApproval": "Pending Modify Approval",
+      "PendingDeleteApproval": "Pending Delete Approval",
+      "PendingAddApproval": "Pending Add Approval",
+      "PAPendingApproval": "Modify - Pending for Approval"
+    },
+    "searchAffiliateName": {
+      "cinValue": "CIN",
+      "companyName": "Corporation Name",
+      "companyId": "Corporation ID"
+    },
+    "searchAffiliateValue": {
+      "SGAffiliate": "SG2BE11",
+      "INAffiliate": "INANCO01",
+      "CNAffiliate": "CNLT2044",
+      "PASGAffiliate": "UTOSG02",
+      "SAMSGAffiliate": "UTOSAM1",
+      "SAMJPAffiliate": "UTOJP01",
+      "SAMDUBAIAffiliate": "DBAI01",
+      "PAenableAffiliate": "UTOSSM2",
+      "SAMSGAffiliate2": "ATOSAM2",
+      "SAMSGAffiliate3": "ATOSAM3",
+      "SAMSGAffiliate4": "ATOSAM4",
+      "SAMSGAffiliate5": "ATOSAM5",
+      "UAT": {
+        "HKAffiliate": "AUTOK01",
+        "TWOBUAffiliate": "OU001"
+      },
+      "SIT": {
+        "HKAffiliate": "HK05",
+        "TWOBUAffiliate": "TOBU01"
+      }
+    },
+    "oboUserViewPage": {
+      "Title": "View",
+      "SubTitle": "Use this page to view details of a"
+    },
+    "groupType": {
+      "Approver": "Approver",
+      "Verifier": "Verifier",
+      "Releaser": "Releaser"
+    },
+    "groupName": {
+      "GroupA": "Group A",
+      "GroupB": "Group B",
+      "GroupE": "Group E",
+      "ReleaseGroup": "ReleaseGroup"
+    },
+    "groupUsers": {
+      "AUTOSG02C01": "AUTSG02C01@AUTOSG02",
+      "AUTOSG02C02": "AUTSG02C02@AUTOSG02",
+      "AUTOSG02C03": "ATOSG02C03@AUTOSG02",
+      "AUTOSG01S01": "AUOSG01S01@AUTOSG01",
+      "AUTOSAM1U01": "ATOSAM1U01",
+      "AUTOSAM1U02": "AUTSAM1U02",
+      "AUTOSAM1U03": "ATOSAM1U03"
+    },
+    "profile": {
+      "Name": "Payment",
+      "MinAmount": "0.01",
+      "MinAmount1": "0.02",
+      "MaxAmount": "500.00"
+    },
+    "paymentType": {
+      "SG_ACT": "SG - Account Transfer",
+      "SG_BLVT": "SG - Bulk GIRO Payment",
+      "SG_COL": "SG - Bulk GIRO Collection",
+      "SG_TT": "SG - Telegraphic Transfer",
+      "SG_ICT": "Intra Company Transfer",
+      "SG_SAL": "SG - Payroll",
+      "SG_CCH": "SG - Corporate Cheques"
+    },
+    "schedule": {
+      "CutoffTime": "00:00",
+      "CutoffTime01": "23:59",
+      "PreviewCutoffTime": "Monday 00:00",
+      "PreviewCutoffTime01": "Monday 23:59"
+    },
+    "date": {
+      "startDate": "23-Nov-2018",
+      "endDate": "23-Nov-2018"
+    },
+    "selectAffiliateByValue": {
+      "DBSAU": "DBSAU",
+      "DBSCN": "DBSCN",
+      "DBSHK": "DBSHK",
+      "DBSHKBR": "DBSHKBR",
+      "DBSIN": "DBSIN",
+      "DBSID": "DBSID",
+      "DBSMO": "DBSMO",
+      "DBSSG": "DBSSG",
+      "DBSTW": "DBSTW",
+      "DBSTWOBU": "DBSTWOBU",
+      "DBSUK": "DBSUK",
+      "DBSVN": "DBSVN"
+    },
+    "selectSupportSearchBy": {
+      "LoginID": "Login ID",
+      "editUserID":"AUTOUSER001",
+      "Name": "Name",
+      "FirstName": "First Name",
+      "EmailAddress": "Email Address",
+      "SupportGroup": "Support Goup",
+      "TAMSupportGroups": "TAM Support Groups",
+      "TAMSecureMessageGroups": "TAM Secure Message Groups"
+    },
+    "searchSupport": {
+      "loginID": "ADMIN1",
+      "editUserID":"AUTOUSER001"
+    },
+    "enrollSupportPerson": {
+      "supportName": "TESTNAME",
+      "supportLoginID": "TESTSP",
+      "PhoneNumber": "54321678",
+      "EmailID": "testSAMSupport@dbs.com",
+      "DefaultReport": "Portable Document Format (PDF)"
+    },
+    "editSupportPerson":{
+      "PhoneNumber": "77445588123",
+      "EmailID": "EdittestSAMSupport@dbs.com",
+      "DefaultReport": "Portable Document Format (PDF)"
+    },
+    "supportResultStatus": {
+      "Approved": "Approved"
+    },
+    "reports": {
+      "searchByCorpID": "Corporation ID",
+      "reportWindow": "BIRT Report Viewer",
+      "viewIdealApprovalReportWindow": "View IDEAL Approval Policy Setup Report - S1 Application Manager",
+      "operationReportPageWindow": "Reports - S1 Application Manager",
+      "userSetupReportTitle": "SAM User Setup Report",
+      "approvalPolicyReportTitle": "IDEAL APPROVAL POLICY",
+      "customerPurgeReportTitle": "Inactive Customers ready for purging Report",
+      "dormantUserReportTitle": "Dormant User Report"
+    },
+    "personnelSearchAffiliate": {
+      "DBSAU": "DBS - Aust",
+      "DBSCN": "DBS China",
+      "DBSHK": "DBS Hong Kong",
+      "DBSHKBR": "DBS Hong Kong Branch",
+      "DBSIN": "DBS India",
+      "DBSID": "DBS Indonesia",
+      "DBSMO": "DBS MACAU",
+      "DBSSG": "DBS Singapore",
+      "DBSTW": "DBS Taiwan DBU",
+      "DBSTWOBU": "DBS Taiwan OBU",
+      "DBSUK": "DBS UK",
+      "DBSVN": "DBSVN"
+    },
+    "corporationID": {
+      "SG": "SG2BE11",
+      "SGViewAprvlPlcy":"SG2BFE1"
+    },
+    "systemParameters": {
+      "City": "New York City",
+      "ApplicationURL": "https://ngidealprovider.corp.dbs.com/loginProvider/logout/logout",
+      "SAMTimeOut": "150",
+      "AccountPurge": "111",
+      "SwiftID": "SWIFTID00011",
+      "HolidayName": "AutoTestHoliday_",
+      "ScheduleHolidayDate": "12/31",
+      "AffiliateDesc": "Desc - Singapore",
+      "MobileBrandingGroup": "S1EP"
+    },
+    "configurationParameter": {
+      "COSName": "AutoTestCOS_Name"
+    },
+    "personnelGroup": {
+      "GroupName": "TESTGroupName",
+      "SecureMsgName": "GroupMsgName",
+      "SearchByGroupName": "Group Name",
+      "SearchForGroupName": "Positive CSR BO group",
+      "TESTGroupName":"TESTGroupNamem41tj"
+    },
+    "personnelActivity": {
+      "UserFunction": "Accounts : CD/PD Info Reporting Configuration",
+      "FunctionType": "CD/PD Info Reporting Configuration"
+    },
+    "personnelSearch": {
+      "PhoneNumber": "1",
+      "EmailAddress": "szuliangquek@dbs.com",
+      "Group": "Positive CSR BO group"
+    },
+    "marketing": {
+      "MsgName": "AutoTestMarketMsg",
+      "marketMsgText": "Message test text"
+    },
+    "newAccountValue": {
+      "accountName": "samUpgradeAutoTest",
+      "addressLine1": "address1",
+      "addressLine2": "address2",
+      "addressLine3": "address3",
+      "organisationId": "1234",
+      "organisationCode": "1234",
+      "organisationName": "organisationName",
+      "currency": "SGD - Singapore Dollar",
+      "swiftBicCode": "BWBKDE6S625",
+      "swiftBicCodeJP": "DBSJPA89933",
+      "bankIdType": "SWIFT (international)",
+      "SIT": {
+        "enrollProduct": "LCY CURRENT ACCOUNT"
+      },
+      "UAT": {
+        "enrollProduct": "SGD CURRENT ACCOUNT"
+      }
+    },
+    "newUserValue": {
+      "currency": "SGD Singapore Dollar - Singapore Dollar",
+      "email": "123@11.com",
+      "hqAccessProfileName": "1234"
+    },
+    "activity": {
+      "functionSelect": "Create Intra Company Transfer",
+      "beneUserId": "AUTOSAM1U01",
+      "SIT": {
+        "startDate": "24-Dec-2019",
+        "endDate": "24-Dec-2019"
+      },
+      "UAT": {
+        "startDate": "26-Dec-2019",
+        "endDate": "26-Dec-2019"
+      },
+      "componentType": "Intra Company Transfer",
+      "functionType": "Create Intra Company Transfer",
+      "CB": {
+        "SIT": {
+          "fromAccount": "6743582664",
+          "toAccount": "8535691841"
+        },
+        "UAT": {
+          "fromAccount": "0039007639",
+          "toAccount": "123123123"
+        },
+        "amount": "11",
+        "transactionNote": "ICT for Activity"
+      }
+    },
+    "beneficiary": {
+      "categoryName": "Rename as required - category 1"
+    },
+    "newCoporationValue": {
+      "cinValue": "X201792139K",
+      "newCompanyId": "AUOSG11"
+    },
+    "paymentLimit": {
+      "limitValue": "1234",
+      "paymentLimitCheck": "1,234.00"
+    },
+    "OboUser": {
+      "SGuser": "APPROVER1NVYT",
+      "UpgradeSGuser": "AUOSAM1U01",
+      "HKuser": "HK105A06",
+      "INuser": "IN2BFE1M01"
+    },
+    "filerUser": {
+      "SIT": {
+        "SGuser": "SAM01030"
+      },
+      "UAT": {
+        "SGuser": "SAM00138"
+      },
+      "enquiryOpetion": "Enquiry",
+      "withApproveOwnOpetion": "Single Access with Approve Own (Enquiry, Payment, Payroll, Collection)",
+      "withoutApproveOwnOpetion": "Single Access without Approve Own (Enquiry, Payment, Payroll, Collection)"
+    },
+    "ebbrErp": {
+      "Trusple": "Trusple"
+    },
+    "bulkEntitlementGrant": {
+      "description": "bulkEntitlementGrant01",
+      "companyId": "SPIN04",
+      "affiliate": "DBS India",
+      "filename":"SAM_UploadFile/BulkEntitlement_Customer_Template.csv",
+      "entitlementType": {
+        "Flag": "Flag",
+        "Widget": "Widget",
+        "COS": "COS / Account / Panel Auth / Functional Access"
+      },
+      "Flag": {
+        "selectFlags": "Widget",
+        "DigitalDocumentation": "Enabled",
+        "NewApproval": "NEW Approval"
+      },
+      "Widget": {
+        "selectWidget":"Invest"
+      },
+      "COS_AC_PA_FA": {
+        "productSection": {
+          "ifCustomerHas": "Intra Company Transfer",
+          "thenGrant": "Partner Bank Payment"
+        },
+        "userFunction": "Create/Modify/Delete",
+        "userFunctionEdit": "View",
+        "accountSection": {
+          "product": "CAENT",
+          "Ccy": "INR"
+        }
+      }
+    },
+  
+    "copyUserId":{
+        "userId01":"FOTUTOTEST2",
+        "userId02":"FORATOTEST03",
+        "userId03":"NOUBACCESS",
+        "userId04":"AUOUSER01"
+    }
+  }
