@@ -18,6 +18,11 @@ export default defineConfig({
   globalTimeout: 8_000_000,
   expect: { timeout: 10_000 },
 
+  
+  //grep: /@BulkPayment/,
+  grepInvert: /@TelegraphicTransfer/,
+
+
   /* Run tests in files in parallel */
   fullyParallel: false,
   workers: 1,
@@ -34,9 +39,10 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('')`. */
     //baseURL: 'https://10.8.59.68:7443',
     /* Allow insecure HTTPS for self-signed certs */
-    headless: !!process.env.CI,
+    headless: true,
     ignoreHTTPSErrors: true,
     viewport: { width: 1920, height: 1080 },
+    permissions: ['clipboard-read', 'clipboard-write'],
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',

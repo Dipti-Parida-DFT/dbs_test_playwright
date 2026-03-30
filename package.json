@@ -12,7 +12,11 @@
     "test:report": "npm run allure:generate && npm run allure:open",
     "test:e2e": "npx playwright test --project=e2e && test:report",
     "test:api": "npx playwright test --project=api && test:report",
-    "extract:alltests": "node extract-alltests.js"
+    "extract:alltests": "node extract-alltests.js",
+    "test:bulkpayment": "playwright test --grep @BulkPayment",
+    "test:bulkcollection": "playwright test --grep @BulkCollection",
+    "test:not-sg": "playwright test --grep-invert @SG"
+
   },
   "keywords": [],
   "author": "",

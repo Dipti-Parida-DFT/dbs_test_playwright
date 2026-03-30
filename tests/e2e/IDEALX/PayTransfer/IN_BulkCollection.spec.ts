@@ -29,7 +29,7 @@ const loginUserId = testData.BulkCollection.SIT.loginUserId;
 const fromAccount = testData.BulkCollection.SIT.fromAccount;
 const payeeBankID = testData.BulkCollection.payeeBankID;
 
-test.describe.serial('IN_Bulk Collection', () => {
+test.describe.serial('IN_Bulk Collection', { tag: ['@BulkCollection', '@IN'] }, () => {
   let pages: PaymentsPages;
   // this from OnlineCreate, then Reject/Edit/Delete
   let reference = "";
@@ -40,7 +40,7 @@ test.describe.serial('IN_Bulk Collection', () => {
   test.beforeEach(async ({ page }, testInfo) => {
     // This is used by the logging proxies in some converted classes (optional)
     process.env.currentTestTitle = testInfo.title;
-    customBrowser = await chromium.launch({ headless: false });
+    //customBrowser = await chromium.launch({ headless: false });
     test.setTimeout(200_000);
     const loginPage = new LoginPage(page);
     await loginPage.goto();

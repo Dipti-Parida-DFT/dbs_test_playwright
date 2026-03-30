@@ -81,7 +81,7 @@ test.beforeEach(async ({ page }, testInfo) => {
 // TESTS (each runs in its own fresh browser context + login)
 // ═══════════════════════════════════════════════════════════════════════════════
 
-test('TC001_SG_TelegraphicTransfer - Create A TT Payment With New Payee', async ({ page }) => {
+test('TC001_SG_TelegraphicTransfer - Create A TT Payment With New Payee', { tag: ['@TelegraphicTransfer', '@SG'] },async ({ page }) => {
   // Payments → Transfer Center → Make a Payment
   // paymentMenu => Pay & Transfer (Left option)
   await pages.AccountTransferPage.waitForMenu();
@@ -151,7 +151,7 @@ test('TC001_SG_TelegraphicTransfer - Create A TT Payment With New Payee', async 
   await expect(pages.TelegraphicTransferPage.newTTActivityLog).toContainText('Create');
 });
 
-test('TC002_SG_TelegraphicTransfer - Create A TT Payment With ApprovalNow Pmchallenge', async ({ page }) => {
+test('TC002_SG_TelegraphicTransfer - Create A TT Payment With ApprovalNow Pmchallenge', { tag: ['@TelegraphicTransfer', '@SG'] }, async ({ page }) => {
   // Payments → Transfer Center → Make a Payment
   // paymentMenu => Pay & Transfer (Left option)
   await pages.AccountTransferPage.waitForMenu();
@@ -213,7 +213,7 @@ test('TC002_SG_TelegraphicTransfer - Create A TT Payment With ApprovalNow Pmchal
   await expect(pages.TelegraphicTransferPage.newTTActivityLog).toContainText('Approve');
 });
 
-test('TC003_SG_TelegraphicTransfer - Create A TT Payment With ApprovalNow Mchallenge', async ({ page }) => {
+test('TC003_SG_TelegraphicTransfer - Create A TT Payment With ApprovalNow Mchallenge', { tag: ['@TelegraphicTransfer', '@SG'] }, async ({ page }) => {
   // Payments → Transfer Center → Make a Payment
   // paymentMenu => Pay & Transfer (Left option)
   await pages.AccountTransferPage.waitForMenu();
@@ -270,7 +270,7 @@ test('TC003_SG_TelegraphicTransfer - Create A TT Payment With ApprovalNow Mchall
   await expect(pages.TelegraphicTransferPage.newTTActivityLog).toContainText('Approve');
 });
 
-test('TC004_SG_TelegraphicTransfer - Create A TT Payment With Save As Template', async ({ page }) => {
+test('TC004_SG_TelegraphicTransfer - Create A TT Payment With Save As Template', { tag: ['@TelegraphicTransfer', '@SG'] }, async ({ page }) => {
   // Payments → Transfer Center → Make a Payment
   // paymentMenu => Pay & Transfer (Left option)
   await pages.AccountTransferPage.waitForMenu();
@@ -350,7 +350,7 @@ test('TC004_SG_TelegraphicTransfer - Create A TT Payment With Save As Template',
   
 });
 
-test('TC005_SG_TelegraphicTransfer - Create A TT Payment From Template', async ({ page }) => {
+test('TC005_SG_TelegraphicTransfer - Create A TT Payment From Template', { tag: ['@TelegraphicTransfer', '@SG'] }, async ({ page }) => {
   //checkpoint for templateNew which is created in TC004, if it's empty then throw error to skip this test as it has dependency on TC004
   if (!templateNew?.trim()) {
   throw new Error('templateNew is empty – TC004 must pass first');
@@ -384,7 +384,7 @@ test('TC005_SG_TelegraphicTransfer - Create A TT Payment From Template', async (
   await expect(pages.TelegraphicTransferPage.newTTAmountValue).toContainText(testData.TelegraphicTransfer.paymentCurrency);
 });
 
-test('TC006_SG_TelegraphicTransfer - Create A TT With Save As Draft', async ({ page }) => {
+test('TC006_SG_TelegraphicTransfer - Create A TT With Save As Draft', { tag: ['@TelegraphicTransfer', '@SG'] }, async ({ page }) => {
   // Payments → Transfer Center → Make a Payment
   // paymentMenu => Pay & Transfer (Left option)
   await pages.AccountTransferPage.waitForMenu();
@@ -435,7 +435,7 @@ test('TC006_SG_TelegraphicTransfer - Create A TT With Save As Draft', async ({ p
   await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText('Saved');
 });
 
-test('TC007_SG_TelegraphicTransfer - Copy A TT Payment Via Transfer Center', async ({ page }) => {
+test('TC007_SG_TelegraphicTransfer - Copy A TT Payment Via Transfer Center', { tag: ['@TelegraphicTransfer', '@SG'] },async ({ page }) => {
   //checkpoint for reference2 which is created in TC001, if it's empty then throw error to skip this test as it has dependency on TC001
   if (!reference2?.trim()) throw new Error('reference2 is empty – TC001 must pass first');
   // Step 1:Payments → Transfer Center → Search for a payment using reference number created in TC001 and open it
@@ -472,7 +472,7 @@ test('TC007_SG_TelegraphicTransfer - Copy A TT Payment Via Transfer Center', asy
   await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText('Pending Verification');
 });
 
-test('TC008_SG_TelegraphicTransfer - Edit A TT Payment Via Transfer Center', async ({ page }) => {
+test('TC008_SG_TelegraphicTransfer - Edit A TT Payment Via Transfer Center', { tag: ['@TelegraphicTransfer', '@SG'] }, async ({ page }) => {
   //checkpoint for reference2 which is created in TC001, if it's empty then throw error to skip this test as it has dependency on TC001
   if (!reference2?.trim()) throw new Error('reference2 is empty – TC001 must pass first');
   // Step 1:Payments → Transfer Center → Search for a payment using reference number created in TC001 and open it
@@ -512,7 +512,7 @@ test('TC008_SG_TelegraphicTransfer - Edit A TT Payment Via Transfer Center', asy
   await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText('Pending Approval');
 });
 
-test('TC009_SG_TelegraphicTransfer - Reject A TT Payment Via Transfer Center', async ({ page }) => {
+test('TC009_SG_TelegraphicTransfer - Reject A TT Payment Via Transfer Center', { tag: ['@TelegraphicTransfer', '@SG'] },async ({ page }) => {
   //checkpoint for reference2 which is created in TC001, if it's empty then throw error to skip this test as it has dependency on TC001
   if (!reference2?.trim()) throw new Error('reference2 is empty – TC001/TC008 must pass first');
   // Step 1:Payments → Transfer Center → Search for a payment using reference number created in TC001 and open it
@@ -538,7 +538,7 @@ test('TC009_SG_TelegraphicTransfer - Reject A TT Payment Via Transfer Center', a
   await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText('Rejected');
 });
 
-test('TC010_SG_TelegraphicTransfer - Delete A TT Payment Via Transfer Center', async ({ page }) => {
+test('TC010_SG_TelegraphicTransfer - Delete A TT Payment Via Transfer Center', { tag: ['@TelegraphicTransfer', '@SG'] },async ({ page }) => {
   //checkpoint for reference2 which is created in TC001, if it's empty then throw error to skip this test as it has dependency on TC001
   if (!reference2?.trim()) throw new Error('reference2 is empty – TC001/TC008 must pass first');
   // Step 1:Payments → Transfer Center → Search for a payment using reference number created in TC001 and open it
@@ -564,7 +564,7 @@ test('TC010_SG_TelegraphicTransfer - Delete A TT Payment Via Transfer Center', a
   await expect(pages.TelegraphicTransferPage.ttDeletePaymentSuccessMessage).toContainText('No information to display');
 });
 
-test('TC011_SG_TelegraphicTransfer - Create A TT Payment With Currency As SGD And Payee Bank Supports PARTIOR', async ({ page }) => {
+test('TC011_SG_TelegraphicTransfer - Create A TT Payment With Currency As SGD And Payee Bank Supports PARTIOR', { tag: ['@TelegraphicTransfer', '@SG'] },async ({ page }) => {
   // Step 1: Payments → Transfer Center → Make a Payment
   // paymentMenu => Pay & Transfer (Left option)
   await pages.AccountTransferPage.waitForMenu();
@@ -613,7 +613,7 @@ test('TC011_SG_TelegraphicTransfer - Create A TT Payment With Currency As SGD An
   await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText('Pending Approval');
 });
 
-test('TC012_SG_TelegraphicTransfer - Approve A TT Payment For PARTIOR', async ({ page }) => {
+test('TC012_SG_TelegraphicTransfer - Approve A TT Payment For PARTIOR', { tag: ['@TelegraphicTransfer', '@SG'] },async ({ page }) => {
   //checkpoint for reference3 which is created in TC011, if it's empty then throw error to skip this test as it has dependency on TC011
   if (!reference3?.trim()) throw new Error('reference3 is empty – TC011 must pass first');
   // Step 1: Logout from current user, as partiour payment is created with it. Login with a different user who has approval authority for TT payments, navigate to Transfer Center, search and open the payment with reference number created in TC011
@@ -643,7 +643,7 @@ test('TC012_SG_TelegraphicTransfer - Approve A TT Payment For PARTIOR', async ({
   await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText('Partial Approved');
 });
 
-test('TC013_SG_TelegraphicTransfer - Edit a TT Payment with max amount 999999999.99 CNH', async ({ page }) => {
+test('TC013_SG_TelegraphicTransfer - Edit a TT Payment with max amount 999999999.99 CNH', { tag: ['@TelegraphicTransfer', '@SG'] },async ({ page }) => {
   // Step 1: Payments → Transfer Center → Make a Payment
   // paymentMenu => Pay & Transfer (Left option)
   await pages.AccountTransferPage.waitForMenu();
@@ -697,7 +697,7 @@ test('TC013_SG_TelegraphicTransfer - Edit a TT Payment with max amount 999999999
   await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText('Pending Approval');
 });
 
-test('TC014_SG_TelegraphicTransfer - Verify A TT Payment Via My Verify', async ({ page }) => {
+test('TC014_SG_TelegraphicTransfer - Verify A TT Payment Via My Verify', { tag: ['@TelegraphicTransfer', '@SG'] },async ({ page }) => {
   //checkpoint for copyreference which is created in TC007, if it's empty then throw error to skip this test as it has dependency on TC007
   if (!copyreference?.trim()) throw new Error('copyreference is empty – TC007 must pass first');
   // Step 1: Logout from current user, as payment is created with it. Login with a different user who has authority to verify TT payments, navigate to My Verify and search for the payment with reference number created in TC007
@@ -727,7 +727,7 @@ test('TC014_SG_TelegraphicTransfer - Verify A TT Payment Via My Verify', async (
   await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText('Pending Approval');
 });
 
-test('TC015_SG_TelegraphicTransfer - Approve A TT Payment Via Transfer Center', async ({ page }) => {
+test('TC015_SG_TelegraphicTransfer - Approve A TT Payment Via Transfer Center', { tag: ['@TelegraphicTransfer', '@SG'] },async ({ page }) => {
   //checkpoint for copyreference which is created in TC007, if it's empty then throw error to skip this test as it has dependency on TC007
   if (!copyreference?.trim()) throw new Error('copyreference is empty – TC007 must pass first');
   // Step 1: Logout from current user, as payment is created with it. Login with a different user who has approval authority for TT payments, navigate to Transfer Center, search and open the payment with reference number created in TC007
@@ -762,7 +762,7 @@ test('TC015_SG_TelegraphicTransfer - Approve A TT Payment Via Transfer Center', 
   await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText('Pending Release');
 });
 
-test('TC016_SG_TelegraphicTransfer - Release A TT Payment Via My Release', async ({ page }) => {
+test('TC016_SG_TelegraphicTransfer - Release A TT Payment Via My Release', { tag: ['@TelegraphicTransfer', '@SG'] },async ({ page }) => {
   //checkpoint for copyreference which is created in TC007, if it's empty then throw error to skip this test as it has dependency on TC007
   if (!copyreference?.trim()) throw new Error('copyreference is empty – TC007 must pass first');
   // Step 1: Logout from current user, as payment is created with it. Login with a different user who has authority to release TT payments, navigate to My Release and search for the payment with reference number created in TC007
@@ -791,7 +791,7 @@ test('TC016_SG_TelegraphicTransfer - Release A TT Payment Via My Release', async
   await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText('Completed');
 });
 
-test('TC017_SG_TelegraphicTransfer - DOL User Create A TT Payment With Showing FX Savings Message Old UI', async ({ page }) => {
+test('TC017_SG_TelegraphicTransfer - DOL User Create A TT Payment With Showing FX Savings Message Old UI', { tag: ['@TelegraphicTransfer', '@SG'] }, async ({ page }) => {
   // Step 1: Payments → Transfer Center → Make a Payment
   // paymentMenu => Pay & Transfer (Left option)
   await pages.AccountTransferPage.waitForMenu();

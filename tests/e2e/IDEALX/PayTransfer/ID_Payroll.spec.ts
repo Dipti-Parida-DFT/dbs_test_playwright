@@ -24,7 +24,7 @@ test.describe.configure({
   retries: Number(process.env.CASE_RETRY_TIMES ?? 0),
 });
 
-test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
+test.describe('ID_Payroll (Playwright using PaymentsPages)', { tag: ['@Payroll', '@ID'] }, () => {
   let pages: PaymentsPages;
   // Track created payees per test
   type CreatedPayee = { name?: string; accountNumber?: string };
@@ -34,7 +34,7 @@ test.describe('ID_Payroll (Playwright using PaymentsPages)', () => {
   test.beforeEach(async ({ page }, testInfo) => {
     // This is used by the logging proxies in some converted classes (optional)
     process.env.currentTestTitle = testInfo.title;
-    customBrowser = await chromium.launch({ headless: false });
+    //customBrowser = await chromium.launch({ headless: false });
     test.setTimeout(TIMEOUT.MAX);
     const loginPage = new LoginPage(page);
     await loginPage.goto();
