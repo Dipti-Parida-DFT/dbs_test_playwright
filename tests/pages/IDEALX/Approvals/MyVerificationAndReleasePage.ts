@@ -12,7 +12,7 @@ export class MyVerificationAndReleasePage {
      * By Transaction
      * ======================= */
     this.byTransactionTab = page.locator('//a[@id="ux-tab-byTransaction"]');
-    this.transactionFilter = page.locator('//input[@name="approve-filter"]');
+    this.transactionFilter = page.locator('//input[@name="byTXN-filter"]');
     this.transactionReferenceLink = page.locator('//button[@id="transaction-reference_0"]');
     this.transactionListResult = page.locator('//*[@id="transactionListResult"]');
     this.transactionMoreResults = page.locator('//*[@id="labelMoreResults"]');

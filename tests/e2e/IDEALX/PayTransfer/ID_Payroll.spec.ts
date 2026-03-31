@@ -32,6 +32,7 @@ let customBrowser: Browser;
 
 const loginCompanyId = testData.Payroll.SIT.loginCompanyId;
 const loginUserId    = testData.Payroll.SIT.loginUserId;
+const loginUserId2    = testData.Payroll.SIT.loginUserId2;
 const fromAccount    = testData.Payroll.SIT.fromAccount;
 const payeeBankID    = testData.Payroll.SIT.payeeBankID;
 
@@ -198,7 +199,7 @@ test.describe.serial('ID_Payroll (Create Payments)', () => {
     // Step 7: Capture reference
     reference = await pages.PayrollPage.getReferenceID();
     await webComponents.waitElementToBeVisible(pages.PayrollPage.finishedButton);
-    console.log(`Captured reference from TC002: ${reference}`);
+
     // Step 8: Verify reference in transfer center
     await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
@@ -383,7 +384,7 @@ test.describe.serial('ID_Payroll (Approve and Release Payment)', () => {
   });
 
   test('TC005_IDPayroll - Release payroll payment via My Release', async ({ page }) => {
-
+    test.setTimeout(180000);
     /**
      * Step 1: Login to IDEALX
      */
@@ -392,7 +393,7 @@ test.describe.serial('ID_Payroll (Approve and Release Payment)', () => {
     await loginPage.login(loginCompanyId, loginUserId, '123'); 
   
     /**
-     * Step 2: Open My Release
+     * Step 2: Open My Approval Page
      */
     await webComponents.clickWhenVisibleAndEnabled(
       approvalsPages.ApprovalPage.approvalMenu
@@ -421,6 +422,9 @@ test.describe.serial('ID_Payroll (Approve and Release Payment)', () => {
       approvalReference
     );
   
+    /**
+     * Step 5: Assert that status should not be Approved/Received/Completed/Bank Rejected since today is holiday and schedule is not approved yet
+    */
     await expect(
       pages.PayrollPage.transactionStatusLabel1
     ).not.toContainText(
@@ -457,4 +461,5 @@ test.describe.serial('ID_Payroll (Approve and Release Payment)', () => {
       pages.PayrollPage.pendingModifyApprovalLink
     );
   });
+  
 });

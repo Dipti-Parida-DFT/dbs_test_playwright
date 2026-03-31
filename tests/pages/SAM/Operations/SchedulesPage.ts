@@ -7,10 +7,7 @@ export class SchedulesPage {
     this.selectAffiliate = page.locator('//select[@name="selectAffiliate"]');
     this.submitAffiliate = page.locator('//input[@name="submit_affiliate"]');
     this.topOperationsLink = page.locator('(//a[@title="Setup System Operations and Events"])[1]');
-    //this.topOperationsLink = page.locator('//a[text()="OPERATIONS" and @href="/samweb/csr/common/auditactivity/csr/reports"]');
-    // Schedule navigation
     this.scheduleLink = page.locator('//a[contains(@href,"csr/common/schedule/bom/procSchdAdmin")]');
-    //this.scheduleLink = page.locator('//a[text()="SCHEDULES" and @href="/samweb/csr/common/schedule/bom/procSchdAdmin"]');
     this.previewScheduleButton = page.locator('//input[@name="submit_prepreview"]');
     this.submitScheduleButton = page.locator('//input[@name="submit_submit"]');
     this.approveScheduleButton = page.locator('//*[@name="approve"]');
@@ -30,6 +27,9 @@ export class SchedulesPage {
   readonly selectAffiliate: Locator;
   readonly submitAffiliate: Locator;
   readonly topOperationsLink: Locator;
+  readonly topCorporationsLink: Locator;
+  readonly searchCorporationLink: Locator;
+
   readonly scheduleLink: Locator;
   readonly previewScheduleButton: Locator;
   readonly submitScheduleButton: Locator;
