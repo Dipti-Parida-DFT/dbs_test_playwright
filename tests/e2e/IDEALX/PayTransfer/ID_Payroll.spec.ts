@@ -282,7 +282,7 @@ test.describe('ID_Payroll (Approve and Release Payment)', () => {
   });
 
   test('TC004_IDPayroll - Approve payroll after cutoff time via My Approval', async ({page}) => {
-    test.setTimeout(180000);
+    test.setTimeout(TIMEOUT.MAX);
     const loginPage = new LoginPage(page); 
     
     //Step 1: Login as SAM Admin 1 and set today as a holiday (empty cutoff)
@@ -312,11 +312,11 @@ test.describe('ID_Payroll (Approve and Release Payment)', () => {
     
     // Step 3: Login to IDEALX (Maker already created payroll earlier)
     await loginPage.goto();
-    await loginPage.login(loginCompanyId, loginUserId, '123');
+    await loginPage.login(loginCompanyId, loginUserId, (String(CONSTANTS.PIN)));
   
     // Step 2: Open Approval Page
     await _ApprovalsPages.ApprovalPage.safeClick(_ApprovalsPages.ApprovalPage.approvalMenu);
-    await pages.AccountTransferPage.handleAuthIfPresent("1111");
+    await pages.AccountTransferPage.handleAuthIfPresent(String(CONSTANTS.SECURITYACCESSCODE));
     await _ApprovalsPages.ApprovalPage.waitForApprovalPageReady();
   
     // Step 3: Filter by reference (if available)
@@ -355,13 +355,13 @@ test.describe('ID_Payroll (Approve and Release Payment)', () => {
   });
 
   test('TC005_IDPayroll - Release payroll payment via My Release', async ({ page }) => {
-    test.setTimeout(180000);
+    test.setTimeout(TIMEOUT.MAX);
     /**
      * Step 1: Login to IDEALX
      */
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await loginPage.login(loginCompanyId, loginUserId, '123'); 
+    await loginPage.login(loginCompanyId, loginUserId, (String(CONSTANTS.PIN))); 
   
     /**
      * Step 2: Open My Approval Page
@@ -369,7 +369,7 @@ test.describe('ID_Payroll (Approve and Release Payment)', () => {
     await _ApprovalsPages.ApprovalPage.safeClick(
       _ApprovalsPages.ApprovalPage.approvalMenu
     );
-    await pages.AccountTransferPage.handleAuthIfPresent("1111");
+    await pages.AccountTransferPage.handleAuthIfPresent(String(CONSTANTS.SECURITYACCESSCODE));
     await _ApprovalsPages.ApprovalPage.waitForApprovalPageReady();
   
     /**
