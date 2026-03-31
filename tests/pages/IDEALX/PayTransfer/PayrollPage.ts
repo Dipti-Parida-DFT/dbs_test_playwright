@@ -1445,7 +1445,7 @@ export class PayrollPage {
    * This method validates the details of Expected
    * values(JSON) Vs Actual Selected Payee Or Reference No (from UI) 
    */
-  async validatePayeeOrRefrenceNoDetails(input: NewPayee1ValidationData, reference) {
+  async validatePayeeOrRefrenceNoDetails(input: NewPayee1ValidationData, reference: string) {
     const { fromAccountValue1, fromAccountValue2, paymentTypeValue, amountDeductedValue, amountDeductedEditedValue,
       referenceValueUserProvided, batchIdValueUserProvided, paymentSummaryLabel, totalPayeesLabel, totalPayeesValue,
       totalAmountLabel, totalAmountValue, totalAmountValueEdited, payeeNameLabelValue,
@@ -1594,7 +1594,7 @@ export class PayrollPage {
    * This method validates the details of Expected Template values
    * values(JSON) Vs Actual Template Values(from UI) 
    */
-  async validateManagementPayrollTemplateDetails(input: ManagementPayrollTemplateValidationData, reference) {
+  async validateManagementPayrollTemplateDetails(input: ManagementPayrollTemplateValidationData, reference: string) {
     const { templateName, statusTop, fromAccountValue1, fromAccountValue2, paymentTypeValue, checkAmountValue,
       amountValue, amountEditedValue, validateDate, payrollFilter, paymentSummaryLabel, totalPayeesLabel, totalPayeesValue, totalAmountLabel,
       totalAmountValue, totalAmountValueEdited, payeeNameLabelValue, payeeNicknameLabelValue, bankNameLabelValue,
@@ -1779,7 +1779,7 @@ export class PayrollPage {
    * This method validates the details of Expected
    * values(JSON) Vs Actual Selected Payee Or Reference No (from UI) 
    */
-  async editAmountSGD(testData) {
+  async editAmountSGD(testData: any) {
 
     // Click : Edit button
     await this.webComponents.clickWhenVisibleAndEnabled(this.editButton);
@@ -1794,7 +1794,7 @@ export class PayrollPage {
    * Author : LC5741501
    * This method delete's the PayeeOrReference No
    */
-  async deleteOpenPayeeOrReferenceNo(input: deleteOpenPayeeOrReferenceNo, reference) {
+  async deleteOpenPayeeOrReferenceNo(input: deleteOpenPayeeOrReferenceNo, reference: string) {
     const { transactionDeleted, internalReference } = input;
     // Click : Delete button
     await this.webComponents.clickWhenVisibleAndEnabled(this.deleteButonPayroll);
