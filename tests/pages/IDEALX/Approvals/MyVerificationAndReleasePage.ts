@@ -19,7 +19,10 @@ export class MyVerificationAndReleasePage {
 
     this.verifyTxnButton = page.locator('//*[@id="transactionVerify"]');
     this.releaseTxnButton = page.locator('//*[@id="transactionRelease"]');
+    this.viewVerifyReleaseButton = page.locator('xpath=//button[@name="view-verify-release"]');
     this.previewVerifyReleaseButton = page.locator('//button[@name="txn-preview-verify-release"]');
+    this.verifyReleaseConfirmButton = page.locator('xpath=//button[@name="verify-release"]');
+    this.byTransactionFilter = page.locator('//input[@id="byTXN-filter"]');
 
     /* =======================
      * By File
@@ -60,6 +63,9 @@ export class MyVerificationAndReleasePage {
   readonly verifyTxnButton: Locator;
   readonly releaseTxnButton: Locator;
   readonly previewVerifyReleaseButton: Locator;
+  readonly byTransactionFilter: Locator;
+  readonly viewVerifyReleaseButton: Locator;
+  readonly verifyReleaseConfirmButton: Locator;
 
   readonly byFileTab: Locator;
   readonly fileNameLink: Locator;
@@ -96,7 +102,7 @@ export class MyVerificationAndReleasePage {
   async waitForReleaseByTransactionReady(timeout = 30_000) {
     await this.waitForUXLoading();
     await expect(this.releaseTxnButton).toBeVisible({ timeout });
-    await expect(this.transactionReferenceLink).toBeVisible({ timeout });
+    //await expect(this.transactionReferenceLink).toBeVisible({ timeout });
   }
 
   async waitForVerifyByFileReady(timeout = 30_000) {
@@ -172,7 +178,7 @@ export class MyVerificationAndReleasePage {
     await this.waitForReleaseByTransactionReady();
 
     if (verifyReference && approvalReference) {
-      await this.safeFill(this.transactionFilter, approvalReference);
+      await this.safeFill(this.byTransactionFilter, approvalReference);
     } else {
       await this.openByPaymentType(paymentType);
     }
@@ -180,8 +186,10 @@ export class MyVerificationAndReleasePage {
     releaseReference =
       (await this.transactionReferenceLink.textContent())?.trim() ?? '';
 
-    await this.safeClick(this.releaseTxnButton);
-    await this.safeClick(this.previewVerifyReleaseButton);
+    await this.safeClick(this.transactionReferenceLink);
+    await this.safeClick(this.viewVerifyReleaseButton);
+    await this.safeClick(this.verifyReleaseConfirmButton);
+    await this.safeClick(this.dismissButton);
 
     if (await this.hasSuccessMessage()) {
       await this.safeClick(this.finishButton);

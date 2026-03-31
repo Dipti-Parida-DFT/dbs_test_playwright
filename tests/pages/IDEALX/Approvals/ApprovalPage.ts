@@ -12,14 +12,18 @@ export class ApprovalPage {
     this.paymentTypeList = page.locator(
       "//p-auto-complete[@formcontrolname='paymentTypeRec']"
     );
-    this.byTransactionFilter = page.locator('//input[@type="text"]');
-    //this.transactionList = page.locator('//*[@id="transactionListResult"]//tbody/tr');
+    this.paymentTypeListInput = this.paymentTypeList.locator('input');
+    this.byTransactionFilter = page.locator('//input[@id="byTXN-filter"]');
     this.transactionList = page.locator('//datatable-scroller');
+    this.transactionChkBox = page.locator('input[type="checkbox"][id^="txn-select-"]');
+    this.IDPayrollOption = page.locator('//span[contains(@class,"ui-autocomplete-list-item-label") and normalize-space()="ID - Payroll"]');
 
     // --- Approval actions ---
     this.approveButton = page.locator('//*[@name="approve"]');
     this.reviewApproveButton = page.locator('//*[@id="transactionApprove"]');
     this.pushApproveButton = page.locator('//button[@id="push-btn"]');
+    this.searchButton = page.locator('xpath=//*[@name="search"]');
+    this.approveDismissButton = page.locator('xpath=//button[@name="dismiss"]');
 
     // --- Challenge / OTP ---
     this.getChallengeButton = page.locator('//button[@name="get-challenge"]');
@@ -53,12 +57,18 @@ export class ApprovalPage {
   readonly transactionReferenceLink: Locator;
   readonly showAdditionalFilter: Locator;
   readonly paymentTypeList: Locator;
+  readonly paymentTypeListInput: Locator;
   readonly byTransactionFilter: Locator;
   readonly transactionList: Locator;
+  readonly transactionChkBox: Locator;
+  readonly IDPayrollOption: Locator;
+
 
   readonly approveButton: Locator;
   readonly reviewApproveButton: Locator;
   readonly pushApproveButton: Locator;
+  readonly searchButton: Locator;
+  readonly approveDismissButton: Locator;
 
   readonly getChallengeButton: Locator;
   readonly challengeResponseInput: Locator;
@@ -84,8 +94,7 @@ export class ApprovalPage {
   /** Former: jiazhai() */
   async waitForApprovalPageReady(timeout = 30_000) {
     await this.waitForUXLoading();
-    await expect(this.approveButton).toBeVisible({ timeout });
-    await expect(this.transactionReferenceLink).toBeVisible({ timeout });
+    await expect(this.showAdditionalFilter).toBeVisible({ timeout });
   }
 
   /** Former: jiazhaiForReview() */

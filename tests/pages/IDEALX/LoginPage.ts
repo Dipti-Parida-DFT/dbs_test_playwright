@@ -66,20 +66,11 @@ export class LoginPage {
   await webComponents.enterText(this.userIdInput, creds.userId);
   await webComponents.enterText(this.pinInput, creds.pin);
   await this.loginButton.click();
-  //await this.page.waitForTimeout(10000); // Wait for potential redirects
-  //await this.IdealxDashboardLink.waitFor({ state: 'visible', timeout: 30000 });
   }
 
 
   async gotoSAM() {
     await this.page.goto('https://10.8.59.68:8443/samweb/csr/loginSSO');
-    // await this.page.goto(
-    //   'https://10.8.59.68:8443/samweb/csr/loginSSO',
-    //   {
-    //     waitUntil: 'domcontentloaded',
-    //     timeout: 30000,
-    //   }
-    // );
   }
   
   async loginSAM(samUserID?: string) {
@@ -95,27 +86,6 @@ export class LoginPage {
     await webComponents.enterText(this.samPwdInput, creds.samPWD);
     await webComponents.enterText(this.samSecurityAccessCodeInput, creds.samSAC);
     await this.samLoginButton.click();
-    //Delete below snippet
-    // this.page.on('popup', p => {
-    //   console.log('New popup URL:', p.url());
-    // });
-    
-    // this.page.on('framenavigated', f => {
-    //   console.log('Frame navigated:', f.url());
-    // });
-
-    // await this.page.waitForTimeout(5000);
-    // console.log('Current URL:', this.page.url());
-
-    // await this.page.waitForFunction(() => {
-    //   return document.cookie.includes('JSESSIONID') ||
-    //          document.cookie.includes('SAM');
-    // }, { timeout: 60000 });
-
-    
-    //await frame.getByText('Application Manager').waitFor();
-
-    //Do not delete this
     await this.SAMPostLoginIndicator.waitFor({ state: 'visible', timeout: 50000 });  
   }
 

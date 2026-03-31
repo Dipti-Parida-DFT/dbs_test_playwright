@@ -70,7 +70,7 @@ export class PayrollPage {
     this.pushApprovalOption = page.locator('xpath=//*[@class="push-option-label"]');
     this.getChallengeTextButton = page.locator('xpath=//button[@name="get-challenge"]');
     this.getChallengeSMSButton = page.locator('xpath=//button[@name="get-challenge"]');
-    this.challengeResponse = page.locator('xpath=//ShuRu[@name="responseCode"]');
+    this.challengeResponse = page.locator('xpath=//input[@name="responseCode"]');
     this.saveAsTemplateCheckbox = page.locator('xpath=//ShuRu[@name="saveAsTemplate"]');
     this.templateName = page.locator('xpath=//*[@name="templateName"]');
     this.saveAsDraftButton = page.locator('xpath=//button[@name="save-as-draft"]');
