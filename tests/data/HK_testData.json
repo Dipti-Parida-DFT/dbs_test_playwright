@@ -11,6 +11,10 @@
         "toAccountNameLabel": "NAME OF ACCT NO:7837003010",
         "paymentType": "Hong Kong Bulk Collection",
         "totalAmount": "USD 1.00",
+        "totalAmountEditedValue": "",
+        "internalReferenceUserProvided": "",
+        "batchIdValueUserProvided": "",
+        "totalAmountValueEdited": "",
         "totalAmountConsolidated": "USD 3.00",
         "creditType":"Itemized Credit",
         "creditTypeConsolidated":"Consolidated Credit",
@@ -31,16 +35,21 @@
         "transactionDeleted": "Transaction deleted" 
     },
     "payer1": {
+        "amountPayer2Tc002": "",
         "newPayeeName": "Test_Payer_Name001",
         "payeeBankID": "ALLA",
         "newPayeeAcctNumber": "10102345",
         "DDAReference": "DDARef001",
         "mandateID": "MandateID001",
         "amount" : "1.00",
+        "amountEdited" : "",
+        "transactionCodeSelect": "92DirectDebitMerchantPayment",
         "transactionCode": "92 - Direct Debit(Merchant Payment)",
         "transactionCodeTc002": "98 - Direct Debit(Merchant Payment - Consolidated posting)",
         "purposeOfPayment": "Merchant Initiated Bills Payment",
         "particulars": "Particulars1",
+        "particularsPayer1": "Yes",
+        "collectionDetailsPayer1": "Yes",
         "collectionDetails": "CollectionDetailsTest01",
         "emailId0": "Email0@dbs.com",
         "emailId1": "Email1@dbs.com",
@@ -50,6 +59,7 @@
         "emailMessage": "TestEmailMessage"
     },
     "payer2": {
+        "amountPayer2Tc002": "YES",
         "newPayeeName": "AutoTestBulkCollection",
         "newPayeeNickName": "AutoTestBulkCollectionNickName",
         "newPayeeAcctNumber": "010123456",
@@ -57,7 +67,9 @@
         "mandateID": "Mandate ID002",
         "amount" : "2.00",
         "transactionCode": "38 - Direct Debit(Consolidated posting)",
-        "particulars": "Particulars2"    
+        "particularsPayer1": "",
+        "particulars": "Particulars2",
+        "collectionDetailsPayer1": ""
     },
     "status": {
         "Approved": "Approved",
@@ -74,5 +86,96 @@
         "Rejected": "Rejected",
         "Failed": "Failed",
         "Cancelled": "Cancelled"
+    },
+    "ManagePayroll": {
+        "SIT": {
+            "loginCompanyId": "SHKLT008",
+            "loginUserIdHKMP": "DBSAUTOHKBLKCN01",
+            "fromAccount": "781024341"
+        }
+    },
+    "ManagePayrollPayer1": {
+        "newPayeeName": "ManagePayrollPayer1_Name001",
+        "newPayeeNickName": "ManagePayrollPayer1_NickName001",
+        "payeeBankID": "ALLA",
+        "newPayeeAcctNumber": "10102345",
+        "amount" : "1.00",
+        "amountEdited" : "",
+        "transactionCode": "22SalaryCredit",
+        "purposeCode": "",
+        "referenceForPayee": "TestReferenceForPayee",
+        "particulars": "Particulars1",
+        "paymentDetails": "TestPaymentDetails",
+        "emailId0": "Email0@dbs.com",
+        "emailId1": "Email1@dbs.com",
+        "emailId2": "Email2@dbs.com",
+        "emailId3": "Email3@dbs.com",
+        "emailId4": "Email4@dbs.com",
+        "emailMessage": "TestEmailMessage",
+
+        "internalReferenceUserProvided": "",
+        "batchIdValueUserProvided": ""
+    },
+    "ManagePayrollPayee1ValidationData": {
+        "fromAccountValue1": "781024341 (HKD)",
+        "fromAccountValue2": "SNAME 7810243",
+        "paymentTypeValue": "Hong Kong Management Payroll",
+        "amountDeductedValue": "HKD 1.00",
+        "amountDeductedEditedValue": "",
+    
+        "paymentSummaryLabel":"Payment summary:",
+        "totalPayeesLabel":"Total payees:",
+        "totalPayeesValue": "1",
+        "totalAmountLabel": "Total amount",
+        "totalAmountValue": "(HKD): 1.00",
+        "totalAmountValueEdited": "",
+
+        "bankNameLabelValue": "ALLAHABAD BANK",
+        "bankSwiftBicLabelValue": "0256",
+
+        "purposeCodeLabelValue": "",
+        "transactionCodeLabelValue": "22 - Salary Credit"
+    },
+  "TelegraphicTransfer": {
+    "loginCompanyId": "HK105",
+    "loginUserId": "DBSAUTOHK01",
+
+    "fromAccountNP": "87654567898",
+    "fromAccountCNH": "000011",
+    "newPayeeAdd1": "newPayeeAdd1",
+    "NewTTPayeeForINR": "NewTTPayeeForINR",
+    "INRCCY": "INR",
+    "paymentCurrencyCNY": "CNY",
+    "amountA1": "10",
+    "amountA2": "102",
+    "existingPayee": "ABNACNS0888",
+    "existingpayeeINR": "44321348",
+    "intermediaryBankCountry": "MAINLAND CHINA",
+    "intermediaryBankINRCountry": "INDIA",
+    "intermediaryBankID": "DBSSCNS0XXX",
+    "intermediaryBankINRID": "CNRBINB0TDC",
+    "purposeCode": "Goods Trade",
+    "emailIdO": "Email0@dbs.com",
+    "emailId1": "Email1@dbs.com",
+    "emailId2": "Email2@dbs.com",
+    "emailId3": "Email3@dbs.com",
+    "emailId4": "Email4@dbs.com",
+    "message": "message",
+    "transactionNote": "transactionNote",
+    "messageToOrderingBank": "messageToOrderingBank",
+    "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again.",
+    "paymentDetail": "我爱中国",
+    "EditpaymentDetail": "I Love China",
+    "editAmount": "11",
+    "paymentType": "Hong Kong Telegraphic Transfer",
+    "payeeBankName": "ABN AMRO BANK (CHINA)CO",
+    "payeeBankLocation": "CHINA",
+    "payeeBankCity": "SHANGHAI",
+    "payeeBankRoutingCode": "134134124",
+    "payeeBankSwiftbic": "ABNACNS0888",
+    "intermediaryBankName": "AFGAN UNITED BANK",
+    "bankChargeValue": "OUR",
+    "chargeAcctValue": "Default charge account",
+    "purposeCodeForINR": "P0502 - Receipts on account of construction works carried out abroad by Indian Companies"
     }
 }

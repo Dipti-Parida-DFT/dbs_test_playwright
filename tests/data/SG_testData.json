@@ -12,9 +12,12 @@
         "referenceForPayee": "TestReferenceForPayee",
 
         "internalReference": "IntRef00001",
+        "internalReferenceAutoYes": "",
         "amount" : "1.00",
         "editAmount": "2.00",
+
         "paymentDetails": "TestPaymentDetails",
+        "paymentDetailsEmpty": "",
         "emailId0": "Email0@dbs.com",
         "emailId1": "Email1@dbs.com",
         "emailId2": "Email2@dbs.com",
@@ -27,6 +30,11 @@
         "paymentType": "Singapore Payroll",
         "yourAccountDeducted": "SGD 1.00",
         "yourAccountDeductedEdited":"SGD 2.00",
+        "amountDeductedEditedValue":"",
+        "totalAmountValueEdited":"",
+        "transactionCodeLabelValue":"",
+        "particulars":"",
+        "amountEdited":"",
         "paymentSummaryLabel": "Payment summary:",
         "totalPayeesLabel": "Total payees:",
         "totalPayeesLabelValue": "1",
@@ -54,5 +62,188 @@
         "Rejected": "Rejected",
         "Failed": "Failed",
         "Cancelled": "Cancelled"
+    },
+  "TelegraphicTransfer": {
+    "loginCompanyId": "SG2BFE1",
+    "loginUserId": "DBSAUTOSG01",
+    "loginUserIdAlt": "DBSAUTOSG02",
+    "verifyUserId": "SG2BFE1S01",
+
+    "fromAccountNP": "02020202",
+    "fromAccountEP": "03030303",
+    "fromAccountCNH": "000011",
+
+    "payeeBankID": "AOFMMYK0XXX",
+
+    "payeeBankIDSGD": "DBSSSGS0XXX",
+
+    "paymentCurrency": "SGD",
+    "myrPaymentCcy": "MYR",
+    "inrPaymentCcy": "INR",
+
+    "amountA1": "10",
+    "amountA2": "4500",
+    "amountA3": "8500",
+    "maxCNHAmount": "999999999.99",
+    "maxCNHAmountValue": "999,999,999,999.99",
+    "amountV": "3,100",
+    "editAmount": "20",
+
+    "fxRef0": "FxReference0",
+    "fxAmount0": "10",
+
+    "existingPayee": "SPI307-TT-ExistingPayee",
+    "existingAccountNumber": "12341234124",
+    "existingPayeeAcctNum": "12341234124",
+    "PayeeForTemplate": "ExistingTTpayee01",
+    "SupportPartiorPayee": "BAERSGS0XXX",
+
+    "Country": "Hong Kong",
+    "myanmarCountry": "Myanmar",
+
+    "name": "TTNewPayeeName",
+    "nickName": "TTNewPayeeNick",
+
+    "add1": "17 Jln",
+    "add2": "Taman Sppk",
+    "add3": "newPayeeAdd3",
+
+    "city": "Kuala Lumpur",
+
+    "payeeBankName": "A.A. ANTHONY AND CO SDN BHD",
+    "payeeBankLocation": "MALAYSIA",
+
+    "myPayeeBankID": "AMCBMYK0XXX",
+
+    "routingCode": "1234567",
+    "accountNumber": "123456000001",
+
+    "intermediaryBankCountry": "MALAYSIA",
+    "intermediaryBankLocation": "MALAYSIA",
+    "intermediaryBankId": "AOFMMYK0XXX",
+
+    "purposeCode": "04000",
+    "purposeCodeSGD": "GSTX - Goods & Services Tax",
+    "bankMessage": "PaymentDetails",
+
+    "emailId0": "Email0@dbs.com",
+    "emailId1": "Email1@dbs.com",
+    "emailId2": "Email2@dbs.com",
+    "emailId3": "Email3@dbs.com",
+    "emailId4": "Email4@dbs.com",
+
+    "message": "message",
+    "transactionNote": "transactionNote",
+    "remitterIdentity": "messageToOrderingBank",
+    "challengeResponse": "76786778",
+
+    "templateName": "testTTtemplate001",
+    "existingTemplate": "testTTtemplate001",
+
+    "specPmtPurpose": "Dividend-related Co.",
+    "cnhPurposeCode": "04000",
+
+    "paymentType": "Singapore Telegraphic Transfer",
+    "bankChargeTypeOUR": "OUR",
+    "bankChargeTypeSHARED": "SHARED",
+    "bankChargeTypeTHEY": "THEY",
+    "preferentialRate": "Preferential Rate\n1USD = 1.4065SGD\nRegular Bank Rate: 1USD = 1.4165SGD\nRates are indicative only.",
+    "savingsMsg": "You can choose an existing Foreign Exchange or book a new one for this payment",
+    "exchangeRate": "1 USD = 1.4065 SGD"
+  },
+  "AccountTransfer": {
+    "loginCompanyId": "SPI307",
+    "loginUserId": "SPI307A16",
+    "verifyUserId": "SPI307A17",
+    "loginUserNonDol": "SPI307A18",
+    "fromAccount": "0039007639",
+
+    "Country": "SINGAPORE",
+    "paymentCurrency": "SGD",
+    "paymentCurrencyFCY": "USD",
+    "amountA1": "10",
+    "amountA2": "1,100",
+    "amountV": "3,100",
+    "editAmount": "20",
+    "fxRef0": "FxReference0",
+    "fxAmount0": "10",
+    "existingPayee": "SPI307-ACT-ExistingPayee",
+    "newPayeeName": "ACT AUTO NewPayeeName01",
+    "newPayeeAdd1": "ACT AUTO newPayeeAdd1",
+    "newPayeeAdd2": "ACT AUTO newPayeeAdd2",
+    "newPayeeAdd3": "ACT AUTO newPayeeAdd3",
+    "newPayeeAcctNumber": "38900000001",
+    "paymentDetail": "ACT AUTO PaymentDetails",
+    "emailIdO": "ACT_AUTO_Email0@dbs.com",
+    "emailId1": "ACT_AUTO_Email1@dbs.com",
+    "emailId2": "ACT_AUTO_Email2@dbs.com",
+    "emailId3": "ACT_AUTO_Email3@dbs.com",
+    "emailId4": "ACT_AUTO_Email4@dbs.com",
+    "message": "ACT AUTO TEST message",
+    "faxCountryCode0": "65",
+    "faxAreaCode0": "000",
+    "faxNo0": "76786778",
+    "transactionNote": "ACT Transaction Note test message",
+    "existingTemplate": "ACTAutoTemplateName001",
+    "rejectReason": "Reject ACT for AUTO TEST",
+    "deductAmt": "SGD 16.32",
+    "deductAmt1": "8.16",
+    "paymentType": "Singapore Account Transfer"
+  },
+  "ManagePayroll": {
+        "SIT": {
+            "loginCompanyId": "SG2BFE1",
+            "loginUserIdHKMP": "DBSAUTOSG0001",
+            "fromAccount": "03030303Na"
+        }
+    },
+    "ManagePayrollPayee1": {
+        "newPayeeName": "SGManagePayrollPayee1_Name01",
+        "newPayeeNickName": "SGManagePayrollPayee1_NickName01",
+        "payeeBankID": "ABERDEEN",
+        "newPayeeAcctNumber": "10017001238",
+        "payeeCategory": "RenameAsRequiredPaul",
+        "sgManagePayrollTemplate": "SGManagePayrollTemplateMax500",
+        "savePayeeCheckbox": "",
+        "amount" : "1.00",
+        "amountMaxForSGTemplate" : "500.01",
+        "amountMaxForTemplateError" : "The amount entered exceeds the maximum amount specified in the template.",
+        "amountPartialApprove" : "90000001",
+        "amountPartialApproveSG" : "90,000,001.00",
+        "purposeOfPayment" : "BusinessExpense!AccountManagement",
+        "amountEdited" : "",
+        "transactionCode": "",
+        "purposeCode": "ACCT - Account Management",
+        "referenceForPayee": "TestReferenceForPayee",
+        "particulars": "",
+        "paymentDetails": "TestPaymentDetails",
+        "emailId0": "Email0@dbs.com",
+        "emailId1": "Email1@dbs.com",
+        "emailId2": "Email2@dbs.com",
+        "emailId3": "Email3@dbs.com",
+        "emailId4": "Email4@dbs.com",
+        "emailMessage": "TestEmailMessage",
+        "internalReferenceUserProvided": "",
+        "transactionDeleted": "Transaction deleted",
+        "batchIdValueUserProvided": ""
+    },
+    "ManagePayrollPayee1ValidationData": {
+        "fromAccountValue1": "03030303 (SGD)",
+        "fromAccountValue2": "03030303Name",
+        "paymentTypeValue": "Singapore Management Payroll",
+        "amountDeductedValue": "SGD 1.00",
+        "amountDeductedValueSG": "SGD 90,000,001.00",
+        "amountDeductedEditedValue": "",
+        "paymentSummaryLabel":"Payment summary:",
+        "totalPayeesLabel":"Total payees:",
+        "totalPayeesValue": "1",
+        "totalAmountLabel": "Total amount",
+        "totalAmountValue": "(SGD): 1.00",
+        "totalAmountValueSG": "(SGD): 90,000,001.00",
+        "totalAmountValueEdited": "",
+        "bankNameLabelValue": "ABERDEEN ASSET MANAGEMENT ASIA LIMI",
+        "bankSwiftBicLabelValue": "ABFMSGS0XXX",
+        "purposeCodeLabelValue": "",
+        "transactionCodeLabelValue": ""
     }
 }

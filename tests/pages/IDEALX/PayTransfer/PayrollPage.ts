@@ -1,18 +1,132 @@
 // pages/PayrollPage.ts
 import { Page, Locator, expect } from '@playwright/test';
-import { WebComponents } from '../../../lib/components';
-
+import { WebComponents } from '../../../lib/webComponents';
+import { TIMEOUT } from '../../../lib/timeouts';
 
 export type NewPayeeInput = {
   name: string;
   nickName: string;
   bankId: string;
   accountNumber: string;
+
+};
+
+export type NewPayeeInputSG = {
+  name: string;
+  nickName: string;
+  bankId: string;
+  accountNumber: string;
+  payeeCategory: string;
+  savePayeeCheckbox: string;
+
+};
+
+export type NewPayeeOptionaldetails = {
+  amount: string;
+  referenceForPayee: string;
+  paymentDetails: string;
+  emailId0: string;
+  emailId1: string;
+  emailId2: string;
+  emailId3: string;
+  emailId4: string;
+  emailMessage: string;
+};
+
+export type NewPayeeOthersInput = {
+  amount: string;
+  transactionCode: string;
+  referenceForPayee: string;
+  particulars: string;
+  paymentDetails: string;
+  email1: string;
+  email2: string;
+  email3: string;
+  email4: string;
+  email5: string;
+  emailMessage: string;
+};
+
+export type NewPayee1Data = {
+  amount: string;
+  transactionCode: string;
+  referenceForPayee: string;
+  particulars: string;
+  paymentDetails: string;
+  email1: string;
+  email2: string;
+  email3: string;
+  email4: string;
+  email5: string;
+  emailMessage: string;
+};
+
+export type NewPayee1DataSG = {
+  amount: string;
+  purposeOfPayment: string;
+  transactionCode: string;
+  referenceForPayee: string;
+  particulars: string;
+  paymentDetails: string;
+  email1: string;
+  email2: string;
+  email3: string;
+  email4: string;
+  email5: string;
+  emailMessage: string;
+};
+
+export type transactionReferenceData = {
+  internalReferenceData: string;
+  batchIDData: string;
+};
+
+export type deleteOpenPayeeOrReferenceNo = {
+  transactionDeleted: string;
+  internalReference: string;
+};
+
+export type NewPayee1ValidationData = {
+  fromAccountValue1: string;
+  fromAccountValue2: string;
+  paymentTypeValue: string;
+  amountDeductedValue: string;
+  amountDeductedEditedValue: string;
+
+  referenceValueUserProvided: string;
+  batchIdValueUserProvided: string;
+
+  paymentSummaryLabel: string;
+  totalPayeesLabel: string;
+  totalPayeesValue: string;
+  totalAmountLabel: string;
+  totalAmountValue: string;
+  totalAmountValueEdited: string;
+
+  payeeNameLabelValue: string;
+  payeeNicknameLabelValue: string;
+  bankNameLabelValue: string;
+  bankSwiftBicLabelValue: string;
+  accountNumberLabelValue: string;
+  statusLabelValue: string;
+  amountLabelValue: string;
+  amountEditedLabelValue: string,
+  transactionLabelValue: string;
+  purposeCodeLabelValue: string;
+  referenceForPayeeLabelValue: string;
+  particularsLabelValue: string;
+  paymentDetailsLabelValue: string;
+  emailMessageLabelValue: string
+  email1LabelValue: string;
+  email2LabelValue: string;
+  email3LabelValue: string;
+  email4LabelValue: string;
+  email5LabelValue: string;
 };
 
 
 export type NewPayeeResult = {
-  nickName: string;
+  name: string;
   accountNumber: string;
 };
 
@@ -26,6 +140,7 @@ export class PayrollPage {
     this.managePayrollAlternate = page.locator('xpath=//*[@id="icon__mgmt_payroll_alternate"]');
     this.payrollAlternate = page.locator('xpath=//*[@id="icon__payroll_payment_alternate"]');
     this.vnPayrollIcon = page.locator('xpath=//*[@class="menu-item__icon icon icon__payroll_payment"]');
+    this.continueBtn = page.locator('xpath=//*[@id="cognitive-continue"]');
 
     // Core fields
     this.fromAccount = page.locator('xpath=//p-auto-complete[@formcontrolname="fromAccount"]');
@@ -34,7 +149,14 @@ export class PayrollPage {
     this.paymentPriorityRadioGroup = page.locator('xpath=//dbs-radio-group[@formcontrolname="transfer_priority_radio"]');
     this.billerServiceDropdown = page.locator('xpath=//multi-level-dropdown[@name="billerServiceID"]');
     this.amount = page.locator('xpath=//input[@name="payeeAmount"]');
-    this.payeeParticulars = page.locator('xpath=//ShuRu[@name="payeeParticulars"]');
+    this.filterExistingPayee = page.locator('//*[@name="payee-selector"]');
+
+    this.purposeOfPayment = page.locator('xpath=//multi-level-dropdown[@formcontrolname="payeePurposeCode"]');
+    this.businessExpense = page.locator('xpath=//span[text()="Business Expense"]');
+    this.accountManagement = page.locator('xpath=//span[text()="ACCT - Account Management"]');
+
+    this.amountPayee1 = page.locator('(//input[@name="payeeAmount"])[1]');
+    this.payeeParticulars = page.locator('xpath=//*[@name="payeeParticulars"]');
     this.payeeRef = page.locator('xpath=//input[@name="payeeRef"]');
     this.payeeNationalId = page.locator('xpath=//ShuRu[@name="payeeNationalID"]');
     this.payeeMandateDetail = page.locator('xpath=//ShuRu[@name="payeeMandateDetail"]');
@@ -44,6 +166,12 @@ export class PayrollPage {
     this.payeeSenderFreeText = page.locator('xpath=//ShuRu[@name="payeeFreeText4Sender"]');
     this.paymentDetailsTextarea = page.locator('xpath=//textarea[@name="payeeDetails"]');
     this.messageToThePayeeCheckBox = page.locator('xpath=//span[text()="5 notifications "]');
+    this.payeeResidentStatus = page.locator('xpath=//span[text()="Payee Resident Status"]/parent::div/following-sibling::div//span[@id="fromAccount"]');
+    this.payeeResidentOptionNonResident = page.locator('xpath=//span[text()="Non-Resident"]');
+    this.payeeResidentOptionResident = page.locator('xpath=//span[text()="Resident"]');
+    this.payeeCategory = page.locator('xpath=//span[text()="Payee category"]/parent::div/following-sibling::div//span[@id="fromAccount"]');
+    this.payeeCategoryOptionEnterprise = page.locator('xpath=//span[text()="Enterprise"]');
+    this.payeeCategoryOptionGovernment = page.locator('xpath=//span[text()="Government"]');
     this.internalReference = page.locator('xpath=//input[@name="batchReference"]');
     this.batchID = page.locator('xpath=//input[@name="batch-id"]');
     this.savePayeeCheckBox = page.locator('xpath=//input[@name="savePayee"]/following-sibling::label/div/span');
@@ -55,9 +183,11 @@ export class PayrollPage {
     this.emailId4 = page.locator('xpath=//input[@name="email-4"]');
     this.emailMessageTextarea = page.locator('xpath=//*[@name="adviceContent"]');
     this.earliestAvailableDateCheckbox = page.locator('xpath=//span[text()="Earliest Available Date "]');
-    
+
 
     this.nextButton = page.locator('xpath=//button[@name="next"]');
+    this.amountMaxForTemplateError = page.locator('xpath=//span[text()="The amount entered exceeds the maximum amount specified in the template."]');
+
     this.submitButton = page.locator('xpath=//button[@name="submit"]');
     this.approveButton = page.locator('xpath=//*[@name="approve"]');
     this.acceptAndApproveButton = page.locator('xpath=//button[@class="btn btn__primary ng-star-inserted"]');
@@ -67,15 +197,21 @@ export class PayrollPage {
     this.copyButton = page.locator('xpath=//button[@name="copy"]');
 
     this.approveNowCheckbox = page.locator('xpath=//*[@id="approveNow"]');
+    //this.approveNowCheckbox = page.locator('xpath=//label[@for="approveNow"]/div/p]');
     this.pushApprovalOption = page.locator('xpath=//*[@class="push-option-label"]');
     this.getChallengeTextButton = page.locator('xpath=//button[@name="get-challenge"]');
     this.getChallengeSMSButton = page.locator('xpath=//button[@name="get-challenge"]');
+    this.challengeCodeMsg = page.locator('xpath=//challenge-ref[@name="challengeRef"]');
+    this.digitalTokenInstructions1 = page.locator('xpath=//div[@class="challenge-step-content"]/span/span[1]');
+    this.digitalTokenInstructions2 = page.locator('xpath=//div[@class="challenge-step-content"]/span/span[2]');
+    this.enterResponseTextBox = page.locator('xpath=//*[@name="responseCode"]');
     this.challengeResponse = page.locator('xpath=//input[@name="responseCode"]');
     this.saveAsTemplateCheckbox = page.locator('xpath=//ShuRu[@name="saveAsTemplate"]');
     this.templateName = page.locator('xpath=//*[@name="templateName"]');
     this.saveAsDraftButton = page.locator('xpath=//button[@name="save-as-draft"]');
 
     this.amountInlineError = page.locator('xpath=//bp-payee-amount//span[starts-with(@class, "dbs-validation-error")]');
+    this.errorOneOrMorefieldsNotFilled = page.locator('xpath=//span[text()="One or more of the fields below have not been properly filled up. Please amend and submit again."]');
     this.deletePayeeButton = page.locator('xpath=//*[@id="delete_"]');
     this.newFPSPayeeOption = page.locator('xpath=//*[@id="labelNewPayee-panel"]/dbs-radio-group/div/dbs-radio[2]/div/label/div');
     this.hkFpsIdRadio = page.locator('xpath=//*[@id="labelNewPayee-panel"]/div/bulk-new-fps-payee/div/section/div/div[1]/span[2]/dbs-radio-group/div/dbs-radio[3]/div/label');
@@ -84,19 +220,20 @@ export class PayrollPage {
     // New Payee
     this.newPayeeTab = page.locator('xpath=//*[@id="ux-tab-labelNewPayee"]');
     this.existingPayeeTabHeader = page.locator('xpath=//*[@id="ux-tab-labelExistingPayee"]');
+    this.existingPayeeFilter = page.locator('xpath=//input[@name="payee-selector"]');
     this.payNowTab = page.locator('xpath=//*[@id="ux-tab-labelPayNow"]');
     this.newPayeeName = page.locator('xpath=//*[@name="new-payee-payeeName"]');
     this.newPayeeNickName = page.locator('xpath=//input[@name="new-payee-nick-name"]');
     this.newPayeeAccountNumber = page.locator('xpath=//*[@name="new-payee-accountNumber"]');
     this.addNewPayeeButton = page.locator('xpath=//*[@name="add-payee"]');
     this.payeeBankId = page.locator('xpath=//*[@id="bulk-newPayee-bankId"]');
-    this.findBankIDButton=page.locator('xpath=//*[@id="new-payee-bank-id-button"]');
-    //this.payeeBankSearchResults = page.locator('xpath=//*[@class="search-result-container"]');
+    this.findBankIDButton = page.locator('xpath=//*[@id="new-payee-bank-id-button"]');
     this.payeeBankSearchResults = page.locator('xpath=//table[@class="swift-results ng-star-inserted"]');
-    //this.payeeBankSearchResults = page.locator('xpath=//table[@class="swift-results ng-star-inserted"]/tr/td/label');
     this.enterBankDetailsManuallyButton = page.locator('xpath=//div[starts-with(@class, "manual clearfix")]');
     this.bsbCode = page.locator('xpath=//ShuRu[@name="bp-swift-select-bsbCode"]');
-
+    this.payeeCategorySG = page.locator('xpath=//input[@id="payeeCategory"]');
+    this.payeeCategoryRenameAsRequiredPaul = page.locator('xpath=//span[text()="Rename as required – Paul"]');
+    
     // Existing payee
     this.existingPayeeTab = page.locator('xpath=//*[@id="labelExistingPayee_0"]');
     this.existingPayeeFilter = page.locator('xpath=//input[@id="payee-selector"]');
@@ -126,11 +263,10 @@ export class PayrollPage {
 
     //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
     this.beneficiaryTab = page.locator('xpath=//span[normalize-space()="Payee / Beneficiaries"]');
-    this.beneficiaryFilter= page.locator('xpath=//input[@id="approve-filter"]');
-    this.beneficiaryDelButton= page.locator('xpath=//button[@name="payee-delete"]');
-    this.beneficiaryDelCnfButton= page.locator('xpath=//button[@id="dialogDelete"]');
-    this.beneficiaryDelDismissButton= page.locator('xpath=//button[@name="cancel"]');
-
+    this.beneficiaryFilter = page.locator('xpath=//input[@id="approve-filter"]');
+    this.beneficiaryDelButton = page.locator('xpath=//button[@name="payee-delete"]');
+    this.beneficiaryDelCnfButton = page.locator('xpath=//button[@id="dialogDelete"]');
+    this.beneficiaryDelDismissButton = page.locator('xpath=//button[@name="cancel"]');
 
     // View payroll Payment Page
     this.hashValueLabel = page.locator('xpath=//*[@id="bulk-view-hashValue"]');
@@ -140,7 +276,7 @@ export class PayrollPage {
     this.paymentTypeLabel = page.locator('xpath=//*[@id="bulk-view-paymentType"]');
     this.paymentType = page.locator('xpath=//*[@id="bulk-view-paymentType"]');
     this.paymentDate = page.locator('xpath=//*[@id="bulk-view-paymentDate"]');
-    
+
     this.paymentTypeDetailLabel = page.locator('xpath=//dbs-bp-view-summary-section/div[5]/span[2]/span[2]');
     this.amountViewLabel = page.locator('xpath=//*[@id="bulk-view-paymentAmount"]');
     this.bankChargeLabel = page.locator('xpath=//*[@id="bulk-view-bankChargeType"]');
@@ -148,10 +284,12 @@ export class PayrollPage {
     this.paymentDateLabel = page.locator('xpath=//*[@id="bulk-view-paymentDate"]');
     this.referenceLabel = page.locator('xpath=//*[@id="viewReference"]');
     this.referenceID = page.locator('xpath=//label[contains(text(),"Payroll Payment")]');
+    // Have added this locator for Management Payroll bcs above is not working
+    this.referenceIDPayroll = page.locator('xpath=//label[contains(text(),"Payroll")]');
+
     this.batchIdLabel = page.locator('xpath=//*[@id="bulk-view-batchId"]');
     this.billerServiceIdLabel = page.locator('xpath=//*[@id="bulk-view-billerServiceID"]');
     this.paymentSummaryPanel = page.locator('xpath=//*[@class="summary-panel step2-panel-triangle"]');
-
     this.paymentSummaryLabel = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[1]');
     this.totalPayeesLabel = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[2]');
     this.totalPayeesValue = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[3]');
@@ -162,9 +300,7 @@ export class PayrollPage {
     this.transactionStatusLabel2 = page.locator('xpath=//div[@id="bulk-view-status_1"]');
     this.payeeNameLabel1Value = page.locator('xpath=//*[@id="bulk-view-name_0"]');
     this.payeeNameLabel2 = page.locator('xpath=//*[@id="bulk-view-name_1"]');
-
     this.payeeNicknameLabelValue = page.locator('xpath=//*[@id="bulk-view-nickName_0"]');
-
     this.bankNameLabel1Value = page.locator('xpath=//*[@id="bulk-view-payeeBankName_0"]');
     this.bankNameLabel2Value = page.locator('xpath=//*[@id="bulk-view-payeeBankName_1"]');
     this.branchNameLabel = page.locator('xpath=//*[@id="bulk-view-payeeBranchName_0"]');
@@ -179,9 +315,7 @@ export class PayrollPage {
 
     this.accountNumberLabel1 = page.locator('xpath=//*[@id="bulk-view-acctNum_0"]');
     this.accountNumberLabel2 = page.locator('xpath=//*[@id="bulk-view-acctNum_1"]');
-
     this.status = page.locator('xpath=//*[@id="bulk-view-pendingStatus_0"]');
-    
     this.viewPayrollFilter = page.locator('xpath=//*[@id="bulk-view-filter"]');
     this.amountFirstLabel = page.locator('xpath=//*[@id="bulk-view-amount_0"]');
     this.amountSecondLabel = page.locator('xpath=//*[@id="bulk-view-amount_1"]');
@@ -193,10 +327,7 @@ export class PayrollPage {
     this.referenceForPayeeLabel2 = page.locator('xpath=//dbs-view-transfer-list[2]//*[@id="reference-for-payee"]');
     this.particularsLabel1 = page.locator('xpath=//dbs-view-transfer-list[1]/div/div[1]/div[2]/div[4]/div[2]/strong');
     this.particularsLabel2 = page.locator('xpath=//dbs-view-transfer-list[2]/div/div[1]/div[2]/div[4]/div[2]/strong');
-    //this.showOptionalViewButton1 = page.locator('xpath=//*[@id="bulk-viewTemp-optDetail_0"]');
-    //this.showOptionalViewButton1 = page.locator('xpath=(//span[text()="Show optional details"])[2]');
     this.showOptionalViewButton1 = page.locator('xpath=(//span[text()="Show optional details"])[2]');
-
     this.showOptionalViewButton2 = page.locator('xpath=//*[@id="bulk-viewTemp-optDetail_1"]');
     this.paymentDetailLabel1 = page.locator('xpath=//*[@id="bulk-view-paymentDetails_0"]');
     this.paymentDetailLabel2 = page.locator('(//span[text()="Show optional details"])[2]path=//*[@id="bulk-view-paymentDetails_1"]');
@@ -204,7 +335,6 @@ export class PayrollPage {
     this.messageLabel2 = page.locator('xpath=//*[@id="bulk-view-message_1"]');
     this.emailListLabel1 = page.locator('xpath=//*[@id="bulk-view-email_0"]');
     this.emailListLabel2 = page.locator('xpath=//*[@id="bulk-view-email_1"]');
-
     this.emailListLabel1Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[1]');
     this.emailListLabel2Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[2]');
     this.emailListLabel3Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[3]');
@@ -213,7 +343,6 @@ export class PayrollPage {
 
     this.passbookLabel = page.locator('xpath=//*[@id="bulk-view-passBook_0"]');
     this.freeTextLabel = page.locator('xpath=//*[@id="bulk-view-freeText_0"]');
-
     this.nextApproverLabel = page.locator('xpath=//dbs-approval-requirement/div/section/div[1]/span[2]');
     this.activityLogSection = page.locator('xpath=//*[@class="payment-history"]');
 
@@ -221,7 +350,7 @@ export class PayrollPage {
     this.deleteButonConfirmDeletePopup = page.locator('xpath=//button[@id="dialogDelete"]');
     this.transactionDeletedPopupLabel = page.locator('xpath=//h2[text()="Transaction deleted"]');
     this.transactionDeletedPopupLabelMsg = page.locator('xpath=//p[@id="dialogMessage"]/span');
-    
+    this.transferSavedPopupLabel = page.locator('xpath=//h2[text()="Transfer saved"]');
 
     this.viewVerifyReleaseButton = page.locator('xpath=//button[@name="view-verify-release"]');
     this.verifyReleaseConfirmButton = page.locator('xpath=//button[@name="verify-release"]');
@@ -234,7 +363,7 @@ export class PayrollPage {
     // Create from template
     this.templatePurposeCodeDropdown = page.locator('xpath=//multi-level-dropdown[@formcontrolname="payeePurposeCode"]');
     this.templateTransactionCodeDropdown = page.locator('xpath=//multi-level-dropdown[@formcontrolname="transactionCode"]');
-
+    this.transactionCodeValue22SalaryCredit = page.locator('xpath=//span[text()="22 - Salary Credit"]');
     // Tabs / pagination in view page
     this.viewAllTab = page.locator('xpath=//a[@id="ux-tab-1"]');
     this.viewPendingTab = page.locator('xpath=//a[@id="ux-tab-2"]');
@@ -267,6 +396,7 @@ export class PayrollPage {
   readonly managePayrollAlternate: Locator;
   readonly payrollAlternate: Locator;
   readonly vnPayrollIcon: Locator;
+  readonly continueBtn: Locator;
 
   readonly fromAccount: Locator;
   readonly bankChargesYou: Locator;
@@ -274,6 +404,13 @@ export class PayrollPage {
   readonly paymentPriorityRadioGroup: Locator;
   readonly billerServiceDropdown: Locator;
   readonly amount: Locator;
+  readonly filterExistingPayee: Locator;
+
+  readonly purposeOfPayment: Locator;
+  readonly businessExpense: Locator;
+  readonly accountManagement: Locator;
+
+  readonly amountPayee1: Locator;
   readonly payeeParticulars: Locator;
   readonly payeeRef: Locator;
   readonly payeeNationalId: Locator;
@@ -284,6 +421,12 @@ export class PayrollPage {
   readonly payeeSenderFreeText: Locator;
   readonly paymentDetailsTextarea: Locator;
   readonly messageToThePayeeCheckBox: Locator;
+  readonly payeeResidentStatus: Locator;
+  readonly payeeResidentOptionNonResident: Locator;
+  readonly payeeResidentOptionResident: Locator;
+  readonly payeeCategory: Locator;
+  readonly payeeCategoryOptionEnterprise: Locator;
+  readonly payeeCategoryOptionGovernment: Locator;
   readonly internalReference: Locator;
   readonly batchID: Locator;
   readonly beneficiaryAdvisingToggle: Locator;
@@ -298,6 +441,7 @@ export class PayrollPage {
 
 
   readonly nextButton: Locator;
+  readonly amountMaxForTemplateError: Locator;
   readonly submitButton: Locator;
   readonly approveButton: Locator;
   readonly acceptAndApproveButton: Locator;
@@ -309,11 +453,16 @@ export class PayrollPage {
   readonly pushApprovalOption: Locator;
   readonly getChallengeTextButton: Locator;
   readonly getChallengeSMSButton: Locator;
+  readonly challengeCodeMsg: Locator;
+  readonly digitalTokenInstructions1: Locator;
+  readonly digitalTokenInstructions2: Locator;
+  readonly enterResponseTextBox: Locator;
   readonly challengeResponse: Locator;
   readonly saveAsTemplateCheckbox: Locator;
   readonly templateName: Locator;
   readonly saveAsDraftButton: Locator;
   readonly amountInlineError: Locator;
+  readonly errorOneOrMorefieldsNotFilled: Locator;
   readonly deletePayeeButton: Locator;
   readonly newFPSPayeeOption: Locator;
   readonly hkFpsIdRadio: Locator;
@@ -332,6 +481,8 @@ export class PayrollPage {
   readonly payeeBankSearchResults: Locator;
   readonly enterBankDetailsManuallyButton: Locator;
   readonly bsbCode: Locator;
+  readonly payeeCategorySG: Locator;
+  readonly payeeCategoryRenameAsRequiredPaul: Locator;
 
   // Existing payee
   readonly existingPayeeTab: Locator;
@@ -370,7 +521,7 @@ export class PayrollPage {
   readonly paymentTypeLabel: Locator;
   readonly paymentType: Locator;
   readonly paymentDate: Locator;
-  
+
 
   readonly paymentTypeDetailLabel: Locator;
   readonly amountViewLabel: Locator;
@@ -379,10 +530,11 @@ export class PayrollPage {
   readonly paymentDateLabel: Locator;
   readonly referenceLabel: Locator;
   readonly referenceID: Locator;
+  readonly referenceIDPayroll: Locator;
   readonly batchIdLabel: Locator;
   readonly billerServiceIdLabel: Locator;
   readonly paymentSummaryPanel: Locator;
-  
+
   readonly paymentSummaryLabel: Locator;
   readonly totalPayeesLabel: Locator;
   readonly totalPayeesValue: Locator;
@@ -434,7 +586,7 @@ export class PayrollPage {
   readonly emailListLabel3Value: Locator;
   readonly emailListLabel4Value: Locator;
   readonly emailListLabel5Value: Locator;
-  
+
   readonly passbookLabel: Locator;
   readonly freeTextLabel: Locator;
 
@@ -445,7 +597,8 @@ export class PayrollPage {
   readonly deleteButonConfirmDeletePopup: Locator;
   readonly transactionDeletedPopupLabel: Locator;
   readonly transactionDeletedPopupLabelMsg: Locator;
-  
+  readonly transferSavedPopupLabel: Locator;
+
   readonly viewVerifyReleaseButton: Locator;
   readonly verifyReleaseConfirmButton: Locator;
   readonly toNewPayeeNameLabel: Locator;
@@ -457,6 +610,7 @@ export class PayrollPage {
   // From template selectors
   readonly templatePurposeCodeDropdown: Locator;
   readonly templateTransactionCodeDropdown: Locator;
+  readonly transactionCodeValue22SalaryCredit: Locator;
 
   // Tabs/pagination
   readonly viewAllTab: Locator;
@@ -471,7 +625,7 @@ export class PayrollPage {
   readonly viewPaginationButton: Locator;
   readonly viewRejectedCountLabel: Locator;
   readonly viewBulkTotalItemLabel: Locator;
-  
+
 
   // Links / search / export
   readonly IDPayrollScheduleLink: Locator;
@@ -484,15 +638,15 @@ export class PayrollPage {
 
   // ---------- Helper waits (English names) ----------
 
-   // create lib => components.ts object
-   webComponents = new WebComponents();
-  
-/**
-   * Add a new payee flow (reusable in all tests).
-   * Mirrors the exact steps you currently perform, including clipboard paste.
-   */
-async addNewPayee(input: NewPayeeInput): Promise<NewPayeeResult> {
-  const { name, nickName, bankId, accountNumber } = input;
+  // create lib => components.ts object
+  webComponents = new WebComponents();
+
+   /**
+     * Add a new payee flow (reusable in all tests).
+     * Mirrors the exact steps you currently perform, including clipboard paste.
+     */
+  async addNewPayee(input: NewPayeeInput): Promise<NewPayeeResult> {
+    const { name, nickName, bankId, accountNumber } = input;
     await this.newPayeeTab.click();
     await this.safeClick(this.newPayeeName);
     await this.safeFill(this.newPayeeName, name);
@@ -521,7 +675,7 @@ async addNewPayee(input: NewPayeeInput): Promise<NewPayeeResult> {
     await this.page.keyboard.press('Tab');
     await this.newPayeeAccountNumber.blur();
     await this.safeClick(this.addNewPayeeButton);
-    return { nickName, accountNumber };
+    return { name, accountNumber };
   }
 
 
@@ -530,28 +684,28 @@ async addNewPayee(input: NewPayeeInput): Promise<NewPayeeResult> {
    * Created Date: 17/02/2026
    * This Method "addNewPayeeWithDetails" : Add's a new payee with all details (reusable in all tests).
    */
-async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
-  const { name, nickName, bankId, accountNumber } = input;
+  async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
+    const { name, nickName, bankId, accountNumber } = input;
 
     // Click : New Payee Tab
-    await this.newPayeeTab.click();
+    await this.webComponents.clickWhenVisibleAndEnabled(this.newPayeeTab);
 
     // Enter : Payee Name
     await this.webComponents.enterTextarea(this.newPayeeName, name);
-    await this.page.keyboard.press('Tab');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
     await this.newPayeeName.blur();
 
     // Enter : Payee nickname
     await this.webComponents.enterTextarea(this.newPayeeNickName, nickName);
-    await this.page.keyboard.press('Tab');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
     await this.newPayeeNickName.blur();
 
     // Enter : Payee bank ID
     await this.webComponents.enterTextarea(this.payeeBankId, bankId);
-    await this.page.keyboard.press('Enter');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Enter');
     await this.payeeBankId.blur();
     await this.webComponents.clickWhenVisibleAndEnabled(this.findBankIDButton);
-    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 45000 });
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: TIMEOUT.MIN });
     await this.payeeBankSearchResults.first().click();
     await this.webComponents.clickWhenVisibleAndEnabled(this.newPayeeAccountNumber);
 
@@ -561,15 +715,142 @@ async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
       await navigator.clipboard.writeText(text);
     }, accountNumber);
 
-    await this.page.keyboard.press('Control+V');
-    await this.page.keyboard.press('Enter');
-    await this.page.keyboard.press('Tab');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Control+V');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Enter');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
     await this.newPayeeAccountNumber.blur();
 
     //Click : Add Payee button
     await this.webComponents.clickWhenVisibleAndEnabled(this.addNewPayeeButton);
-    return { nickName, accountNumber };
+    return { name, accountNumber };
   }
+
+  /**
+   * Author : LC5741501
+   * Created Date: 26/03/2026
+   * This Method "addNewPayeeWithDetailsSG is for Singapore region" because
+   * it has extra field "Payee category" hance created a new method.
+   * This method adds a new payee with all details (reusable in all tests for SG).
+   */
+  async addNewPayeeWithAllDetailsSG(input: NewPayeeInputSG): Promise<NewPayeeResult> {
+    const { name, nickName, bankId, accountNumber, payeeCategory, savePayeeCheckbox } = input;
+
+    // Click : New Payee Tab
+    await this.webComponents.clickWhenVisibleAndEnabled(this.newPayeeTab);
+
+    // Enter : Payee Name
+    if (await this.webComponents.stringIsNotNullOrBlank(name)) {
+      await this.webComponents.enterTextarea(this.newPayeeName, name);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.newPayeeName.blur();
+    }
+
+    // Enter : Payee nickname
+    if (await this.webComponents.stringIsNotNullOrBlank(nickName)) {
+      await this.webComponents.enterTextarea(this.newPayeeNickName, nickName);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.newPayeeNickName.blur();
+    }
+
+    // Enter : Payee bank ID     
+	  if (await this.webComponents.stringIsNotNullOrBlank(bankId)) {
+      await this.webComponents.enterTextarea(this.payeeBankId, bankId);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Enter');
+      await this.payeeBankId.blur();
+      await this.webComponents.clickWhenVisibleAndEnabled(this.findBankIDButton);
+      await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: TIMEOUT.MIN });
+      await this.payeeBankSearchResults.first().click();
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newPayeeAccountNumber);
+	  }
+
+    // Enter : Payee bank account number
+    // Preserve your clipboard -> paste behavior
+    if (await this.webComponents.stringIsNotNullOrBlank(accountNumber)) {
+      await this.page.evaluate(async (text) => {
+        await navigator.clipboard.writeText(text);
+      }, accountNumber);
+
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Control+V');
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Enter');
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.newPayeeAccountNumber.blur();
+	  }
+
+    //Select : Payee category and per Json input
+    if (await this.webComponents.stringIsNotNullOrBlank(payeeCategory)) {
+      switch (payeeCategory.toLowerCase()) {
+        case 'renameasrequiredpaul':
+          // Select Payee category "Rename as required – Paul" from dropdown
+          await this.webComponents.clickWhenVisibleAndEnabled(this.payeeCategorySG);
+          await this.webComponents.clickWhenVisibleAndEnabled(this.payeeCategoryRenameAsRequiredPaul);
+          break;
+
+        default:
+      }
+	  }
+
+    // Click: Save payee checkbox
+    if (await this.webComponents.stringIsNotNullOrBlank(savePayeeCheckbox)) {
+      await this.webComponents.clickWhenVisibleAndEnabled(this.savePayeeCheckBox);
+    }
+
+    //Click : Add Payee button
+    await this.webComponents.clickWhenVisibleAndEnabled(this.addNewPayeeButton);
+    return { name, accountNumber };
+  }
+
+  /**
+   * Author : LC5741501
+   * Created Date: 17/02/2026
+   * This Method "addNewPayeeWithDetails" : Add's a new payee with all details (reusable in all tests).
+   */
+  async addNewPayeeWithAllDetailsCheckPopupClickContinueBtn(input: NewPayeeInput): Promise<NewPayeeResult> {
+    const { name, nickName, bankId, accountNumber } = input;
+
+    // Click : New Payee Tab
+    await this.webComponents.clickWhenVisibleAndEnabled(this.newPayeeTab);
+
+    if (await this.webComponents.isElementVisible(this.page, this.continueBtn, { timeout: TIMEOUT.MIN })) {
+      this.webComponents.clickWhenVisibleAndEnabled(this.continueBtn);
+    }
+
+    // Enter : Payee Name
+    await this.webComponents.enterTextarea(this.newPayeeName, name);
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+    await this.newPayeeName.blur();
+
+
+    // Enter : Payee nickname
+    await this.webComponents.enterTextarea(this.newPayeeNickName, nickName);
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+    await this.newPayeeNickName.blur();
+
+    // Enter : Payee bank ID
+    await this.webComponents.enterTextarea(this.payeeBankId, bankId);
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Enter');
+    await this.payeeBankId.blur();
+    await this.webComponents.clickWhenVisibleAndEnabled(this.findBankIDButton);
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: TIMEOUT.MIN });
+    await this.payeeBankSearchResults.first().click();
+    await this.webComponents.clickWhenVisibleAndEnabled(this.newPayeeAccountNumber);
+
+    // Enter : Payee bank account number
+    // Preserve your clipboard -> paste behavior
+    await this.page.evaluate(async (text) => {
+      await navigator.clipboard.writeText(text);
+    }, accountNumber);
+
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Control+V');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Enter');
+    await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+    await this.newPayeeAccountNumber.blur();
+
+    //Click : Add Payee button
+    await this.webComponents.clickWhenVisibleAndEnabled(this.addNewPayeeButton);
+    return { name, accountNumber };
+  }
+
+
 
   /**
    * Author : LC5741501
@@ -577,68 +858,244 @@ async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
    * @param testData : is a Json object
    * This method Enters Step 2: Payment to Amount and other opetional fields 
    */
-  async enterNewPayeeAmountAndOptionalDetails(testData){
+  async enterNewPayeeAmountAndOptionalDetails(input: NewPayeeOptionaldetails) {
+    const { amount, referenceForPayee, paymentDetails, emailId0, emailId1, emailId2, emailId3, emailId4, emailMessage } = input;
 
     // Step 2: Enter Amount (SGD) = add Amount
-    await this.webComponents.enterTextarea(this.amount, testData.Payroll.amount);
-    
+    await this.webComponents.enterTextarea(this.amount, amount);
+
     // Step 2: Payment from => Below steps for the (Step 2) optionals fields.
 
     // Enter Reference for payee
-    await this.webComponents.enterTextarea(this.payeeRef, testData.Payroll.referenceForPayee);
+    await this.webComponents.enterTextarea(this.payeeRef, referenceForPayee);
 
     // Click Show optional details arrow
     await this.webComponents.clickWhenVisibleAndEnabled(this.showOptionalDetails);
-    
+
 
     // Enter Payment details to the payee bank
-    await this.webComponents.enterTextarea(this.paymentDetailsTextarea, testData.Payroll.paymentDetails);
+    await this.webComponents.enterTextarea(this.paymentDetailsTextarea, paymentDetails);
 
     // Click : "Message to the payee" checkbox
     await this.webComponents.clickWhenVisibleAndEnabled(this.messageToThePayeeCheckBox);
-    
+
     // Enter : Emails 1
-    await this.webComponents.enterTextarea(this.emailId0, testData.Payroll.emailId0);
+    await this.webComponents.enterTextarea(this.emailId0, emailId0);
     // Enter : Emails 2
-    await this.webComponents.enterTextarea(this.emailId1, testData.Payroll.emailId1);
+    await this.webComponents.enterTextarea(this.emailId1, emailId1);
     // Enter : Emails 3
-    await this.webComponents.enterTextarea(this.emailId2, testData.Payroll.emailId2);
+    await this.webComponents.enterTextarea(this.emailId2, emailId2);
     // Enter : Emails 4
-    await this.webComponents.enterTextarea(this.emailId3, testData.Payroll.emailId3);
+    await this.webComponents.enterTextarea(this.emailId3, emailId3);
     // Enter : Emails 5
-    await this.webComponents.enterTextarea(this.emailId4, testData.Payroll.emailId4);
+    await this.webComponents.enterTextarea(this.emailId4, emailId4);
 
     // Enter : Emails Mesage (Textarea)
-    await this.webComponents.enterTextarea(this.emailMessageTextarea, testData.Payroll.emailMessage);
+    await this.webComponents.enterTextarea(this.emailMessageTextarea, emailMessage);
 
   }
+
 
   /**
    * Author : LC5741501
    * Created Date: 20/02/2026
-   * @param testData : Contains Json value
-   * This method enters the Step 4: Transaction references in Payroll page
-   * for the fields Internal reference and Batch ID
+   * @param testData : is a Json object
+   * This method Enters Step 2: Payment to Amount and other opetional fields 
    */
-  async enterTransactionReferences(testData,internalReferenceBoolean){
+  async enterNewPayeeAllOtherDetails(input: NewPayee1Data) {
+    const { amount, transactionCode, referenceForPayee, particulars, paymentDetails, email1, email2, email3,
+      email4, email5, emailMessage } = input;
 
+    // Step 2: Enter Amount (SGD) = add Amount
+    await this.webComponents.enterTextarea(this.amount, amount);
+
+    // Step 2: Transaction code(If not Null/Blank)
+    const trueCheck: boolean = await this.webComponents.stringIsNotNullOrBlank(transactionCode);
+    console.log("TransactionCode Is : " + trueCheck);
+    // If true
+    if (trueCheck) {
+
+      switch (transactionCode) {
+        case '22SalaryCredit':
+          // Click Transaction Code Dropdown and select "22SalaryCredit"
+          await this.webComponents.clickWhenVisibleAndEnabled(this.templateTransactionCodeDropdown);
+          await this.webComponents.clickWhenVisibleAndEnabled(this.transactionCodeValue22SalaryCredit);
+          break;
+
+        default:
+      }
+
+    }
+    
+
+    // Step 2: Payment from => Below steps for the (Step 2) optionals fields.
+
+    // Step 2: If true(value present): Enter Reference for payee 
+    if (await this.webComponents.stringIsNotNullOrBlank(referenceForPayee)) {
+      await this.webComponents.enterTextarea(this.payeeRef, referenceForPayee);
+    }
+
+    // Step 2: If true(value present): Enter Particulars
+    if (await this.webComponents.stringIsNotNullOrBlank(particulars)) {
+      await this.webComponents.enterTextarea(this.payeeParticulars, particulars);
+    }
+
+    // Click Show optional details arrow
+    await this.webComponents.clickWhenVisibleAndEnabled(this.showOptionalDetails);
+
+    // Enter Payment details to the payee bank
+    await this.webComponents.enterTextarea(this.paymentDetailsTextarea, paymentDetails);
+
+    // Click : "Message to the payee" checkbox
+    await this.webComponents.clickWhenVisibleAndEnabled(this.messageToThePayeeCheckBox);
+
+    // Enter : Emails 1
+    await this.webComponents.enterTextarea(this.emailId0, email1);
+    // Enter : Emails 2
+    await this.webComponents.enterTextarea(this.emailId1, email2);
+    // Enter : Emails 3
+    await this.webComponents.enterTextarea(this.emailId2, email3);
+    // Enter : Emails 4
+    await this.webComponents.enterTextarea(this.emailId3, email4);
+    // Enter : Emails 5
+    await this.webComponents.enterTextarea(this.emailId4, email5);
+
+    // Enter : Emails Mesage (Textarea)
+    await this.webComponents.enterTextarea(this.emailMessageTextarea, emailMessage);
+
+  }
+
+
+  /**
+   * Author : LC5741501
+   * Created Date: 26/03/2026
+   * @param input : export from spec
+   * This method Enters "Step 2: Payment to" Amount and other opetional fields.
+   */
+  async enterNewPayeeAllOtherDetailsSG(input: NewPayee1DataSG) {
+    const { amount, purposeOfPayment, transactionCode, referenceForPayee, particulars, paymentDetails, email1, email2, email3,
+      email4, email5, emailMessage } = input;
+
+    // 1) If true(value present): Enter Amount (SGD) = add Amount
+    if (await this.webComponents.stringIsNotNullOrBlank(amount)) {
+      await this.webComponents.enterTextarea(this.amount, amount);
+    }
+
+    // 2) If true(value present): Select Purpose Of Payment
+    if (await this.webComponents.stringIsNotNullOrBlank(purposeOfPayment)) {
+
+      //Click Purpose Of Payment Checkbox
+      await this.webComponents.clickWhenVisibleAndEnabled(this.purposeOfPayment);
+
+      //Split the Json value to check which purposeOfPayment and its value needs to select
+      const purposeOfPaymentSplit = purposeOfPayment.split('!');
+
+      //Check Case for Purpose Of Payment and select
+      switch (purposeOfPaymentSplit[0].toLowerCase()) {
+        case 'businessexpense':
+          await this.webComponents.clickWhenVisibleAndEnabled(this.businessExpense);
+          if(purposeOfPaymentSplit[1].toLowerCase() === 'accountmanagement'){
+            await this.webComponents.clickWhenVisibleAndEnabled(this.accountManagement);
+          }
+          break;
+
+        default:
+      }
+
+    }
+
+    // 3) If true(value present): Select Transaction code(If not Null/Blank)
+    if (await this.webComponents.stringIsNotNullOrBlank(transactionCode)) {
+      switch (transactionCode) {
+        case '22SalaryCredit':
+          // Click Transaction Code Dropdown and select "22SalaryCredit"
+          await this.webComponents.clickWhenVisibleAndEnabled(this.templateTransactionCodeDropdown);
+          await this.webComponents.clickWhenVisibleAndEnabled(this.transactionCodeValue22SalaryCredit);
+          break;
+
+        default:
+      }
+
+    }
+    
+    // 4) If true(value present): Enter Reference for payee 
+    if (await this.webComponents.stringIsNotNullOrBlank(referenceForPayee)) {
+      await this.webComponents.enterTextarea(this.payeeRef, referenceForPayee);
+    }
+
+    // 5) If true(value present): Enter Particulars
+    if (await this.webComponents.stringIsNotNullOrBlank(particulars)) {
+      await this.webComponents.enterTextarea(this.payeeParticulars, particulars);
+    }
+
+    // Click Show optional details arrow
+    await this.webComponents.clickWhenVisibleAndEnabled(this.showOptionalDetails);
+
+    // 6) If true(value present): Enter Payment details to the payee bank
+    if (await this.webComponents.stringIsNotNullOrBlank(paymentDetails)) {
+      await this.webComponents.enterTextarea(this.paymentDetailsTextarea, paymentDetails);
+    }
+    
+    // 7) If true(value present): Click on "Message to the payee" checkbox and enter email and emailMsg
+    if (await this.webComponents.stringIsNotNullOrBlank(email1)) {
+      await this.webComponents.clickWhenVisibleAndEnabled(this.messageToThePayeeCheckBox);
+
+      if (await this.webComponents.stringIsNotNullOrBlank(email1)) {
+        // Enter : Emails 1
+        await this.webComponents.enterTextarea(this.emailId0, email1);
+		  }
+      if (await this.webComponents.stringIsNotNullOrBlank(email2)) {
+        // Enter : Emails 2
+        await this.webComponents.enterTextarea(this.emailId1, email2);
+		  }
+      if (await this.webComponents.stringIsNotNullOrBlank(email3)) {
+        // Enter : Emails 3
+        await this.webComponents.enterTextarea(this.emailId2, email3);
+		  }
+      if (await this.webComponents.stringIsNotNullOrBlank(email4)) {
+        // Enter : Emails 4
+        await this.webComponents.enterTextarea(this.emailId3, email4);
+		  }
+      if (await this.webComponents.stringIsNotNullOrBlank(email5)) {
+        // Enter : Emails 5
+        await this.webComponents.enterTextarea(this.emailId4, email5);
+		  }
+      if (await this.webComponents.stringIsNotNullOrBlank(emailMessage)) {
+         // Enter : Emails Mesage (Textarea)
+        await this.webComponents.enterTextarea(this.emailMessageTextarea, emailMessage);
+		  }
+
+    } 
+
+  }
+
+
+  /**
+  * Author : LC5741501
+  * Created Date: 20/02/2026
+  * @param testData : Contains Json value
+  * This method enters the Step 4: Transaction references in Payroll page
+  * for the fields Internal reference and Batch ID
+  */
+  async enterTransactionReferences(input: transactionReferenceData) {
+    const { internalReferenceData, batchIDData } = input;
     //Step 4: Payment date : Enter Internal reference, Batch ID
     // Internal reference : It Adds the value if internalReferenceBoolean=true
     //Else it will keep it blank
-    if (internalReferenceBoolean) {
-      await this.webComponents.enterTextarea(this.internalReference, testData.Payroll.internalReference);
-      console.log("Entered the Internal Reference Value : " + testData.Payroll.internalReference);
-    }else {
+    if (await this.webComponents.stringIsNotNullOrBlank(internalReferenceData)) {
+      await this.webComponents.enterTextarea(this.internalReference, internalReferenceData);
+      console.log("Entered the Internal Reference Value : " + internalReferenceData);
+    } else {
       console.log("Not entered the Internal Reference");
     }
-    
+
     // Batch ID : add details
-    await this.webComponents.enterText(this.batchID, testData.Payroll.batchID);
+    await this.webComponents.enterText(this.batchID, batchIDData);
 
   }
 
   /** Delete Payee fnction */
-  
+
   async openBeneficiariesTabIfPresent(): Promise<boolean> {
     const count = await this.beneficiaryTab.count();
     if (count === 0) return false;
@@ -646,19 +1103,19 @@ async addNewPayeeWithAllDetails(input: NewPayeeInput): Promise<NewPayeeResult> {
     return true;
   }
 
-  
-async filterBeneficiaries(query: string) {
-  await this.safeFill(this.beneficiaryFilter, '');
-  await this.safeFill(this.beneficiaryFilter, query);
-  await this.beneficiaryFilter.press('Enter'); // try enter
-  await this.beneficiaryFilter.blur();         // and blur, in case enter isn't enough
-  // Small debounce for filter to apply
-  await this.page.waitForTimeout(500);
-}
+
+  async filterBeneficiaries(query: string) {
+    await this.safeFill(this.beneficiaryFilter, '');
+    await this.safeFill(this.beneficiaryFilter, query);
+    await this.beneficiaryFilter.press('Enter'); // try enter
+    await this.beneficiaryFilter.blur();         // and blur, in case enter isn't enough
+    // Small debounce for filter to apply
+    await this.page.waitForTimeout(500);
+  }
 
 
-async deletePayeeGlobal(confirm = true) {
-  
+  async deletePayeeGlobal(confirm = true) {
+
     await this.safeClick(this.beneficiaryDelButton);
     if (confirm) {
       await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: 10000 });
@@ -667,27 +1124,27 @@ async deletePayeeGlobal(confirm = true) {
       await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: 10000 });
       await this.beneficiaryDelDismissButton.click();
     }
-  
-
-  // Wait for disappearance of a success banner OR row removal if you can detect it.
-  // Fallback: brief pause to let UI settle.
-  await this.page.waitForTimeout(800);
-}
 
 
-beneficiaryRowsByText(text: string): Locator {
-  // Scope to the datatable body rows to avoid picking elements from the right pane
-  return this.page
-    .locator('.payee-transaction-list ngx-datatable datatable-body datatable-row-wrapper datatable-body-row')
-    .filter({ hasText: text });
-}
-  
- async deletePayeeInRow(textKey: string, confirm = true) {
-  const row = this.beneficiaryRowsByText(textKey).first();
-  await expect(row).toBeVisible({ timeout: 15000 });
+    // Wait for disappearance of a success banner OR row removal if you can detect it.
+    // Fallback: brief pause to let UI settle.
+    await this.page.waitForTimeout(800);
+  }
 
-  const rowDeleteButton = row.locator('xpath=.//button[@name="payee-delete"]');
-  await this.safeClick(rowDeleteButton);
+
+  beneficiaryRowsByText(text: string): Locator {
+    // Scope to the datatable body rows to avoid picking elements from the right pane
+    return this.page
+      .locator('.payee-transaction-list ngx-datatable datatable-body datatable-row-wrapper datatable-body-row')
+      .filter({ hasText: text });
+  }
+
+  async deletePayeeInRow(textKey: string, confirm = true) {
+    const row = this.beneficiaryRowsByText(textKey).first();
+    await expect(row).toBeVisible({ timeout: 15000 });
+
+    const rowDeleteButton = row.locator('xpath=.//button[@name="payee-delete"]');
+    await this.safeClick(rowDeleteButton);
 
     if (confirm) {
       await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: 10000 });
@@ -699,7 +1156,7 @@ beneficiaryRowsByText(text: string): Locator {
       await this.beneficiaryDelDismissButton.click();
       await expect(row).toBeVisible(); // still there
     }
-}
+  }
 
   async deletePayeeByFilter(textKey?: string, confirm = true) {
     const opened = await this.openBeneficiariesTabIfPresent();
@@ -717,18 +1174,18 @@ beneficiaryRowsByText(text: string): Locator {
     }
   }
 
-  
+
   /**
      * Returns the raw banner text (trimmed). If you only need EBLV…,
      * use getReferenceToken() below.
      */
   async getReferenceText(): Promise<string> {
-    const raw = await this.referenceID.textContent();
+    const raw = await this.referenceIDPayroll.textContent();
     return (raw ?? '').trim();
   }
 
   //Extract reference ID
-  
+
   async getReferenceID(): Promise<string> {
     const raw = await this.getReferenceText();
     const match = raw.match(/\b(EB[A-Z0-9-]+)\b/i);
@@ -755,8 +1212,8 @@ beneficiaryRowsByText(text: string): Locator {
     await expect(this.finishButton).toBeVisible({ timeout });
   }
 
-   /** Wait until Pay & Transfer page is ready (Payroll visible) */
-   async waitForPayAndTransferPageReady(timeout = 130_000) {
+  /** Wait until Pay & Transfer page is ready (Payroll visible) */
+  async waitForPayAndTransferPageReady(timeout = 130_000) {
     await this.waitForUXLoading();
     await expect(this.payroll).toBeVisible({ timeout });
   }
@@ -892,8 +1349,8 @@ beneficiaryRowsByText(text: string): Locator {
      * This method waits for 15 seconds for the element
      * to be visible
      */
-  }  
-  
+  }
+
   async waitElementToBeVisible(locator: Locator, timeout = 25_000) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
@@ -917,162 +1374,197 @@ beneficiaryRowsByText(text: string): Locator {
 
   }
 
+
+
   /**
-     * Author : LC5741501
-     * This method validates the details of Expected
-     * values(JSON) Vs Actual Selected Payee Or Reference No (from UI) 
-     */
-    async validatePayeeOrRefrenceNoDetailsOfPayroll(testData,internalReferenceAutoGenerated, reference, amountSGDIsEdit,yourAccountDeductedEdited) {
-      
-      // Assertions
-      // 1) Hash value : Auto generated hence checking value is Not Null
-      await this.webComponents.verifyUIElementTextIsNotNull(this.hashValueLabel);
-      
-      // 2) From : Validate UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.fromAccountViewLabel, testData.Payroll.fromAccount1);
-      await this.webComponents.compareUIVsJsonValue(this.fromAccountViewLabel2, testData.Payroll.fromAccount2);
-      
-      // 3) Payment Type : Validate UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.paymentType, testData.Payroll.paymentType);
-  
-       // 4) Your account will be deducted : 
-       // If yourAccountDeductedEdited = true it checkes edited value of 'your Account Deducted' field
-       //Else not edited value of 'your Account Deducted'
-       if(yourAccountDeductedEdited){
-        await this.webComponents.compareUIVsJsonValue(this.amountViewLabel, testData.Payroll.yourAccountDeductedEdited);
-       }else{
-        await this.webComponents.compareUIVsJsonValue(this.amountViewLabel, testData.Payroll.yourAccountDeducted);
-       }
-       
-       //5 Payment Date: checking value is Not Null
-       await this.webComponents.verifyUIElementTextIsNotNull(this.paymentDate);
-  
-      // 6) Internal reference : Validate UI Vs Json
-      if(internalReferenceAutoGenerated){
-        await this.webComponents.compareUIVsJsonValue(this.referenceLabel, reference);
-      }else{
-        await this.webComponents.compareUIVsJsonValue(this.referenceLabel, testData.Payroll.internalReference);
-      }
-      
-      
-      // 7) Batch ID : Validate UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.batchIdLabel, testData.Payroll.batchID);
-  
-      // 8) Filter is Visible 
-      await this.webComponents.waitElementToBeVisible(this.viewPayrollFilter);
-      
-      // 9) Payment summary : Validate UI Vs Json (Payment summary Label)
-      await this.webComponents.compareUIVsJsonValue(this.paymentSummaryLabel, testData.Payroll.paymentSummaryLabel);
-  
-      // 10) Total Payees Label : Validate UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.totalPayeesLabel, testData.Payroll.totalPayeesLabel);
-      
-      // 11) Total Payees Value : Validate UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.totalPayeesValue, testData.Payroll.totalPayeesLabelValue);
-      
-      // 12) Total Amount Label : Validate UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.totalAmountLabel, testData.Payroll.totalAmountLabel);
-  
-      // 13) Total Amount Value : Validate UI Vs Json
-      if(amountSGDIsEdit){
-      await this.webComponents.compareUIVsJsonValue(this.totalAmountValue, testData.Payroll.totalAmountLabelValueEdited);
-      }else{
-        await this.webComponents.compareUIVsJsonValue(this.totalAmountValue, testData.Payroll.totalAmountLabelValue);
-      }
-      // 14) Payee/Nickname : Validate (Payee Name) UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.payeeNameLabel1Value, testData.Payroll.newPayeeName);
-  
-      // 15) Payee/Nickname : Validate (Nickname) UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.payeeNicknameLabelValue, testData.Payroll.newPayeeNickName);
-  
-      // 16) Bank/SWIFT BIC: Validate (Bank) UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.bankNameLabel1Value, testData.Payroll.bankNameValue);
-  
-      // 17) Bank/SWIFT BIC: Validate (SWIFT) UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.bankSwiftBicLabel1, testData.Payroll.bankSwiftBicValue);
-  
-      // 18) Account number: Validate UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.accountNumberLabel1, testData.Payroll.newPayeeAcctNumber);
-  
-      // 19) Status (PendingApproval) : Validate UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.status, testData.status.PendingApproval);
-      
-      // 20) Amount (SGD): Validate UI Vs Json
-      // If amountSGDIsEdit = true it checks edited value of amount
-      // else checks no edited value of amount
-      if(amountSGDIsEdit){
-        await this.webComponents.compareUIVsJsonValue(this.amountFirstLabel, testData.Payroll.editAmount);
-      }else{
-        await this.webComponents.compareUIVsJsonValue(this.amountFirstLabel, testData.Payroll.amount);
-      }
-      
-      // 21) Purpose Code (SALA - Salary Payment) : Validate UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.purposeCodeLabel1, testData.Payroll.purposeCode);
-  
-      // 22) Reference for payee (optional): Validate UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.referenceForPayeeLabel1, testData.Payroll.referenceForPayee);
+   * Author : LC5741501
+   * This method validates the details of Expected
+   * values(JSON) Vs Actual Selected Payee Or Reference No (from UI) 
+   */
+  async validatePayeeOrRefrenceNoDetails(input: NewPayee1ValidationData, reference) {
+    const { fromAccountValue1, fromAccountValue2, paymentTypeValue, amountDeductedValue, amountDeductedEditedValue,
+      referenceValueUserProvided, batchIdValueUserProvided, paymentSummaryLabel, totalPayeesLabel, totalPayeesValue,
+      totalAmountLabel, totalAmountValue, totalAmountValueEdited, payeeNameLabelValue,
+      payeeNicknameLabelValue, bankNameLabelValue, bankSwiftBicLabelValue, accountNumberLabelValue, statusLabelValue,
+      amountLabelValue, amountEditedLabelValue, transactionLabelValue, purposeCodeLabelValue,
+      referenceForPayeeLabelValue, particularsLabelValue,
+      paymentDetailsLabelValue, emailMessageLabelValue, email1LabelValue, email2LabelValue, email3LabelValue,
+      email4LabelValue, email5LabelValue } = input;
+    // Assertions
+    // 1) Hash value : Auto generated hence checking value is Not Null
+    await this.webComponents.verifyUIElementTextIsNotNull(this.hashValueLabel);
 
-      // Click : showOptionalViewButton1
-     await this.webComponents.clickWhenVisibleAndEnabled(this.showOptionalViewButton1);
-      
-      // 23) Message to payee (optional): Validate UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.messageLabel1, testData.Payroll.emailMessage);
-      
-      // 24)Emails 1 to 5 : Validate UI Vs Json
-      await this.webComponents.compareUIVsJsonValue(this.emailListLabel1Value, testData.Payroll.emailId0);
-      await this.webComponents.compareUIVsJsonValue(this.emailListLabel2Value, testData.Payroll.emailId1);
-      await this.webComponents.compareUIVsJsonValue(this.emailListLabel3Value, testData.Payroll.emailId2);
-      await this.webComponents.compareUIVsJsonValue(this.emailListLabel4Value, testData.Payroll.emailId3);
-      await this.webComponents.compareUIVsJsonValue(this.emailListLabel5Value, testData.Payroll.emailId4);
+    // 2) From : Validate UI Vs Json
+    await this.webComponents.compareUIVsJsonValue(this.fromAccountViewLabel, fromAccountValue1);
+    await this.webComponents.compareUIVsJsonValue(this.fromAccountViewLabel2, fromAccountValue2);
 
-      // 25) Next approver : value is not Null
-      await this.webComponents.verifyUIElementTextIsNotNull(this.nextApproverLabel);
-  
-      // 26) Next approver : Visible
-      await this.webComponents.waitElementToBeVisible(this.activityLogSection);
-    
+    // 3) Payment Type : Validate UI Vs Json
+    await this.webComponents.compareUIVsJsonValue(this.paymentType, paymentTypeValue);
+
+    // 4) Account deducted : If amountDeductedEditedValue is Not Null/Blank, it means Amount is editd, and validate edited value
+    //Else not edited, then validate actual amount
+    if (await this.webComponents.stringIsNotNullOrBlank(amountDeductedEditedValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.amountViewLabel, amountDeductedEditedValue);
+    } else {
+      await this.webComponents.compareUIVsJsonValue(this.amountViewLabel, amountDeductedValue);
     }
 
-    /**
-     * Author : LC5741501
-     * This method validates the details of Expected
-     * values(JSON) Vs Actual Selected Payee Or Reference No (from UI) 
-     */
-    async editAmountSGD(testData) {
+    //5 Payment Date: checking value is Not Null
+    await this.webComponents.verifyUIElementTextIsNotNull(this.paymentDate);
 
-      // Click : Edit button
-      await this.webComponents.clickWhenVisibleAndEnabled(this.editButton);
+    // 6) Internal reference : If referenceValueUserProvided is Not Null/Blank, it means value present, validate User provided value
+    //Else value not present, then autogenerated reference No
+    if (await this.webComponents.stringIsNotNullOrBlank(referenceValueUserProvided)) {
+      await this.webComponents.compareUIVsJsonValue(this.referenceLabel, referenceValueUserProvided);
+    } else {
+      await this.webComponents.compareUIVsJsonValue(this.referenceLabel, reference);
+    }
+
+    // 7) Batch ID : If batchIdValueUserProvided is Not Null/Blank, it means user provided the value and validate it
+    // Else validete auto generated Batch Id value is not null
+    if (await this.webComponents.stringIsNotNullOrBlank(batchIdValueUserProvided)) {
+      await this.webComponents.compareUIVsJsonValue(this.batchIdLabel, batchIdValueUserProvided);
+    } else {
+      await this.webComponents.verifyUIElementTextIsNotNull(this.batchIdLabel);
+    }
+
+
+    // 8) Filter is Visible 
+    await this.webComponents.waitElementToBeVisible(this.viewPayrollFilter);
+
+    // 9) Payment summary : Validate UI Vs Json (Payment summary Label) Additional Validation
+    await this.webComponents.compareUIVsJsonValue(this.paymentSummaryLabel, paymentSummaryLabel);
+
+    // 10) Total Payees Label : Validate UI Vs Json
+    await this.webComponents.compareUIVsJsonValue(this.totalPayeesLabel, totalPayeesLabel);
+
+    // 11) Total Payees Value : Validate UI Vs Json
+    await this.webComponents.compareUIVsJsonValue(this.totalPayeesValue, totalPayeesValue);
+
+    // 12) Total Amount Label : Validate UI Vs Json
+    await this.webComponents.compareUIVsJsonValue(this.totalAmountLabel, totalAmountLabel);
+
+    // 13) Total Amount Value : If totalAmountValueEdited is Not Null/Blank, it means its edited and validate it
+    // Else validete the without edited value
+    if (await this.webComponents.stringIsNotNullOrBlank(totalAmountValueEdited)) {
+      await this.webComponents.compareUIVsJsonValue(this.totalAmountValue, totalAmountValueEdited);
+    } else {
+      await this.webComponents.compareUIVsJsonValue(this.totalAmountValue, totalAmountValue);
+    }
+    // 14) Payee/Nickname : Validate (Payee Name) UI Vs Json
+    await this.webComponents.compareUIVsJsonValue(this.payeeNameLabel1Value, payeeNameLabelValue);
+
+    // 15) Payee/Nickname : Validate (Nickname) UI Vs Json
+    await this.webComponents.compareUIVsJsonValue(this.payeeNicknameLabelValue, payeeNicknameLabelValue);
+
+    // 16) Bank/SWIFT BIC: Validate (Bank) UI Vs Json
+    await this.webComponents.compareUIVsJsonValue(this.bankNameLabel1Value, bankNameLabelValue);
+
+    // 17) Bank/SWIFT BIC: Validate (SWIFT) UI Vs Json
+    await this.webComponents.compareUIVsJsonValue(this.bankSwiftBicLabel1, bankSwiftBicLabelValue);
+
+    // 18) Account number: Validate UI Vs Json
+    await this.webComponents.compareUIVsJsonValue(this.accountNumberLabel1, accountNumberLabelValue);
+
+    // 19) Status (PendingApproval) : Validate UI Vs Json
+    await this.webComponents.compareUIVsJsonValue(this.status, statusLabelValue);
+
+    // 20) Amount (SGD): Validate UI Vs Json
+    // If amountEditedLabelValue : is edited validate the edited value
+    // else validate the no edited value of amount
+    if (await this.webComponents.stringIsNotNullOrBlank(amountEditedLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.amountFirstLabel, amountEditedLabelValue);
+    } else {
+      await this.webComponents.compareUIVsJsonValue(this.amountFirstLabel, amountLabelValue);
+    }
+
+    // 21) If Purpose Code: Value is not null/Blank validate the value provided UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(purposeCodeLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.purposeCodeLabel1, purposeCodeLabelValue);
+    }
+
+    // 22) If Transaction Code: Value is not null/Blank validate the value provided UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(transactionLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.transactionCodeLabel1, transactionLabelValue);
+    }
+
+    //23) If Reference for payee: Value is not null/Blank validate the value provided UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(referenceForPayeeLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.referenceForPayeeLabel1, referenceForPayeeLabelValue);
+    }
+
+    //24) If particulars: Value is not null/Blank validate the value provided UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(particularsLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.particularsLabel1, particularsLabelValue);
+    }
+
+    // Click : showOptionalViewButton1
+    await this.webComponents.javaScriptsClick(this.showOptionalViewButton1);
+
+    //25) If Payment details: Value is not null/Blank validate the value provided UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(paymentDetailsLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.paymentDetailLabel1, paymentDetailsLabelValue);
+    }
+
+    // 26) Message to payee (optional): Validate UI Vs Json
+    await this.webComponents.compareUIVsJsonValue(this.messageLabel1, emailMessageLabelValue);
+
+    // 27)Emails 1 to 5 : Validate UI Vs Json
+    await this.webComponents.compareUIVsJsonValue(this.emailListLabel1Value, email1LabelValue);
+    await this.webComponents.compareUIVsJsonValue(this.emailListLabel2Value, email2LabelValue);
+    await this.webComponents.compareUIVsJsonValue(this.emailListLabel3Value, email3LabelValue);
+    await this.webComponents.compareUIVsJsonValue(this.emailListLabel4Value, email4LabelValue);
+    await this.webComponents.compareUIVsJsonValue(this.emailListLabel5Value, email5LabelValue);
+
+    // 28) Next approver : value is not Null
+    await this.webComponents.waitElementToBeVisible(this.nextApproverLabel);
+
+    // 29) Next approver : Visible
+    await this.webComponents.waitElementToBeVisible(this.activityLogSection);
+
+  }
+
+  /**
+   * Author : LC5741501
+   * This method validates the details of Expected
+   * values(JSON) Vs Actual Selected Payee Or Reference No (from UI) 
+   */
+  async editAmountSGD(testData) {
+
+    // Click : Edit button
+    await this.webComponents.clickWhenVisibleAndEnabled(this.editButton);
 
     // Step 2: Enter Amount (SGD) = add Amount
     await this.webComponents.enterTextarea(this.amount, testData.Payroll.editAmount);
 
+  }
+
+
+  /**
+   * Author : LC5741501
+   * This method delete's the PayeeOrReference No
+   */
+  async deleteOpenPayeeOrReferenceNo(input: deleteOpenPayeeOrReferenceNo, reference) {
+    const { transactionDeleted, internalReference } = input;
+    // Click : Delete button
+    await this.webComponents.clickWhenVisibleAndEnabled(this.deleteButonPayroll);
+
+    // Click : Delete button (Confirm delete Popup)
+    await this.webComponents.clickWhenVisibleAndEnabled(this.deleteButonConfirmDeletePopup);
+
+    //Validate : Transaction Deleted Popup Label
+    await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabel);
+    await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabel, transactionDeleted);
+
+    // Validate : Refrence No is present in the deleted message
+    if (await this.webComponents.stringIsNotNullOrBlank(internalReference)) {
+      await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabelMsg);
+      await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabelMsg, internalReference);
+    } else {
+      await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabelMsg);
+      await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabelMsg, reference);
     }
 
-    /**
-       * Author : LC5741501
-       * This method delete's the PayeeOrReference No
-       */
-      async deleteOpenPayeeOrReferenceNo(testData, internalReferenceAutoGenerated, reference){
-    
-        // Click : Delete button
-        await this.webComponents.clickWhenVisibleAndEnabled(this.deleteButonPayroll);
-    
-        // Click : Delete button (Confirm delete Popup)
-        await this.webComponents.clickWhenVisibleAndEnabled(this.deleteButonConfirmDeletePopup);
-    
-        //Validate : Transaction Deleted Popup Label
-        await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabel);
-        await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabel, testData.Payroll.transactionDeleted);
-
-        // Validate : Refrence No is present in the deleted message
-        if(internalReferenceAutoGenerated){
-          await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabelMsg);
-        await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabelMsg, reference);
-        }else{
-          await this.webComponents.waitElementToBeVisible(this.transactionDeletedPopupLabelMsg);
-        await this.webComponents.compareUIVsJsonValue(this.transactionDeletedPopupLabelMsg, testData.Payroll.internalReference);
-        }
-        
-      }
+  }
 
 }

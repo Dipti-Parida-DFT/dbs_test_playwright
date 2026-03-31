@@ -343,18 +343,15 @@ export class AccountTransferPage {
 
 
   //** wait for Authenticate dialogue if present */
-  async handleAuthIfPresent(code = '1111') {
-    
+  async handleAuthIfPresent(code: string) {
     const appears = await this.authDialog.waitFor({
       state: 'visible',
       timeout: 60000
     }).then(() => true).catch(() => false);
-    //console.log('Authentication dialog appears:', appears);
     if (appears) {
       await this.securityAccessCode.fill(code);
       await this.authenticateButton.click();
-      //console.log('Handled authentication dialog with code:', code);
-      await this.authDialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+      await this.authDialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => { });
     }
   }
 
@@ -464,7 +461,7 @@ export class AccountTransferPage {
   }
 
   /** Convenience: click after visible+enabled */
-  async safeClick(locator: Locator, timeout = 15_000) {
+  async safeClick(locator: Locator, timeout = 25_000) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
     await locator.click();

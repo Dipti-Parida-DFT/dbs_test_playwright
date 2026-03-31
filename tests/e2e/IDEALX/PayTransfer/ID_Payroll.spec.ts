@@ -5,6 +5,8 @@ import path from 'node:path';
 
 import { NavigatePages, PaymentsPages, ApprovalsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
+import { CONSTANTS } from '../../../lib/constants';
+import { TIMEOUT } from '../../../lib/timeouts';
 import { OperationsPages } from '../../../pages/SAM';
 import moment from "moment";
 
@@ -41,7 +43,7 @@ test.describe.configure({
 test.describe('ID_Payroll (Create Payments)', () => {
   let pages: PaymentsPages;
   // Track created payees per test
-  type CreatedPayee = { nickName?: string; accountNumber?: string };
+  type CreatedPayee = { name?: string; accountNumber?: string };
   let createdPayees: CreatedPayee[] = [];
    
 
@@ -50,10 +52,10 @@ test.describe('ID_Payroll (Create Payments)', () => {
     _OperationsPages = new OperationsPages(page);
     process.env.currentTestTitle = testInfo.title;
     customBrowser = await chromium.launch({ headless: false });
-    test.setTimeout(200_000);
+    test.setTimeout(TIMEOUT.MAX);
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await loginPage.login(loginCompanyId, loginUserId, '123');
+    await loginPage.login(loginCompanyId, loginUserId, (String(CONSTANTS.PIN)));
     // 2) Create the aggregator once per test
     pages = new PaymentsPages(page);
   });
@@ -68,7 +70,7 @@ test.describe('ID_Payroll (Create Payments)', () => {
   // Best-effort cleanup; never fail the test because cleanup failed
   for (const p of createdPayees) {
     try {
-      const key = p.nickName ?? p.accountNumber ?? '';
+      const key = p.name ?? p.accountNumber ?? '';
       await pages.PayrollPage.deletePayeeByFilter(key, /* confirm */ true);
       console.log(`[cleanup] Deleted payee with key: ${key}`);
     } catch (err) {
@@ -84,7 +86,7 @@ test.describe('ID_Payroll (Create Payments)', () => {
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
 
     // Step 2: Authentication Pop-up
-    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    await pages.AccountTransferPage.handleAuthIfPresent(String(CONSTANTS.SECURITYACCESSCODE))
 
     // Step 3: Click on VN Payroll icon
     await pages.PayrollPage.safeClick(pages.PayrollPage.payroll);
@@ -97,7 +99,7 @@ test.describe('ID_Payroll (Create Payments)', () => {
     await page.keyboard.press('Enter');
     
     // Reusable helper for add new payee
-    const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+    const { name, accountNumber }  = await pages.PayrollPage.addNewPayee({
       name: testData.Payroll.newPayeeName,
       nickName: testData.Payroll.newPayeeNickName,
       bankId: payeeBankID,
@@ -105,7 +107,7 @@ test.describe('ID_Payroll (Create Payments)', () => {
     });
 
     // Register for cleanup
-    createdPayees.push({ nickName, accountNumber });
+    createdPayees.push({ name, accountNumber });
 
     // Step 5: Enter Amount > max + details
     await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.moreThanMaxAmountIx);
@@ -126,9 +128,13 @@ test.describe('ID_Payroll (Create Payments)', () => {
       '.ant-message', '.ant-message-error', '.ant-notification-notice', // Ant Design
       '.MuiAlert-root',                  // Material UI
       '.invalid-feedback'                // Common form feedback
-    ].join(', '));
+    ].join(', ')
+    , {
+      hasText: testData.Payroll.errorMessage
+    }
+    );
 
-    await expect(globalError).toBeVisible({ timeout: 30000 });
+    await expect(globalError).toBeVisible({ timeout: TIMEOUT.LONG });
     await expect(globalError).toContainText(testData.Payroll.errorMessage);
     
   });
@@ -140,7 +146,7 @@ test.describe('ID_Payroll (Create Payments)', () => {
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
 
     // Step 2: Authentication Pop-up
-    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    await pages.AccountTransferPage.handleAuthIfPresent(String(CONSTANTS.SECURITYACCESSCODE))
 
     // Step 3: Click on VN Payroll icon
     await pages.PayrollPage.safeClick(pages.PayrollPage.payroll);
@@ -153,7 +159,7 @@ test.describe('ID_Payroll (Create Payments)', () => {
     await page.keyboard.press('Enter');
 
     // Reusable helper for add new payee
-        const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+        const { name, accountNumber }  = await pages.PayrollPage.addNewPayee({
           name: testData.Payroll.newPayeeName,
           nickName: testData.Payroll.newPayeeNickName,
           bankId: payeeBankID,
@@ -161,7 +167,7 @@ test.describe('ID_Payroll (Create Payments)', () => {
         });
 
       // Register for cleanup
-      createdPayees.push({ nickName, accountNumber });
+      createdPayees.push({ name, accountNumber });
 
     // Step 5: Enter Amount = max + details
     await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.maxAmountIx);
@@ -194,7 +200,7 @@ test.describe('ID_Payroll (Create Payments)', () => {
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
 
     // Step 2: Authentication Pop-up
-    await pages.AccountTransferPage.handleAuthIfPresent("1111")
+    await pages.AccountTransferPage.handleAuthIfPresent(String(CONSTANTS.SECURITYACCESSCODE))
 
     // Step 3: Click on VN Payroll icon
     await pages.PayrollPage.safeClick(pages.PayrollPage.payroll);
@@ -207,7 +213,7 @@ test.describe('ID_Payroll (Create Payments)', () => {
     await page.keyboard.press('Enter');
 
     // Reusable helper for add new payee
-      const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+      const { name, accountNumber }  = await pages.PayrollPage.addNewPayee({
         name: testData.Payroll.newPayeeName,
         nickName: testData.Payroll.newPayeeNickName,
         bankId: payeeBankID,
@@ -215,7 +221,7 @@ test.describe('ID_Payroll (Create Payments)', () => {
       });
 
     // Register for cleanup
-    createdPayees.push({ nickName, accountNumber });
+    createdPayees.push({ name, accountNumber });
 
     // Step 5: Enter Amount = max for first item + details
     await pages.PayrollPage.safeFill(pages.PayrollPage.amount, testData.Payroll.maxAmountIx);
@@ -224,7 +230,7 @@ test.describe('ID_Payroll (Create Payments)', () => {
 
     // Step 6: Add an existing payee to exceed total
     await pages.PayrollPage.safeClick(pages.PayrollPage.existingPayeeTabHeader);
-    await pages.PayrollPage.safeFill(pages.PayrollPage.existingPayeeFilter, testData.Payroll.bulkExistingPayee);
+    await pages.PayrollPage.safeFill(pages.PayrollPage.existingPayeeFilter, testData.Payroll.payrollExistingPayee);
     await pages.PayrollPage.safeClick(pages.PayrollPage.addExistingPayeeButton);
 
      // Step 7: Enter Amount = max for second item + details
