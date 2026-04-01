@@ -1,5 +1,7 @@
 // pages/TransferCentersPage.ts
 import { Page, Locator, expect } from '@playwright/test';
+import { CONSTANTS } from '../../../lib/constants';
+import { TIMEOUT} from '../../../lib/timeouts';
 
 const isSIT = (process.env.ENV?.toUpperCase() === 'SIT');
 
@@ -262,13 +264,13 @@ export class TransferCentersPage {
     await this.page.waitForLoadState('networkidle');
   }
 
-  async safeClick(locator: Locator, timeout = 99_000) {
+  async safeClick(locator: Locator, timeout = TIMEOUT.EXTREME) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
     await locator.click();
   }
 
-  async safeFill(locator: Locator, value: string, timeout = 35_000) {
+  async safeFill(locator: Locator, value: string, timeout = TIMEOUT.EXTREME) {
     await expect(locator).toBeVisible({ timeout });
     await locator.fill(value);
   }

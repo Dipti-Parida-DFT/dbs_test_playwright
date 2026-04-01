@@ -1233,13 +1233,110 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     await webComponents.waitElementToBeVisible(pages.PayrollPage.amountViewLabel);
     await webComponents.waitElementToBeVisible(pages.PayrollPage.hashValueLabel);
 
-    // Step 24: This method deletes the existing opened PayeeOrReferenceNo.
+    // Test Case TC008_SG_ManagePayroll - Edit ManagePayrollDBS via Transfer Center
+    // Step 24: Click Edit button
+    await webComponents.isElementVisible(page, pages.PayrollPage.editButton);
+    await webComponents.hardWait(page);
+    //await page.waitForTimeout(TIMEOUT.VERYMIN);
+    console.log('[TC008] Clicking Edit button');
+    await webComponents.hardClick(pages.PayrollPage.editButton);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.amount);
+
+     // Step 25: Select Payment date. Click Radio button : Earliest Available Date
+     await webComponents.waitElementToBeVisible(pages.PayrollPage.earliestAvailableDateCheckbox);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.earliestAvailableDateCheckbox);
+    
+    // Step 26: Enter new amount
+    console.log('[TC008] Entering new amount');
+    // New amount is entered using webComponents.enterTextarea
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.amount);
+    await webComponents.enterTextarea(pages.PayrollPage.amount,testData.ManagePayrollPayee1.amountEditTc08);
+    
+    // Step 27: Click Next button
+    console.log('[TC008] Clicking Next button');
+    await webComponents.scrollToElement(pages.PayrollPage.nextButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.nextButton);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.submitButton);
+
+    // Step 28: Click Submit button
+    console.log('[TC008] Clicking Submit button');
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.submitButton);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.finishButton);
+
+    // Step 29: Click Finish button.
+    await webComponents.scrollToElement(pages.BulkCollectionPage.finishButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.finishButton);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.managePayroll);
+    //await page.waitForTimeout(TIMEOUT.VERYMIN); // Wait for page to settle before searching
+    await webComponents.hardWait(page);
+
+    // Step 30: Search Reference No and Open.
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.hardWait(page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.fromAccountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.amountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.hashValueLabel);
+
+    
+    // Step 31: Validate the Reference No details.
+    // Extra Validation added for all fields validation in actual script its validating only FromAccountValue, amount, and ExistingPayeeName
+    await pages.PayrollPage.validatePayeeOrRefrenceNoDetails({
+      fromAccountValue1: testData.ManagePayrollPayee1ValidationData.fromAccountValue1,
+      fromAccountValue2: testData.ManagePayrollPayee1ValidationData.fromAccountValue2,
+      paymentTypeValue: testData.ManagePayrollPayee1ValidationData.paymentTypeValue,
+      amountDeductedValue: testData.ManagePayrollPayee1.amountEditSGDTc08,
+      amountDeductedEditedValue: testData.ManagePayrollPayee1ValidationData.amountDeductedEditedValue,
+
+      referenceValueUserProvided: testData.ManagePayrollPayee1.internalReferenceUserProvided,
+      batchIdValueUserProvided: testData.ManagePayrollPayee1.batchIdValueUserProvided,
+
+      paymentSummaryLabel: testData.ManagePayrollPayee1ValidationData.paymentSummaryLabel,
+      totalPayeesLabel: testData.ManagePayrollPayee1ValidationData.totalPayeesLabel,
+      totalPayeesValue: testData.ManagePayrollPayee1ValidationData.totalPayeesValue,
+      totalAmountLabel: testData.ManagePayrollPayee1ValidationData.totalAmountLabel,
+      totalAmountValue: testData.ManagePayrollPayee1.amountEditSGD,
+      totalAmountValueEdited: testData.ManagePayrollPayee1ValidationData.totalAmountValueEdited,
+
+
+      payeeNameLabelValue: testData.ManagePayrollPayee1.newPayeeName,
+      payeeNicknameLabelValue: testData.ManagePayrollPayee1.newPayeeNickName,
+      bankNameLabelValue: testData.ManagePayrollPayee1ValidationData.bankNameLabelValue,
+      bankSwiftBicLabelValue: testData.ManagePayrollPayee1ValidationData.bankSwiftBicLabelValue,
+      accountNumberLabelValue: testData.ManagePayrollPayee1.newPayeeAcctNumber,
+      statusLabelValue: testData.status.PendingApproval,
+
+      amountLabelValue: testData.ManagePayrollPayee1.amountEditTc08,
+      amountEditedLabelValue: testData.ManagePayrollPayee1.amountEdited,
+      transactionLabelValue: testData.ManagePayrollPayee1ValidationData.transactionCodeLabelValue,
+      purposeCodeLabelValue: testData.ManagePayrollPayee1ValidationData.purposeCodeLabelValue,
+
+      referenceForPayeeLabelValue: testData.ManagePayrollPayee1.referenceForPayee,
+      particularsLabelValue: testData.ManagePayrollPayee1.particulars,
+
+      paymentDetailsLabelValue: testData.ManagePayrollPayee1.paymentDetails,
+      emailMessageLabelValue: testData.ManagePayrollPayee1.emailMessage,
+      email1LabelValue: testData.ManagePayrollPayee1.emailId0,
+      email2LabelValue: testData.ManagePayrollPayee1.emailId1,
+      email3LabelValue: testData.ManagePayrollPayee1.emailId2,
+      email4LabelValue: testData.ManagePayrollPayee1.emailId3,
+      email5LabelValue: testData.ManagePayrollPayee1.emailId4
+    }, reference);
+
+    // Step 32: This method deletes the existing opened PayeeOrReferenceNo.
     // Additional Step to delete the Reference No created
     await pages.PayrollPage.deleteOpenPayeeOrReferenceNo({
       transactionDeleted: testData.ManagePayrollPayee1.transactionDeleted,
       internalReference: testData.ManagePayrollPayee1.internalReferenceUserProvided
     }, reference);
-    
+
+
+
   });
 
 });

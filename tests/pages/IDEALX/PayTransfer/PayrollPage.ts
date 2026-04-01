@@ -1563,6 +1563,7 @@ export class PayrollPage {
     }
 
     // Click : showOptionalViewButton1
+    await this.webComponents.scrollToElement(this.showOptionalViewButton1);
     await this.webComponents.javaScriptsClick(this.showOptionalViewButton1);
 
     //25) If Payment details: Value is not null/Blank validate the value provided UI Vs Json

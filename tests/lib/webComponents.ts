@@ -235,7 +235,7 @@ async hardClick(locator: Locator): Promise<void> {
       const loc = sel.startsWith('/') ? page.locator(`xpath=${sel}`) : page.locator(sel);
       try {
         const first = loc.first();
-        if (await first.isVisible({ timeout: TIMEOUT.MAX }).catch(() => false)) {
+        if (await first.isVisible({ timeout: TIMEOUT.EXTREME }).catch(() => false)) {
           await first.waitFor({ state: 'hidden', timeout: TIMEOUT.EXTREME });
         }
       } catch { /* ignore */ }
