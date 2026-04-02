@@ -34,6 +34,7 @@ export class BulkPaymentPage {
     this.bankCharge = page.locator('xpath=//dbs-radio-group[@formcontrolname="bankCharge"]');
     this.amount = page.locator('xpath=//input[@name="payeeAmount"]');
     this.amountPayee1 = page.locator('(//input[@name="payeeAmount"])[1]');
+    this.secondDot = page.locator('//ul[contains(@class,"pages__container")]/li[2]');
 
     //Addded Locator fo Bulk Payment  Author: LC5741501   * Created Date: 11/03/26
     this.payeeResidentStatus = page.locator('xpath=//span[text()="Payee Resident Status"]/parent::div/following-sibling::div//span[@id="fromAccount"]');
@@ -57,6 +58,7 @@ export class BulkPaymentPage {
     this.existingPayeeFilter = page.locator('xpath=//input[@name="payee-selector"]');
     this.addPayee = page.locator('xpath=//button[@name="addPayee"]');
     this.addButton = page.locator('xpath=//button[@name="add"]');
+    this.continueButton = page.locator('//*[@id="cognitive-continue"]');
 
     // Tabs
     this.newPayNow = page.locator('xpath=//*[@id="ux-tab-labelPayNow"]');
@@ -161,6 +163,7 @@ export class BulkPaymentPage {
     // Payee 1 (view)
     this.payeeNameValue = page.locator('xpath=//*[@id="bulk-view-name_0"]');
     this.payeeNickNameValue = page.locator('xpath=//*[@id="bulk-view-nickName_0"]');
+    this.payeeNickNameSGBulk = page.locator('xpath=//*[@name="new-payee-nick-name"]');
     this.payeeBankName = page.locator('xpath=//*[@id="bulk-view-payeeBankName_0"]');
     this.payeeBranchBankName = page.locator('xpath=//*[@id="bulk-view-payeeBranchName_0"]');
     this.payeeBankSwiftBic = page.locator('xpath=//*[@id="bulk-view-bankDetailsMsgDisplay_0"]');
@@ -287,6 +290,7 @@ export class BulkPaymentPage {
   readonly fromAccount: Locator;
   readonly billerServiceID: Locator;
   readonly bankCharge: Locator;
+  readonly secondDot: Locator;
   readonly amount: Locator;
   readonly amountPayee1: Locator;
   readonly payeeResidentStatus: Locator;
@@ -309,6 +313,7 @@ export class BulkPaymentPage {
   readonly existingPayeeFilter: Locator;
   readonly addPayee: Locator;
   readonly addButton: Locator;
+  readonly continueButton: Locator;
 
   readonly newPayNow: Locator;
   readonly existingPayeeTabIx: Locator;
@@ -402,6 +407,7 @@ export class BulkPaymentPage {
 
   readonly payeeNameValue: Locator;
   readonly payeeNickNameValue: Locator;
+  readonly payeeNickNameSGBulk: Locator;
   readonly payeeBankName: Locator;
   readonly payeeBranchBankName: Locator;
   readonly payeeBankSwiftBic: Locator;
@@ -523,14 +529,16 @@ export class BulkPaymentPage {
     const { name, nickName, bankId, accountNumber } = input;
 
     await this.newPayeeTab.click();
+    await this.continueButton.waitFor({ state: 'hidden', timeout: 15_000 });
+    await this.safeClick(this.continueButton);
     await this.safeClick(this.newPayeeName);
     await this.safeFill(this.newPayeeName, name);
     await this.page.keyboard.press('Tab');
     await this.newPayeeName.blur();
-    // await this.safeClick(this.newPayeeNickName);
-    // await this.safeFill(this.newPayeeNickName, nickName);
+    await this.safeClick(this.payeeNickNameValue);
+    await this.safeFill(this.payeeNickNameValue, nickName);
     await this.page.keyboard.press('Tab');
-    //await this.newPayeeNickName.blur();
+    await this.payeeNickNameValue.blur();
     await this.payeeBankId.click();
     await this.payeeBankId.fill(bankId);
     await this.page.keyboard.press('Enter');
@@ -552,6 +560,47 @@ export class BulkPaymentPage {
     await this.safeClick(this.addNewPayeeButton);
     return { name, accountNumber };
   }
+
+  /**
+     * Add a new payee flow (reusable in all tests).
+     * Mirrors the exact steps you currently perform, including clipboard paste.
+     */
+  async addNewPayeeSGBulkPayment(input: NewPayeeInput): Promise<NewPayeeResult> {
+    const { name, nickName, bankId, accountNumber } = input;
+
+    await this.newPayeeTab.click();
+    await this.continueButton.waitFor({ state: 'hidden', timeout: 15_000 });
+    await this.safeClick(this.continueButton);
+    await this.safeClick(this.newPayeeName);
+    await this.safeFill(this.newPayeeName, name);
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeName.blur();
+    await this.safeClick(this.payeeNickNameSGBulk);
+    await this.safeFill(this.payeeNickNameSGBulk, nickName);
+    await this.page.keyboard.press('Tab');
+    await this.payeeNickNameSGBulk.blur();
+    await this.payeeBankId.click();
+    await this.payeeBankId.fill(bankId);
+    await this.page.keyboard.press('Enter');
+    await this.payeeBankId.blur();
+    await this.safeClick(this.findBankIDButton);
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
+    await this.payeeBankSearchResults.first().click();
+    await this.safeClick(this.newPayeeAccountNumber);
+
+    // Preserve your clipboard -> paste behavior
+    await this.page.evaluate(async (text) => {
+      await navigator.clipboard.writeText(text);
+    }, accountNumber);
+
+    await this.page.keyboard.press('Control+V');
+    await this.page.keyboard.press('Enter');
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeAccountNumber.blur();
+    await this.safeClick(this.addNewPayeeButton);
+    return { name, accountNumber };
+  }
+
 
   /** Delete Payee fnction */
 
