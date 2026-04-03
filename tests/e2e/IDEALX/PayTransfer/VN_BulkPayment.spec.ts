@@ -36,9 +36,10 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
 
     //customBrowser = await chromium.launch({ headless: false });
     test.setTimeout(TIMEOUT.MAX);
+    test.setTimeout(TIMEOUT.MAX);
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await loginPage.login(loginCompanyId, loginUserId, '123');
+    await loginPage.login(loginCompanyId, loginUserId, (String(CONSTANTS.PIN)));
 
     pages = new PaymentsPages(page);
   });
@@ -164,12 +165,7 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
     await pages.BulkPaymentPage.waitForSubmittedPageReady();
 
     // Capture reference and verify
-      // If you just want the full banner text:
-    const referenceText = await pages.BulkPaymentPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
-    // If you want only the EBLV… token:
     const reference = await pages.BulkPaymentPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
 
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.waitForTransferCenterReady();
@@ -228,12 +224,7 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
     await pages.BulkPaymentPage.waitForSubmittedPageReady();
 
     // Capture reference and verify
-      // If you just want the full banner text:
-      const referenceText = await pages.BulkPaymentPage.getReferenceText();
-      console.log('Captured reference text:', referenceText);
-      // If you want only the EBLV… token:
       const reference = await pages.BulkPaymentPage.getReferenceID();
-      console.log('Captured referenceID:', reference);
   
       await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
       await pages.TransferCentersPage.waitForTransferCenterReady();

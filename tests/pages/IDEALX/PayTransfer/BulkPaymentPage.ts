@@ -26,6 +26,7 @@ export class BulkPaymentPage {
     // Create Page / Menu
     this.menuRadio = page.locator('xpath=//dbs-toolbar/div/div[2]/p-horizontal-navigation/div/ul[2]/li[2]');
     this.bulkPayment = page.locator('xpath=//*[@id="icon__bulk_payment"]/parent::span');
+    this.secondDot = page.locator('//ul[contains(@class,"pages__container")]/li[2]');
 
     // Create form
     this.debitTypeSelect = page.locator('xpath=//p-auto-complete[@id="debitType"]');
@@ -44,6 +45,7 @@ export class BulkPaymentPage {
     this.payeeCategoryOptionEnterprise = page.locator('xpath=//span[text()="Enterprise"]');
     this.earliestAvailableDateCheckbox = page.locator('xpath=//span[text()="Earliest Available Date "]');
 
+    this.continueButton = page.locator('//*[@id="cognitive-continue"]');
     this.payeeRef = page.locator('xpath=//input[@name="payeeRef"]');
     this.payeeParticulars = page.locator('xpath=//input[@name="payeeParticulars"]');
     this.paymentDetailsTextarea = page.locator('xpath=//textarea[@name="payeeDetails"]');
@@ -168,6 +170,7 @@ export class BulkPaymentPage {
     // Payee 1 (view)
     this.payeeNameValue = page.locator('xpath=//*[@id="bulk-view-name_0"]');
     this.payeeNickNameValue = page.locator('xpath=//*[@id="bulk-view-nickName_0"]');
+    this.newPayeeNickName = page.locator('xpath=//input[@name="new-payee-nick-name"]');
     this.payeeNickNameSGBulk = page.locator('xpath=//*[@name="new-payee-nick-name"]');
     this.payeeBankName = page.locator('xpath=//*[@id="bulk-view-payeeBankName_0"]');
     this.payeeBranchBankName = page.locator('xpath=//*[@id="bulk-view-payeeBranchName_0"]');
@@ -290,10 +293,11 @@ export class BulkPaymentPage {
   // ────────────────────────────── Locators ──────────────────────────────
   readonly menuRadio: Locator;
   readonly bulkPayment: Locator;
-
+  readonly secondDot: Locator;
   readonly debitTypeSelect: Locator;
   readonly consolidatedDebit: Locator;
   readonly fromAccount: Locator;
+  readonly continueButton: Locator;
   readonly billerServiceID: Locator;
   readonly bankCharge: Locator;
   readonly secondDot: Locator;
@@ -416,6 +420,7 @@ export class BulkPaymentPage {
 
   readonly payeeNameValue: Locator;
   readonly payeeNickNameValue: Locator;
+  readonly newPayeeNickName: Locator;
   readonly payeeNickNameSGBulk: Locator;
   readonly payeeBankName: Locator;
   readonly payeeBranchBankName: Locator;

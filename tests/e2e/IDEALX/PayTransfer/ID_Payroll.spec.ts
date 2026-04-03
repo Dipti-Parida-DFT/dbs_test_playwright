@@ -369,7 +369,6 @@ test.describe.serial('ID_Payroll (Approve and Release Payment)', () => {
     /**
      * Step 8: Handle challenge (OTP)
      */
-   // await pages.PayrollPage.waitForApprovalChallengeReady();
    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.pushApprovalOption);
    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.getChallengeSMSButton);
    await webComponents.enterTextarea(pages.PayrollPage.enterResponseTextBox, '12312312');
