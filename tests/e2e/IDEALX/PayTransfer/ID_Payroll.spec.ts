@@ -29,8 +29,8 @@ const testDataSAMPath = path.resolve(__dirname, '../../../data/SAM_testData.json
 const testDataSAM = JSON.parse(fs.readFileSync(testDataSAMPath, 'utf-8'));
 let day = new Date().getDay();
 let currentDate = moment(new Date()).format("DD MMM YYYY");
-let _ApprovalsPages: ApprovalsPages;
-let _OperationsPages: OperationsPages;
+let approvalsPages: ApprovalsPages;
+let operationsPages: OperationsPages;
 let reference = "";
 let reference1 = "";
 let approvalReference = '';
@@ -48,8 +48,8 @@ test.describe('ID_Payroll (Create Payments)', () => {
    
 
   test.beforeEach(async ({ page }, testInfo) => {
-    _ApprovalsPages = new ApprovalsPages(page);
-    _OperationsPages = new OperationsPages(page);
+    approvalsPages = new ApprovalsPages(page);
+    operationsPages = new OperationsPages(page);
     process.env.currentTestTitle = testInfo.title;
     customBrowser = await chromium.launch({ headless: false });
     test.setTimeout(TIMEOUT.MAX);
@@ -264,8 +264,8 @@ test.describe('ID_Payroll (Approve and Release Payment)', () => {
   let pages: PaymentsPages;
 
   test.beforeEach(async ({ context, page }, testInfo) => {
-    _ApprovalsPages = new ApprovalsPages(page);
-    _OperationsPages = new OperationsPages(page);
+    approvalsPages = new ApprovalsPages(page);
+    operationsPages = new OperationsPages(page);
     process.env.currentTestTitle = testInfo.title;
     customBrowser = await chromium.launch({ headless: false });
     pages = new PaymentsPages(page);
@@ -290,7 +290,7 @@ test.describe('ID_Payroll (Approve and Release Payment)', () => {
     await loginPage.loginSAM(testDataSAM.loginSAMID.ASADM2);
 
     // Set today as holiday by setting empty cutoff time for DBSID schedule
-    await _OperationsPages.schedulesPage.editCutOffTime(
+    await operationsPages.schedulesPage.editCutOffTime(
       testDataSAM.selectAffiliateByValue.DBSID,
       pages.PayrollPage.IDPayrollScheduleLink,
       day,
@@ -303,7 +303,7 @@ test.describe('ID_Payroll (Approve and Release Payment)', () => {
     await loginPage.gotoSAM();
     await loginPage.loginSAM(testDataSAM.loginSAMID.ASADM1);
     
-    await _OperationsPages.schedulesPage.approveCutOffTime(
+    await operationsPages.schedulesPage.approveCutOffTime(
       testDataSAM.selectAffiliateByValue.DBSID,
       pages.PayrollPage.pendingModifyApprovalLink
     );
@@ -315,35 +315,35 @@ test.describe('ID_Payroll (Approve and Release Payment)', () => {
     await loginPage.login(loginCompanyId, loginUserId, (String(CONSTANTS.PIN)));
   
     // Step 2: Open Approval Page
-    await _ApprovalsPages.ApprovalPage.safeClick(_ApprovalsPages.ApprovalPage.approvalMenu);
+    await approvalsPages.ApprovalPage.safeClick(approvalsPages.ApprovalPage.approvalMenu);
     await pages.AccountTransferPage.handleAuthIfPresent(String(CONSTANTS.SECURITYACCESSCODE));
-    await _ApprovalsPages.ApprovalPage.waitForApprovalPageReady();
+    await approvalsPages.ApprovalPage.waitForApprovalPageReady();
   
     // Step 3: Filter by reference (if available)
     if (reference.trim().length > 0) {
-      await _ApprovalsPages.ApprovalPage.safeFill(_ApprovalsPages.ApprovalPage.byTransactionFilter, reference);
+      await approvalsPages.ApprovalPage.safeFill(approvalsPages.ApprovalPage.byTransactionFilter, reference);
     } else {
-      await _ApprovalsPages.ApprovalPage.safeClick(_ApprovalsPages.ApprovalPage.showAdditionalFilter);
-      await _ApprovalsPages.ApprovalPage.safeFill(_ApprovalsPages.ApprovalPage.paymentTypeListInput, 'ID - Payroll');
-      await _ApprovalsPages.ApprovalPage.safeClick(_ApprovalsPages.ApprovalPage.IDPayrollOption);     
-      await _ApprovalsPages.ApprovalPage.safeClick(_ApprovalsPages.ApprovalPage.searchButton);
-      await _ApprovalsPages.ApprovalPage.transactionReferenceLink.isVisible({ timeout: 30000 });
+      await approvalsPages.ApprovalPage.safeClick(approvalsPages.ApprovalPage.showAdditionalFilter);
+      await approvalsPages.ApprovalPage.safeFill(approvalsPages.ApprovalPage.paymentTypeListInput, 'ID - Payroll');
+      await approvalsPages.ApprovalPage.safeClick(approvalsPages.ApprovalPage.IDPayrollOption);     
+      await approvalsPages.ApprovalPage.safeClick(approvalsPages.ApprovalPage.searchButton);
+      await approvalsPages.ApprovalPage.transactionReferenceLink.isVisible({ timeout: 30000 });
     }
   
     // Step 4: Capture reference from approval list and open the transaction
-    reference1 = (await _ApprovalsPages.ApprovalPage.transactionReferenceLink.textContent())?.trim() ?? '';
-    await _ApprovalsPages.ApprovalPage.safeFill(_ApprovalsPages.ApprovalPage.byTransactionFilter, reference1);
+    reference1 = (await approvalsPages.ApprovalPage.transactionReferenceLink.textContent())?.trim() ?? '';
+    await approvalsPages.ApprovalPage.safeFill(approvalsPages.ApprovalPage.byTransactionFilter, reference1);
   
     // Step 5: Approve transaction
-    await _ApprovalsPages.ApprovalPage.safeClick(_ApprovalsPages.ApprovalPage.transactionReferenceLink);
-    await _ApprovalsPages.ApprovalPage.safeClick(_ApprovalsPages.ApprovalPage.approveButton);
+    await approvalsPages.ApprovalPage.safeClick(approvalsPages.ApprovalPage.transactionReferenceLink);
+    await approvalsPages.ApprovalPage.safeClick(approvalsPages.ApprovalPage.approveButton);
     
     // Step 6: Handle challenge (OTP)
     await pages.PayrollPage.safeClick(pages.PayrollPage.pushApprovalOption);
     await pages.PayrollPage.safeClick(pages.PayrollPage.getChallengeSMSButton);
     await pages.PayrollPage.safeFill(pages.PayrollPage.challengeResponse, '12312312');
     await pages.PayrollPage.safeClick(pages.PayrollPage.approveButton.nth(1));
-    await _ApprovalsPages.ApprovalPage.safeClick(_ApprovalsPages.ApprovalPage.approveDismissButton);
+    await approvalsPages.ApprovalPage.safeClick(approvalsPages.ApprovalPage.approveDismissButton);
   
     // Step 7: Verify transaction in Transfer Center
     await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
@@ -366,17 +366,17 @@ test.describe('ID_Payroll (Approve and Release Payment)', () => {
     /**
      * Step 2: Open My Approval Page
      */
-    await _ApprovalsPages.ApprovalPage.safeClick(
-      _ApprovalsPages.ApprovalPage.approvalMenu
+    await approvalsPages.ApprovalPage.safeClick(
+      approvalsPages.ApprovalPage.approvalMenu
     );
     await pages.AccountTransferPage.handleAuthIfPresent(String(CONSTANTS.SECURITYACCESSCODE));
-    await _ApprovalsPages.ApprovalPage.waitForApprovalPageReady();
+    await approvalsPages.ApprovalPage.waitForApprovalPageReady();
   
     /**
      * Step 3: Release payroll transaction and capture reference
      */
     approvalReference =
-      await _ApprovalsPages.MyVerificationAndReleasePage.releaseSingleTransaction(
+      await approvalsPages.MyVerificationAndReleasePage.releaseSingleTransaction(
         reference,
         reference1,
         'ID - Payroll'
