@@ -56,7 +56,7 @@ export class TransferCentersPage {
     this.viewGroupReferenceLink = page.locator('xpath=//*[@id="view-group-list-reference_0"]');
     this.viewGroupFilterInput = page.locator('xpath=//*[@id="byGroup-view-filter"]');
     this.viewGroupListStatus = page.locator('xpath=//*[@id="view-group-list-status_0"]');
-    this.noInformationLabel = page.locator('xpath=//div[@id="No information to display"]');
+    this.noInformationLabel = page.locator('xpath=//p[text()="No information to display"]');
     this.groupCancelButton = page.locator('xpath=//*[@name="view-group-cancel"]');
   }
 

@@ -1233,7 +1233,8 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     await webComponents.waitElementToBeVisible(pages.PayrollPage.amountViewLabel);
     await webComponents.waitElementToBeVisible(pages.PayrollPage.hashValueLabel);
 
-    // Test Case TC008_SG_ManagePayroll - Edit ManagePayrollDBS via Transfer Center
+    // ##### Test Case TC008_SG_ManagePayroll - Edit ManagePayrollDBS via Transfer Center ####
+
     // Step 24: Click Edit button
     await webComponents.isElementVisible(page, pages.PayrollPage.editButton);
     await webComponents.hardWait(page);
