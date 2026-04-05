@@ -54,7 +54,7 @@ test.beforeEach(async ({ page }) => {
 // TESTS (each runs in its own fresh browser context + login)
 // ═══════════════════════════════════════════════════════════════════════════════
 
-test('TC001_HK_TelegraphicTransfer - Create A TT Payment Without Purpose Code', { tag: ['@TelegraphicTransfer', '@HK'] }, async ({ page }) => {
+test('TC001_HK_TelegraphicTransfer - Create A TT Payment Without Purpose Code', { tag: ['@telegraphic-transfer'] }, async ({ page }) => {
   // Payments → Transfer Center → Make a Payment
   // paymentMenu => Pay & Transfer (Left option)
   await pages.AccountTransferPage.waitForMenu();

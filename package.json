@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "validate:tags-DNR": "npx tsx scripts/validateTags.ts",
+    "enforce:tags": "npx tsx scripts/enforce-tags.ts",
+    "enforce:describe-tags": "npx tsx scripts/enforce-describe-required-tags.ts",
     "test": "npx playwright test",
     "test:headed": "npx playwright test --headed",
     "test:debug": "npx playwright test --debug",
@@ -15,8 +18,9 @@
     "extract:alltests": "node extract-alltests.js",
     "test:bulkpayment": "playwright test --grep @BulkPayment",
     "test:bulkcollection": "playwright test --grep @BulkCollection",
-    "test:not-sg": "playwright test --grep-invert @SG"
-
+    "test:not-sg": "playwright test --grep-invert @SG",
+    "validate:tags": "node scripts/validate-tags-available.js",
+    "validate:describe-tags": "npx tsx scripts/validate-describe-tags.ts"
   },
   "keywords": [],
   "author": "",
@@ -26,13 +30,17 @@
     "@playwright/test": "^1.58.2",
     "@types/log4js": "^0.0.33",
     "@types/moment": "^2.11.29",
-    "@types/node": "^25.0.3",
+    "@types/node": "^25.5.0",
     "allure-commandline": "^2.36.0",
-    "allure-playwright": "^3.4.5"
+    "allure-playwright": "^3.4.5",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
   },
   "dependencies": {
+    "glob": "^13.0.6",
     "log4js": "^6.9.1",
     "moment": "^2.30.1",
-    "typescript": "^5.9.3"
+    "yaml": "^2.8.3"
   }
 }

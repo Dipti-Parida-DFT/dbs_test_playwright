@@ -52,7 +52,7 @@ test.describe.configure({
 });
 
 // Actions for beforEach and afterEach test hooks
-test.describe('HK_BulkCollection (Playwright using PaymentsPages)', { tag: ['@BulkCollection', '@HK'] }, () => {
+test.describe('HK_BulkCollection (Playwright using PaymentsPages)', { tag: ['@bulk-collection'   ] }, () => {
   let pages: PaymentsPages;
   // Track created payees per test
   type CreatedPayee = { name?: string; accountNumber?: string };
@@ -97,7 +97,7 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', { tag: ['@Bu
   });
 
   //TC001_HK_BulkCollection
-  test('TC001_HK_BulkCollection - Verify creation of a Bulk collection with new Payer', { tag: ['@newPayer'] }, async ({ page }) => {
+  test('TC001_HK_BulkCollection - Verify creation of a Bulk collection with new Payer', { tag: ['@create-payment'] }, async ({ page }) => {
 
     //Step 1: Navigate Payment & Transfer Menu.
     await webComponents.waitForUXLoading([], page);
@@ -237,7 +237,7 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', { tag: ['@Bu
 
 
   //TC002_HK_BulkCollection
-  test('TC002_HK_BulkCollection - Verify creation of a Bulk collection with new and existing payer', { tag: ['@newPayer'] }, async ({ page }) => {
+  test('TC002_HK_BulkCollection - Verify creation of a Bulk collection with new and existing payer', { tag: ['@create-payment'] }, async ({ page }) => {
 
     //Step 1: Navigate Payment & Transfer Menu.
     await webComponents.waitForUXLoading([], page);

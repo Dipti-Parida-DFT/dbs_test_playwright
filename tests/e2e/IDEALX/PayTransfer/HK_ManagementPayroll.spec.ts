@@ -50,7 +50,7 @@ test.describe.configure({
 });
 
 // Actions for beforEach and afterEach test hooks
-test.describe('HK_ManagementPayroll (Playwright using PaymentsPages)', { tag: ['@ManagementPayroll', '@HK'] }, () => {
+test.describe('HK_ManagementPayroll (Playwright using PaymentsPages)', { tag: ['@management-payroll'  ] }, () => {
   let pages: PaymentsPages;
   // Track created payees per test
   type CreatedPayee = { name?: string; accountNumber?: string };
@@ -95,7 +95,7 @@ test.describe('HK_ManagementPayroll (Playwright using PaymentsPages)', { tag: ['
   });
 
   //TC001_HK_ManagementPayroll
-  test('TC001_HK_ManagementPayroll - Verify creation of a Management Payroll with new Payee', { tag: ['@newPayer'] }, async ({ page }) => {
+  test('TC001_HK_ManagementPayroll - Verify creation of a Management Payroll with new Payee', async ({ page }) => {
 
     //Step 1: Navigate Payment & Transfer Menu.
     await webComponents.waitForUXLoading([], page);

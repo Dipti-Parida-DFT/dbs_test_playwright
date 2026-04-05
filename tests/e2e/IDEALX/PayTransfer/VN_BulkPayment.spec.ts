@@ -21,7 +21,7 @@ test.describe.configure({
   retries: Number(process.env.CASE_RETRY_TIMES ?? 0),
 });
 
-test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', { tag: ['@BulkPayment', '@VN'] }, () => {
+test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', { tag: ['@bulk-payment'] }, () => {
   let pages: PaymentsPages;
   // Track created payees per test
   type CreatedPayee = { nickName?: string; accountNumber?: string };
