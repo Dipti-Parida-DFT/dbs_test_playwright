@@ -791,7 +791,7 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     // Step 5: Add Existing Payer.
     await webComponents.enterTextarea(pages.PayrollPage.filterExistingPayee, testData.ManagePayrollPayee1.newPayeeName);
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.addButton);
-
+    
     // Step 6: Enter Amount (SGD), Transaction code, Purpose of Payment and other optional details for 
     // Particulars, Collection details to the payer bank, Message to the payee, Emails, Emails Message
     await pages.PayrollPage.enterNewPayeeAllOtherDetailsSG({

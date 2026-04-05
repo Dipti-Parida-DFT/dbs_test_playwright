@@ -205,7 +205,7 @@ export class PayrollPage {
     this.digitalTokenInstructions1 = page.locator('xpath=//div[@class="challenge-step-content"]/span/span[1]');
     this.digitalTokenInstructions2 = page.locator('xpath=//div[@class="challenge-step-content"]/span/span[2]');
     this.enterResponseTextBox = page.locator('xpath=//*[@name="responseCode"]');
-    this.saveAsTemplateCheckbox = page.locator('xpath=//ShuRu[@name="saveAsTemplate"]');
+    this.saveAsTemplateCheckbox = page.locator('xpath=//input[@name="saveAsTemplate"]');
     this.templateName = page.locator('xpath=//*[@name="templateName"]');
     this.saveAsDraftButton = page.locator('xpath=//button[@name="save-as-draft"]');
 
