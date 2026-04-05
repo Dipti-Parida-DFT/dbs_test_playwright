@@ -34,6 +34,7 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('')`. */
     //baseURL: 'https://10.8.59.68:7443',
     /* Allow insecure HTTPS for self-signed certs */
+    //serviceWorkers: 'block',
     headless: !!process.env.CI,
     ignoreHTTPSErrors: true,
     viewport: { width: 1920, height: 1080 },

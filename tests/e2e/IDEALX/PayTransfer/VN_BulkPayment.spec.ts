@@ -5,8 +5,14 @@ import path from 'node:path';
 import { NavigatePages, PaymentsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
 import { chromium, Browser } from 'playwright';
+import { WebComponents } from '../../../lib/webComponents';
+import { CONSTANTS } from '../../../lib/constants';
+import { TIMEOUT } from '../../../lib/timeouts';
+
 
 let customBrowser: Browser;
+//Initialize Web Component class
+const webComponents = new WebComponents();
 
 // --- Load JSON test data ---
 const testDataPath = path.resolve(__dirname, '../../../data/VN_testData.json');
@@ -24,17 +30,17 @@ test.describe.configure({
 test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
   let pages: PaymentsPages;
   // Track created payees per test
-  type CreatedPayee = { nickName?: string; accountNumber?: string };
+  type CreatedPayee = { name?: string; accountNumber?: string };
   let createdPayees: CreatedPayee[] = [];
 
   test.beforeEach(async ({ page }, testInfo) => {
     process.env.currentTestTitle = testInfo.title;
 
     //customBrowser = await chromium.launch({ headless: false });
-    test.setTimeout(200_000);
+    test.setTimeout(TIMEOUT.MAX);
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await loginPage.login(loginCompanyId, loginUserId, '123');
+    await loginPage.login(loginCompanyId, loginUserId, (String(CONSTANTS.PIN)));
 
     pages = new PaymentsPages(page);
   });
@@ -49,7 +55,7 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
     // Best-effort cleanup; never fail the test because cleanup failed
     for (const p of createdPayees) {
       try {
-        const key = p.nickName ?? p.accountNumber ?? '';
+        const key = p.name ?? p.accountNumber ?? '';
         await pages.PayrollPage.deletePayeeByFilter(key, /* confirm */ true);
         console.log(`[cleanup] Deleted payee with key: ${key}`);
       } catch (err) {
@@ -80,7 +86,7 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
     await page.keyboard.press('Enter');
 
     // Reusable helper for add new payee
-    const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+    const { name, accountNumber }  = await pages.PayrollPage.addNewPayee({
       name: testData.Payroll.newPayeeName,
       nickName: testData.Payroll.newPayeeNickName,
       bankId: payeeBankID,
@@ -88,7 +94,7 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
     });
 
     // Register for cleanup
-    createdPayees.push({ nickName, accountNumber });
+    createdPayees.push({ name, accountNumber });
 
     // Amount > max (validates inline error + banner error after Next)
     await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.amount, testData.BulkPayment.moreThanMaxAmountIx);
@@ -138,7 +144,7 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
     await page.keyboard.press('Enter');
 
     // Reusable helper for add new payee
-    const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+    const { name, accountNumber }  = await pages.PayrollPage.addNewPayee({
       name: testData.Payroll.newPayeeName,
       nickName: testData.Payroll.newPayeeNickName,
       bankId: payeeBankID,
@@ -146,7 +152,7 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
     });
 
     // Register for cleanup
-    createdPayees.push({ nickName, accountNumber });
+    createdPayees.push({ name, accountNumber });
 
     // Amount > max (validates inline error + banner error after Next)
     await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.amount, testData.BulkPayment.maxAmountIx);
@@ -191,7 +197,7 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
    await page.keyboard.press('Enter');
 
     // Reusable helper for add new payee
-    const { nickName, accountNumber }  = await pages.PayrollPage.addNewPayee({
+    const { name, accountNumber }  = await pages.PayrollPage.addNewPayee({
     name: testData.Payroll.newPayeeName,
     nickName: testData.Payroll.newPayeeNickName,
     bankId: payeeBankID,
@@ -199,7 +205,7 @@ test.describe('VN_Bulk Payment (Playwright using PaymentsPages)', () => {
   });
 
   // Register for cleanup
-  createdPayees.push({ nickName, accountNumber });
+  createdPayees.push({ name, accountNumber });
 
    //Amount = max
    await pages.BulkPaymentPage.safeFill(pages.BulkPaymentPage.amount, testData.BulkPayment.maxAmountIx);

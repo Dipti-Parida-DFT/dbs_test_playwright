@@ -205,6 +205,7 @@ export class PayrollPage {
     this.digitalTokenInstructions1 = page.locator('xpath=//div[@class="challenge-step-content"]/span/span[1]');
     this.digitalTokenInstructions2 = page.locator('xpath=//div[@class="challenge-step-content"]/span/span[2]');
     this.enterResponseTextBox = page.locator('xpath=//*[@name="responseCode"]');
+    this.challengeResponse = page.locator('xpath=//input[@name="responseCode"]');
     this.saveAsTemplateCheckbox = page.locator('xpath=//ShuRu[@name="saveAsTemplate"]');
     this.templateName = page.locator('xpath=//*[@name="templateName"]');
     this.saveAsDraftButton = page.locator('xpath=//button[@name="save-as-draft"]');
@@ -228,7 +229,6 @@ export class PayrollPage {
     this.payeeBankId = page.locator('xpath=//*[@id="bulk-newPayee-bankId"]');
     this.findBankIDButton = page.locator('xpath=//*[@id="new-payee-bank-id-button"]');
     this.payeeBankSearchResults = page.locator('xpath=//table[@class="swift-results ng-star-inserted"]');
-    //this.payeeBankSearchResults = page.locator('xpath=//table[@class="swift-results ng-star-inserted"]/tr/td/label//input');
     this.enterBankDetailsManuallyButton = page.locator('xpath=//div[starts-with(@class, "manual clearfix")]');
     this.bsbCode = page.locator('xpath=//ShuRu[@name="bp-swift-select-bsbCode"]');
     this.payeeCategorySG = page.locator('xpath=//input[@id="payeeCategory"]');
@@ -268,7 +268,6 @@ export class PayrollPage {
     this.beneficiaryDelCnfButton = page.locator('xpath=//button[@id="dialogDelete"]');
     this.beneficiaryDelDismissButton = page.locator('xpath=//button[@name="cancel"]');
 
-
     // View payroll Payment Page
     this.hashValueLabel = page.locator('xpath=//*[@id="bulk-view-hashValue"]');
     this.fromAccountViewLabel = page.locator('xpath=//*[@id="bulk-view-accountNum"]');
@@ -276,7 +275,6 @@ export class PayrollPage {
     this.balanceLabel = page.locator('xpath=//*[@id="bulk-view-acctBalance"]');
     this.paymentTypeLabel = page.locator('xpath=//*[@id="bulk-view-paymentType"]');
     this.paymentType = page.locator('xpath=//*[@id="bulk-view-paymentType"]');
-    //this.paymentDate = page.locator('xpath=//*[@id="bulk-view-paymentDate"]//label');
     this.paymentDate = page.locator('xpath=//*[@id="bulk-view-paymentDate"]');
 
     this.paymentTypeDetailLabel = page.locator('xpath=//dbs-bp-view-summary-section/div[5]/span[2]/span[2]');
@@ -292,7 +290,6 @@ export class PayrollPage {
     this.batchIdLabel = page.locator('xpath=//*[@id="bulk-view-batchId"]');
     this.billerServiceIdLabel = page.locator('xpath=//*[@id="bulk-view-billerServiceID"]');
     this.paymentSummaryPanel = page.locator('xpath=//*[@class="summary-panel step2-panel-triangle"]');
-
     this.paymentSummaryLabel = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[1]');
     this.totalPayeesLabel = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[2]');
     this.totalPayeesValue = page.locator('xpath=(//*[@class="summary-panel step2-panel-triangle"]/div/span)[3]');
@@ -303,9 +300,7 @@ export class PayrollPage {
     this.transactionStatusLabel2 = page.locator('xpath=//div[@id="bulk-view-status_1"]');
     this.payeeNameLabel1Value = page.locator('xpath=//*[@id="bulk-view-name_0"]');
     this.payeeNameLabel2 = page.locator('xpath=//*[@id="bulk-view-name_1"]');
-
     this.payeeNicknameLabelValue = page.locator('xpath=//*[@id="bulk-view-nickName_0"]');
-
     this.bankNameLabel1Value = page.locator('xpath=//*[@id="bulk-view-payeeBankName_0"]');
     this.bankNameLabel2Value = page.locator('xpath=//*[@id="bulk-view-payeeBankName_1"]');
     this.branchNameLabel = page.locator('xpath=//*[@id="bulk-view-payeeBranchName_0"]');
@@ -320,9 +315,7 @@ export class PayrollPage {
 
     this.accountNumberLabel1 = page.locator('xpath=//*[@id="bulk-view-acctNum_0"]');
     this.accountNumberLabel2 = page.locator('xpath=//*[@id="bulk-view-acctNum_1"]');
-
     this.status = page.locator('xpath=//*[@id="bulk-view-pendingStatus_0"]');
-
     this.viewPayrollFilter = page.locator('xpath=//*[@id="bulk-view-filter"]');
     this.amountFirstLabel = page.locator('xpath=//*[@id="bulk-view-amount_0"]');
     this.amountSecondLabel = page.locator('xpath=//*[@id="bulk-view-amount_1"]');
@@ -334,10 +327,7 @@ export class PayrollPage {
     this.referenceForPayeeLabel2 = page.locator('xpath=//dbs-view-transfer-list[2]//*[@id="reference-for-payee"]');
     this.particularsLabel1 = page.locator('xpath=//dbs-view-transfer-list[1]/div/div[1]/div[2]/div[4]/div[2]/strong');
     this.particularsLabel2 = page.locator('xpath=//dbs-view-transfer-list[2]/div/div[1]/div[2]/div[4]/div[2]/strong');
-    //this.showOptionalViewButton1 = page.locator('xpath=//*[@id="bulk-viewTemp-optDetail_0"]');
-    //this.showOptionalViewButton1 = page.locator('xpath=(//span[text()="Show optional details"])[2]');
     this.showOptionalViewButton1 = page.locator('xpath=(//span[text()="Show optional details"])[2]');
-
     this.showOptionalViewButton2 = page.locator('xpath=//*[@id="bulk-viewTemp-optDetail_1"]');
     this.paymentDetailLabel1 = page.locator('xpath=//*[@id="bulk-view-paymentDetails_0"]');
     this.paymentDetailLabel2 = page.locator('(//span[text()="Show optional details"])[2]path=//*[@id="bulk-view-paymentDetails_1"]');
@@ -345,7 +335,6 @@ export class PayrollPage {
     this.messageLabel2 = page.locator('xpath=//*[@id="bulk-view-message_1"]');
     this.emailListLabel1 = page.locator('xpath=//*[@id="bulk-view-email_0"]');
     this.emailListLabel2 = page.locator('xpath=//*[@id="bulk-view-email_1"]');
-
     this.emailListLabel1Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[1]');
     this.emailListLabel2Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[2]');
     this.emailListLabel3Value = page.locator('xpath=(//*[@id="bulk-view-email_0"]//span)[3]');
@@ -354,7 +343,6 @@ export class PayrollPage {
 
     this.passbookLabel = page.locator('xpath=//*[@id="bulk-view-passBook_0"]');
     this.freeTextLabel = page.locator('xpath=//*[@id="bulk-view-freeText_0"]');
-
     this.nextApproverLabel = page.locator('xpath=//dbs-approval-requirement/div/section/div[1]/span[2]');
     this.activityLogSection = page.locator('xpath=//*[@class="payment-history"]');
 
@@ -363,7 +351,6 @@ export class PayrollPage {
     this.transactionDeletedPopupLabel = page.locator('xpath=//h2[text()="Transaction deleted"]');
     this.transactionDeletedPopupLabelMsg = page.locator('xpath=//p[@id="dialogMessage"]/span');
     this.transferSavedPopupLabel = page.locator('xpath=//h2[text()="Transfer saved"]');
-
 
     this.viewVerifyReleaseButton = page.locator('xpath=//button[@name="view-verify-release"]');
     this.verifyReleaseConfirmButton = page.locator('xpath=//button[@name="verify-release"]');
@@ -393,7 +380,7 @@ export class PayrollPage {
     //this.showOptionalDetails = page.locator('xpath=//span[@id="show-optional-details-0"]');
 
     // Links / schedules / search
-    this.idPayrollScheduleLink = page.locator('xpath=//a[contains(@href,"/csr/common/schedule/bom") and text()="Indonesia Payroll"]');
+    this.IDPayrollScheduleLink = page.locator('xpath=//a[contains(@href,"/csr/common/schedule/bom") and text()="Indonesia Payroll"]');
     this.searchButton = page.locator('xpath=//*[@name="search"]');
     this.pendingModifyApprovalLink = page.locator('xpath=//a[contains(@href,"/csr/common/schedule/bom/procSchdApprove") and text()="Pending Modify Approval"]');
 
@@ -470,6 +457,7 @@ export class PayrollPage {
   readonly digitalTokenInstructions1: Locator;
   readonly digitalTokenInstructions2: Locator;
   readonly enterResponseTextBox: Locator;
+  readonly challengeResponse: Locator;
   readonly saveAsTemplateCheckbox: Locator;
   readonly templateName: Locator;
   readonly saveAsDraftButton: Locator;
@@ -640,7 +628,7 @@ export class PayrollPage {
 
 
   // Links / search / export
-  readonly idPayrollScheduleLink: Locator;
+  readonly IDPayrollScheduleLink: Locator;
   readonly searchButton: Locator;
   readonly pendingModifyApprovalLink: Locator;
   readonly exportCsvButton: Locator;

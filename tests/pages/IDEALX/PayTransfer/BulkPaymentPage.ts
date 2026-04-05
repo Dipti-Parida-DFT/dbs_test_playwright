@@ -25,6 +25,7 @@ export class BulkPaymentPage {
     // Create Page / Menu
     this.menuRadio = page.locator('xpath=//dbs-toolbar/div/div[2]/p-horizontal-navigation/div/ul[2]/li[2]');
     this.bulkPayment = page.locator('xpath=//*[@id="icon__bulk_payment"]/parent::span');
+    this.secondDot = page.locator('//ul[contains(@class,"pages__container")]/li[2]');
 
     // Create form
     this.debitTypeSelect = page.locator('xpath=//p-auto-complete[@id="debitType"]');
@@ -42,6 +43,7 @@ export class BulkPaymentPage {
     this.payeeCategoryOptionEnterprise = page.locator('xpath=//span[text()="Enterprise"]');
     this.earliestAvailableDateCheckbox = page.locator('xpath=//span[text()="Earliest Available Date "]');
 
+    this.continueButton = page.locator('//*[@id="cognitive-continue"]');
     this.payeeRef = page.locator('xpath=//input[@name="payeeRef"]');
     this.payeeParticulars = page.locator('xpath=//input[@name="payeeParticulars"]');
     this.paymentDetailsTextarea = page.locator('xpath=//textarea[@name="payeeDetails"]');
@@ -161,6 +163,7 @@ export class BulkPaymentPage {
     // Payee 1 (view)
     this.payeeNameValue = page.locator('xpath=//*[@id="bulk-view-name_0"]');
     this.payeeNickNameValue = page.locator('xpath=//*[@id="bulk-view-nickName_0"]');
+    this.newPayeeNickName = page.locator('xpath=//input[@name="new-payee-nick-name"]');
     this.payeeBankName = page.locator('xpath=//*[@id="bulk-view-payeeBankName_0"]');
     this.payeeBranchBankName = page.locator('xpath=//*[@id="bulk-view-payeeBranchName_0"]');
     this.payeeBankSwiftBic = page.locator('xpath=//*[@id="bulk-view-bankDetailsMsgDisplay_0"]');
@@ -281,10 +284,11 @@ export class BulkPaymentPage {
   // ────────────────────────────── Locators ──────────────────────────────
   readonly menuRadio: Locator;
   readonly bulkPayment: Locator;
-
+  readonly secondDot: Locator;
   readonly debitTypeSelect: Locator;
   readonly consolidatedDebit: Locator;
   readonly fromAccount: Locator;
+  readonly continueButton: Locator;
   readonly billerServiceID: Locator;
   readonly bankCharge: Locator;
   readonly amount: Locator;
@@ -402,6 +406,7 @@ export class BulkPaymentPage {
 
   readonly payeeNameValue: Locator;
   readonly payeeNickNameValue: Locator;
+  readonly newPayeeNickName: Locator;
   readonly payeeBankName: Locator;
   readonly payeeBranchBankName: Locator;
   readonly payeeBankSwiftBic: Locator;
@@ -527,10 +532,10 @@ export class BulkPaymentPage {
     await this.safeFill(this.newPayeeName, name);
     await this.page.keyboard.press('Tab');
     await this.newPayeeName.blur();
-    // await this.safeClick(this.newPayeeNickName);
-    // await this.safeFill(this.newPayeeNickName, nickName);
+    await this.safeClick(this.newPayeeNickName);
+    await this.safeFill(this.newPayeeNickName, nickName);
     await this.page.keyboard.press('Tab');
-    //await this.newPayeeNickName.blur();
+    await this.newPayeeNickName.blur();
     await this.payeeBankId.click();
     await this.payeeBankId.fill(bankId);
     await this.page.keyboard.press('Enter');

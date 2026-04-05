@@ -15,6 +15,16 @@ export class LoginPage {
   readonly dashboard: Locator;
   readonly authenticate: Locator;
 
+  //SAM Locators
+  readonly samUserIDInput: Locator;
+  readonly samPwdInput: Locator;
+  readonly samSecurityAccessCodeInput: Locator;
+  readonly samLoginButton: Locator;
+  readonly IdealxLogoutButton: Locator;
+  readonly SAMLogoutButton: Locator;
+  readonly IdealxDashboardLink: Locator;
+  readonly SAMPostLoginIndicator: Locator;
+  
   constructor(page: Page) {
     this.page = page;
     this.orgIdInput = page.locator('input[name="orgId"], input[placeholder*="Organisation" i]');
@@ -26,6 +36,16 @@ export class LoginPage {
     // Use a unique selector for the Pay & Transfer nav item
     this.postLoginIndicator = page.locator('#nav-item-navBBTopPaymentsLinkText');
     this.authenticate = page.locator('//button[@type="button" and @class="btn btn__primary"]');
+    this.IdealxDashboardLink = page.locator('//span[contains(@class,"nav-item__main-title") and normalize-space()="Dashboard"]');
+    this.IdealxLogoutButton = page.locator('//div[@id="logout"]');
+    //SAM Locators
+    this.samUserIDInput = page.locator('xpath=//*[@id="UID"]');
+    this.samPwdInput = page.locator('xpath=//*[@id="password"]');
+    this.samSecurityAccessCodeInput = page.locator('xpath=//*[@id="sac"]');
+    this.samLoginButton = page.locator('xpath=//*[@name="submit_csrLogin"]');
+    this.SAMLogoutButton = page.locator('xpath=//a[@title="Logout and Exit this system"]');
+    this.SAMPostLoginIndicator = page.locator('xpath=//a[text()="HOME" and @href="/samweb/csr/home"]');
+    this.SAMPostLoginIndicator = page.locator('xpath=//td[@class="headline" and normalize-space()="Application Manager"]');
   }
 
   async goto() {
@@ -69,7 +89,30 @@ export class LoginPage {
     await webComponents.enterText(this.pinInput, creds.pin);
     await this.loginButton.click();
     await webComponents.waitDashboardToBeVisible(this.dashboard); // Wait for Pay & Transfer is visible till (20_0000)
-    //await this.page.waitForTimeout(TIMEOUT.MAX); // Wait for potential redirects
+    await webComponents.enterText(this.orgIdInput, creds.orgId);
+    await webComponents.enterText(this.userIdInput, creds.userId);
+    await webComponents.enterText(this.pinInput, creds.pin);
+    await this.loginButton.click();
+  }
+
+  async gotoSAM() {
+    await this.page.goto('https://10.8.59.68:8443/samweb/csr/loginSSO');
+  }
+  
+  async loginSAM(samUserID?: string) {
+    const webComponents = new WebComponents();
+    const defaultCreds = loginCredentials["SAM"];
+    const creds = {
+      samUserID: samUserID ?? defaultCreds.samUserID,
+      samPWD: defaultCreds.samPWD,
+      samSAC: defaultCreds.samSAC
+    };
+  
+    await webComponents.enterText(this.samUserIDInput, creds.samUserID);
+    await webComponents.enterText(this.samPwdInput, creds.samPWD);
+    await webComponents.enterText(this.samSecurityAccessCodeInput, creds.samSAC);
+    await this.samLoginButton.click();
+    await this.SAMPostLoginIndicator.waitFor({ state: 'visible', timeout: 50000 });  
   }
 
   async loginWithDefaultCredentials() {
