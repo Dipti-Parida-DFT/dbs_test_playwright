@@ -124,6 +124,48 @@ export type NewPayee1ValidationData = {
   email5LabelValue: string;
 };
 
+export type ManagementPayrollTemplateValidationData = {
+  templateName: string;
+  statusTop: string
+  fromAccountValue1: string;
+  fromAccountValue2: string;
+  paymentTypeValue: string;
+  checkAmountValue: string;
+  amountValue: string;
+  amountEditedValue: string;
+
+  validateDate: string;
+  payrollFilter: string;
+
+  paymentSummaryLabel: string;
+  totalPayeesLabel: string;
+  totalPayeesValue: string;
+  totalAmountLabel: string;
+  totalAmountValue: string;
+  totalAmountValueEdited: string;
+
+  payeeNameLabelValue: string;
+  payeeNicknameLabelValue: string;
+  bankNameLabelValue: string;
+  bankSwiftBicLabelValue: string;
+  accountNumberLabelValue: string;
+  statusLabelValue: string;
+  defaultAmount: string;
+  amountLabelValue: string;
+  amountEditedLabelValue: string,
+  transactionLabelValue: string;
+  purposeCodeLabelValue: string;
+  referenceForPayeeLabelValue: string;
+  particularsLabelValue: string;
+  paymentDetailsLabelValue: string;
+  emailMessageLabelValue: string
+  email1LabelValue: string;
+  email2LabelValue: string;
+  email3LabelValue: string;
+  email4LabelValue: string;
+  email5LabelValue: string;
+};
+
 
 export type NewPayeeResult = {
   name: string;
@@ -258,8 +300,10 @@ export class PayrollPage {
     this.viewTemplateName = page.locator('xpath=//*[@id="bulk-viewTemp-name"]');
     this.viewTemplateStatus = page.locator('xpath=//*[@id="bulk-viewTemp-status"]');
     this.viewTemplateFromAccount = page.locator('xpath=//*[@id="bulk-viewTemp-accountNum"]');
+    this.viewTemplateFromAccountName = page.locator('xpath=//*[@id="bulk-viewTemp-accountName"]');
     this.viewTemplateAmount = page.locator('xpath=//*[@id="bulk-view-amount_0"]');
     this.viewTemplatePayeeName = page.locator('xpath=//*[@id="bulk-view-name_0"]');
+    this.viewTemplatePaymentType = page.locator('xpath=//*[@id="bulk-viewTemp-paymentType"]');
 
     //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
     this.beneficiaryTab = page.locator('xpath=//span[normalize-space()="Payee / Beneficiaries"]');
@@ -287,7 +331,8 @@ export class PayrollPage {
     this.referenceLabel = page.locator('xpath=//*[@id="viewReference"]');
     this.referenceID = page.locator('xpath=//label[contains(text(),"Payroll Payment")]');
     // Have added this locator for Management Payroll bcs above is not working
-    this.referenceIDPayroll = page.locator('xpath=//label[contains(text(),"Payroll")]');
+    //this.referenceIDPayroll = page.locator('xpath=//label[contains(text(),"Payroll")]');
+    this.referenceIDPayroll = page.locator('xpath=(//label[contains(text(),"Payroll")])[1]');
 
     this.batchIdLabel = page.locator('xpath=//*[@id="bulk-view-batchId"]');
     this.billerServiceIdLabel = page.locator('xpath=//*[@id="bulk-view-billerServiceID"]');
@@ -523,8 +568,10 @@ export class PayrollPage {
   readonly viewTemplateName: Locator;
   readonly viewTemplateStatus: Locator;
   readonly viewTemplateFromAccount: Locator;
+  readonly viewTemplateFromAccountName: Locator;
   readonly viewTemplateAmount: Locator;
   readonly viewTemplatePayeeName: Locator;
+  readonly viewTemplatePaymentType: Locator;
 
   readonly hashValueLabel: Locator;
   readonly fromAccountViewLabel: Locator;
