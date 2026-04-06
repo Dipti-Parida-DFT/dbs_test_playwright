@@ -1,5 +1,6 @@
 // pages/TelegraphicTransferPage.ts
 import { Page, Locator, expect, test } from '@playwright/test';
+import path from 'node:path';
 
 export type BankChargeType = 'SHARED' | 'OUR' | 'THEY';
 export type NewTTPayeeInput = {
@@ -128,6 +129,145 @@ export type PartiourTTPayeeResult = {
   additionalNote: string;
   remitterIdentity: string;
 };
+
+  export type AddNewCNPayeeInput = {
+    country: string;
+    bankId: string;
+    routingCode: string;
+    accountNumber: string;
+    name: string;
+    nickName: string;
+    payeeLocation: string;  
+    city: string;
+    add1: string;
+    add2: string;
+    intermediaryLocation: string;
+    intermediaryBankId: string;
+    fxAppRefNum: string;
+    contractNumber: string;
+    invoiceNumber: string;
+    transactionRemark1: string;
+    amountA1: number;
+    bankChargeType: BankChargeType;
+    payeeBankMsg: string;
+    email1: string;
+    email2: string;
+    email3: string;
+    email4: string;
+    email5: string;
+    payeeMsg: string;
+    additionalNote: string;
+    remitterIdentity: string;
+  };
+
+  export type AddNewCNPayeeResult = {
+    country: string;
+    bankId: string;
+    routingCode: string;
+    accountNumber: string;
+    name: string;
+    nickName: string;
+    payeeLocation: string;
+    city: string;
+    add1: string;
+    add2: string;
+    intermediaryLocation: string;
+    intermediaryBankId: string;
+    fxAppRefNum: string;
+    contractNumber?: string; // Optional
+    bankChargeType: BankChargeType;
+  };
+
+  export type AddExistingCNPayeeInput = {
+    existingAccountNumber: string;
+    fxAppRefNum: string;
+    contractNumber?: string; // Optional
+    invoiceNumber: string;
+    transactionRemark1: string;
+    amountA2: number;
+    bankChargeType: BankChargeType;
+    payeeBankMsg: string;
+    email1: string;
+    email2: string;
+    email3: string;
+    email4: string;
+    email5: string;
+    payeeMsg: string;
+    additionalNote: string;
+    remitterIdentity: string;
+};
+
+  export type AddExistingCNPayeeResult = {
+    existingAccountNumber: string;
+    fxAppRefNum: string;
+    contractNumber?: string;
+    invoiceNumber: string;
+    transactionRemark1: string;
+    amountA2: number;
+    bankChargeType: BankChargeType;
+    payeeBankMsg: string;
+    email1: string;
+    email2: string;
+    email3: string;
+    email4: string;
+    email5: string;
+    payeeMsg: string;
+    additionalNote: string;
+    remitterIdentity: string;
+};
+
+  export type AddExistingCNPayeeWithNewCategoryInput = {
+    existingAccountNumber: string;
+    fxAppRefNum: string;
+    contractNumber?: string; // Optional
+    invoiceNumber: string;
+    transactionRemark1: string;
+    amountA2: number;
+    bankChargeType: BankChargeType;
+    payeeBankMsg: string;
+    email1: string;
+    email2: string;
+    email3: string;
+    email4: string;
+    email5: string;
+    payeeMsg: string;
+    additionalNote: string;
+    remitterIdentity: string;
+};
+
+  export type AddExistingCNPayeeWithNewCategoryResult = {
+    existingAccountNumber: string;
+    fxAppRefNum: string;
+    contractNumber?: string;
+    invoiceNumber: string;
+    transactionRemark1: string;
+    amountA2: number;
+    bankChargeType: BankChargeType;
+    payeeBankMsg: string;
+    email1: string;
+    email2: string;
+    email3: string;
+    email4: string;
+    email5: string;
+    payeeMsg: string;
+    additionalNote: string;
+    remitterIdentity: string;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 export class TelegraphicTransferPage {
@@ -262,6 +402,41 @@ export class TelegraphicTransferPage {
     this.newINRPurposeCodeDropdown = page.locator('//span[contains(text(),"Indian Companies")]');
     this.payeeMessageDetail = page.locator('//span[@id="payment-details-to-payee"]');
     this.purposeCodeText = page.locator('//span[@id="label-purpose-code"]');
+
+    this.protectionInfoCheckbox0 = page.locator('//input[@id="checkbox_0"]');
+    this.protectionInfoCheckbox1 = page.locator('//input[@id="checkbox_1"]');
+    this.protectionInfoAcknowledge = page.locator('//button[@class="btn btn__primary"]');
+    this.newCNPayeeBankAccountDropdown = page.locator('//span[contains(text(),"2019073000001")]');
+    this.SGDPayeeCurrencyDropdown = page.locator('//span[contains(text(),"SGD")]');
+    this.inputnewTTBankLocationHongkongDropdown = page.locator('//span[contains(text(),"HONG KONG")]');
+    this.newTTHKbankIDButton = page.locator('//span[contains(text(),"DBSSHKH0XXX")]');
+    this.locationHongKong = page.locator('//span[text()=" HONG KONG SAR (HK) "]');
+    this.newIntermediaryBankLocationAfghanistanDropdown = page.locator('//span[text()="AFGHANISTAN"]');
+    this.newIntermediaryBankLocationAfghanistanSelect = page.locator('//span[contains(text(),"ALFHAFK0XXX")]');
+    this.countryPartyCNHCode = page.locator('//input[@id="counterptycntryCode"]');
+    this.countryPartyAndorraDropdown = page.locator('//span[contains(text(),"ANDORRA")]');
+    this.specificPaymentPurpose = page.locator('//input[@id="specPmtPurpose"]');
+    this.specificPaymentPurposeDropdown = page.locator('//span[contains(text(),"Advance Payment")]');
+    this.isTaxFreeGoods = page.locator('//input[@id="yes"]');
+    this.fxAppRefNum = page.locator('//input[@name="ott-regulatory-advising-approve"]');
+    this.pmtBOPCategory1 = page.locator('//input[@id="pmtCategory1"]');
+    this.pmtBOPCategory1Dropdown = page.locator('(//span[contains(text(),"Trade Related")])[1]');
+    this.pmtBOPCodeSeries1 = page.locator('//input[@id="seriesCode1"]');
+    this.pmtBOPCodeSeries1Dropdown = page.locator('//span[contains(text(),"121010")]');
+    this.contractNumber = page.locator('//input[@name="ott-regulatory-advising-contractNum"]');
+    this.invoiceNumber = page.locator('//input[@name="ott-regulatory-advising-invoiceNum"]');
+    this.transactionRemark1 = page.locator('//input[@name="ott-regulatory-advising-transRemark1"]');
+    this.uploadDocumentButton = page.locator('//input[@name="digiDoc_file_upload"]');
+    this.documentType = page.locator('//input[@id="docType"]');
+    this.documentTypeDropdown = page.locator('(//span[contains(text(),"Customs form")])[3]');
+    this.utilizedAmount = page.locator('//input[@type="tel"]');
+    this.orderingBankMsgCheckbox = page.locator('//input[@id="isMessageToOrderingBank"]');
+
+    this.existingCNPayeeBankAccountDropdown = page.locator('//span[contains(text(),"30001599688")]');
+    this.existingCNPaymentNature = page.locator('//input[@id="PaymentNature"]');
+    this.existingCNPaymentNatureDropdown = page.locator('(//span[contains(@class,"autocomplete-list")])[1]');
+    this.pmtBOPCategory2Dropdown = page.locator('//span[contains(text(),"Capital")]');
+    this.pmtBOPCodeSeries2Dropdown = page.locator('//span[contains(text(),"521010")]');
     }
 
     readonly authenticate: Locator;
@@ -393,8 +568,42 @@ export class TelegraphicTransferPage {
     readonly newINRPurposeCodeDropdown: Locator;
     readonly payeeMessageDetail: Locator;
     readonly purposeCodeText: Locator;
+    readonly protectionInfoCheckbox0: Locator;
+    readonly protectionInfoCheckbox1: Locator;
+    readonly protectionInfoAcknowledge: Locator;
+    readonly SGDPayeeCurrencyDropdown: Locator;
+    readonly newCNPayeeBankAccountDropdown: Locator;
+    readonly inputnewTTBankLocationHongkongDropdown: Locator;
+    readonly newTTHKbankIDButton: Locator;
+    readonly locationHongKong: Locator;
+    readonly newIntermediaryBankLocationAfghanistanDropdown: Locator;
+    readonly newIntermediaryBankLocationAfghanistanSelect: Locator;
+    readonly countryPartyCNHCode: Locator;
+    readonly countryPartyAndorraDropdown: Locator;
+    readonly specificPaymentPurpose: Locator;
+    readonly specificPaymentPurposeDropdown: Locator;
+    readonly isTaxFreeGoods: Locator;
+    readonly fxAppRefNum: Locator;
+    readonly pmtBOPCategory1: Locator;
+    readonly pmtBOPCategory1Dropdown: Locator;
+    readonly pmtBOPCodeSeries1: Locator;
+    readonly pmtBOPCodeSeries1Dropdown: Locator;
+    readonly contractNumber: Locator;
+    readonly invoiceNumber: Locator;
+    readonly transactionRemark1: Locator;
+    readonly uploadDocumentButton: Locator;
+    readonly documentType: Locator;
+    readonly documentTypeDropdown: Locator;
+    readonly utilizedAmount : Locator;
+    readonly orderingBankMsgCheckbox: Locator;
 
-  
+    readonly existingCNPayeeBankAccountDropdown: Locator;
+    readonly existingCNPaymentNature: Locator;
+    readonly existingCNPaymentNatureDropdown: Locator;
+    readonly pmtBOPCategory2Dropdown: Locator;
+    readonly pmtBOPCodeSeries2Dropdown: Locator;
+
+    
   private async selectBankCharge(charge: BankChargeType) {
   switch (charge) {
     case 'OUR':
@@ -411,6 +620,18 @@ export class TelegraphicTransferPage {
   }
 }
   
+  /**
+   * Author: LC5741501
+   * Upload a PDF document using the file upload input.
+   * @param filePath - Absolute path to the PDF file to upload
+   * @param timeout - Optional timeout in milliseconds
+   */
+  async uploadSupportingDocument(fileName: string) {
+    const filePath = path.join(process.cwd(), 'tests', 'data', fileName);
+    await this.uploadDocumentButton.setInputFiles(filePath);
+    await this.waitForUXLoading();
+  }
+
   async waitForUXLoading(extraSpinnerSelectors: string[] = []) {
     const spinnerSelectors = [
       '.ux-loading',
@@ -959,5 +1180,406 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
  async waitForCNYCurrency(timeout = 1000) {
     return await this.CNYcurrency.isVisible({ timeout }).catch(() => false);
   }
+
+  async waitForProtectionMessage() {
+    await this.waitForUXLoading();
+    await this.protectionInfoCheckbox0.evaluate(el => (el as HTMLElement).click());
+    await this.protectionInfoCheckbox1.evaluate(el => (el as HTMLElement).click());
+    await this.safeClick(this.protectionInfoAcknowledge);
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async addNewCNTTPayee(input: AddNewCNPayeeInput): Promise<AddNewCNPayeeResult> {
+    const { country, bankId, routingCode, accountNumber, name, nickName, payeeLocation, city, add1, add2, intermediaryLocation, intermediaryBankId, fxAppRefNum, contractNumber, invoiceNumber, transactionRemark1, amountA1, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity } = input;
+      await this.safeClick(this.newPayeeTab)
+      await this.waitForSGNewPayeeFormReady();
+      await this.inputnewTTBankLocation.click();
+      await this.safeFill(this.inputnewTTBankLocation, country);
+      await this.safeClick(this.inputnewTTBankLocationHongkongDropdown);
+      await this.enterNewPayeeBankID.waitFor({ state: 'visible' });
+      await this.enterNewPayeeBankID.fill(bankId);
+      await this.page.keyboard.press('Enter');
+      await this.safeClick(this.existingPayeeBankAccountSelect);
+      await this.enterNewPayeeBankID.blur();
+
+      await this.safeClick(this.inputRoutingNumber);
+      await this.safeFill(this.inputRoutingNumber, routingCode);
+      await this.page.keyboard.press('Tab');
+      await this.inputRoutingNumber.blur();
+
+      await this.safeClick(this.newTTPayeeAccountNumber);
+      await this.safeFill(this.newTTPayeeAccountNumber, accountNumber);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeAccountNumber.blur();
+
+      await this.safeClick(this.newTTPayeeName);
+      await this.safeFill(this.newTTPayeeName, name);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeName.blur();
+
+      await this.safeClick(this.newTTPayeeNickname);
+      await this.safeFill(this.newTTPayeeNickname, nickName);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeNickname.blur();
+
+      await this.payeeLocation.click();
+      await this.safeFill(this.payeeLocation, payeeLocation);
+      await this.safeClick(this.MYRlocation);
+
+      await this.safeClick(this.newPayeeCity);
+      await this.safeFill(this.newPayeeCity, city);
+      await this.page.keyboard.press('Tab');
+      await this.newPayeeCity.blur();
+
+      await this.safeClick(this.newTTPayeeAddress1);
+      await this.safeFill(this.newTTPayeeAddress1, add1);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeAddress1.blur();
+
+      await this.safeClick(this.newTTPayeeAddress2);
+      await this.safeFill(this.newTTPayeeAddress2, add2);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeAddress2.blur();
+
+      await this.intermediaryBankCheckbox.evaluate(el => (el as HTMLElement).click());
+
+      await this.intermediaryBankLocation.click();
+      await this.safeFill(this.intermediaryBankLocation, intermediaryLocation);
+      await this.safeClick(this.newIntermediaryBankLocationAfghanistanDropdown);
+      
+      await this.intermediaryBankId.waitFor({ state: 'visible' });
+      await this.intermediaryBankId.fill(intermediaryBankId);
+      await this.page.keyboard.press('Enter');
+      await this.safeClick(this.newIntermediaryBankLocationAfghanistanSelect);
+      await this.intermediaryBankId.blur();
+
+      await this.safeClick(this.countryPartyCNHCode);
+      await this.safeClick(this.countryPartyAndorraDropdown);
+      await this.countryPartyCNHCode.blur();
+
+      await this.safeClick(this.specificPaymentPurpose);
+      await this.safeClick(this.specificPaymentPurposeDropdown);
+      await this.specificPaymentPurpose.blur();
+
+      await this.isTaxFreeGoods.evaluate(el => (el as HTMLElement).click());
+
+      await this.safeClick(this.fxAppRefNum);
+      await this.safeFill(this.fxAppRefNum, fxAppRefNum);
+      await this.page.keyboard.press('Tab');
+      await this.fxAppRefNum.blur();
+
+      await this.safeClick(this.pmtBOPCategory1);
+      await this.safeClick(this.pmtBOPCategory1Dropdown);
+      await this.pmtBOPCategory1.blur();
+
+      await this.safeClick(this.pmtBOPCodeSeries1);
+      await this.safeClick(this.pmtBOPCodeSeries1Dropdown);
+      await this.pmtBOPCodeSeries1.blur();
+
+      await this.safeClick(this.contractNumber);
+      await this.safeFill(this.contractNumber, contractNumber);
+      await this.page.keyboard.press('Tab');
+      await this.contractNumber.blur();
+
+      await this.safeClick(this.invoiceNumber);
+      await this.safeFill(this.invoiceNumber, invoiceNumber);
+      await this.page.keyboard.press('Tab');
+      await this.invoiceNumber.blur();
+
+      await this.safeClick(this.transactionRemark1);
+      await this.safeFill(this.transactionRemark1, transactionRemark1);
+      await this.page.keyboard.press('Tab');
+      await this.transactionRemark1.blur();
+
+      await this.uploadSupportingDocument('DIGI_DOC.pdf');
+
+      await this.safeClick(this.documentType);
+      await this.safeClick(this.documentTypeDropdown);
+      await this.documentType.blur();
+
+      await this.safeClick(this.utilizedAmount);
+      await this.safeFill(this.utilizedAmount, amountA1);
+      await this.page.keyboard.press('Tab');
+      await this.utilizedAmount.blur();      
+     
+      await this.selectBankCharge(bankChargeType);
+
+      await this.safeClick(this.newTTPaymentRemark);
+      await this.safeFill(this.newTTPaymentRemark, payeeBankMsg);
+      await this.newTTPaymentRemark.blur();
+
+      await this.newTTPayeeMsgCheckbox.evaluate(el => (el as HTMLElement).click());
+
+      await this.safeClick(this.newTTPayeeEmail1);
+      await this.safeFill(this.newTTPayeeEmail1, email1);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail1.blur();
+
+      await this.safeClick(this.newTTPayeeEmail2);
+      await this.safeFill(this.newTTPayeeEmail2, email2);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail2.blur();
+
+      await this.safeClick(this.newTTPayeeEmail3);
+      await this.safeFill(this.newTTPayeeEmail3, email3);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail3.blur();
+
+      await this.safeClick(this.newTTPayeeEmail4);
+      await this.safeFill(this.newTTPayeeEmail4, email4);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail4.blur();
+
+      await this.safeClick(this.newTTPayeeEmail5);
+      await this.safeFill(this.newTTPayeeEmail5, email5);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail5.blur();
+
+      await this.safeClick(this.newTTPayeeRemark);
+      await this.safeFill(this.newTTPayeeRemark, payeeMsg);
+      await this.newTTPayeeRemark.blur();
+
+      await this.additionalNoteCheckbox.evaluate(el => (el as HTMLElement).click());
+
+      await this.safeClick(this.additionalNoteRemark);
+      await this.safeFill(this.additionalNoteRemark, additionalNote);
+      await this.additionalNoteRemark.blur();
+
+      await this.orderingBankMsgCheckbox.evaluate(el => (el as HTMLElement).click());
+
+      await this.safeClick(this.orderingBankMsg);
+      await this.safeFill(this.orderingBankMsg, remitterIdentity);
+      await this.orderingBankMsg.blur();
+
+      return { country, bankId, routingCode, accountNumber, name, nickName, payeeLocation, city, add1, add2, intermediaryLocation, intermediaryBankId, fxAppRefNum, contractNumber, invoiceNumber, transactionRemark1, amountA1, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity };
+ };
+
+  async addExistingCNTTPayee(input: AddExistingCNPayeeInput): Promise<AddExistingCNPayeeResult> {
+    const { existingAccountNumber, fxAppRefNum, contractNumber, invoiceNumber, transactionRemark1, amountA2, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity } = input;
+      await this.safeClick(this.existingPayeeTab)
+
+      await this.safeClick(this.existingPayeeBankAccount);
+      await this.safeFill(this.existingPayeeBankAccount, existingAccountNumber);
+      await this.existingPayeeBankAccount.blur();
+      await this.safeClick(this.existingCNPayeeBankAccountDropdown);
+
+      await this.safeClick(this.countryPartyCNHCode);
+      await this.safeClick(this.countryPartyAndorraDropdown);
+      await this.countryPartyCNHCode.blur();
+
+      await this.safeClick(this.specificPaymentPurpose);
+      await this.safeClick(this.specificPaymentPurposeDropdown);
+      await this.specificPaymentPurpose.blur();
+
+      await this.isTaxFreeGoods.evaluate(el => (el as HTMLElement).click());
+
+      await this.safeClick(this.existingCNPaymentNature);
+      await this.safeClick(this.existingCNPaymentNatureDropdown);
+      await this.existingCNPaymentNature.blur();
+
+      await this.safeClick(this.fxAppRefNum);
+      await this.safeFill(this.fxAppRefNum, fxAppRefNum);
+      await this.page.keyboard.press('Tab');
+      await this.fxAppRefNum.blur();
+
+      await this.safeClick(this.pmtBOPCategory1);
+      await this.safeClick(this.pmtBOPCategory1Dropdown);
+      await this.pmtBOPCategory1.blur();
+
+      await this.safeClick(this.pmtBOPCodeSeries1);
+      await this.safeClick(this.pmtBOPCodeSeries1Dropdown);
+      await this.pmtBOPCodeSeries1.blur();
+
+      await this.safeClick(this.contractNumber);
+      await this.safeFill(this.contractNumber, contractNumber);
+      await this.page.keyboard.press('Tab');
+      await this.contractNumber.blur();
+
+      await this.safeClick(this.invoiceNumber);
+      await this.safeFill(this.invoiceNumber, invoiceNumber);
+      await this.page.keyboard.press('Tab');
+      await this.invoiceNumber.blur();
+
+      await this.safeClick(this.transactionRemark1);
+      await this.safeFill(this.transactionRemark1, transactionRemark1);
+      await this.page.keyboard.press('Tab');
+      await this.transactionRemark1.blur();
+
+      await this.uploadSupportingDocument('DIGI_DOC.pdf');
+
+      await this.safeClick(this.documentType);
+      await this.safeClick(this.documentTypeDropdown);
+      await this.documentType.blur();
+
+      await this.safeClick(this.utilizedAmount);
+      await this.safeFill(this.utilizedAmount, amountA2);
+      await this.page.keyboard.press('Tab');
+      await this.utilizedAmount.blur();  
+
+      await this.selectBankCharge(bankChargeType);
+
+      await this.safeClick(this.newTTPaymentRemark);
+      await this.safeFill(this.newTTPaymentRemark, payeeBankMsg);
+      await this.newTTPaymentRemark.blur();
+
+      await this.newTTPayeeMsgCheckbox.evaluate(el => (el as HTMLElement).click());
+
+      await this.safeClick(this.newTTPayeeEmail1);
+      await this.safeFill(this.newTTPayeeEmail1, email1);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail1.blur();
+
+      await this.safeClick(this.newTTPayeeEmail2);
+      await this.safeFill(this.newTTPayeeEmail2, email2);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail2.blur();
+
+      await this.safeClick(this.newTTPayeeEmail3);
+      await this.safeFill(this.newTTPayeeEmail3, email3);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail3.blur();
+
+      await this.safeClick(this.newTTPayeeEmail4);
+      await this.safeFill(this.newTTPayeeEmail4, email4);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail4.blur();
+
+      await this.safeClick(this.newTTPayeeEmail5);
+      await this.safeFill(this.newTTPayeeEmail5, email5);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail5.blur();
+
+      await this.safeClick(this.newTTPayeeRemark);
+      await this.safeFill(this.newTTPayeeRemark, payeeMsg);
+      await this.newTTPayeeRemark.blur();
+
+      await this.additionalNoteCheckbox.evaluate(el => (el as HTMLElement).click());
+
+      await this.safeClick(this.additionalNoteRemark);
+      await this.safeFill(this.additionalNoteRemark, additionalNote);
+      await this.additionalNoteRemark.blur();
+
+      await this.orderingBankMsgCheckbox.evaluate(el => (el as HTMLElement).click());
+
+      await this.safeClick(this.orderingBankMsg);
+      await this.safeFill(this.orderingBankMsg, remitterIdentity);
+      await this.orderingBankMsg.blur();
+
+      return { existingAccountNumber, fxAppRefNum, contractNumber, invoiceNumber, transactionRemark1, amountA2, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity };
+ };
+
+ async addExistingCNTTPayeeWithNewCategory(input: AddExistingCNPayeeWithNewCategoryInput): Promise<AddExistingCNPayeeWithNewCategoryResult> {
+    const { existingAccountNumber, fxAppRefNum, contractNumber, invoiceNumber, transactionRemark1, amountA2, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity } = input;
+      await this.safeClick(this.existingPayeeTab)
+
+      await this.safeClick(this.existingPayeeBankAccount);
+      await this.safeFill(this.existingPayeeBankAccount, existingAccountNumber);
+      await this.existingPayeeBankAccount.blur();
+      await this.safeClick(this.existingCNPayeeBankAccountDropdown);
+
+      await this.safeClick(this.countryPartyCNHCode);
+      await this.safeClick(this.countryPartyAndorraDropdown);
+      await this.countryPartyCNHCode.blur();
+
+      await this.safeClick(this.specificPaymentPurpose);
+      await this.safeClick(this.specificPaymentPurposeDropdown);
+      await this.specificPaymentPurpose.blur();
+
+      await this.isTaxFreeGoods.evaluate(el => (el as HTMLElement).click());
+
+      await this.safeClick(this.existingCNPaymentNature);
+      await this.safeClick(this.existingCNPaymentNatureDropdown);
+      await this.existingCNPaymentNature.blur();
+
+      await this.safeClick(this.fxAppRefNum);
+      await this.safeFill(this.fxAppRefNum, fxAppRefNum);
+      await this.page.keyboard.press('Tab');
+      await this.fxAppRefNum.blur();
+
+      await this.safeClick(this.pmtBOPCategory1);
+      await this.safeClick(this.pmtBOPCategory2Dropdown);
+      await this.pmtBOPCategory1.blur();
+
+      await this.safeClick(this.pmtBOPCodeSeries1);
+      await this.safeClick(this.pmtBOPCodeSeries2Dropdown);
+      await this.pmtBOPCodeSeries1.blur();
+
+      await this.safeClick(this.contractNumber);
+      await this.safeFill(this.contractNumber, contractNumber);
+      await this.page.keyboard.press('Tab');
+      await this.contractNumber.blur();
+
+      await this.safeClick(this.invoiceNumber);
+      await this.safeFill(this.invoiceNumber, invoiceNumber);
+      await this.page.keyboard.press('Tab');
+      await this.invoiceNumber.blur();
+
+      await this.safeClick(this.transactionRemark1);
+      await this.safeFill(this.transactionRemark1, transactionRemark1);
+      await this.page.keyboard.press('Tab');
+      await this.transactionRemark1.blur();
+
+      await this.uploadSupportingDocument('DIGI_DOC.pdf');
+
+      await this.safeClick(this.documentType);
+      await this.safeClick(this.documentTypeDropdown);
+      await this.documentType.blur();
+
+      await this.safeClick(this.utilizedAmount);
+      await this.safeFill(this.utilizedAmount, amountA2);
+      await this.page.keyboard.press('Tab');
+      await this.utilizedAmount.blur();  
+
+      await this.selectBankCharge(bankChargeType);
+
+      await this.safeClick(this.newTTPaymentRemark);
+      await this.safeFill(this.newTTPaymentRemark, payeeBankMsg);
+      await this.newTTPaymentRemark.blur();
+
+      await this.newTTPayeeMsgCheckbox.evaluate(el => (el as HTMLElement).click());
+
+      await this.safeClick(this.newTTPayeeEmail1);
+      await this.safeFill(this.newTTPayeeEmail1, email1);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail1.blur();
+
+      await this.safeClick(this.newTTPayeeEmail2);
+      await this.safeFill(this.newTTPayeeEmail2, email2);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail2.blur();
+
+      await this.safeClick(this.newTTPayeeEmail3);
+      await this.safeFill(this.newTTPayeeEmail3, email3);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail3.blur();
+
+      await this.safeClick(this.newTTPayeeEmail4);
+      await this.safeFill(this.newTTPayeeEmail4, email4);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail4.blur();
+
+      await this.safeClick(this.newTTPayeeEmail5);
+      await this.safeFill(this.newTTPayeeEmail5, email5);
+      await this.page.keyboard.press('Tab');
+      await this.newTTPayeeEmail5.blur();
+
+      await this.safeClick(this.newTTPayeeRemark);
+      await this.safeFill(this.newTTPayeeRemark, payeeMsg);
+      await this.newTTPayeeRemark.blur();
+
+      await this.additionalNoteCheckbox.evaluate(el => (el as HTMLElement).click());
+
+      await this.safeClick(this.additionalNoteRemark);
+      await this.safeFill(this.additionalNoteRemark, additionalNote);
+      await this.additionalNoteRemark.blur();
+
+      await this.orderingBankMsgCheckbox.evaluate(el => (el as HTMLElement).click());
+
+      await this.safeClick(this.orderingBankMsg);
+      await this.safeFill(this.orderingBankMsg, remitterIdentity);
+      await this.orderingBankMsg.blur();
+
+      return { existingAccountNumber, fxAppRefNum, contractNumber, invoiceNumber, transactionRemark1, amountA2, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity };
+ };
 
 };
