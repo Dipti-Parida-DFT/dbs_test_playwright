@@ -7,5 +7,7 @@ export const CONSTANTS = {
     SITURL: 'https://i3bku3uatqeweb01.qe.dragonflyft.com:1443/iws/ssologin', // New SIT Subscriber url
     UATURL: 'https://UAT',   // UAT Subscriber url
     PRODURL:'https://PROD',   // PROD Subscriber url
-    CHALLENGEVIASMSCODE:'12345678'
+    CHALLENGEVIASMSCODE:'12345678',
+    SCROLLBYX:0,
+    SCROLLBYY:500
   };

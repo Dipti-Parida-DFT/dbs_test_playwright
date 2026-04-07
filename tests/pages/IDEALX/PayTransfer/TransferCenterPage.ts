@@ -113,13 +113,13 @@ export class TransferCentersPage {
   // ---------- Waits / Helpers (Chinese → English) ----------
 
   /** Former: jiazhai() — wait until a key list item (reference link) is visible/clickable */
-  async waitForTransferCenterReady(timeout = 199_000) {
+  async waitForTransferCenterReady(timeout = TIMEOUT.MAX) {
     await this.waitForUXLoading();
     await expect(this.transferCenterFilter).toBeVisible({ timeout });
   }
 
   /** Former: jiazhai2() — slower readiness (network + visibility) */
-  async waitForTransferCenterReadySlow(timeout = 45_000) {
+  async waitForTransferCenterReadySlow(timeout = TIMEOUT.LONG) {
     await this.waitForUXLoading();
     await this.page.waitForLoadState('networkidle');
     await expect(this.transferCenterFilter).toBeVisible({ timeout });
@@ -140,7 +140,7 @@ export class TransferCentersPage {
       await this.selectFromAutoComplete(this.paymentTypeAutoComplete, paymentType);
     }
     if (transactionStatus && transactionStatus.trim()) {
-      await this.scrollBy(0, 500);
+      await this.scrollBy(CONSTANTS.SCROLLBYX, CONSTANTS.SCROLLBYY);
       await this.selectFromAutoComplete(this.transactionStatusAutoComplete, transactionStatus);
     }
 
@@ -150,11 +150,11 @@ export class TransferCentersPage {
   }
 
   /** Former: jiazhaiforApprovalSection() */
-  async waitForApprovalSectionReady(timeout = 20_000) {
+  async waitForApprovalSectionReady(timeout = TIMEOUT.MEDIUM) {
     await this.waitForUXLoading();
     await expect(this.challengeResponseInput).toBeVisible({ timeout });
     // original had a fixed 5s delay for push response; keep a short wait if required by backend flow
-    await this.page.waitForTimeout(5000);
+    await this.page.waitForTimeout(TIMEOUT.VERYMIN);
   }
 
   /** Former: goToViewPaymentPageforPagination(reference, paymentType) */
@@ -162,7 +162,7 @@ export class TransferCentersPage {
     await this.waitForTransferCenterReady();
     await this.safeFill(this.transferCenterFilter, reference);
 
-    if (await this.isVisible(this.referenceLink, 3000)) {
+    if (await this.isVisible(this.referenceLink, TIMEOUT.VERYMIN)) {
       await this.safeClick(this.referenceLink);
       return;
     }
@@ -172,7 +172,7 @@ export class TransferCentersPage {
       await this.selectFromAutoComplete(this.paymentTypeAutoComplete, paymentType);
     }
 
-    await this.page.waitForTimeout(500); // allow suggestions to settle
+    await this.page.waitForTimeout(TIMEOUT.VERYMIN); // allow suggestions to settle
     await this.safeClick(this.searchButton);
 
     await this.waitForTransferCenterReady();
@@ -184,7 +184,7 @@ export class TransferCentersPage {
   async getFirstVisibleCheckboxIndex(items: number): Promise<number> {
     for (let index = 0; index < items; index++) {
       const locator = this.page.locator(`xpath=//ShuRu[@id="tc-checkbox-${index}"]`);
-      if (await locator.isVisible({ timeout: 250 }).catch(() => false)) {
+      if (await locator.isVisible({ timeout: TIMEOUT.MIN }).catch(() => false)) {
         return index;
       }
     }
@@ -192,13 +192,13 @@ export class TransferCentersPage {
   }
 
   /** Former: loadCreateGroupCondition() */
-  async waitForCreateGroupReady(timeout = 15_000) {
+  async waitForCreateGroupReady(timeout = TIMEOUT.MIN) {
     await this.waitForUXLoading();
     await expect(this.createGroupButton).toBeVisible({ timeout });
   }
 
   /** Former: loadViewGroupCondition() */
-  async waitForViewGroupReady(timeout = 20_000) {
+  async waitForViewGroupReady(timeout = TIMEOUT.MEDIUM) {
     await this.waitForUXLoading();
     await this.page.waitForLoadState('domcontentloaded');
     await expect(this.groupCancelButton).toBeVisible({ timeout });
@@ -206,7 +206,7 @@ export class TransferCentersPage {
   }
 
   /** Former: loadViewGroupCondition2() (slower) */
-  async waitForViewGroupReadySlow(timeout = 30_000) {
+  async waitForViewGroupReadySlow(timeout = TIMEOUT.MEDIUM) {
     await this.waitForUXLoading();
     await this.page.waitForLoadState('networkidle');
     await expect(this.groupCancelButton).toBeVisible({ timeout });
@@ -214,20 +214,20 @@ export class TransferCentersPage {
   }
 
   /** Former: jiazhaiGroupList() */
-  async waitForGroupListReady(timeout = 15_000) {
+  async waitForGroupListReady(timeout = TIMEOUT.MIN) {
     await this.waitForUXLoading();
     await expect(this.groupNameLink).toBeVisible({ timeout });
   }
 
   /** Former: loadOfflineGroup() */
-  async waitForOfflineGroupReady(timeout = 20_000) {
+  async waitForOfflineGroupReady(timeout = TIMEOUT.MEDIUM) {
     await this.waitForUXLoading();
     await expect(this.groupApproveButton).toBeVisible({ timeout });
     await this.waitForUXLoading();
   }
 
   /** Former: jiazhaiForDismiss() */
-  async waitForDismissReady(timeout = 15_000) {
+  async waitForDismissReady(timeout = TIMEOUT.MIN) {
     await this.waitForUXLoading();
     await expect(this.dismissButton).toBeVisible({ timeout });
     await expect(this.dismissButton).toBeEnabled({ timeout });
@@ -237,7 +237,7 @@ export class TransferCentersPage {
   async waitForUATSelectAccount() {
     if (!isSIT) {
       // keep a small grace period like original code
-      await this.page.waitForTimeout(5000);
+      await this.page.waitForTimeout(TIMEOUT.VERYMIN);
     }
   }
 
@@ -256,8 +256,8 @@ export class TransferCentersPage {
     for (const sel of spinnerSelectors) {
       const spinner = this.page.locator(sel).first();
       try {
-        if (await spinner.isVisible({ timeout: 1000 }).catch(() => false)) {
-          await spinner.waitFor({ state: 'hidden', timeout: 395_000 });
+        if (await spinner.isVisible({ timeout: TIMEOUT.VERYMIN }).catch(() => false)) {
+          await spinner.waitFor({ state: 'hidden', timeout: TIMEOUT.EXTREME });
         }
       } catch { /* ignore individual spinner errors */ }
     }
@@ -275,7 +275,7 @@ export class TransferCentersPage {
     await locator.fill(value);
   }
 
-  async isVisible(locator: Locator, timeout = 1000) {
+  async isVisible(locator: Locator, timeout = TIMEOUT.MIN) {
     return await locator.isVisible({ timeout }).catch(() => false);
   }
 
@@ -300,7 +300,7 @@ export class TransferCentersPage {
     await this.page.keyboard.press('Enter');
     // If still not applied, attempt to click a suggestion node used elsewhere
     const suggestion = this.organisationListResult.first();
-    if (await suggestion.isVisible({ timeout: 500 }).catch(() => false)) {
+    if (await suggestion.isVisible({ timeout: TIMEOUT.VERYMIN }).catch(() => false)) {
       await suggestion.click();
     }
   }
