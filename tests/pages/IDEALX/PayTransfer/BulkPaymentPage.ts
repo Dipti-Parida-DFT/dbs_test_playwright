@@ -91,12 +91,13 @@ export class BulkPaymentPage {
     this.showOptionalDetails = page.locator('xpath=//div[@id="temp-bulk-create-optDetail_0"]');
 
     // Actions / controls
-    this.approveNowCheckBox = page.locator('xpath=//input[@id="approveNow"]');
+    this.approveNowCheckBox = page.locator('xpath=//label[@for="approveNow"]');
     this.pushOption = page.locator('xpath=//*[@class="push-option-label"]');
     this.batchId = page.locator('xpath=//input[@name="batch-id"]');
     this.getChallengeSMS = page.locator('xpath=//button[@name="get-challenge"]');
     this.challengeResponse = page.locator('xpath=//input[@name="responseCode"]');
-    this.saveAsTemplateCheckbox = page.locator('xpath=//*[@name="saveAsTemplate"]');
+    //this.saveAsTemplateCheckbox = page.locator('xpath=//*[@name="saveAsTemplate"]');
+    this.saveAsTemplateCheckbox = page.locator('//label[@for="saveAsTemplate"]');
     this.templateName = page.locator('xpath=//*[@name="templateName"]');
     this.saveAsDraft = page.locator('xpath=//button[@name="save-as-draft"]');
     this.editButton = page.locator('xpath=//*[@id="bulk-view-edit"]');
@@ -123,6 +124,7 @@ export class BulkPaymentPage {
     this.rejectButton4 = page.locator('xpath=//button[@class="btn btn__secondary medium bg-white text-red-500 ng-star-inserted"]');
     this.rejectStatus2 = page.locator('xpath=//strong[@id="bulk-view-rejectStatus_1"]');
     this.rejectStatus3 = page.locator('xpath=//strong[@id="bulk-view-rejectStatus_2"]');
+    this.rejectReferenceMsg = page.locator('xpath=//p[@id="dialogMessage"]/span');
 
     //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
     this.beneficiaryTab = page.locator('xpath=//span[normalize-space()="Payee / Beneficiaries"]');
@@ -159,6 +161,7 @@ export class BulkPaymentPage {
     this.nextApprover = page.locator('xpath=//dbs-approval-requirement/div/section/div[1]/span[2]');
     this.activityLog = page.locator('xpath=//*[@class="payment-history"]');
     this.totalAmountValue = page.locator('xpath=//*[@id="view-bulk-totalAmount"]');
+    this.cancelButton = page.locator('xpath=//button[@name="cancel"]');
 
     // Payee 1 (view)
     this.payeeNameValue = page.locator('xpath=//*[@id="bulk-view-name_0"]');
@@ -254,6 +257,7 @@ export class BulkPaymentPage {
     this.showOptionalButton = page.locator('xpath=//span[@id="show-optional-details-0"]');
 
     // Template view
+    this.templateMenu = page.locator('//a[contains(@href,"#/transfers/manage-templates")]');
     this.viewTemplateName = page.locator('xpath=//span[@id="bulk-viewTemp-name"]');
     this.viewTemplateFromAccount = page.locator('xpath=//span[@id="bulk-viewTemp-accountNum"]');
     this.viewTemplateAmount = page.locator('xpath=//strong[@id="bulk-view-amount_0"]');
@@ -358,6 +362,7 @@ export class BulkPaymentPage {
   readonly pushButton: Locator;
   readonly amountInlineError: Locator;
   readonly errorOneOrMorefieldsNotFilled: Locator;
+  readonly cancelButton: Locator;
 
   readonly deleteButton: Locator;
   readonly deleteDialogButton: Locator;
@@ -371,6 +376,7 @@ export class BulkPaymentPage {
   readonly rejectButton4: Locator;
   readonly rejectStatus2: Locator;
   readonly rejectStatus3: Locator;
+  readonly rejectReferenceMsg: Locator;
 
   //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
   readonly beneficiaryTab: Locator;
@@ -493,6 +499,7 @@ export class BulkPaymentPage {
   readonly viewBulkTotalItem: Locator;
   readonly showOptionalButton: Locator;
 
+  readonly templateMenu: Locator;
   readonly viewTemplateName: Locator;
   readonly viewTemplateFromAccount: Locator;
   readonly viewTemplateAmount: Locator;
@@ -688,17 +695,32 @@ export class BulkPaymentPage {
      * use getReferenceToken() below.
      */
   async getReferenceText(): Promise<string> {
-    const raw = await this.referenceID.textContent();
+    const raw = await (this.referenceID).first().textContent();
     return (raw ?? '').trim();
   }
 
   //Extract reference ID
-
   async getReferenceID(): Promise<string> {
     const raw = await this.getReferenceText();
     const match = raw.match(/\b(EB[A-Z0-9-]+)\b/i);
     return match?.[1] ?? '';
   }
+
+      /**
+     * Returns the raw banner text (trimmed) for reject. If you only need EBLV…,
+     * use getReferenceToken() below.
+     */
+      async getRejectReferenceText(): Promise<string> {
+        const raw = await this.rejectReferenceMsg.textContent();
+        return (raw ?? '').trim();
+      }
+    
+      //Extract reference ID
+      async getRejectReferenceId(): Promise<string> {
+        const raw = await this.getRejectReferenceText();
+        const match = raw.match(/\b(EB[A-Z0-9-]+)\b/i);
+        return match?.[1] ?? '';
+      }
 
   /** Former: jiazhai() – waits until create form is ready (fromAccount visible). */
   async waitForBulkPaymentFormReady(timeout = 20_000) {
@@ -773,8 +795,8 @@ export class BulkPaymentPage {
   }
 
   /** Former: addExistingPayee(testDate) */
-  async addExistingPayee(existingPayeeFilter: string) {
-    await this.safeFill(this.existingPayeeFilter, existingPayeeFilter);
+  async addExistingPayee(existingPayee: string) {
+    await this.safeFill(this.existingPayeeFilter, existingPayee);
     await this.safeClick(this.addButton);
   }
 
