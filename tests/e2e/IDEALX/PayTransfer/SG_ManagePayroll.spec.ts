@@ -1745,7 +1745,7 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
 
 
-  //TC013_SG_ManagePayroll
+  //TC012_SG_ManagePayroll
   test('TC013_SG_ManagePayroll - Approve ManagePayrollDBS via Transfer Center with "Get Challenge via SMS", resulting in an "Approved" transaction status', async ({ page }) => {
 
     // Step 1: Navigate Payment & Transfer Menu.
@@ -1857,6 +1857,7 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     //await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.PayrollPage.dismissButton);
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.dismissButton);
+    await webComponents.waitForUXLoading([], page);
 
      await webComponents.waitElementToBeVisible(pages.TransferCentersPage.transferCenterFilter);
 
