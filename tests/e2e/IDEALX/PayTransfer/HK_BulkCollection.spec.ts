@@ -272,7 +272,7 @@ test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
       transactionCode: testData.payer2.transactionCode,
       particulars: testData.payer2.particulars
     });
-
+       
     // Step 8: Add "New payer".
     const { name, accountNumber } = await pages.BulkCollectionPage.addNewPayerWithAllDetails({
       name: testData.payer1.newPayeeName,
