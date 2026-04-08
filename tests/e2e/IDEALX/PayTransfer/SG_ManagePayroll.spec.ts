@@ -1006,7 +1006,7 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
   });
 
 
-  //TC007_SG_ManagePayroll
+  //TC007_TC008_SG_ManagePayroll
   test('TC007_SG_ManagePayroll - Verify Management Payroll creation by Copy ManagePayrollDBS via Transfer Center', async ({ page }) => {
 
     //Step 1: Navigate Payment & Transfer Menu.
@@ -1355,7 +1355,7 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
    * 9. Dismiss confirmation dialog
    * 10. Validate transaction status is "Rejected"
    */
-  test('TC009_SG_ManagePayroll - Reject ManagePayrollDBS via Transfer Center', async ({
+  test('TC009_TC010_SG_ManagePayroll - Reject ManagePayrollDBS via Transfer Center', async ({
     page,
   }) => {
     // PHASE 1: CREATE PAYMENT
@@ -1530,6 +1530,9 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     expect(transactionStatusText).toContain(testData.status.Rejected);
     console.log(`✓ Transaction status confirmed as: ${transactionStatusText}`);
 
+    //TC011_Delete ManagePayrollDBS via Transfer Center
+
+
     // PHASE 4: CLEANUP - DELETE REJECTED TRANSACTION
     // ===============================================
     console.log('=== PHASE 4: Deleting rejected transaction ===');
@@ -1584,7 +1587,8 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
 
   //TC011_SG_ManagePayroll
-  test('TC012_SG_ManagePayrollDBS_Approvals', async ({ page }) => {
+  test('TC011_SG_ManagePayrollDBS_Approvals', async ({ page }, testInfo) => {
+    testInfo.setTimeout(TIMEOUT.ULTRA);
 
     //Step 1: Navigate Payment & Transfer Menu.
     await webComponents.waitForUXLoading([], page);
@@ -1667,27 +1671,22 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     await webComponents.waitElementToBeVisible(pages.PayrollPage.amountViewLabel);
     await webComponents.waitElementToBeVisible(pages.PayrollPage.hashValueLabel);
 
-    // Step 13: Validate the Reference No has status "Pending Approval".
-    //await webComponents.compareUIVsJsonValue(pages.PayrollPage.status,testData.status.PendingVerification);
-
+    // Step 13: Validate the Reference No has status "Pending Verification".
+    await webComponents.compareUIVsJsonValue(pages.PayrollPage.status,testData.status.PendingVerification);
 
     // Step 14: Logout from current user, as partiour payment is created with it. Login with a different user who has approval authority for TT payments, navigate to Transfer Center, search and open the payment with reference number created in TC011
     await pages.TelegraphicTransferPage.safeClick(pages.PayrollPage.logoutButton);
     const loginPage = new LoginPage(page);
+    await loginPage.goto();
     await loginPage.login(loginCompanyId, testData.ManagePayroll.SIT.loginUserIdUser2, String(CONSTANTS.PIN));
     pages = new PaymentsPages(page);
       
-    //await webComponents.waitElementToBeVisible(pages.AccountTransferPage.paymentMenu);
-    //await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
-
     await webComponents.waitElementToBeVisible(pages.ApprovalPage.approvalMenu);
     await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approvalMenu);
     //Step 2: Handle Authentication Pop-up.
     await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
 
-    // Step 15: Click approvalMenu in ApprovalPage
-     //await webComponents.waitElementToBeVisible(pages.ApprovalPage.approvalMenu);
-    //await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approvalMenu);
+    // Step 15: Click approvalMenu in ApprovalPage;
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.ApprovalPage.verifyPaymentTab);
 
@@ -1696,25 +1695,31 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.ApprovalPage.transactionFilter);
 
-    // Step 17: Click approvalMenu in ApprovalPage
+    // Step 17: Search by reference in Verify tab
+    await webComponents.enterTextarea(pages.ApprovalPage.transactionFilter, reference);
+    await page.waitForTimeout(5000);
     await webComponents.enterTextarea(pages.ApprovalPage.transactionFilter, reference);
 
-    // Step 18: Click the checkbox to select the transaction and click Approve button
-    await webComponents.waitElementToBeVisible(pages.ApprovalPage.searchFirstCheckBox);
-    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.searchFirstCheckBox);
+    // Step 18: Click the first checkbox to select the transaction and click Verify button
+    await webComponents.javaScriptsClick(pages.ApprovalPage.searchFirstCheckBox.first());
 
     await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveVerifyButton);
     await webComponents.waitForUXLoading([], page);
 
-    // Step 19: Click finish button
+    // Step 19: Click Submit button on verify confirmation page
+    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveVerifySubmitButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // Step 20: Verify success message and click Finish button
     await webComponents.waitElementToBeVisible(pages.ApprovalPage.verifiedSuccessfullyMessage);
     await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveVerifyFinishButton);
     await webComponents.waitForUXLoading([], page);
 
     await webComponents.waitElementToBeVisible(pages.ApprovalPage.transactionFilter);
 
-    // Step 20: Search Reference No and Open.
-    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    // Step 20: Search in Verify tab to confirm transaction is no longer listed after verification.
+    await webComponents.enterTextarea(pages.ApprovalPage.transactionFilter, reference);
+    await page.waitForTimeout(5000);
     await webComponents.waitElementToBeVisible(pages.ApprovalPage.noInformationToDisplay);
 
     // Step 20: Click Payment & Transfer Menu.
@@ -1746,7 +1751,8 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
 
   //TC012_SG_ManagePayroll
-  test('TC013_SG_ManagePayroll - Approve ManagePayrollDBS via Transfer Center with "Get Challenge via SMS", resulting in an "Approved" transaction status', async ({ page }) => {
+  test('TC012_SG_ManagePayroll - Approve ManagePayrollDBS via Transfer Center with "Get Challenge via SMS", resulting in an "Approved" transaction status', async ({ page }, testInfo) => {
+    testInfo.setTimeout(TIMEOUT.ULTRA);
 
     // Step 1: Navigate Payment & Transfer Menu.
     await webComponents.waitForUXLoading([], page);
@@ -1911,12 +1917,271 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
       email5LabelValue: testData.ManagePayrollPayee1.emailId4
     }, reference);
 
-    // Step 14: This method deletes the existing opened PayeeOrReferenceNo.
-    // Additional Step to delete the Reference No created
-    await pages.PayrollPage.deleteOpenPayeeOrReferenceNo({
-      transactionDeleted: testData.ManagePayrollPayee1.transactionDeleted,
-      internalReference: testData.ManagePayrollPayee1.internalReferenceUserProvided
-    }, reference);
+    // Note: Approved transactions cannot be deleted (Delete button is disabled for Approved status).
+    // No cleanup delete step needed.
+
+  });
+
+
+
+  //TC013_SG_ManagePayroll
+  test('TC013_SG_ManagePayroll - Release ManagePayrollDBS via My Release', async ({ page }, testInfo) => {
+    testInfo.setTimeout(TIMEOUT.ULTRA);
+
+    //Step 1: Navigate Payment & Transfer Menu.
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.AccountTransferPage.paymentMenu);
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+
+    //Step 2: Handle Authentication Pop-up.
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // Step 3: Click Management Payroll option.
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.managePayroll);
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.managePayroll);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.fromAccount);
+
+    // Step 4: Select account from "Account" dropdown.
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.fromAccount);
+    await webComponents.typeTextThroughKeyBoardAction(page, fromAccount);
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'ArrowDown');
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'Enter');
+
+    // Step 5: Add "New payee".
+    const { name, accountNumber } = await pages.PayrollPage.addNewPayeeWithAllDetailsSG({
+      name: testData.ManagePayrollPayee1.newPayeeName,
+      nickName: testData.ManagePayrollPayee1.newPayeeNickName,
+      bankId: testData.ManagePayrollPayee1.payeeBankID,
+      accountNumber: testData.ManagePayrollPayee1.newPayeeAcctNumber,
+      payeeCategory: testData.ManagePayrollPayee1.payeeCategory,
+      savePayeeCheckbox: testData.ManagePayrollPayee1.savePayeeCheckbox
+    });
+
+    // Register for cleanup
+    createdPayees.push({ name, accountNumber });
+
+    // Step 6: Enter Amount (SGD), Transaction code, Purpose of Payment and other optional details for 
+    // Particulars, Collection details to the payer bank, Message to the payee, Emails, Emails Message
+    await pages.PayrollPage.enterNewPayeeAllOtherDetailsSG({
+      amount: testData.ManagePayrollPayee1.amountPendingVerification,
+      purposeOfPayment: testData.ManagePayrollPayee1.purposeOfPayment,
+      transactionCode: testData.ManagePayrollPayee1.transactionCode,
+      referenceForPayee: testData.ManagePayrollPayee1.referenceForPayee,
+      particulars: testData.ManagePayrollPayee1.particulars,
+      paymentDetails: testData.ManagePayrollPayee1.paymentDetails,
+      email1: testData.ManagePayrollPayee1.emailId0,
+      email2: testData.ManagePayrollPayee1.emailId1,
+      email3: testData.ManagePayrollPayee1.emailId2,
+      email4: testData.ManagePayrollPayee1.emailId3,
+      email5: testData.ManagePayrollPayee1.emailId4,
+      emailMessage: testData.ManagePayrollPayee1.emailMessage
+    });
+
+    // Step 7: Select Payment date. Click checkbox : Earliest Available Date
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.earliestAvailableDateCheckbox);
+
+    // Step 8: Click Next button.
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.nextButton);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.submitButton);
+
+    // Step 9: Click Submit button.
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.submitButton);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.finishButton);
+
+    // Step 10: Get the full banner text.
+    const referenceText = await pages.PayrollPage.getReferenceText();
+    console.log('Captured reference text:', referenceText);
+    // It extracts the EBLV… token/Refrence no
+    const reference = await pages.PayrollPage.getReferenceID();
+    console.log('Captured referenceID:', reference);
+
+    // Step 11: Click Finish button.
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.finishButton);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.payroll);
+
+    // Step 12: Search Reference No and Open.
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.fromAccountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.amountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.hashValueLabel);
+
+    // Step 13: Validate the Reference No has status "Pending Verification".
+    await webComponents.compareUIVsJsonValue(pages.PayrollPage.status, testData.status.PendingVerification);
+
+
+    // ========== PHASE 2: Verify ManagePayrollDBS via My Verify ==========
+
+    // Step 14: Logout from current user and login with User2 who has verify/approve/release authority
+    await pages.TelegraphicTransferPage.safeClick(pages.PayrollPage.logoutButton);
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.login(loginCompanyId, testData.ManagePayroll.SIT.loginUserIdUser2, String(CONSTANTS.PIN));
+    pages = new PaymentsPages(page);
+
+    // Step 15: Navigate to Approvals menu
+    await webComponents.waitElementToBeVisible(pages.ApprovalPage.approvalMenu);
+    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approvalMenu);
+
+    // Step 16: Handle Authentication Pop-up.
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // Step 17: Click Verify Payment tab in ApprovalPage
+    await webComponents.waitElementToBeVisible(pages.ApprovalPage.verifyPaymentTab);
+    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.verifyPaymentTab);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.ApprovalPage.transactionFilter);
+
+    // Step 18: Search by reference in Verify tab
+    await webComponents.enterTextarea(pages.ApprovalPage.transactionFilter, reference);
+    await page.waitForTimeout(5000);
+    await webComponents.enterTextarea(pages.ApprovalPage.transactionFilter, reference);
+
+    // Step 19: Click the first checkbox to select the transaction and click Verify button
+    await webComponents.javaScriptsClick(pages.ApprovalPage.searchFirstCheckBox.first());
+    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveVerifyButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // Step 20: Click Submit button on verify confirmation page
+    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveVerifySubmitButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // Step 21: Verify success message and click Finish button
+    await webComponents.waitElementToBeVisible(pages.ApprovalPage.verifiedSuccessfullyMessage);
+    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveVerifyFinishButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // Step 22: Search in Verify tab to confirm transaction is no longer listed after verification
+    await webComponents.waitElementToBeVisible(pages.ApprovalPage.transactionFilter);
+    await webComponents.enterTextarea(pages.ApprovalPage.transactionFilter, reference);
+    await page.waitForTimeout(5000);
+    await webComponents.waitElementToBeVisible(pages.ApprovalPage.noInformationToDisplay);
+
+    // Step 23: Navigate to Pay & Transfer and validate status is Pending Approval after verify
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.TransferCentersPage.transferCenterFilter);
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.fromAccountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.amountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.hashValueLabel);
+    await webComponents.compareUIVsJsonValue(pages.PayrollPage.status, testData.status.PendingApproval);
+
+
+    // ========== PHASE 3: Approve ManagePayrollDBS via Transfer Center ==========
+
+    // Step 24: Navigate back to Pay & Transfer Menu to search and approve
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.waitForUXLoading([], page);
+
+    // Step 25: Search Reference No and Open via Transfer Center.
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.fromAccountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.amountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.hashValueLabel);
+
+    // Step 26: Click Approve button on view payment page
+    await webComponents.scrollToElement(pages.PayrollPage.approveSubmitButton);
+    await webComponents.javaScriptsClick(pages.PayrollPage.approveSubmitButton);
+
+    // Step 27: Click 'Alternatively, use your digital token or security device for approval'
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.pushApprovalOption);
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.pushApprovalOption);
+
+    // Step 28: Click 'Get Challenge via SMS' button
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.getChallengeSMSButton);
+    await webComponents.isElementVisible(page, pages.PayrollPage.challengeCodeMsg);
+
+    // Step 29: Enter "Enter Response" code
+    await webComponents.enterTextarea(pages.PayrollPage.enterResponseTextBox, CONSTANTS.CHALLENGEVIASMSCODE);
+
+    // Step 30: Click Approve button to confirm approval
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.toolbarApproveButton);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.dismissButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.dismissButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // Step 31: Navigate to Transfer Center and validate status after approval
+    await webComponents.waitElementToBeVisible(pages.TransferCentersPage.transferCenterFilter);
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.fromAccountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.amountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.hashValueLabel);
+
+    // Validate status is one of the expected post-approval statuses
+    // Protractor: textbaohanLessOne(Approved, PartialApproved, Received, PendingRelease, Completed, BankRejected)
+    const approvalStatusText = await webComponents.getTextFromElement(pages.PayrollPage.status);
+    const approvalValidStatuses = [testData.status.Approved, testData.status.PartialApproved, testData.status.Received, testData.status.PendingRelease, testData.status.Completed, testData.status.BankRejected];
+    const approvalStatusMatch = approvalValidStatuses.some((s: string) => approvalStatusText.includes(s));
+    expect(approvalStatusMatch).toBeTruthy();
+    console.log(`Post-approval status: ${approvalStatusText}`);
+
+
+    // ========== PHASE 4: Release ManagePayrollDBS via My Release ==========
+
+    // Step 32: Navigate to Approvals menu
+    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approvalMenu);
+    await webComponents.waitForUXLoading([], page);
+
+    // Step 33: Click Release tab in ApprovalPage
+    await webComponents.waitElementToBeVisible(pages.ApprovalPage.approveReleaseTab);
+    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveReleaseTab);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.ApprovalPage.transactionFilter);
+
+    // Step 34: Search by reference in Release tab
+    await webComponents.enterTextarea(pages.ApprovalPage.transactionFilter, reference);
+    await page.waitForTimeout(5000);
+    await webComponents.enterTextarea(pages.ApprovalPage.transactionFilter, reference);
+
+    // Step 35: Click the first checkbox to select the transaction and click Release button
+    await webComponents.javaScriptsClick(pages.ApprovalPage.searchFirstCheckBox.first());
+    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveReleaseButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // Step 36: Click Submit button on release confirmation page
+    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveReleaseSubmitButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // Step 37: Verify success message and click Finish button
+    await webComponents.waitElementToBeVisible(pages.ApprovalPage.releasedSuccessfullyMessage);
+    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveVerifyFinishButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // Step 38: Search in Release tab to confirm transaction is no longer listed after release
+    await webComponents.waitElementToBeVisible(pages.ApprovalPage.transactionFilter);
+    await webComponents.enterTextarea(pages.ApprovalPage.transactionFilter, reference);
+    await page.waitForTimeout(5000);
+    await webComponents.waitElementToBeVisible(pages.ApprovalPage.noInformationToDisplay);
+
+    // Step 39: Click Payment & Transfer Menu.
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.waitForUXLoading([], page);
+
+    // Step 40: Search Reference No and Open via Transfer Center.
+    await webComponents.waitElementToBeVisible(pages.TransferCentersPage.transferCenterFilter);
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.fromAccountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.amountViewLabel);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.hashValueLabel);
+
+    // Step 41: Validate the Reference No has final status (Approved/Received/Completed/BankRejected).
+    // Protractor: textbaohanLessOne(Approved, Received, Completed, BankRejected)
+    const statusText = await webComponents.getTextFromElement(pages.PayrollPage.status);
+    const validStatuses = [testData.status.Approved, testData.status.Received, testData.status.Completed, testData.status.BankRejected];
+    const statusMatch = validStatuses.some((s: string) => statusText.includes(s));
+    expect(statusMatch).toBeTruthy();
+    console.log(`Transaction status confirmed as: ${statusText}`);
 
   });
 

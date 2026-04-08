@@ -17,9 +17,10 @@ export class ApprovalPage {
     this.approveReleaseSubmitButton = page.locator('//button[@name="txn-preview-verify-release"]');
 
     this.verifyPaymentTab = page.locator('//a[contains(@href,"/approvals/verify")]');
-    this.transactionFilter = page.locator('//input[@type="text"]');
+    this.transactionFilter = page.locator('//input[@id="byTXN-filter"]');
     this.searchFirstCheckBox = page.locator('//input[contains(@id, "txn-select") and @type="checkbox"]');
     this.verifiedSuccessfullyMessage = page.locator('//label[contains(text(),"has been verified successfully. New status has been updated.")]');
+    this.releasedSuccessfullyMessage = page.locator('//label[contains(text(),"has been released successfully")]');
     this.noInformationToDisplay = page.locator('//div[normalize-space(text())="No information to display"]');
 
   }
@@ -38,6 +39,7 @@ export class ApprovalPage {
   readonly transactionFilter: Locator;
   readonly searchFirstCheckBox: Locator;
   readonly verifiedSuccessfullyMessage: Locator;
+  readonly releasedSuccessfullyMessage: Locator;
   readonly noInformationToDisplay: Locator;
 
 
