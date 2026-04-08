@@ -16,6 +16,12 @@ export class ApprovalPage {
     this.approveReleaseButton = page.locator('//button[@id="transactionRelease"]');
     this.approveReleaseSubmitButton = page.locator('//button[@name="txn-preview-verify-release"]');
 
+    this.verifyPaymentTab = page.locator('//a[contains(@href,"/approvals/verify")]');
+    this.transactionFilter = page.locator('//input[@type="text"]');
+    this.searchFirstCheckBox = page.locator('//input[contains(@id, "txn-select") and @type="checkbox"]');
+    this.verifiedSuccessfullyMessage = page.locator('//label[contains(text(),"has been verified successfully. New status has been updated.")]');
+    this.noInformationToDisplay = page.locator('//div[normalize-space(text())="No information to display"]');
+
   }
   readonly approvalMenu: Locator;
   readonly approvalVerifyTab: Locator;
@@ -28,6 +34,11 @@ export class ApprovalPage {
   readonly approveReleaseTab: Locator;
   readonly approveReleaseButton: Locator;
   readonly approveReleaseSubmitButton: Locator;
+  readonly verifyPaymentTab: Locator;
+  readonly transactionFilter: Locator;
+  readonly searchFirstCheckBox: Locator;
+  readonly verifiedSuccessfullyMessage: Locator;
+  readonly noInformationToDisplay: Locator;
 
 
   async saferClick(locator: Locator, timeout = 20_000) {

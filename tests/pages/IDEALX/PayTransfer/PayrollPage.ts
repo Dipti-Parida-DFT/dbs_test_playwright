@@ -322,6 +322,7 @@ export class PayrollPage {
     this.paymentType = page.locator('xpath=//*[@id="bulk-view-paymentType"]');
     //this.paymentDate = page.locator('xpath=//*[@id="bulk-view-paymentDate"]//label');
     this.paymentDate = page.locator('xpath=//*[@id="bulk-view-paymentDate"]');
+    this.logoutButton = page.locator('//div[@id="logout"]');
 
     this.paymentTypeDetailLabel = page.locator('xpath=//dbs-bp-view-summary-section/div[5]/span[2]/span[2]');
     this.amountViewLabel = page.locator('xpath=//*[@id="bulk-view-paymentAmount"]');
@@ -580,6 +581,7 @@ export class PayrollPage {
   readonly paymentTypeLabel: Locator;
   readonly paymentType: Locator;
   readonly paymentDate: Locator;
+   readonly logoutButton: Locator;
 
 
   readonly paymentTypeDetailLabel: Locator;
