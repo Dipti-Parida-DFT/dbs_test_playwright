@@ -1,6 +1,7 @@
 // pages/TelegraphicTransferPage.ts
 import { Page, Locator, expect, test } from '@playwright/test';
 import path from 'node:path';
+import { WebComponents } from '../../../lib/webComponents';
 
 export type BankChargeType = 'SHARED' | 'OUR' | 'THEY';
 export type NewTTPayeeInput = {
@@ -254,6 +255,48 @@ export type PartiourTTPayeeResult = {
     remitterIdentity: string;
 };
 
+  export type AddExistingCNPayeeWithNewCategoryAndSeriesInput = {
+    existingAccountNumber: string;
+    fxAppRefNum: string;
+    BOP1Amount: number;
+    BOP2Amount: number;
+    contractNumber?: string; // Optional
+    invoiceNumber: string;
+    transactionRemark1: string;
+    amountA2: number;
+    bankChargeType: BankChargeType;
+    payeeBankMsg: string;
+    email1: string;
+    email2: string;
+    email3: string;
+    email4: string;
+    email5: string;
+    payeeMsg: string;
+    additionalNote: string;
+    remitterIdentity: string;
+};
+
+  export type AddExistingCNPayeeWithNewCategoryAndSeriesResult = {
+    existingAccountNumber: string;
+    fxAppRefNum: string;
+    BOP1Amount: number;
+    BOP2Amount: number;
+    contractNumber?: string;
+    invoiceNumber: string;
+    transactionRemark1: string;
+    amountA2: number;
+    bankChargeType: BankChargeType;
+    payeeBankMsg: string;
+    email1: string;
+    email2: string;
+    email3: string;
+    email4: string;
+    email5: string;
+    payeeMsg: string;
+    additionalNote: string;
+    remitterIdentity: string;
+};
+
 
 
 
@@ -271,6 +314,8 @@ export type PartiourTTPayeeResult = {
 
 
 export class TelegraphicTransferPage {
+  private readonly webComponents = new WebComponents();
+
   constructor(private readonly page: Page) {
     this.authenticate = page.locator('//button[@type="button" and @class="btn btn__primary"]');
     this.makePayment = page.locator('//mat-icon[@id="icon__make_payment"]');
@@ -437,6 +482,12 @@ export class TelegraphicTransferPage {
     this.existingCNPaymentNatureDropdown = page.locator('(//span[contains(@class,"autocomplete-list")])[1]');
     this.pmtBOPCategory2Dropdown = page.locator('//span[contains(text(),"Capital")]');
     this.pmtBOPCodeSeries2Dropdown = page.locator('//span[contains(text(),"521010")]');
+    this.pmtBOPCategory2 = page.locator('//input[@id="pmtCategory2"]');
+    this.pmtBOPCodeSeries2 = page.locator('//input[@id="seriesCode2"]');
+    this.pmtBOP1Amount = page.locator('//input[@name="bop-amount-1"]');
+    this.pmtBOP2Amount = page.locator('//input[@name="bop-amount-2"]');
+    this.pmtBOPCodeSeries3Dropdown = page.locator('(//span[contains(text(),"Capital")])[2]');
+    this.userIdInput1 = page.locator('input[name="userId"], input[placeholder*="User" i]');
     }
 
     readonly authenticate: Locator;
@@ -602,8 +653,13 @@ export class TelegraphicTransferPage {
     readonly existingCNPaymentNatureDropdown: Locator;
     readonly pmtBOPCategory2Dropdown: Locator;
     readonly pmtBOPCodeSeries2Dropdown: Locator;
+    readonly pmtBOPCategory2: Locator;
+    readonly pmtBOPCodeSeries2: Locator;
+    readonly pmtBOP1Amount: Locator;
+    readonly pmtBOP2Amount: Locator;
+    readonly pmtBOPCodeSeries3Dropdown: Locator;
+    readonly userIdInput1: Locator;
 
-    
   private async selectBankCharge(charge: BankChargeType) {
   switch (charge) {
     case 'OUR':
@@ -1185,170 +1241,173 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
     await this.waitForUXLoading();
     await this.protectionInfoCheckbox0.evaluate(el => (el as HTMLElement).click());
     await this.protectionInfoCheckbox1.evaluate(el => (el as HTMLElement).click());
-    await this.safeClick(this.protectionInfoAcknowledge);
+    await this.webComponents.clickWhenVisibleAndEnabled(this.protectionInfoAcknowledge); 
     await this.page.waitForLoadState('networkidle');
   }
 
   async addNewCNTTPayee(input: AddNewCNPayeeInput): Promise<AddNewCNPayeeResult> {
     const { country, bankId, routingCode, accountNumber, name, nickName, payeeLocation, city, add1, add2, intermediaryLocation, intermediaryBankId, fxAppRefNum, contractNumber, invoiceNumber, transactionRemark1, amountA1, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity } = input;
-      await this.safeClick(this.newPayeeTab)
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newPayeeTab);
       await this.waitForSGNewPayeeFormReady();
-      await this.inputnewTTBankLocation.click();
-      await this.safeFill(this.inputnewTTBankLocation, country);
-      await this.safeClick(this.inputnewTTBankLocationHongkongDropdown);
-      await this.enterNewPayeeBankID.waitFor({ state: 'visible' });
-      await this.enterNewPayeeBankID.fill(bankId);
-      await this.page.keyboard.press('Enter');
-      await this.safeClick(this.existingPayeeBankAccountSelect);
+      await this.webComponents.enterTextarea(this.inputnewTTBankLocation, country);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.inputnewTTBankLocationHongkongDropdown);
+      await this.webComponents.enterTextarea(this.enterNewPayeeBankID, bankId);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Enter');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingPayeeBankAccountSelect);
       await this.enterNewPayeeBankID.blur();
 
-      await this.safeClick(this.inputRoutingNumber);
-      await this.safeFill(this.inputRoutingNumber, routingCode);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.inputRoutingNumber);
+      await this.webComponents.enterTextarea(this.inputRoutingNumber, routingCode);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.inputRoutingNumber.blur();
 
-      await this.safeClick(this.newTTPayeeAccountNumber);
-      await this.safeFill(this.newTTPayeeAccountNumber, accountNumber);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeAccountNumber);
+      await this.webComponents.enterTextarea(this.newTTPayeeAccountNumber, accountNumber);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeAccountNumber.blur();
 
-      await this.safeClick(this.newTTPayeeName);
-      await this.safeFill(this.newTTPayeeName, name);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeName);
+      await this.webComponents.enterTextarea(this.newTTPayeeName, name);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeName.blur();
 
-      await this.safeClick(this.newTTPayeeNickname);
-      await this.safeFill(this.newTTPayeeNickname, nickName);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeNickname);
+      await this.webComponents.enterTextarea(this.newTTPayeeNickname, nickName);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeNickname.blur();
 
-      await this.payeeLocation.click();
-      await this.safeFill(this.payeeLocation, payeeLocation);
-      await this.safeClick(this.MYRlocation);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.payeeLocation);
+      await this.webComponents.typeTextThroughKeyBoardAction(this.page, payeeLocation);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'ArrowDown');
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Enter');
 
-      await this.safeClick(this.newPayeeCity);
-      await this.safeFill(this.newPayeeCity, city);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newPayeeCity);
+      await this.webComponents.enterTextarea(this.newPayeeCity, city);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newPayeeCity.blur();
 
-      await this.safeClick(this.newTTPayeeAddress1);
-      await this.safeFill(this.newTTPayeeAddress1, add1);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeAddress1);
+      await this.webComponents.enterTextarea(this.newTTPayeeAddress1, add1);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeAddress1.blur();
 
-      await this.safeClick(this.newTTPayeeAddress2);
-      await this.safeFill(this.newTTPayeeAddress2, add2);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeAddress2);
+      await this.webComponents.enterTextarea(this.newTTPayeeAddress2, add2);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeAddress2.blur();
 
-      await this.intermediaryBankCheckbox.evaluate(el => (el as HTMLElement).click());
+      await this.webComponents.javaScriptsClick(this.intermediaryBankCheckbox);
 
-      await this.intermediaryBankLocation.click();
-      await this.safeFill(this.intermediaryBankLocation, intermediaryLocation);
-      await this.safeClick(this.newIntermediaryBankLocationAfghanistanDropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.intermediaryBankLocation);
+      await this.webComponents.typeTextThroughKeyBoardAction(this.page, intermediaryLocation);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newIntermediaryBankLocationAfghanistanDropdown);
       
       await this.intermediaryBankId.waitFor({ state: 'visible' });
-      await this.intermediaryBankId.fill(intermediaryBankId);
-      await this.page.keyboard.press('Enter');
-      await this.safeClick(this.newIntermediaryBankLocationAfghanistanSelect);
+      await this.webComponents.enterTextarea(this.intermediaryBankId, intermediaryBankId);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Enter');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newIntermediaryBankLocationAfghanistanSelect);
       await this.intermediaryBankId.blur();
 
-      await this.safeClick(this.countryPartyCNHCode);
-      await this.safeClick(this.countryPartyAndorraDropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.countryPartyCNHCode);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.countryPartyAndorraDropdown);
       await this.countryPartyCNHCode.blur();
 
-      await this.safeClick(this.specificPaymentPurpose);
-      await this.safeClick(this.specificPaymentPurposeDropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.specificPaymentPurpose);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.specificPaymentPurposeDropdown);
       await this.specificPaymentPurpose.blur();
 
-      await this.isTaxFreeGoods.evaluate(el => (el as HTMLElement).click());
+      await this.webComponents.javaScriptsClick(this.isTaxFreeGoods);
 
-      await this.safeClick(this.fxAppRefNum);
-      await this.safeFill(this.fxAppRefNum, fxAppRefNum);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.fxAppRefNum);
+      await this.webComponents.enterTextarea(this.fxAppRefNum, fxAppRefNum);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.fxAppRefNum.blur();
 
-      await this.safeClick(this.pmtBOPCategory1);
-      await this.safeClick(this.pmtBOPCategory1Dropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCategory1);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCategory1Dropdown);
       await this.pmtBOPCategory1.blur();
 
-      await this.safeClick(this.pmtBOPCodeSeries1);
-      await this.safeClick(this.pmtBOPCodeSeries1Dropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCodeSeries1);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCodeSeries1Dropdown);
       await this.pmtBOPCodeSeries1.blur();
 
-      await this.safeClick(this.contractNumber);
-      await this.safeFill(this.contractNumber, contractNumber);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.contractNumber);
+      await this.webComponents.enterTextarea(this.contractNumber, contractNumber);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.contractNumber.blur();
 
-      await this.safeClick(this.invoiceNumber);
-      await this.safeFill(this.invoiceNumber, invoiceNumber);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.invoiceNumber);
+      await this.webComponents.enterTextarea(this.invoiceNumber, invoiceNumber);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.invoiceNumber.blur();
 
-      await this.safeClick(this.transactionRemark1);
-      await this.safeFill(this.transactionRemark1, transactionRemark1);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.transactionRemark1);
+      await this.webComponents.enterTextarea(this.transactionRemark1, transactionRemark1);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.transactionRemark1.blur();
 
       await this.uploadSupportingDocument('DIGI_DOC.pdf');
 
-      await this.safeClick(this.documentType);
-      await this.safeClick(this.documentTypeDropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.documentType);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.documentTypeDropdown);
       await this.documentType.blur();
 
-      await this.safeClick(this.utilizedAmount);
-      await this.safeFill(this.utilizedAmount, amountA1);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.utilizedAmount);
+      await this.webComponents.enterTextarea(this.utilizedAmount, amountA1);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.utilizedAmount.blur();      
      
       await this.selectBankCharge(bankChargeType);
 
-      await this.safeClick(this.newTTPaymentRemark);
-      await this.safeFill(this.newTTPaymentRemark, payeeBankMsg);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPaymentRemark);
+      await this.webComponents.enterTextarea(this.newTTPaymentRemark, payeeBankMsg);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPaymentRemark.blur();
 
-      await this.newTTPayeeMsgCheckbox.evaluate(el => (el as HTMLElement).click());
+      await this.webComponents.javaScriptsClick(this.newTTPayeeMsgCheckbox);
 
-      await this.safeClick(this.newTTPayeeEmail1);
-      await this.safeFill(this.newTTPayeeEmail1, email1);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail1);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail1, email1);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail1.blur();
 
-      await this.safeClick(this.newTTPayeeEmail2);
-      await this.safeFill(this.newTTPayeeEmail2, email2);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail2);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail2, email2);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail2.blur();
 
-      await this.safeClick(this.newTTPayeeEmail3);
-      await this.safeFill(this.newTTPayeeEmail3, email3);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail3);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail3, email3);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail3.blur();
 
-      await this.safeClick(this.newTTPayeeEmail4);
-      await this.safeFill(this.newTTPayeeEmail4, email4);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail4);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail4, email4);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail4.blur();
 
-      await this.safeClick(this.newTTPayeeEmail5);
-      await this.safeFill(this.newTTPayeeEmail5, email5);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail5);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail5, email5);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail5.blur();
 
-      await this.safeClick(this.newTTPayeeRemark);
-      await this.safeFill(this.newTTPayeeRemark, payeeMsg);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeRemark);
+      await this.webComponents.enterTextarea(this.newTTPayeeRemark, payeeMsg);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab'); 
       await this.newTTPayeeRemark.blur();
 
-      await this.additionalNoteCheckbox.evaluate(el => (el as HTMLElement).click());
+      await this.webComponents.javaScriptsClick(this.additionalNoteCheckbox);
 
-      await this.safeClick(this.additionalNoteRemark);
-      await this.safeFill(this.additionalNoteRemark, additionalNote);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.additionalNoteRemark);
+      await this.webComponents.enterTextarea(this.additionalNoteRemark, additionalNote);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.additionalNoteRemark.blur();
 
-      await this.orderingBankMsgCheckbox.evaluate(el => (el as HTMLElement).click());
+      await this.webComponents.javaScriptsClick(this.orderingBankMsgCheckbox);
 
-      await this.safeClick(this.orderingBankMsg);
-      await this.safeFill(this.orderingBankMsg, remitterIdentity);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.orderingBankMsg);
+      await this.webComponents.enterTextarea(this.orderingBankMsg, remitterIdentity);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.orderingBankMsg.blur();
 
       return { country, bankId, routingCode, accountNumber, name, nickName, payeeLocation, city, add1, add2, intermediaryLocation, intermediaryBankId, fxAppRefNum, contractNumber, invoiceNumber, transactionRemark1, amountA1, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity };
@@ -1356,113 +1415,115 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
 
   async addExistingCNTTPayee(input: AddExistingCNPayeeInput): Promise<AddExistingCNPayeeResult> {
     const { existingAccountNumber, fxAppRefNum, contractNumber, invoiceNumber, transactionRemark1, amountA2, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity } = input;
-      await this.safeClick(this.existingPayeeTab)
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingPayeeTab)
+      await expect(this.existingPayeeBankAccount).toBeVisible({ timeout: 120_000 });
+      await expect(this.existingPayeeBankAccount).toBeEnabled({ timeout: 120_000 });
 
-      await this.safeClick(this.existingPayeeBankAccount);
-      await this.safeFill(this.existingPayeeBankAccount, existingAccountNumber);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingPayeeBankAccount);
+      await this.webComponents.typeTextThroughKeyBoardAction(this.page, existingAccountNumber);
+      
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPayeeBankAccountDropdown);
       await this.existingPayeeBankAccount.blur();
-      await this.safeClick(this.existingCNPayeeBankAccountDropdown);
 
-      await this.safeClick(this.countryPartyCNHCode);
-      await this.safeClick(this.countryPartyAndorraDropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.countryPartyCNHCode);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.countryPartyAndorraDropdown);
       await this.countryPartyCNHCode.blur();
 
-      await this.safeClick(this.specificPaymentPurpose);
-      await this.safeClick(this.specificPaymentPurposeDropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.specificPaymentPurpose);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.specificPaymentPurposeDropdown);
       await this.specificPaymentPurpose.blur();
 
-      await this.isTaxFreeGoods.evaluate(el => (el as HTMLElement).click());
+      await this.webComponents.javaScriptsClick(this.isTaxFreeGoods);
 
-      await this.safeClick(this.existingCNPaymentNature);
-      await this.safeClick(this.existingCNPaymentNatureDropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPaymentNature);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPaymentNatureDropdown);
       await this.existingCNPaymentNature.blur();
 
-      await this.safeClick(this.fxAppRefNum);
-      await this.safeFill(this.fxAppRefNum, fxAppRefNum);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.fxAppRefNum);
+      await this.webComponents.enterTextarea(this.fxAppRefNum, fxAppRefNum);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.fxAppRefNum.blur();
 
-      await this.safeClick(this.pmtBOPCategory1);
-      await this.safeClick(this.pmtBOPCategory1Dropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCategory1);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCategory1Dropdown);
       await this.pmtBOPCategory1.blur();
 
-      await this.safeClick(this.pmtBOPCodeSeries1);
-      await this.safeClick(this.pmtBOPCodeSeries1Dropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCodeSeries1);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCodeSeries1Dropdown);
       await this.pmtBOPCodeSeries1.blur();
 
-      await this.safeClick(this.contractNumber);
-      await this.safeFill(this.contractNumber, contractNumber);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.contractNumber);
+      await this.webComponents.enterTextarea(this.contractNumber, contractNumber);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.contractNumber.blur();
 
-      await this.safeClick(this.invoiceNumber);
-      await this.safeFill(this.invoiceNumber, invoiceNumber);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.invoiceNumber);
+      await this.webComponents.enterTextarea(this.invoiceNumber, invoiceNumber);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.invoiceNumber.blur();
 
-      await this.safeClick(this.transactionRemark1);
-      await this.safeFill(this.transactionRemark1, transactionRemark1);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.transactionRemark1);
+      await this.webComponents.enterTextarea(this.transactionRemark1, transactionRemark1);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.transactionRemark1.blur();
 
       await this.uploadSupportingDocument('DIGI_DOC.pdf');
 
-      await this.safeClick(this.documentType);
-      await this.safeClick(this.documentTypeDropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.documentType);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.documentTypeDropdown);
       await this.documentType.blur();
 
-      await this.safeClick(this.utilizedAmount);
-      await this.safeFill(this.utilizedAmount, amountA2);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.utilizedAmount);
+      await this.webComponents.enterTextarea(this.utilizedAmount, amountA2);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.utilizedAmount.blur();  
 
       await this.selectBankCharge(bankChargeType);
 
-      await this.safeClick(this.newTTPaymentRemark);
-      await this.safeFill(this.newTTPaymentRemark, payeeBankMsg);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPaymentRemark);
+      await this.webComponents.enterTextarea(this.newTTPaymentRemark, payeeBankMsg);
       await this.newTTPaymentRemark.blur();
 
-      await this.newTTPayeeMsgCheckbox.evaluate(el => (el as HTMLElement).click());
+      await this.webComponents.javaScriptsClick(this.newTTPayeeMsgCheckbox);
 
-      await this.safeClick(this.newTTPayeeEmail1);
-      await this.safeFill(this.newTTPayeeEmail1, email1);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail1);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail1, email1);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail1.blur();
 
-      await this.safeClick(this.newTTPayeeEmail2);
-      await this.safeFill(this.newTTPayeeEmail2, email2);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail2);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail2, email2);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail2.blur();
 
-      await this.safeClick(this.newTTPayeeEmail3);
-      await this.safeFill(this.newTTPayeeEmail3, email3);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail3);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail3, email3);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail3.blur();
 
-      await this.safeClick(this.newTTPayeeEmail4);
-      await this.safeFill(this.newTTPayeeEmail4, email4);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail4);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail4, email4);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail4.blur();
 
-      await this.safeClick(this.newTTPayeeEmail5);
-      await this.safeFill(this.newTTPayeeEmail5, email5);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail5);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail5, email5);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail5.blur();
 
-      await this.safeClick(this.newTTPayeeRemark);
-      await this.safeFill(this.newTTPayeeRemark, payeeMsg);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeRemark);
+      await this.webComponents.enterTextarea(this.newTTPayeeRemark, payeeMsg);
       await this.newTTPayeeRemark.blur();
 
-      await this.additionalNoteCheckbox.evaluate(el => (el as HTMLElement).click());
+      await this.webComponents.javaScriptsClick(this.additionalNoteCheckbox);
 
-      await this.safeClick(this.additionalNoteRemark);
-      await this.safeFill(this.additionalNoteRemark, additionalNote);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.additionalNoteRemark);
+      await this.webComponents.enterTextarea(this.additionalNoteRemark, additionalNote);
       await this.additionalNoteRemark.blur();
 
-      await this.orderingBankMsgCheckbox.evaluate(el => (el as HTMLElement).click());
-
-      await this.safeClick(this.orderingBankMsg);
-      await this.safeFill(this.orderingBankMsg, remitterIdentity);
+      await this.webComponents.javaScriptsClick(this.orderingBankMsgCheckbox);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.orderingBankMsg);
+      await this.webComponents.enterTextarea(this.orderingBankMsg, remitterIdentity);
       await this.orderingBankMsg.blur();
 
       return { existingAccountNumber, fxAppRefNum, contractNumber, invoiceNumber, transactionRemark1, amountA2, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity };
@@ -1470,116 +1531,254 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
 
  async addExistingCNTTPayeeWithNewCategory(input: AddExistingCNPayeeWithNewCategoryInput): Promise<AddExistingCNPayeeWithNewCategoryResult> {
     const { existingAccountNumber, fxAppRefNum, contractNumber, invoiceNumber, transactionRemark1, amountA2, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity } = input;
-      await this.safeClick(this.existingPayeeTab)
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingPayeeTab)
+      await expect(this.existingPayeeBankAccount).toBeVisible({ timeout: 120_000 });
+      await expect(this.existingPayeeBankAccount).toBeEnabled({ timeout: 120_000 });
 
-      await this.safeClick(this.existingPayeeBankAccount);
-      await this.safeFill(this.existingPayeeBankAccount, existingAccountNumber);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingPayeeBankAccount);
+      await this.webComponents.typeTextThroughKeyBoardAction(this.page, existingAccountNumber);
+      
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPayeeBankAccountDropdown);
       await this.existingPayeeBankAccount.blur();
-      await this.safeClick(this.existingCNPayeeBankAccountDropdown);
 
-      await this.safeClick(this.countryPartyCNHCode);
-      await this.safeClick(this.countryPartyAndorraDropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.countryPartyCNHCode);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.countryPartyAndorraDropdown);
       await this.countryPartyCNHCode.blur();
 
-      await this.safeClick(this.specificPaymentPurpose);
-      await this.safeClick(this.specificPaymentPurposeDropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.specificPaymentPurpose);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.specificPaymentPurposeDropdown);
       await this.specificPaymentPurpose.blur();
 
-      await this.isTaxFreeGoods.evaluate(el => (el as HTMLElement).click());
+      await this.webComponents.javaScriptsClick(this.isTaxFreeGoods);
 
-      await this.safeClick(this.existingCNPaymentNature);
-      await this.safeClick(this.existingCNPaymentNatureDropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPaymentNature);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPaymentNatureDropdown);
       await this.existingCNPaymentNature.blur();
 
-      await this.safeClick(this.fxAppRefNum);
-      await this.safeFill(this.fxAppRefNum, fxAppRefNum);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.fxAppRefNum);
+      await this.webComponents.enterTextarea(this.fxAppRefNum, fxAppRefNum);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.fxAppRefNum.blur();
 
-      await this.safeClick(this.pmtBOPCategory1);
-      await this.safeClick(this.pmtBOPCategory2Dropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCategory1);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCategory2Dropdown);
       await this.pmtBOPCategory1.blur();
 
-      await this.safeClick(this.pmtBOPCodeSeries1);
-      await this.safeClick(this.pmtBOPCodeSeries2Dropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCodeSeries1);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCodeSeries2Dropdown);
       await this.pmtBOPCodeSeries1.blur();
 
-      await this.safeClick(this.contractNumber);
-      await this.safeFill(this.contractNumber, contractNumber);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.contractNumber);
+      await this.webComponents.enterTextarea(this.contractNumber, contractNumber);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.contractNumber.blur();
 
-      await this.safeClick(this.invoiceNumber);
-      await this.safeFill(this.invoiceNumber, invoiceNumber);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.invoiceNumber);
+      await this.webComponents.enterTextarea(this.invoiceNumber, invoiceNumber);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.invoiceNumber.blur();
 
-      await this.safeClick(this.transactionRemark1);
-      await this.safeFill(this.transactionRemark1, transactionRemark1);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.transactionRemark1);
+      await this.webComponents.enterTextarea(this.transactionRemark1, transactionRemark1);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.transactionRemark1.blur();
 
       await this.uploadSupportingDocument('DIGI_DOC.pdf');
 
-      await this.safeClick(this.documentType);
-      await this.safeClick(this.documentTypeDropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.documentType);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.documentTypeDropdown);
       await this.documentType.blur();
 
-      await this.safeClick(this.utilizedAmount);
-      await this.safeFill(this.utilizedAmount, amountA2);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.utilizedAmount);
+      await this.webComponents.enterTextarea(this.utilizedAmount, amountA2);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.utilizedAmount.blur();  
 
       await this.selectBankCharge(bankChargeType);
 
-      await this.safeClick(this.newTTPaymentRemark);
-      await this.safeFill(this.newTTPaymentRemark, payeeBankMsg);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPaymentRemark);
+      await this.webComponents.enterTextarea(this.newTTPaymentRemark, payeeBankMsg);
       await this.newTTPaymentRemark.blur();
 
-      await this.newTTPayeeMsgCheckbox.evaluate(el => (el as HTMLElement).click());
+      await this.webComponents.javaScriptsClick(this.newTTPayeeMsgCheckbox);
 
-      await this.safeClick(this.newTTPayeeEmail1);
-      await this.safeFill(this.newTTPayeeEmail1, email1);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail1);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail1, email1);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail1.blur();
 
-      await this.safeClick(this.newTTPayeeEmail2);
-      await this.safeFill(this.newTTPayeeEmail2, email2);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail2);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail2, email2);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail2.blur();
 
-      await this.safeClick(this.newTTPayeeEmail3);
-      await this.safeFill(this.newTTPayeeEmail3, email3);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail3);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail3, email3);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail3.blur();
 
-      await this.safeClick(this.newTTPayeeEmail4);
-      await this.safeFill(this.newTTPayeeEmail4, email4);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail4);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail4, email4);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail4.blur();
 
-      await this.safeClick(this.newTTPayeeEmail5);
-      await this.safeFill(this.newTTPayeeEmail5, email5);
-      await this.page.keyboard.press('Tab');
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail5);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail5, email5);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeEmail5.blur();
 
-      await this.safeClick(this.newTTPayeeRemark);
-      await this.safeFill(this.newTTPayeeRemark, payeeMsg);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeRemark);
+      await this.webComponents.enterTextarea(this.newTTPayeeRemark, payeeMsg);
       await this.newTTPayeeRemark.blur();
 
-      await this.additionalNoteCheckbox.evaluate(el => (el as HTMLElement).click());
+      await this.webComponents.javaScriptsClick(this.additionalNoteCheckbox);
 
-      await this.safeClick(this.additionalNoteRemark);
-      await this.safeFill(this.additionalNoteRemark, additionalNote);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.additionalNoteRemark);
+      await this.webComponents.enterTextarea(this.additionalNoteRemark, additionalNote);
       await this.additionalNoteRemark.blur();
 
-      await this.orderingBankMsgCheckbox.evaluate(el => (el as HTMLElement).click());
+      await this.webComponents.javaScriptsClick(this.orderingBankMsgCheckbox);
 
-      await this.safeClick(this.orderingBankMsg);
-      await this.safeFill(this.orderingBankMsg, remitterIdentity);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.orderingBankMsg);
+      await this.webComponents.enterTextarea(this.orderingBankMsg, remitterIdentity);
       await this.orderingBankMsg.blur();
 
       return { existingAccountNumber, fxAppRefNum, contractNumber, invoiceNumber, transactionRemark1, amountA2, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity };
+ };
+
+ async addExistingCNTTPayeeWithNewCategoryAndSeries(input: AddExistingCNPayeeWithNewCategoryAndSeriesInput): Promise<AddExistingCNPayeeWithNewCategoryAndSeriesResult> {
+    const { existingAccountNumber, fxAppRefNum, BOP1Amount, BOP2Amount, contractNumber, invoiceNumber, transactionRemark1, amountA2, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity } = input;
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingPayeeTab)
+      await expect(this.existingPayeeBankAccount).toBeVisible({ timeout: 120_000 });
+      await expect(this.existingPayeeBankAccount).toBeEnabled({ timeout: 120_000 });
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingPayeeBankAccount);
+      await this.webComponents.typeTextThroughKeyBoardAction(this.page, existingAccountNumber);
+      
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPayeeBankAccountDropdown);
+      await this.existingPayeeBankAccount.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.countryPartyCNHCode);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.countryPartyAndorraDropdown);
+      await this.countryPartyCNHCode.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.specificPaymentPurpose);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.specificPaymentPurposeDropdown);
+      await this.specificPaymentPurpose.blur();
+
+      await this.webComponents.javaScriptsClick(this.isTaxFreeGoods);
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPaymentNature);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPaymentNatureDropdown);
+      await this.existingCNPaymentNature.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.fxAppRefNum);
+      await this.webComponents.enterTextarea(this.fxAppRefNum, fxAppRefNum);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.fxAppRefNum.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCategory1);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCategory2Dropdown);
+      await this.pmtBOPCategory1.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCodeSeries1);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCodeSeries2Dropdown);
+      await this.pmtBOPCodeSeries1.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCategory2);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCodeSeries3Dropdown);
+      await this.pmtBOPCategory2.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCodeSeries2);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCodeSeries2Dropdown);
+      await this.pmtBOPCodeSeries2.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOP1Amount);
+      await this.webComponents.enterTextarea(this.pmtBOP1Amount, BOP1Amount);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.pmtBOP1Amount.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOP2Amount);
+      await this.webComponents.enterTextarea(this.pmtBOP2Amount, BOP2Amount);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.pmtBOP2Amount.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.contractNumber);
+      await this.webComponents.enterTextarea(this.contractNumber, contractNumber);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.contractNumber.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.invoiceNumber);
+      await this.webComponents.enterTextarea(this.invoiceNumber, invoiceNumber);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.invoiceNumber.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.transactionRemark1);
+      await this.webComponents.enterTextarea(this.transactionRemark1, transactionRemark1);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.transactionRemark1.blur();
+
+      await this.uploadSupportingDocument('DIGI_DOC.pdf');
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.documentType);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.documentTypeDropdown);
+      await this.documentType.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.utilizedAmount);
+      await this.webComponents.enterTextarea(this.utilizedAmount, amountA2);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.utilizedAmount.blur();  
+
+      await this.selectBankCharge(bankChargeType);
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPaymentRemark);
+      await this.webComponents.enterTextarea(this.newTTPaymentRemark, payeeBankMsg);
+      await this.newTTPaymentRemark.blur();
+
+      await this.webComponents.javaScriptsClick(this.newTTPayeeMsgCheckbox);
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail1);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail1, email1);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.newTTPayeeEmail1.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail2);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail2, email2);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.newTTPayeeEmail2.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail3);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail3, email3);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.newTTPayeeEmail3.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail4);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail4, email4);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.newTTPayeeEmail4.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail5);
+      await this.webComponents.enterTextarea(this.newTTPayeeEmail5, email5);
+      await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
+      await this.newTTPayeeEmail5.blur();
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeRemark);
+      await this.webComponents.enterTextarea(this.newTTPayeeRemark, payeeMsg);
+      await this.newTTPayeeRemark.blur();
+
+      await this.webComponents.javaScriptsClick(this.additionalNoteCheckbox);
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.additionalNoteRemark);
+      await this.webComponents.enterTextarea(this.additionalNoteRemark, additionalNote);
+      await this.additionalNoteRemark.blur();
+
+      await this.webComponents.javaScriptsClick(this.orderingBankMsgCheckbox);
+
+      await this.webComponents.clickWhenVisibleAndEnabled(this.orderingBankMsg);
+      await this.webComponents.enterTextarea(this.orderingBankMsg, remitterIdentity);
+      await this.orderingBankMsg.blur();
+
+      return { existingAccountNumber, fxAppRefNum, BOP1Amount, BOP2Amount, contractNumber, invoiceNumber, transactionRemark1, amountA2, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity };
  };
 
 };

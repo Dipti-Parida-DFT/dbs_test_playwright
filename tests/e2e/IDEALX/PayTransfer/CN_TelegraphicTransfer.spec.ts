@@ -6,6 +6,7 @@
   * 1) TC001_CN_TelegraphicTransfer - Create a CN TT Payment with new Payee (type2) 
   * 2) TC002_CN_TelegraphicTransfer - Create a CN TT Payment with ApprovalNow pMchllenge (type3 - Trade Related: Advance Payment)
   * 3) TC003_CN_TelegraphicTransfer - Create a CN TT Payment with ApprovalNow pMchllenge (type3 - Capital)
+  * 4) TC004_CN_TelegraphicTransfer - Create a CN TT Payment with BOP code1 - Capital and BOP code2 - Capital
   */
 
 //Required Imports
@@ -87,24 +88,29 @@ test.describe('CN_TelegraphicTransfer (Playwright using PaymentsPages)', () => {
 
   //TC001_CN_TelegraphicTransfer
   test('TC001_CN_TelegraphicTransfer - Create a CN TT Payment with new Payee (type2)', async ({ page }) => {
+    // Step 0: Login and handle to Protection Message
     await pages.TelegraphicTransferPage.waitForProtectionMessage();
-    //Step 1: Navigate Payment & Transfer Menu.
     await webComponents.waitForUXLoading([], page);
-    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    await pages.AccountTransferPage.handleAuthIfPresent('1111');
+    // Payments → Transfer Center → Make a Payment
+    // paymentMenu => Pay & Transfer (Left option)
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
     await pages.AccountTransferPage.waitForTransferCenterReady();
-    await pages.TelegraphicTransferPage.saferClick(pages.TelegraphicTransferPage.makePayment);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.makePayment);
+    // Step 1: Payment from => Select account from "Account" dropdown
     await pages.TelegraphicTransferPage.waitForTTFormReady();
-    // Step 1: Payment from => Select account from "Account" dropdown and enter amount
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.fromAccount);
-    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.fromAccount, fromAccount);
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newCNPayeeBankAccountDropdown);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.fromAccount);
+    await webComponents.typeTextThroughKeyBoardAction(page, fromAccount);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newCNPayeeBankAccountDropdown);
     await pages.TelegraphicTransferPage.fromAccount.blur();
-    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.selectCurrencyDropdown, testData.TelegraphicTransfer.paymentCurrency);
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.SGDPayeeCurrencyDropdown);
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.amountInput);
-    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.amountInput, testData.TelegraphicTransfer.amountA1);
-    
+    // Step 2: Change the currency to SGD and enter amount
+    await webComponents.waitElementToBeVisible(pages.TelegraphicTransferPage.selectCurrencyDropdown);
+    await webComponents.hardClick(pages.TelegraphicTransferPage.selectCurrencyDropdown);
+    await webComponents.typeTextThroughKeyBoardAction(page, testData.TelegraphicTransfer.paymentCurrency);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.SGDPayeeCurrencyDropdown);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.amountInput);
+    await webComponents.typeTextThroughKeyBoardAction(page, testData.TelegraphicTransfer.amountA1);
+    // Step 3: Payment from => Click "New payee" tab and enters details
     await pages.TelegraphicTransferPage.addNewCNTTPayee({
     country:                  testData.TelegraphicTransfer.Country,
     bankId:                   payeeBankID,
@@ -134,23 +140,22 @@ test.describe('CN_TelegraphicTransfer (Playwright using PaymentsPages)', () => {
     additionalNote:           testData.TelegraphicTransfer.transactionNote,
     remitterIdentity:         testData.TelegraphicTransfer.messageToOrderingBank,
   });
-
-  // Step 3: Click on Next button in New Payee form, verify details in preview page and submit payment
-  await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTPayeeNextButton);
+  // Step 4: Click on Next button in New Payee form, verify details in preview page and submit payment
+  await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTPayeeNextButton);
   await pages.TelegraphicTransferPage.waitForNewTTPreviewPageReady();
-  await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTsubmitButton);
+  await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTsubmitButton);
   await pages.TelegraphicTransferPage.waitFornewTTSubmittedPageReady();
-  // Step 4: Capture reference ID and verify details in Transfer Center
+  // Step 5: Capture reference ID and verify details in Transfer Center
   const reference = await pages.TelegraphicTransferPage.getNewTTReferenceID();
   console.log('TC001 – referenceID:', reference);
-  // Step 5: Click on Finish button and verify details in Transfer Center
-  await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTfinishButton);
-  await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+  // Step 6: Click on Finish button and verify details in Transfer Center
+  await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTfinishButton);
+  await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
   await pages.TransferCentersPage.waitForTransferCenterReady();
   await pages.TransferCentersPage.searchAndOpenByReference(reference);
   await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
   await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText(testData.TelegraphicTransfer.fromAccount);
-  await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTCancelButton);
+  await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTCancelButton);
   await pages.TransferCentersPage.waitForTransferCenterReady();
   await pages.TransferCentersPage.searchAndOpenByReference(reference);
   await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
@@ -158,29 +163,34 @@ test.describe('CN_TelegraphicTransfer (Playwright using PaymentsPages)', () => {
   await expect(pages.TelegraphicTransferPage.newTTAmountValue).toContainText(testData.TelegraphicTransfer.payeeCurrency);
   await expect(pages.TelegraphicTransferPage.newTTReferenceValue).toContainText(reference);
   await expect(pages.TelegraphicTransferPage.newTTActivityLog).toContainText('Create');
-
+  await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.logoutButton);
+  await webComponents.waitForUXLoading([], page);
   });
 
-  //TC002_CN_TelegraphicTransfer
   test('TC002_CN_TelegraphicTransfer - Create a CN TT Payment with ApprovalNow pMchllenge (type3 - Trade Related: Advance Payment)', async ({ page }) => {
+    // Step 0: Login and handle to Protection Message
     await pages.TelegraphicTransferPage.waitForProtectionMessage();
-    //Step 1: Navigate Payment & Transfer Menu.
     await webComponents.waitForUXLoading([], page);
-    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    await pages.AccountTransferPage.handleAuthIfPresent('1111');
+    // Payments → Transfer Center → Make a Payment
+    // paymentMenu => Pay & Transfer (Left option)
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
     await pages.AccountTransferPage.waitForTransferCenterReady();
-    await pages.TelegraphicTransferPage.saferClick(pages.TelegraphicTransferPage.makePayment);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.makePayment);
+    // Step 1: Payment from => Select account from "Account" dropdown
     await pages.TelegraphicTransferPage.waitForTTFormReady();
-    // Step 1: Payment from => Select account from "Account" dropdown and enter amount
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.fromAccount);
-    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.fromAccount, fromAccount);
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newCNPayeeBankAccountDropdown);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.fromAccount);
+    await webComponents.typeTextThroughKeyBoardAction(page, fromAccount);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newCNPayeeBankAccountDropdown);
     await pages.TelegraphicTransferPage.fromAccount.blur();
-    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.selectCurrencyDropdown, testData.TelegraphicTransfer.paymentCurrency);
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.SGDPayeeCurrencyDropdown);
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.amountInput);
-    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.amountInput, testData.TelegraphicTransfer.amountA2);
-
+    // Step 2: Change the currency to SGD and enter amount
+    await webComponents.waitElementToBeVisible(pages.TelegraphicTransferPage.selectCurrencyDropdown);
+    await webComponents.hardClick(pages.TelegraphicTransferPage.selectCurrencyDropdown);
+    await webComponents.typeTextThroughKeyBoardAction(page, testData.TelegraphicTransfer.paymentCurrency);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.SGDPayeeCurrencyDropdown);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.amountInput);
+    await webComponents.typeTextThroughKeyBoardAction(page, testData.TelegraphicTransfer.amountA2);
+    // Step 3: Payment from => Click "Existing payee" tab and selects the payee with type2 category and enters details
     await pages.TelegraphicTransferPage.addExistingCNTTPayee({
     existingAccountNumber:   testData.TelegraphicTransfer.existingPayeeAcct,
     fxAppRefNum:            testData.TelegraphicTransfer.fxAppRefNum,
@@ -199,25 +209,25 @@ test.describe('CN_TelegraphicTransfer (Playwright using PaymentsPages)', () => {
     additionalNote:         testData.TelegraphicTransfer.transactionNote,
     remitterIdentity:       testData.TelegraphicTransfer.messageToOrderingBank,
   });
-
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTPayeeNextButton);
+  // Step 4: Click on Next button in New Payee form, click approve and submit payment
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTPayeeNextButton);
     await pages.TelegraphicTransferPage.waitForNewTTPreviewPageReady();
-    await pages.TelegraphicTransferPage.ttApproveNowCheckBox.evaluate(el => (el as HTMLElement).click());
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.ttGetChallengeSMSButton);
-    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.ttGetChallengeInput, testData.TelegraphicTransfer.challengeResponse);
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTsubmitButton);
+    await webComponents.javaScriptsClick(pages.TelegraphicTransferPage.ttApproveNowCheckBox);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.ttGetChallengeSMSButton);
+    await webComponents.enterTextarea(pages.TelegraphicTransferPage.ttGetChallengeInput, testData.TelegraphicTransfer.challengeResponse);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTsubmitButton);
     await pages.TelegraphicTransferPage.waitFornewTTSubmittedPageReady();
-    // Step 4: Capture reference ID and verify details in Transfer Center
+    // Step 5: Capture reference ID and verify details in Transfer Center
     const reference = await pages.TelegraphicTransferPage.getNewTTReferenceID();
     console.log('TC002 – referenceID:', reference);
-    // Step 5: Click on Finish button and verify details in Transfer Center
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTfinishButton);
-    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    // Step 6: Click on Finish button and verify details in Transfer Center
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTfinishButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
     await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText(testData.TelegraphicTransfer.fromAccount);
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTCancelButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTCancelButton);
     await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
@@ -226,29 +236,36 @@ test.describe('CN_TelegraphicTransfer (Playwright using PaymentsPages)', () => {
     await expect(pages.TelegraphicTransferPage.newTTReferenceValue).toContainText(reference);
     await expect(pages.TelegraphicTransferPage.newTTActivityLog).toContainText('Create');
     await expect(pages.TelegraphicTransferPage.newTTActivityLog).toContainText('Documents Modified');
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.logoutButton);
+    await webComponents.waitForUXLoading([], page);
   });
 
   //TC003_CN_TelegraphicTransfer
   test('TC003_CN_TelegraphicTransfer - Create a CN TT Payment with ApprovalNow pMchllenge (type3 - Capital)', async ({ page }) => {
+    // Step 0: Login and handle to Protection Message
     await pages.TelegraphicTransferPage.waitForProtectionMessage();
-    //Step 1: Navigate Payment & Transfer Menu.
     await webComponents.waitForUXLoading([], page);
-    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
-    await pages.AccountTransferPage.handleAuthIfPresent('1111');
+    // Payments → Transfer Center → Make a Payment
+    // paymentMenu => Pay & Transfer (Left option)
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
     await pages.AccountTransferPage.waitForTransferCenterReady();
-    await pages.TelegraphicTransferPage.saferClick(pages.TelegraphicTransferPage.makePayment);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.makePayment);
+    // Step 1: Payment from => Select account from "Account" dropdown
     await pages.TelegraphicTransferPage.waitForTTFormReady();
-    // Step 1: Payment from => Select account from "Account" dropdown and enter amount
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.fromAccount);
-    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.fromAccount, fromAccount);
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newCNPayeeBankAccountDropdown);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.fromAccount);
+    await webComponents.typeTextThroughKeyBoardAction(page, fromAccount);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newCNPayeeBankAccountDropdown);
     await pages.TelegraphicTransferPage.fromAccount.blur();
-    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.selectCurrencyDropdown, testData.TelegraphicTransfer.paymentCurrency);
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.SGDPayeeCurrencyDropdown);
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.amountInput);
-    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.amountInput, testData.TelegraphicTransfer.amountA2);
-
-    await pages.TelegraphicTransferPage.addExistingCNTTPayee({
+    // Step 2: Change the currency to SGD and enter amount
+    await webComponents.waitElementToBeVisible(pages.TelegraphicTransferPage.selectCurrencyDropdown);
+    await webComponents.hardClick(pages.TelegraphicTransferPage.selectCurrencyDropdown);
+    await webComponents.typeTextThroughKeyBoardAction(page, testData.TelegraphicTransfer.paymentCurrency);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.SGDPayeeCurrencyDropdown);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.amountInput);
+    await webComponents.typeTextThroughKeyBoardAction(page, testData.TelegraphicTransfer.amountA2);
+    // Step 3: Payment from => Click "Existing payee" tab and selects the payee with type2 category and enters details
+    await pages.TelegraphicTransferPage.addExistingCNTTPayeeWithNewCategory({
     existingAccountNumber:   testData.TelegraphicTransfer.existingPayeeAcct,
     fxAppRefNum:            testData.TelegraphicTransfer.fxAppRefNum,
     contractNumber:         testData.TelegraphicTransfer.contractNum,
@@ -266,25 +283,25 @@ test.describe('CN_TelegraphicTransfer (Playwright using PaymentsPages)', () => {
     additionalNote:         testData.TelegraphicTransfer.transactionNote,
     remitterIdentity:       testData.TelegraphicTransfer.messageToOrderingBank,
   });
-
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTPayeeNextButton);
+    // Step 4: Click on Next button in New Payee form, click approve and submit payment
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTPayeeNextButton);
     await pages.TelegraphicTransferPage.waitForNewTTPreviewPageReady();
-    await pages.TelegraphicTransferPage.ttApproveNowCheckBox.evaluate(el => (el as HTMLElement).click());
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.ttGetChallengeSMSButton);
-    await pages.TelegraphicTransferPage.safeFill(pages.TelegraphicTransferPage.ttGetChallengeInput, testData.TelegraphicTransfer.challengeResponse);
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTsubmitButton);
+    await webComponents.javaScriptsClick(pages.TelegraphicTransferPage.ttApproveNowCheckBox);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.ttGetChallengeSMSButton);
+    await webComponents.enterTextarea(pages.TelegraphicTransferPage.ttGetChallengeInput, testData.TelegraphicTransfer.challengeResponse);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTsubmitButton);
     await pages.TelegraphicTransferPage.waitFornewTTSubmittedPageReady();
-    // Step 4: Capture reference ID and verify details in Transfer Center
+    // Step 5: Capture reference ID and verify details in Transfer Center
     const reference = await pages.TelegraphicTransferPage.getNewTTReferenceID();
     console.log('TC003 – referenceID:', reference);
-    // Step 5: Click on Finish button and verify details in Transfer Center
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTfinishButton);
-    await pages.AccountTransferPage.safeClick(pages.AccountTransferPage.paymentMenu);
+    // Step 6: Click on Finish button and verify details in Transfer Center
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTfinishButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
     await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
     await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText(testData.TelegraphicTransfer.fromAccount);
-    await pages.TelegraphicTransferPage.safeClick(pages.TelegraphicTransferPage.newTTCancelButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTCancelButton);
     await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.TransferCentersPage.searchAndOpenByReference(reference);
     await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
@@ -293,6 +310,84 @@ test.describe('CN_TelegraphicTransfer (Playwright using PaymentsPages)', () => {
     await expect(pages.TelegraphicTransferPage.newTTReferenceValue).toContainText(reference);
     await expect(pages.TelegraphicTransferPage.newTTActivityLog).toContainText('Create');
     await expect(pages.TelegraphicTransferPage.newTTActivityLog).toContainText('Documents Modified');
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.logoutButton);
+    await webComponents.waitForUXLoading([], page);
+  });
+
+  //TC004_CN_TelegraphicTransfer
+  test('TC004_CN_TelegraphicTransfer - Create a CN TT Payment with BOP code1 - Capital and BOP code2 - Capital', async ({ page }) => {
+    // Step 0: Login and handle to Protection Message
+    await pages.TelegraphicTransferPage.waitForProtectionMessage();
+    await webComponents.waitForUXLoading([], page);
+    // Payments → Transfer Center → Make a Payment
+    // paymentMenu => Pay & Transfer (Left option)
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
+    await pages.AccountTransferPage.waitForTransferCenterReady();
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.makePayment);
+    // Step 1: Payment from => Select account from "Account" dropdown
+    await pages.TelegraphicTransferPage.waitForTTFormReady();
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.fromAccount);
+    await webComponents.typeTextThroughKeyBoardAction(page, fromAccount);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newCNPayeeBankAccountDropdown);
+    await pages.TelegraphicTransferPage.fromAccount.blur();
+    // Step 2: Change the currency to SGD and enter amount
+    await webComponents.waitElementToBeVisible(pages.TelegraphicTransferPage.selectCurrencyDropdown);
+    await webComponents.hardClick(pages.TelegraphicTransferPage.selectCurrencyDropdown);
+    await webComponents.typeTextThroughKeyBoardAction(page, testData.TelegraphicTransfer.paymentCurrency);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.SGDPayeeCurrencyDropdown);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.amountInput);
+    await webComponents.typeTextThroughKeyBoardAction(page, testData.TelegraphicTransfer.amountA1);
+    // Step 3: Payment from => Click "Existing payee" tab and selects the payee with existing account number and enters details with BOP code1 - Capital and BOP code2 - Capital
+    await pages.TelegraphicTransferPage.addExistingCNTTPayeeWithNewCategoryAndSeries({
+    existingAccountNumber:   testData.TelegraphicTransfer.existingPayeeAcct,
+    fxAppRefNum:            testData.TelegraphicTransfer.fxAppRefNum,
+    BOP1Amount:             testData.TelegraphicTransfer.BOP1Amount,
+    BOP2Amount:             testData.TelegraphicTransfer.BOP2Amount,
+    contractNumber:         testData.TelegraphicTransfer.contractNum,
+    invoiceNumber:          testData.TelegraphicTransfer.invoiceNum,
+    transactionRemark1:     testData.TelegraphicTransfer.transRemark1,
+    amountA2:               testData.TelegraphicTransfer.amountA1,
+    bankChargeType:         testData.TelegraphicTransfer.bankChargeTypeOUR,
+    payeeBankMsg:           testData.TelegraphicTransfer.paymentDetail,
+    email1:                 testData.TelegraphicTransfer.emailId0,
+    email2:                 testData.TelegraphicTransfer.emailId1,
+    email3:                 testData.TelegraphicTransfer.emailId2,
+    email4:                 testData.TelegraphicTransfer.emailId3,
+    email5:                 testData.TelegraphicTransfer.emailId4,
+    payeeMsg:               testData.TelegraphicTransfer.message,
+    additionalNote:         testData.TelegraphicTransfer.transactionNote,
+    remitterIdentity:       testData.TelegraphicTransfer.messageToOrderingBank,
+  });
+  // Step 4: Click on Next button in New Payee form, click approve and submit payment
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTPayeeNextButton);
+    await pages.TelegraphicTransferPage.waitForNewTTPreviewPageReady();
+    await webComponents.javaScriptsClick(pages.TelegraphicTransferPage.ttApproveNowCheckBox);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.ttGetChallengeSMSButton);
+    await webComponents.enterTextarea(pages.TelegraphicTransferPage.ttGetChallengeInput, testData.TelegraphicTransfer.challengeResponse);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTsubmitButton);
+    await pages.TelegraphicTransferPage.waitFornewTTSubmittedPageReady();
+    // Step 5: Capture reference ID and verify details in Transfer Center
+    const reference = await pages.TelegraphicTransferPage.getNewTTReferenceID();
+    console.log('TC004 – referenceID:', reference);
+    // Step 6: Click on Finish button and verify details in Transfer Center
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTfinishButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
+    await expect(pages.TelegraphicTransferPage.newTTFromAccountViewLabel).toContainText(testData.TelegraphicTransfer.fromAccount);
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.newTTCancelButton);
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await pages.TelegraphicTransferPage.newTTWaitForViewPaymentPageReady();
+    await expect(pages.TelegraphicTransferPage.newTTRefStatusLabel).toContainText('Pending Approval');
+    await expect(pages.TelegraphicTransferPage.newTTAmountValue).toContainText(testData.TelegraphicTransfer.payeeCurrency);
+    await expect(pages.TelegraphicTransferPage.newTTReferenceValue).toContainText(reference);
+    await expect(pages.TelegraphicTransferPage.newTTActivityLog).toContainText('Create');
+    await expect(pages.TelegraphicTransferPage.newTTActivityLog).toContainText('Documents Modified');
+    await webComponents.clickWhenVisibleAndEnabled(pages.TelegraphicTransferPage.logoutButton);
+    await webComponents.waitForUXLoading([], page);
   });
 
   });
