@@ -15,7 +15,7 @@ export class ApprovalPage {
 
     this.approveReleaseButton = page.locator('//button[@id="transactionRelease"]');
     this.approveReleaseSubmitButton = page.locator('//button[@name="txn-preview-verify-release"]');
-
+    
     this.verifyPaymentTab = page.locator('//a[contains(@href,"/approvals/verify")]');
     this.transactionFilter = page.locator('//input[@id="byTXN-filter"]');
     this.searchFirstCheckBox = page.locator('//input[contains(@id, "txn-select") and @type="checkbox"]');

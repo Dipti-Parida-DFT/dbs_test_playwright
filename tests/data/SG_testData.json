@@ -216,6 +216,7 @@
         "amountPartialApprove" : "90000001",
         "amountPendingVerification" : "99900035.00",
         "amountPartialApproveSG" : "90,000,001.00",
+        "amountPendingRelease" : "99900001.00",
         "purposeOfPayment" : "BusinessExpense!AccountManagement",
         "amountEdited" : "",
         "transactionCode": "",
