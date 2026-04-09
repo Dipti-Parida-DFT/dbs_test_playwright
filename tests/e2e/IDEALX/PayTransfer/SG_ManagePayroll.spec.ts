@@ -152,10 +152,8 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
     // Step 10: Get the full banner text.
     const referenceText = await pages.PayrollPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
     // It extracts the EBLV… token/Refrence no
     const reference = await pages.PayrollPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
 
     // Step 11: Click Finish button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.finishButton);
@@ -294,10 +292,8 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
     // Step 14: Get the full banner text.
     const referenceText = await pages.PayrollPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
     // It extracts the EBLV… token/Refrence no
     const reference = await pages.PayrollPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
 
     // Step 15: Click Finish button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.finishButton);
@@ -439,10 +435,8 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
     // Step 14: Get the full banner text.
     const referenceText = await pages.PayrollPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
     // It extracts the EBLV… token/Refrence no
     const reference = await pages.PayrollPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
 
     // Step 15: Click Finish button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.finishButton);
@@ -563,10 +557,8 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
     // Step 9: Get the full banner text.
     const referenceText = await webComponents.getTextFromElement(pages.PayrollPage.transactionDeletedPopupLabelMsg);
-    console.log('Captured reference text:', referenceText);
     // It extracts the EBLV… token/Refrence no
     const reference = await webComponents.getReferenceID(referenceText);
-    console.log('Captured referenceID:', reference);
 
     // Step 10: Click 'Alternatively, use your digital token or security device for approval'
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.dismissButton);
@@ -692,10 +684,8 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
     // Step 9: Get the full banner text.
     const referenceText = await pages.PayrollPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
     // It extracts the EBLV… token/Refrence no
     const reference = await pages.PayrollPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
 
     // Step 10: Click Finish button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.finishButton);
@@ -831,10 +821,8 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
     // Step 12: Get the full banner text.
     const referenceText = await pages.PayrollPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
     // It extracts the EBLV… token/Refrence no
     const reference = await pages.PayrollPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
 
     // Step 13: Click "Pay & Transfer" button.
     await webComponents.waitElementToBeVisible(pages.AccountTransferPage.paymentMenu);
@@ -1073,10 +1061,8 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
     // Step 10: Get the full banner text.
     const referenceText = await pages.PayrollPage.getReferenceText();
-    console.log('Captured reference text:', referenceText);
     // It extracts the EBLV… token/Refrence no
     const reference = await pages.PayrollPage.getReferenceID();
-    console.log('Captured referenceID:', reference);
 
     // Step 11: Click Finish button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.finishButton);
@@ -1152,10 +1138,8 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
     // Step 17: Get the full banner text.
     const referenceText01 = await pages.PayrollPage.getReferenceText();
-    console.log('Captured reference text:', referenceText01);
     // It extracts the EBLV… token/Refrence no
     const reference01 = await pages.PayrollPage.getReferenceID();
-    console.log('Captured referenceID:', reference01);
 
     // Step 18: Click Finish button.
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkCollectionPage.finishButton);
@@ -1238,7 +1222,6 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     await webComponents.isElementVisible(page, pages.PayrollPage.editButton);
     await webComponents.hardWait(page);
     //await page.waitForTimeout(TIMEOUT.VERYMIN);
-    console.log('[TC008] Clicking Edit button');
     await webComponents.hardClick(pages.PayrollPage.editButton);
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.PayrollPage.amount);
@@ -1249,20 +1232,17 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.earliestAvailableDateCheckbox);
 
     // Step 26: Enter new amount
-    console.log('[TC008] Entering new amount');
     // New amount is entered using webComponents.enterTextarea
     await webComponents.waitElementToBeVisible(pages.PayrollPage.amount);
     await webComponents.enterTextarea(pages.PayrollPage.amount, testData.ManagePayrollPayee1.amountEditTc08);
 
     // Step 27: Click Next button
-    console.log('[TC008] Clicking Next button');
     await webComponents.scrollToElement(pages.PayrollPage.nextButton);
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.nextButton);
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.PayrollPage.submitButton);
 
     // Step 28: Click Submit button
-    console.log('[TC008] Clicking Submit button');
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.submitButton);
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.PayrollPage.finishButton);
@@ -1361,7 +1341,6 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     // ========================
     // STEP 1: Navigate to Payment Menu
     // Corresponds to: AccountTransferPage.paymentMenu.click() + jiazhai()
-    console.log('=== PHASE 1: Creating Management Payroll transaction ===');
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.AccountTransferPage.paymentMenu);
     await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
@@ -1395,7 +1374,6 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
       payeeCategory: testData.ManagePayrollPayee1.payeeCategory,
       savePayeeCheckbox: testData.ManagePayrollPayee1.savePayeeCheckbox
     });
-    console.log(`Created payee: ${payeeName} with account: ${payeeAccount}`);
 
     // STEP 8-14: Enter amount, reference, and optional payment details
     await webComponents.waitElementToBeVisible(pages.PayrollPage.amount);
@@ -1430,7 +1408,6 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     // STEP 18: Wait for submitted page and extract reference
     await webComponents.waitElementToBeVisible(pages.PayrollPage.finishButton);
     const paymentReference = await pages.PayrollPage.getReferenceID();
-    console.log(`✓ Payment created with reference: ${paymentReference}`);
     await webComponents.waitForUXLoading([], page);
 
     // STEP 18a: Click Finish button to close submitted dialog and transition to stable state
@@ -1445,15 +1422,12 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
     // PHASE 2: REJECT PAYMENT
     // =======================
-    console.log('=== PHASE 2: Rejecting the created payment ===');
 
     // STEP 19: Search directly for the payment by reference from current payroll page state
     // The page is now stable and in a good state for searching
-    console.log('Searching for created payment by reference...');
     try {
       await pages.TransferCentersPage.searchAndOpenByReference(paymentReference);
     } catch (err) {
-      console.log('Reference search failed, falling back to status-based search...');
       // Fallback: search by payment type and status
       await pages.TransferCentersPage.openViewPaymentViaSearch(
         'SG - Management payroll',
@@ -1471,28 +1445,23 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     await webComponents.waitElementToBeVisible(pages.PayrollPage.hashValueLabel);
 
     // STEP 21: Click Reject button
-    console.log('Clicking reject button...');
     await webComponents.javaScriptsClick(pages.PayrollPage.rejectButton);
 
     // STEP 22: Wait for rejection dialog to be ready and enter reason
     // Uses framework's wait pattern to check element visibility
-    console.log('Entering rejection reason...');
     // Use BulkPaymentPage's reasonForRejection locator (correct for view payment dialog)
     await webComponents.waitElementToBeVisible(pages.BulkPaymentPage.reasonForRejection);
 
     // Fill rejection reason using webComponents utility
     const rejectionText = 'Test Rejection Reason - Automated Test';
     await webComponents.enterText(pages.BulkPaymentPage.reasonForRejection, rejectionText);
-    console.log('Rejection reason entered');
 
     // STEP 23: Click reject confirmation button
-    console.log('Confirming rejection...');
     // Check that button is visible after reason entry and click it
     await webComponents.waitElementToBeVisible(pages.BulkPaymentPage.rejectDialogButton);
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.rejectDialogButton);
 
     // STEP 24: Dismiss the confirmation dialog
-    console.log('Dismissing confirmation dialog...');
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.dismissButton);
 
     // STEP 24a: Wait for page to fully transition back to payroll view
@@ -1500,14 +1469,12 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
     // PHASE 3: VALIDATION
     // ===================
-    console.log('=== PHASE 3: Validating rejection status ===');
 
     // STEP 25: Search for the rejected payment by reference from current payroll state
     console.log('Searching for rejected payment...');
     try {
       await pages.TransferCentersPage.searchAndOpenByReference(paymentReference);
     } catch (err) {
-      console.log('Reference search failed, falling back to status-based search for rejected status...');
       // Fallback: search by payment type and rejected status
       await pages.TransferCentersPage.openViewPaymentViaSearch(
         'SG - Management payroll',
@@ -1524,20 +1491,16 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     await webComponents.waitElementToBeVisible(pages.PayrollPage.hashValueLabel);
 
     // STEP 27: FINAL VALIDATION - Verify transaction status is "Rejected"
-    console.log('Validating rejection status...');
     const transactionStatusText = await webComponents.getTextFromElement(pages.PayrollPage.transactionStatusLabel1);
     expect(transactionStatusText).toContain(testData.status.Rejected);
-    console.log(`✓ Transaction status confirmed as: ${transactionStatusText}`);
 
     //TC011_Delete ManagePayrollDBS via Transfer Center
 
 
     // PHASE 4: CLEANUP - DELETE REJECTED TRANSACTION
     // ===============================================
-    console.log('=== PHASE 4: Deleting rejected transaction ===');
 
     // STEP 28-30: Delete transaction using reusable method
-    console.log('Deleting rejected transaction using reusable method...');
     await pages.PayrollPage.deleteOpenPayeeOrReferenceNo(
       {
         transactionDeleted: testData.Payroll.transactionDeleted,
@@ -1547,15 +1510,11 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     );
 
     // STEP 31: Click OK button on deletion confirmation popup
-    console.log('Closing deletion confirmation popup...');
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.transactionDeletedPopupOkButton);
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.PayrollPage.payroll);
-    console.log('✓ Returned to payroll page after deletion');
 
     // STEP 32: Verify transaction is permanently deleted by searching and confirming absence
-    console.log('Verifying transaction deletion by attempting search...');
-
     // Navigate back to Transfer Center list/filter page and perform search
     await webComponents.waitElementToBeVisible(pages.TransferCentersPage.transferCenterFilter);
 
@@ -1565,24 +1524,10 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
     // After deletion, the search results should show "No information to display" message
     // No referenceLink will exist because the transaction has been deleted
-    console.log('Confirming deleted transaction is no longer in system...');
-
     // Verify the "No information to display" message appears (indicating empty search results)
-    const noInfoVisible = await webComponents.isElementVisible(
-      page,
-      pages.TransferCentersPage.noInformationLabel,
-      { timeout: TIMEOUT.LONG }
-    );
-
-    if (noInfoVisible) {
-      const noDataText = await webComponents.getTextFromElement(pages.TransferCentersPage.noInformationLabel);
-      console.log(`✓ Verified: "${noDataText}" - Transaction ${paymentReference} successfully deleted and removed from system`);
-    } else {
-      console.log('✓ No transaction found in search results - deletion verified by absence of records');
-    }
-    console.log(`✓ TC009 completion: Payment was successfully rejected, validated, and deleted`);
+    await webComponents.isElementVisible(page, pages.TransferCentersPage.noInformationLabel, { timeout: TIMEOUT.LONG });
+    await webComponents.compareUIVsJsonValue(pages.TransferCentersPage.noInformationLabel, testData.ManagePayrollPayee1.noInformationToDisplay);
   });
-
 
 
   //TC011_SG_ManagePayroll
@@ -1685,7 +1630,7 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
     await webComponents.waitElementToBeVisible(pages.ApprovalPage.approvalMenu);
     await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approvalMenu);
-    //Step 2: Handle Authentication Pop-up.
+    // Handle Authentication Pop-up.
     await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
 
     // Step 15: Wait for Verify Payment Tab
@@ -1921,8 +1866,6 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
 
   });
 
-
-
   //TC013_SG_ManagePayroll
   test('TC013_SG_ManagePayroll - Release ManagePayrollDBS via My Release', async ({ page }, testInfo) => {
     testInfo.setTimeout(TIMEOUT.ULTRA);
@@ -2082,15 +2025,11 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)', () => {
     // Post-release, the batch status element may show raw status code (e.g., "statusCode.2")
     // which indicates the transaction has been processed beyond pending states.
     const statusText = await webComponents.getTextFromElement(pages.PayrollPage.status);
-    console.log(`Post-release status text: "${statusText}"`);
     const validStatuses = [testData.status.Approved, testData.status.Received, testData.status.Completed, testData.status.BankRejected, testData.status.PendingRelease, 'statusCode'];
     const statusMatch = validStatuses.some((s: string) => statusText.includes(s));
     expect(statusMatch).toBeTruthy();
-    console.log(`Transaction status confirmed as: ${statusText}`);
 
   });
-
-
 
 
 });

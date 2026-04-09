@@ -207,6 +207,7 @@
         "sgManagePayrollTemplate": "SGManagePayrollTemplateMax500",
         "sgManagePayrollTestTemplate": "SGManagePayrollTestTemplate",
         "savePayeeCheckbox": "",
+        "noInformationToDisplay": "No information to display",
         "amount" : "1.00",
         "amountEditTc08" : "2.00",
         "amountEditSGDTc08" : "SGD 2.00",

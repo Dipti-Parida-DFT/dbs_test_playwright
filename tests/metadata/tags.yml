@@ -39,7 +39,7 @@ tagFamilies:
     - '@files'
     - '@reports'
   - family: component
-    required: true
+    required: false
     allowed:
     - '@telegraphic-transfer'
     - '@bulk-collection'
