@@ -46,6 +46,8 @@ tagFamilies:
     - '@bulk-payment'
     - '@management-payroll'
     - '@payroll'
+    - '@manage-payroll'
+    - '@manage-payroll-alternate'
   - family: journey
     required: false
     allowed:

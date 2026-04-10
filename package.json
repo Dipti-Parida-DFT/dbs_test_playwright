@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "validate:tags-DNR": "npx tsx scripts/validateTags.ts",
+    "validate:tags": "npx tsx scripts/validateTags.ts",
     "enforce:tags": "npx tsx scripts/enforce-tags.ts",
     "enforce:describe-tags": "npx tsx scripts/enforce-describe-required-tags.ts",
     "test": "npx playwright test",
@@ -19,7 +19,7 @@
     "test:bulkpayment": "playwright test --grep @BulkPayment",
     "test:bulkcollection": "playwright test --grep @BulkCollection",
     "test:not-sg": "playwright test --grep-invert @SG",
-    "validate:tags": "node scripts/validate-tags-available.js",
+    "validate:tags-DNR": "node scripts/validate-tags-available.js",
     "validate:describe-tags": "npx tsx scripts/validate-describe-tags.ts"
   },
   "keywords": [],

@@ -39,7 +39,7 @@ test.describe.configure({
 });
 
 // Actions for beforEach and afterEach test hooks
-test.describe('ID_Manage Payroll Alternate (Playwright using PaymentsPages)', { tag: ['@ManagePayrollAlternate', '@ID'] }, () => {
+test.describe('ID_Manage Payroll Alternate (Playwright using PaymentsPages)', { tag: ['@manage-payroll-alternate'] }, () => {
   let pages: PaymentsPages;
   // Track created payees per test
   type CreatedPayee = { name?: string; accountNumber?: string };
