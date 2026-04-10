@@ -46,6 +46,7 @@ const refs = {
   copyReference: '',
   editReference: '',
   rejectReference: '',
+  deleteReference: '',
   approvalReference: '',
 }
 
@@ -501,16 +502,49 @@ test.describe.serial('SG_BulkPayment (Create Payments)', () => {
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.rejectDialogButton);
 
     // Step 5: Copy Reject reference
-    const reference = await pages.BulkPaymentPage.getRejectReferenceId();
+    refs.deleteReference = await pages.BulkPaymentPage.getRejectReferenceId();
     await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.dismissButton);
 
     // Step 6: Verify reference in transfer center
     await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
-    await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    await pages.TransferCentersPage.searchAndOpenByReference(refs.deleteReference);
     await webComponents.waitElementToBeVisible(pages.BulkPaymentPage.fromAccountViewLabel);
 
     // Step 7: Verify payment status should be rejected
     await expect(pages.BulkPaymentPage.transactionStatusValue).toContainText(testData.status.Rejected);
+  });
+
+  test('TC009_BulkPayment - Delete Bulk Payment from transfer center', async ({ page }) => {
+    
+    // Step 1: Click on Pay & Transfer menu
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.AccountTransferPage.paymentMenu);
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+
+    // Step 2: Authentication Pop-up
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
+    
+    //Step 3: Search for any existing Bulk Payment reference
+    if (refs.deleteReference && refs.deleteReference.trim().length > 0) {
+      await pages.TransferCentersPage.searchAndOpenByReference(refs.deleteReference);
+    } else {
+      await pages.TransferCentersPage.openViewPaymentViaSearch('SG - Bulk payment',
+        testData.status.Rejected);
+    }
+
+    //Step 4: Click Delete  
+    await webComponents.waitElementToBeVisible(pages.BulkPaymentPage.fromAccountViewLabel);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.deleteButton);
+    await webComponents.waitElementToBeVisible(pages.BulkPaymentPage.deleteDialogButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.deleteDialogButton);
+
+    // Step 5: Copy Reject reference
+    await webComponents.waitElementToBeVisible(pages.BulkPaymentPage.dismissButton);
+    const reference = await pages.BulkPaymentPage.getDeleteReferenceId();
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.dismissButton);
+
+    // Step 6: Verify payment status should be rejected
+    await expect(pages.TransferCentersPage.transactionResultLabel).toContainText("No information to display");
   });
 
 });

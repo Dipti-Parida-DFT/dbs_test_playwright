@@ -125,6 +125,7 @@ export class BulkPaymentPage {
     this.rejectStatus2 = page.locator('xpath=//strong[@id="bulk-view-rejectStatus_1"]');
     this.rejectStatus3 = page.locator('xpath=//strong[@id="bulk-view-rejectStatus_2"]');
     this.rejectReferenceMsg = page.locator('xpath=//p[@id="dialogMessage"]/span');
+    this.deleteReferenceMsg = page.locator('p.dialog-msg');
 
     //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
     this.beneficiaryTab = page.locator('xpath=//span[normalize-space()="Payee / Beneficiaries"]');
@@ -377,6 +378,7 @@ export class BulkPaymentPage {
   readonly rejectStatus2: Locator;
   readonly rejectStatus3: Locator;
   readonly rejectReferenceMsg: Locator;
+  readonly deleteReferenceMsg: Locator;
 
   //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
   readonly beneficiaryTab: Locator;
@@ -722,6 +724,22 @@ export class BulkPaymentPage {
         return match?.[1] ?? '';
       }
 
+        /**
+ * Returns the raw banner text (trimmed) for reject. If you only need EBLV…,
+ * use getReferenceToken() below.
+ */
+        async getDeleteReferenceText(): Promise<string> {
+          const raw = await this.deleteReferenceMsg.textContent();
+          return (raw ?? '').trim();
+        }
+      
+        //Extract reference ID
+        async getDeleteReferenceId(): Promise<string> {
+          const raw = await this.getDeleteReferenceText();
+          const match = raw.match(/\b(EB[A-Z0-9-]+)\b/i);
+          return match?.[1] ?? '';
+        }
+  
   /** Former: jiazhai() – waits until create form is ready (fromAccount visible). */
   async waitForBulkPaymentFormReady(timeout = 20_000) {
     await this.waitForUXLoading();
