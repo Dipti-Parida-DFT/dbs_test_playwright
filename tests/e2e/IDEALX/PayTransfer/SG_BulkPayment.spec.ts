@@ -12,6 +12,7 @@
   * 6) TC006_SGBulkPayment - Verify creation of a Bulk Payment from copy reference in transfer center
   * 7) TC007_SGBulkPayment - Verify creation of a Bulk Payment from edit reference
   * 8) TC008_SGBulkPayment - Verify rejection of a Bulk Payment from transfer center
+  * 9) TC009_SGBulkPayment - Verify deletion of a Bulk Payment from transfer center
   * 
   *   */
 import { test, expect } from '@playwright/test';

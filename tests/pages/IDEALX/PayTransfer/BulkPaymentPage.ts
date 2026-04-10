@@ -1,6 +1,7 @@
 // tests/pages/IDEALX/PayTransfer/BulkPaymentPage.ts
 import { Page, Locator, expect } from '@playwright/test';
 import { WebComponents } from '../../../lib/webComponents';
+import { TIMEOUT } from '../../../lib/timeouts';
 
 export type NewPayeeInput = {
   name: string;
@@ -538,7 +539,7 @@ export class BulkPaymentPage {
     const { name, nickName, bankId, accountNumber } = input;
 
     await this.newPayeeTab.click();
-    await this.continueButton.waitFor({ state: 'hidden', timeout: 15_000 });
+    await this.continueButton.waitFor({ state: 'hidden', timeout: TIMEOUT.MIN });
     await this.safeClick(this.continueButton);
     await this.safeClick(this.newPayeeName);
     await this.safeFill(this.newPayeeName, name);
@@ -553,7 +554,7 @@ export class BulkPaymentPage {
     await this.page.keyboard.press('Enter');
     await this.payeeBankId.blur();
     await this.safeClick(this.findBankIDButton);
-    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: TIMEOUT.MIN });
     await this.payeeBankSearchResults.first().click();
     await this.safeClick(this.newPayeeAccountNumber);
 
@@ -578,7 +579,7 @@ export class BulkPaymentPage {
     const { name, nickName, bankId, accountNumber } = input;
 
     await this.newPayeeTab.click();
-    await this.continueButton.waitFor({ state: 'hidden', timeout: 15_000 });
+    await this.continueButton.waitFor({ state: 'hidden', timeout: TIMEOUT.MIN });
     await this.safeClick(this.continueButton);
     await this.safeClick(this.newPayeeName);
     await this.safeFill(this.newPayeeName, name);
@@ -593,7 +594,7 @@ export class BulkPaymentPage {
     await this.page.keyboard.press('Enter');
     await this.payeeBankId.blur();
     await this.safeClick(this.findBankIDButton);
-    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: TIMEOUT.MIN });
     await this.payeeBankSearchResults.first().click();
     await this.safeClick(this.newPayeeAccountNumber);
 
@@ -626,8 +627,7 @@ export class BulkPaymentPage {
     await this.safeFill(this.beneficiaryFilter, query);
     await this.beneficiaryFilter.press('Enter'); // try enter
     await this.beneficiaryFilter.blur();         // and blur, in case enter isn't enough
-    // Small debounce for filter to apply
-    await this.page.waitForTimeout(500);
+    await this.waitForUXLoading();
   }
 
 
@@ -635,17 +635,13 @@ export class BulkPaymentPage {
 
     await this.safeClick(this.beneficiaryDelButton);
     if (confirm) {
-      await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: 10000 });
+      await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: TIMEOUT.MIN });
       await this.beneficiaryDelCnfButton.click();
     } else {
-      await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: 10000 });
+      await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: TIMEOUT.MIN });
       await this.beneficiaryDelDismissButton.click();
     }
-
-
-    // Wait for disappearance of a success banner OR row removal if you can detect it.
-    // Fallback: brief pause to let UI settle.
-    await this.page.waitForTimeout(800);
+    await this.waitForUXLoading();
   }
 
 
@@ -658,18 +654,18 @@ export class BulkPaymentPage {
 
   async deletePayeeInRow(textKey: string, confirm = true) {
     const row = this.beneficiaryRowsByText(textKey).first();
-    await expect(row).toBeVisible({ timeout: 15000 });
+    await expect(row).toBeVisible({ timeout: TIMEOUT.MIN });
 
     const rowDeleteButton = row.locator('xpath=.//button[@name="payee-delete"]');
     await this.safeClick(rowDeleteButton);
 
     if (confirm) {
-      await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: 10000 });
+      await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: TIMEOUT.MIN });
       await this.beneficiaryDelCnfButton.click();
       // Wait until the row disappears to confirm deletion
-      await expect(row).toHaveCount(0, { timeout: 15000 });
+      await expect(row).toHaveCount(0, { timeout: TIMEOUT.MIN });
     } else {
-      await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: 10000 });
+      await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: TIMEOUT.MIN });
       await this.beneficiaryDelDismissButton.click();
       await expect(row).toBeVisible(); // still there
     }
@@ -741,74 +737,75 @@ export class BulkPaymentPage {
         }
   
   /** Former: jiazhai() – waits until create form is ready (fromAccount visible). */
-  async waitForBulkPaymentFormReady(timeout = 20_000) {
+  async waitForBulkPaymentFormReady() {
     await this.waitForUXLoading();
-    await expect(this.fromAccount).toBeVisible({ timeout });
+    await expect(this.fromAccount).toBeVisible({ timeout: TIMEOUT.MIN });
   }
 
   /** Former: jiazhaiForPreviewPage() – Preview page ready (submit enabled). */
-  async waitForPreviewPageReady(timeout = 20_000) {
+  async waitForPreviewPageReady() {
     await this.waitForUXLoading();
-    await expect(this.submitButton).toBeVisible({ timeout });
-    await expect(this.submitButton).toBeEnabled({ timeout });
+    await expect(this.submitButton).toBeVisible({ timeout: TIMEOUT.MIN });
+    await expect(this.submitButton).toBeEnabled({ timeout: TIMEOUT.MIN });
   }
 
   /** Former: jiazhaiForSubmittedPage() – Submitted page ready (finish/done button). */
-  async waitForSubmittedPageReady(timeout = 50_000) {
+  async waitForSubmittedPageReady() {
     await this.waitForUXLoading();
-    await expect(this.finishedButton).toBeVisible({ timeout });
+    await expect(this.finishedButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForViewPaymentPage() – View page ready (fromAccountView + hashValue). */
-  async waitForViewPaymentPageReady(timeout = 30_000) {
+  async waitForViewPaymentPageReady() {
     await this.waitForUXLoading();
-    await expect(this.fromAccountViewLabel).toBeVisible({ timeout });
-    await expect(this.hashValue).toBeVisible({ timeout });
-    await this.page.waitForTimeout(500).catch(() => { });
+    await expect(this.fromAccountViewLabel).toBeVisible({ timeout: TIMEOUT.MEDIUM });
+    await expect(this.hashValue).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForApprovePaymentPage() – Approve button visible. */
-  async waitForApprovePaymentPageReady(timeout = 20_000) {
+  async waitForApprovePaymentPageReady() {
     await this.waitForUXLoading();
-    await expect(this.approveButton).toBeVisible({ timeout });
+    await expect(this.approveButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForDismissDialog() */
-  async waitForDismissDialogReady(timeout = 15_000) {
+  async waitForDismissDialogReady() {
     await this.waitForUXLoading();
-    await expect(this.dismissButton).toBeVisible({ timeout });
+    await expect(this.dismissButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForDismissDeleteDialog() */
-  async waitForDismissDeleteDialogReady(timeout = 30_000) {
+  async waitForDismissDeleteDialogReady() {
     await this.waitForUXLoading();
-    await this.page.waitForTimeout(10000);
-    await expect(this.dismissButton).toBeVisible({ timeout });
+    await this.page.waitForLoadState('networkidle', {
+    timeout: TIMEOUT.VERYMIN,});
+    await expect(this.dismissButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForDismissRejectDialog() */
-  async waitForDismissRejectDialogReady(timeout = 30_000) {
+  async waitForDismissRejectDialogReady() {
     await this.waitForUXLoading();
-    await this.page.waitForTimeout(10000);
-    await expect(this.dismissButton).toBeVisible({ timeout });
+    await this.page.waitForLoadState('networkidle', {
+      timeout: TIMEOUT.VERYMIN,});
+    await expect(this.dismissButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForViewPagination() */
-  async waitForViewPaginationReady(timeout = 15_000) {
+  async waitForViewPaginationReady() {
     await this.waitForUXLoading();
-    await expect(this.showOptionalButton).toBeVisible({ timeout });
+    await expect(this.showOptionalButton).toBeVisible({ timeout: TIMEOUT.MIN });
   }
 
   /** Former: jiazhaiForViewTemplatePage() */
-  async waitForViewTemplatePageReady(timeout = 15_000) {
+  async waitForViewTemplatePageReady() {
     await this.waitForUXLoading();
-    await expect(this.viewTemplateStatus).toBeVisible({ timeout });
+    await expect(this.viewTemplateStatus).toBeVisible({ timeout: TIMEOUT.MIN });
   }
 
   /** Former: jiazhaiCreatePayemntTemplate() */
-  async waitForCreatePaymentTemplateReady(timeout = 20_000) {
+  async waitForCreatePaymentTemplateReady() {
     await this.waitForUXLoading();
-    await expect(this.templatePurposeCodeValue).toBeVisible({ timeout });
+    await expect(this.templatePurposeCodeValue).toBeVisible({ timeout: TIMEOUT.MEDIUM });
     await this.waitForUXLoading();
   }
 
@@ -823,7 +820,7 @@ export class BulkPaymentPage {
     await this.waitForViewPaginationReady();
     await tabButton.click({ force: true });
     // In the old code it validated that viewLoadedLabel disappeared; keep a soft check here.
-    await this.viewLoadedLabel.waitFor({ state: 'visible', timeout: 5000 }).catch(() => { });
+    await this.viewLoadedLabel.waitFor({ state: 'visible', timeout: TIMEOUT.VERYMIN }).catch(() => { });
   }
 
   /** Former: checkPaginationForShowAllTab() */
@@ -851,9 +848,9 @@ export class BulkPaymentPage {
       await expect(this.viewPaginationButton).toBeVisible();
     } else {
       // When <= 10, these may not appear—soft checks only
-      const ten = await this.isVisible(this.viewPreTenButton, 1000);
-      const hundred = await this.isVisible(this.viewPreHundredButton, 1000);
-      const pager = await this.isVisible(this.viewPaginationButton, 1000);
+      const ten = await this.isVisible(this.viewPreTenButton);
+      const hundred = await this.isVisible(this.viewPreHundredButton);
+      const pager = await this.isVisible(this.viewPaginationButton);
       // no-ops; used only to stabilize timing
       void ten; void hundred; void pager;
     }
@@ -903,8 +900,8 @@ export class BulkPaymentPage {
       const loc = sel.startsWith('/') ? this.page.locator(`xpath=${sel}`) : this.page.locator(sel);
       try {
         const first = loc.first();
-        if (await first.isVisible({ timeout: 400 }).catch(() => false)) {
-          await first.waitFor({ state: 'hidden', timeout: 15_000 });
+        if (await first.isVisible({ timeout: TIMEOUT.MEDIUM }).catch(() => false)) {
+          await first.waitFor({ state: 'hidden', timeout: TIMEOUT.VERYMIN });
         }
       } catch { /* ignore */ }
     }
@@ -912,20 +909,20 @@ export class BulkPaymentPage {
   }
 
   /** Safe click: visible + enabled + click */
-  async safeClick(locator: Locator, timeout = 15_000) {
-    await expect(locator).toBeVisible({ timeout });
-    await expect(locator).toBeEnabled({ timeout });
+  async safeClick(locator: Locator) {
+    await expect(locator).toBeVisible({ timeout: TIMEOUT.MEDIUM });
+    await expect(locator).toBeEnabled({ timeout: TIMEOUT.MEDIUM });
     await locator.click();
   }
 
   /** Safe fill: visible then fill */
-  async safeFill(locator: Locator, value: string, timeout = 15_000) {
-    await expect(locator).toBeVisible({ timeout });
+  async safeFill(locator: Locator, value: string) {
+    await expect(locator).toBeVisible({ timeout: TIMEOUT.MEDIUM });
     await locator.fill(value ?? '');
   }
 
   /** Quick visible probe */
-  async isVisible(locator: Locator, timeout = 1000) {
-    return locator.isVisible({ timeout }).catch(() => false);
+  async isVisible(locator: Locator) {
+    return locator.isVisible({timeout: TIMEOUT.VERYMIN}).catch(() => false);
   }
 }
