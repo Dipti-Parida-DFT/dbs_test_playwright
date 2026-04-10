@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBS IDEALX Playwright Test Automation Framework — Architecture Report</title>
+    <style>
+        /* ── Word-friendly styling ── */
+        @page { size: A4; margin: 20mm; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Calibri, Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: #222;
+            background: #fff;
+            padding: 0;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 10px 30px 40px;
+        }
+
+        /* ── Header banner ── */
+        .header-banner {
+            background: linear-gradient(135deg, #1a237e 0%, #4a148c 100%);
+            color: #fff;
+            padding: 38px 40px 32px;
+            text-align: center;
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 30px;
+        }
+        .header-banner h1 { font-size: 2.2em; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .header-banner .sub { font-size: 1.05em; opacity: 0.88; }
+        .header-banner .meta { font-size: 0.88em; opacity: 0.72; margin-top: 10px; }
+
+        /* ── TOC ── */
+        .toc {
+            background: #f4f6fa;
+            border: 1px solid #d0d4e4;
+            border-radius: 6px;
+            padding: 22px 30px;
+            margin-bottom: 34px;
+        }
+        .toc h2 { color: #1a237e; font-size: 1.3em; margin-bottom: 14px; }
+        .toc ol { padding-left: 22px; column-count: 2; column-gap: 40px; }
+        .toc li { margin-bottom: 5px; }
+        .toc a { color: #1a237e; text-decoration: none; font-weight: 500; }
+        .toc a:hover { text-decoration: underline; }
+
+        /* ── Sections ── */
+        .section { margin-bottom: 44px; page-break-inside: avoid; }
+        .section h2 {
+            color: #1a237e;
+            font-size: 1.55em;
+            padding-bottom: 6px;
+            border-bottom: 3px solid #1a237e;
+            margin-bottom: 16px;
+        }
+        .section h3 {
+            color: #4a148c;
+            font-size: 1.18em;
+            margin: 22px 0 10px;
+        }
+        .section h4 {
+            color: #37474f;
+            font-size: 1.05em;
+            margin: 16px 0 8px;
+        }
+        .section p, .section ul, .section ol { margin-bottom: 10px; }
+        .section ul, .section ol { padding-left: 24px; }
+        .section li { margin-bottom: 4px; }
+
+        /* ── Tables ── */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0 18px;
+            font-size: 0.93em;
+        }
+        th {
+            background: #1a237e;
+            color: #fff;
+            padding: 9px 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 8px 12px;
+            border: 1px solid #d0d4e4;
+        }
+        tr:nth-child(even) { background: #f7f8fc; }
+        tr:hover { background: #eef0f8; }
+
+        /* ── Code blocks ── */
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #1a237e;
+            padding: 14px 16px;
+            margin: 12px 0;
+            border-radius: 3px;
+            font-family: 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+            font-size: 0.92em;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* ── Method list ── */
+        .method-list { margin: 10px 0; }
+        .method-item {
+            background: #fafafa;
+            padding: 9px 14px;
+            margin: 6px 0;
+            border-left: 3px solid #4a148c;
+            border-radius: 3px;
+        }
+        .method-item code {
+            color: #1a237e;
+            font-weight: 700;
+            font-family: 'Cascadia Code', Consolas, monospace;
+            background: #eef0f8;
+            padding: 1px 5px;
+            border-radius: 3px;
+        }
+
+        /* ── File grid ── */
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .file-card {
+            background: #f7f8fc;
+            padding: 8px 12px;
+            border-left: 3px solid #4a148c;
+            border-radius: 3px;
+            font-family: Consolas, monospace;
+            font-size: 0.9em;
+        }
+
+        /* ── Folder tree ── */
+        .tree {
+            font-family: 'Cascadia Code', Consolas, monospace;
+            font-size: 0.9em;
+            line-height: 1.8;
+            background: #f5f5f5;
+            padding: 16px 20px;
+            border-radius: 4px;
+            margin: 12px 0;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        /* ── Badge ── */
+        .badge {
+            display: inline-block;
+            background: #1a237e;
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.82em;
+            margin: 2px 3px;
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            color: #777;
+            font-size: 0.88em;
+            padding: 20px 0 10px;
+            border-top: 2px solid #1a237e;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!--  HEADER                                                       -->
+<!-- ============================================================ -->
+<div class="header-banner">
+    <h1>DBS IDEALX — Playwright Test Automation Framework</h1>
+    <div class="sub">Comprehensive Architecture &amp; Component Reference</div>
+    <div class="meta">Workspace: dbs_test_playwright &nbsp;|&nbsp; Playwright v1.58.2 &nbsp;|&nbsp; Generated: 10 April 2026</div>
+</div>
+
+<div class="container">
+
+<!-- ============================================================ -->
+<!--  TABLE OF CONTENTS                                            -->
+<!-- ============================================================ -->
+<div class="toc">
+    <h2>Table of Contents</h2>
+    <ol>
+        <li><a href="#s1">Folder Structure</a></li>
+        <li><a href="#s2">Technology Stack</a></li>
+        <li><a href="#s3">Playwright Configuration</a></li>
+        <li><a href="#s4">Package Dependencies &amp; Scripts</a></li>
+        <li><a href="#s5">Page Object Model</a></li>
+        <li><a href="#s6">WebComponents Library</a></li>
+        <li><a href="#s7">TestUtils Methods</a></li>
+        <li><a href="#s8">Utility Functions (utils.ts)</a></li>
+        <li><a href="#s9">Constants &amp; Timeouts</a></li>
+        <li><a href="#s10">Test Data Management</a></li>
+        <li><a href="#s11">E2E Test Specifications</a></li>
+        <li><a href="#s12">API Test Specifications</a></li>
+        <li><a href="#s13">Reporting (Playwright HTML + Allure)</a></li>
+        <li><a href="#s14">MCP Configuration</a></li>
+        <li><a href="#s15">AI Migration Governance</a></li>
+        <li><a href="#s16">AccountTransferPage — Detailed Locators</a></li>
+    </ol>
+</div>
+
+<!-- ============================================================ -->
+<!--  1. FOLDER STRUCTURE                                          -->
+<!-- ============================================================ -->
+<div class="section" id="s1">
+    <h2>1. Folder Structure</h2>
+    <p>High-level directory layout of the <code>dbs_test_playwright</code> workspace.</p>
+    <div class="tree">dbs_test_playwright/
+├── playwright.config.ts          # Playwright settings, reporters, projects
+├── package.json                  # Dependencies &amp; npm scripts
+├── extract-alltests.js           # Script to extract all test metadata
+├── .vscode/
+│   └── mcp.json                  # Playwright MCP server config
+├── tests/
+│   ├── e2e/
+│   │   └── IDEALX/
+│   │       └── PayTransfer/      # 13+ E2E spec files (SG, HK, ID, IN, VN)
+│   ├── api/
+│   │   └── IDEALX/              # 4 API spec files
+│   ├── pages/
+│   │   └── IDEALX/
+│   │       ├── LoginPage.ts      # Login page object
+│   │       └── PayTransfer/
+│   │           ├── index.ts      # PaymentsPages facade (aggregates 8 page classes)
+│   │           ├── AccountTransferPage.ts
+│   │           ├── TelegraphicTransferPage.ts
+│   │           ├── PayrollPage.ts
+│   │           ├── TransferCenterPage.ts
+│   │           ├── ApprovalPage.ts
+│   │           ├── BulkPaymentPage.ts
+│   │           ├── BulkCollectionPage.ts
+│   │           └── PaymentTemplatesPage.ts
+│   ├── lib/
+│   │   ├── webComponents.ts      # 22 public UI helper methods
+│   │   ├── testUtils.ts          # 40+ high-level test utility methods
+│   │   ├── utils.ts              # File ops, path helpers, recording
+│   │   ├── constants.ts          # PIN, URLs, environment tokens
+│   │   └── timeouts.ts           # VERYMIN → EXTREME timeout tiers
+│   ├── data/
+│   │   ├── loginCredentials.json
+│   │   ├── SG_testData.json
+│   │   ├── HK_testData.json
+│   │   ├── ID_testData.json
+│   │   ├── IN_testData.json
+│   │   ├── VN_testData.json
+│   │   └── sgAccountTransferTestData.json
+│   └── testContexts/
+│       ├── context.md            # Framework standard &amp; analysis rules
+│       ├── learnings.md          # Runtime observations &amp; best practices
+│       └── migration-execution-prompt.md  # 9-step migration workflow
+├── allure-results/               # Raw Allure result JSONs &amp; attachments
+├── allure-report/                # Generated Allure HTML report
+├── playwright-report/            # Playwright HTML report
+├── test-results/                 # Playwright trace &amp; artefacts
+└── mcp-playwright-converter/     # Reserved for MCP converter tooling</div>
+</div>
+
+<!-- ============================================================ -->
+<!--  2. TECHNOLOGY STACK                                          -->
+<!-- ============================================================ -->
+<div class="section" id="s2">
+    <h2>2. Technology Stack</h2>
+    <table>
+        <tr><th>Component</th><th>Technology</th><th>Version</th></tr>
+        <tr><td>Test Runner</td><td>@playwright/test</td><td>^1.58.2</td></tr>
+        <tr><td>Language</td><td>TypeScript (CommonJS)</td><td>^5.9.3</td></tr>
+        <tr><td>Node.js Runtime</td><td>Node.js</td><td>LTS</td></tr>
+        <tr><td>Browser</td><td>Chromium (Desktop Chrome)</td><td>Bundled with Playwright</td></tr>
+        <tr><td>Reporting — Primary</td><td>Playwright HTML Reporter</td><td>Built-in</td></tr>
+        <tr><td>Reporting — Secondary</td><td>Allure Playwright</td><td>^3.4.5</td></tr>
+        <tr><td>Logging</td><td>log4js</td><td>^6.9.1</td></tr>
+        <tr><td>Date/Time</td><td>moment</td><td>^2.30.1</td></tr>
+        <tr><td>IDE Integration</td><td>VS Code + MCP</td><td>@playwright/mcp@latest</td></tr>
+        <tr><td>Application Under Test</td><td>DBS IDEALX (Angular)</td><td>SIT environment</td></tr>
+    </table>
+</div>
+
+<!-- ============================================================ -->
+<!--  3. PLAYWRIGHT CONFIGURATION                                  -->
+<!-- ============================================================ -->
+<div class="section" id="s3">
+    <h2>3. Playwright Configuration</h2>
+    <p>Key settings from <code>playwright.config.ts</code>.</p>
+
+    <h3>Timeout Settings</h3>
+    <table>
+        <tr><th>Parameter</th><th>Value</th><th>Description</th></tr>
+        <tr><td>test timeout</td><td>8,000,000 ms (~2.2 hrs)</td><td>Individual test timeout</td></tr>
+        <tr><td>globalTimeout</td><td>8,000,000 ms</td><td>Overall suite timeout</td></tr>
+        <tr><td>expect timeout</td><td>10,000 ms</td><td>Assertion wait ceiling</td></tr>
+        <tr><td>actionTimeout</td><td>60,000 ms</td><td>Per-action timeout</td></tr>
+        <tr><td>navigationTimeout</td><td>120,000 ms</td><td>Page navigation timeout</td></tr>
+    </table>
+
+    <h3>Execution Parameters</h3>
+    <table>
+        <tr><th>Parameter</th><th>Value</th></tr>
+        <tr><td>Parallel execution</td><td>Disabled (<code>fullyParallel: false</code>)</td></tr>
+        <tr><td>Workers</td><td>1 (sequential)</td></tr>
+        <tr><td>Headless</td><td>Only in CI (<code>process.env.CI</code>)</td></tr>
+        <tr><td>Retries</td><td>2 on CI, 0 locally</td></tr>
+        <tr><td>Viewport</td><td>1920 × 1080</td></tr>
+        <tr><td>HTTPS errors</td><td>Ignored (self-signed certs)</td></tr>
+    </table>
+
+    <h3>Artefacts</h3>
+    <table>
+        <tr><th>Artefact</th><th>Strategy</th></tr>
+        <tr><td>Trace</td><td><code>on-first-retry</code></td></tr>
+        <tr><td>Screenshot</td><td><code>only-on-failure</code></td></tr>
+        <tr><td>Video</td><td><code>retain-on-failure</code></td></tr>
+    </table>
+
+    <h3>Projects</h3>
+    <table>
+        <tr><th>Project Name</th><th>Test Directory</th><th>Engine</th></tr>
+        <tr><td>e2e</td><td><code>./tests/e2e</code></td><td>Desktop Chrome (Chromium)</td></tr>
+        <tr><td>api</td><td><code>./tests/api</code></td><td>Node.js (no browser)</td></tr>
+    </table>
+</div>
+
+<!-- ============================================================ -->
+<!--  4. PACKAGE DEPENDENCIES & SCRIPTS                            -->
+<!-- ============================================================ -->
+<div class="section" id="s4">
+    <h2>4. Package Dependencies &amp; Scripts</h2>
+
+    <h3>npm Scripts</h3>
+    <table>
+        <tr><th>Script</th><th>Command</th><th>Purpose</th></tr>
+        <tr><td><code>test</code></td><td>npx playwright test</td><td>Run all tests</td></tr>
+        <tr><td><code>test:headed</code></td><td>npx playwright test --headed</td><td>Headed browser execution</td></tr>
+        <tr><td><code>test:debug</code></td><td>npx playwright test --debug</td><td>Inspector debug mode</td></tr>
+        <tr><td><code>allure:generate</code></td><td>allure generate allure-results --clean -o allure-report</td><td>Generate Allure HTML</td></tr>
+        <tr><td><code>allure:open</code></td><td>allure open allure-report</td><td>Launch Allure in browser</td></tr>
+        <tr><td><code>test:report</code></td><td>allure:generate &amp;&amp; allure:open</td><td>Generate + open report</td></tr>
+        <tr><td><code>test:e2e</code></td><td>playwright test --project=e2e + report</td><td>E2E tests with report</td></tr>
+        <tr><td><code>test:api</code></td><td>playwright test --project=api + report</td><td>API tests with report</td></tr>
+        <tr><td><code>extract:alltests</code></td><td>node extract-alltests.js</td><td>Extract test metadata</td></tr>
+    </table>
+
+    <h3>Dev Dependencies</h3>
+    <table>
+        <tr><th>Package</th><th>Version</th><th>Purpose</th></tr>
+        <tr><td>@playwright/test</td><td>^1.58.2</td><td>Test runner &amp; assertions</td></tr>
+        <tr><td>allure-playwright</td><td>^3.4.5</td><td>Allure test reporter</td></tr>
+        <tr><td>allure-commandline</td><td>^2.36.0</td><td>Allure CLI for report generation</td></tr>
+        <tr><td>@types/node</td><td>^25.0.3</td><td>Node.js type definitions</td></tr>
+        <tr><td>@types/log4js</td><td>^0.0.33</td><td>log4js type definitions</td></tr>
+        <tr><td>@types/moment</td><td>^2.11.29</td><td>moment type definitions</td></tr>
+    </table>
+
+    <h3>Production Dependencies</h3>
+    <table>
+        <tr><th>Package</th><th>Version</th><th>Purpose</th></tr>
+        <tr><td>log4js</td><td>^6.9.1</td><td>Logging framework</td></tr>
+        <tr><td>moment</td><td>^2.30.1</td><td>Date/time utilities</td></tr>
+        <tr><td>typescript</td><td>^5.9.3</td><td>TypeScript compiler</td></tr>
+    </table>
+</div>
+
+<!-- ============================================================ -->
+<!--  5. PAGE OBJECT MODEL                                         -->
+<!-- ============================================================ -->
+<div class="section" id="s5">
+    <h2>5. Page Object Model</h2>
+    <p>The framework uses a <strong>Facade pattern</strong> — <code>PaymentsPages</code> aggregates all payment page objects via a single constructor that receives the Playwright <code>Page</code> instance.</p>
+
+    <h3>Page Class Inventory</h3>
+    <table>
+        <tr><th>#</th><th>Class</th><th>File</th><th>Purpose</th></tr>
+        <tr><td>1</td><td>AccountTransferPage</td><td>AccountTransferPage.ts</td><td>ACT payment creation, new/existing payee, FX, approvals</td></tr>
+        <tr><td>2</td><td>TelegraphicTransferPage</td><td>TelegraphicTransferPage.ts</td><td>International wire transfer flows</td></tr>
+        <tr><td>3</td><td>PayrollPage</td><td>PayrollPage.ts</td><td>Payroll payment creation &amp; management</td></tr>
+        <tr><td>4</td><td>TransferCentersPage</td><td>TransferCenterPage.ts</td><td>Transfer centre search, filter, navigation</td></tr>
+        <tr><td>5</td><td>ApprovalPage</td><td>ApprovalPage.ts</td><td>Payment approval workflows</td></tr>
+        <tr><td>6</td><td>BulkPaymentPage</td><td>BulkPaymentPage.ts</td><td>Bulk payment upload &amp; editing</td></tr>
+        <tr><td>7</td><td>BulkCollectionPage</td><td>BulkCollectionPage.ts</td><td>Bulk collection management</td></tr>
+        <tr><td>8</td><td>PaymentTemplatesPage</td><td>PaymentTemplatesPage.ts</td><td>Payment template creation &amp; reuse</td></tr>
+    </table>
+
+    <h3>Facade Constructor</h3>
+    <div class="code-block">export class PaymentsPages {
+  public AccountTransferPage: AccountTransferPage;
+  public TransferCentersPage: TransferCentersPage;
+  public PayrollPage: PayrollPage;
+  public BulkPaymentPage: BulkPaymentPage;
+  public TelegraphicTransferPage: TelegraphicTransferPage;
+  public ApprovalPage: ApprovalPage;
+  public BulkCollectionPage: BulkCollectionPage;
+  public PaymentTemplatesPage: PaymentTemplatesPage;
+
+  constructor(private readonly page: Page) {
+    this.AccountTransferPage      = new AccountTransferPage(page);
+    this.TransferCentersPage      = new TransferCentersPage(page);
+    this.PayrollPage              = new PayrollPage(page);
+    this.BulkPaymentPage          = new BulkPaymentPage(page);
+    this.TelegraphicTransferPage  = new TelegraphicTransferPage(page);
+    this.ApprovalPage             = new ApprovalPage(page);
+    this.BulkCollectionPage       = new BulkCollectionPage(page);
+    this.PaymentTemplatesPage     = new PaymentTemplatesPage(page);
+  }
+}</div>
+
+    <h3>Login Page</h3>
+    <p><code>LoginPage.ts</code> — Handles SSO login flow: enter User ID, enter PIN, accept security prompts, and navigate to the IDEALX dashboard.</p>
+</div>
+
+<!-- ============================================================ -->
+<!--  6. WEBCOMPONENTS LIBRARY                                     -->
+<!-- ============================================================ -->
+<div class="section" id="s6">
+    <h2>6. WebComponents Library (22 Methods)</h2>
+    <p>Core UI interaction helpers in <code>tests/lib/webComponents.ts</code>.</p>
+
+    <h3>Click Methods</h3>
+    <div class="method-list">
+        <div class="method-item"><code>clickElement(selector, opts)</code> — Basic click with visibility check</div>
+        <div class="method-item"><code>clickWhenVisibleAndEnabled(locator, timeout?)</code> — Wait for visible + enabled, then click</div>
+        <div class="method-item"><code>javaScriptsClick(locator)</code> — Bypass overlays using JS click</div>
+        <div class="method-item"><code>hardClick(locator)</code> — <code>force: true</code> click</div>
+        <div class="method-item"><code>robustClickElement(target, opts?)</code> — Retry click with state verification and backoff</div>
+    </div>
+
+    <h3>Wait &amp; Visibility</h3>
+    <div class="method-list">
+        <div class="method-item"><code>waitElementToBeVisible(locator, timeout?)</code> — Wait for visibility + enabled state</div>
+        <div class="method-item"><code>waitDashboardToBeVisible(locator, timeout?)</code> — Dashboard wait (TIMEOUT.EXTREME)</div>
+        <div class="method-item"><code>waitForUXLoading(extraSpinnerSelectors?, page)</code> — Generic UX loading guard; detects spinners</div>
+        <div class="method-item"><code>isElementVisible(page, target, options?)</code> — Boolean visibility check with optional wait</div>
+    </div>
+
+    <h3>Input</h3>
+    <div class="method-list">
+        <div class="method-item"><code>enterText(target, value, timeout?)</code> — Fill input field</div>
+        <div class="method-item"><code>enterTextarea(locator, value, timeout?)</code> — Fill textarea with editability guard</div>
+        <div class="method-item"><code>typeTextThroughKeyBoardAction(page, text)</code> — Type via keyboard events</div>
+        <div class="method-item"><code>pressGivenButtonThroughKeyBoardAction(page, text)</code> — Press keyboard key</div>
+    </div>
+
+    <h3>Validation</h3>
+    <div class="method-list">
+        <div class="method-item"><code>compareUIVsJsonValue(locator, givenData, timeout?)</code> — Assert UI value matches JSON</div>
+        <div class="method-item"><code>verifyUIElementTextIsNotNull(locator)</code> — Assert element text is non-empty</div>
+        <div class="method-item"><code>stringIsNotNullOrBlank(s)</code> — String null/blank guard</div>
+    </div>
+
+    <h3>Text &amp; Content</h3>
+    <div class="method-list">
+        <div class="method-item"><code>getTextFromElement(locator)</code> — Extract visible text</div>
+        <div class="method-item"><code>getReferenceID(raw)</code> — Regex extract reference ID (<code>EB[A-Z0-9-]+</code>)</div>
+        <div class="method-item"><code>concatenateStrings(value1?, value2?)</code> — Concatenate two strings</div>
+    </div>
+
+    <h3>Utility</h3>
+    <div class="method-list">
+        <div class="method-item"><code>scrollToElement(locator)</code> — Scroll into view</div>
+        <div class="method-item"><code>hardWait(page)</code> — Static wait (TIMEOUT.VERYMIN)</div>
+        <div class="method-item"><code>handleAuthIfPresent(authDialog, securityAccessCode, authenticateButton)</code> — Detect &amp; complete auth dialog</div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  7. TESTUTILS METHODS                                         -->
+<!-- ============================================================ -->
+<div class="section" id="s7">
+    <h2>7. TestUtils Methods (40+ Methods)</h2>
+    <p>High-level test utility class in <code>tests/lib/testUtils.ts</code>.</p>
+
+    <h3>Navigation</h3>
+    <div class="method-list">
+        <div class="method-item"><code>navigateTo(url)</code> — Navigate to URL</div>
+        <div class="method-item"><code>goBack()</code> / <code>goForward()</code> / <code>reload()</code></div>
+        <div class="method-item"><code>waitForNavigation()</code> — Wait for navigation complete</div>
+    </div>
+
+    <h3>Page Information</h3>
+    <div class="method-list">
+        <div class="method-item"><code>getCurrentUrl()</code> / <code>getPageTitle()</code> / <code>getPageSource()</code></div>
+    </div>
+
+    <h3>Element Visibility &amp; State</h3>
+    <div class="method-list">
+        <div class="method-item"><code>waitForElementVisible(locator, timeout?)</code> / <code>waitForElementHidden(locator, timeout?)</code></div>
+        <div class="method-item"><code>isElementVisible(locator)</code> / <code>isElementEnabled(locator)</code> / <code>elementExists(locator)</code></div>
+    </div>
+
+    <h3>Element Content</h3>
+    <div class="method-list">
+        <div class="method-item"><code>getElementText(locator)</code> / <code>getInnerHTML(locator)</code></div>
+        <div class="method-item"><code>getAttribute(locator, attributeName)</code> / <code>hasClass(locator, className)</code></div>
+    </div>
+
+    <h3>Interaction</h3>
+    <div class="method-list">
+        <div class="method-item"><code>scrollIntoView(locator)</code> / <code>focusElement(locator)</code> / <code>hoverElement(locator)</code></div>
+        <div class="method-item"><code>doubleClick(locator)</code> / <code>rightClick(locator)</code> / <code>dragAndDrop(src, tgt)</code></div>
+    </div>
+
+    <h3>Form Interaction</h3>
+    <div class="method-list">
+        <div class="method-item"><code>clearInput(locator)</code> / <code>selectDropdownOption(locator, value)</code></div>
+        <div class="method-item"><code>checkCheckbox(locator)</code> / <code>uncheckCheckbox(locator)</code> / <code>isCheckboxChecked(locator)</code></div>
+    </div>
+
+    <h3>Collections</h3>
+    <div class="method-list">
+        <div class="method-item"><code>getElementCount(locator)</code> / <code>getAllElements(locator)</code></div>
+    </div>
+
+    <h3>Screenshot &amp; Debug</h3>
+    <div class="method-list">
+        <div class="method-item"><code>takeScreenshot(filename)</code> / <code>takeElementScreenshot(locator, filename)</code></div>
+        <div class="method-item"><code>wait(ms)</code> — Explicit delay</div>
+    </div>
+
+    <h3>Cookies</h3>
+    <div class="method-list">
+        <div class="method-item"><code>clearCookies()</code> / <code>getAllCookies()</code> / <code>addCookie(name, value, domain?)</code></div>
+    </div>
+
+    <h3>Keyboard &amp; Script</h3>
+    <div class="method-list">
+        <div class="method-item"><code>pressKey(key)</code> / <code>typeText(text, delay?)</code></div>
+        <div class="method-item"><code>executeScript&lt;T&gt;(script, ...args)</code> — Evaluate JS in page context</div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  8. UTILITY FUNCTIONS                                         -->
+<!-- ============================================================ -->
+<div class="section" id="s8">
+    <h2>8. Utility Functions (utils.ts)</h2>
+
+    <h3>Path &amp; File Management</h3>
+    <div class="method-list">
+        <div class="method-item"><code>getBasePath()</code> — CWD</div>
+        <div class="method-item"><code>getDataPath()</code> — Data folder path</div>
+        <div class="method-item"><code>getFileName(filePath)</code> — Extract filename</div>
+        <div class="method-item"><code>copyFile(source, target)</code> — Synchronous file copy</div>
+        <div class="method-item"><code>addTail(part1, part2)</code> — Join paths with single separator</div>
+    </div>
+
+    <h3>Upload File Generators</h3>
+    <div class="method-list">
+        <div class="method-item"><code>getUploadFile(fileName)</code> — Temp file with timestamp suffix</div>
+        <div class="method-item"><code>getUploadFile2(fileName)</code> — Temp file without timestamp</div>
+        <div class="method-item"><code>getUploadFile3(fileName)</code> — Temp file with timestamp before extension</div>
+    </div>
+
+    <h3>Environment Timeouts</h3>
+    <div class="method-list">
+        <div class="method-item"><code>getElementTimeout()</code> — ELEMENT_TIMEOUT env var (default 10 000 ms)</div>
+        <div class="method-item"><code>getPageCompleteTimeout()</code> — PAGE_COMPLETE_TIMEOUT env var (default 20 000 ms)</div>
+        <div class="method-item"><code>getMenuItemTimeout()</code> — MENU_ITEM_TIMEOUT env var (default 15 000 ms)</div>
+    </div>
+
+    <h3>Test Result Recording</h3>
+    <div class="method-list">
+        <div class="method-item"><code>recordTestResult(testInfo, page?, project?, angularVersion?)</code> — Write result to CSV + capture screenshots</div>
+    </div>
+
+    <h3>PROJECT_TYPE Enum</h3>
+    <div class="code-block">enum PROJECT_TYPE {
+  CB      = 'CB',
+  SU      = 'SU',
+  SSM     = 'SSM',
+  IDEALX  = 'IDEALX'
+}</div>
+</div>
+
+<!-- ============================================================ -->
+<!--  9. CONSTANTS & TIMEOUTS                                      -->
+<!-- ============================================================ -->
+<div class="section" id="s9">
+    <h2>9. Constants &amp; Timeouts</h2>
+
+    <h3>Application Constants (<code>constants.ts</code>)</h3>
+    <table>
+        <tr><th>Constant</th><th>Value</th><th>Purpose</th></tr>
+        <tr><td>PIN</td><td>123</td><td>Login PIN</td></tr>
+        <tr><td>SECURITYACCESSCODE</td><td>1111</td><td>Security access code for Pay &amp; Transfer</td></tr>
+        <tr><td>ENV</td><td>SIT</td><td>Target environment</td></tr>
+        <tr><td>SITURL</td><td>https://i3bku3uatqeweb01.qe.dragonflyft.com:1443/iws/ssologin</td><td>SIT subscriber URL</td></tr>
+        <tr><td>CHALLENGEVIASMSCODE</td><td>12345678</td><td>SMS challenge code</td></tr>
+        <tr><td>SCROLLBYX / SCROLLBYY</td><td>0 / 500</td><td>Default scroll offsets</td></tr>
+    </table>
+
+    <h3>Timeout Tiers (<code>timeouts.ts</code>)</h3>
+    <table>
+        <tr><th>Name</th><th>Value (ms)</th><th>Duration</th><th>Typical Use</th></tr>
+        <tr><td>VERYMIN</td><td>6 000</td><td>6 s</td><td>Hard-wait operations</td></tr>
+        <tr><td>MIN</td><td>15 000</td><td>15 s</td><td>Quick element waits</td></tr>
+        <tr><td>MEDIUM</td><td>30 000</td><td>30 s</td><td>Standard operations</td></tr>
+        <tr><td>LONG</td><td>75 000</td><td>75 s</td><td>Page transitions</td></tr>
+        <tr><td>MAX</td><td>300 000</td><td>5 min</td><td>Single test phases</td></tr>
+        <tr><td>EXTREME</td><td>600 000</td><td>10 min</td><td>Dashboard / extreme waits</td></tr>
+    </table>
+</div>
+
+<!-- ============================================================ -->
+<!--  10. TEST DATA MANAGEMENT                                     -->
+<!-- ============================================================ -->
+<div class="section" id="s10">
+    <h2>10. Test Data Management</h2>
+    <p>JSON-driven test data organised by region inside <code>tests/data/</code>.</p>
+
+    <table>
+        <tr><th>File</th><th>Region</th><th>Contents</th></tr>
+        <tr><td>loginCredentials.json</td><td>Global</td><td>User IDs, organisations, PINs for all environments</td></tr>
+        <tr><td>SG_testData.json</td><td>Singapore</td><td>ACT, Payroll, TT payment scenarios</td></tr>
+        <tr><td>HK_testData.json</td><td>Hong Kong</td><td>Bulk collection, Payroll, TT scenarios</td></tr>
+        <tr><td>ID_testData.json</td><td>Indonesia</td><td>Bulk payment, Payroll scenarios</td></tr>
+        <tr><td>IN_testData.json</td><td>India</td><td>Bulk collection scenarios</td></tr>
+        <tr><td>VN_testData.json</td><td>Vietnam</td><td>Bulk payment, Payroll scenarios</td></tr>
+        <tr><td>sgAccountTransferTestData.json</td><td>Singapore</td><td>Dedicated ACT transfer test data</td></tr>
+    </table>
+
+    <h3>Data Structure Pattern</h3>
+    <ul>
+        <li>Test-case metadata (ID, description, intent)</li>
+        <li>User credentials &amp; session info</li>
+        <li>Payment / transaction fields</li>
+        <li>Payee information (name, account, country, bank)</li>
+        <li>Expected validation values</li>
+        <li>Region-specific business rules &amp; constraints</li>
+    </ul>
+</div>
+
+<!-- ============================================================ -->
+<!--  11. E2E TEST SPECIFICATIONS                                  -->
+<!-- ============================================================ -->
+<div class="section" id="s11">
+    <h2>11. E2E Test Specifications</h2>
+    <p>Located in <code>tests/e2e/IDEALX/PayTransfer/</code>.</p>
+
+    <h3>Spec File Inventory</h3>
+    <div class="file-grid">
+        <div class="file-card">HK_BulkCollection.spec.ts</div>
+        <div class="file-card">HK_ManagementPayroll.spec.ts</div>
+        <div class="file-card">HK_TelegraphicTransfer.spec.ts</div>
+        <div class="file-card">ID_BulkPayment.spec.ts</div>
+        <div class="file-card">ID_ManagePayrollAlternate.spec.ts</div>
+        <div class="file-card">ID_Payroll.spec.ts</div>
+        <div class="file-card">IN_BulkCollection.spec.ts</div>
+        <div class="file-card">SG_AccountTransfer.test.ts</div>
+        <div class="file-card">SG_AccountTransfer_TC001AgentGenerated.spec.ts</div>
+        <div class="file-card">SG_ManagePayroll.spec.ts</div>
+        <div class="file-card">SG_ManagePayrollTC001AgentGenerated.spec.ts</div>
+        <div class="file-card">SG_Payroll.spec.ts</div>
+        <div class="file-card">SG_TelegraphicTransfer.spec.ts</div>
+        <div class="file-card">VN_BulkPayment.spec.ts</div>
+        <div class="file-card">VN_Payroll.spec.ts</div>
+    </div>
+
+    <h3>Regional Coverage</h3>
+    <table>
+        <tr><th>Region</th><th>Code</th><th>Test Types</th></tr>
+        <tr><td>Singapore</td><td>SG</td><td>Account Transfer, Payroll, Manage Payroll, Telegraphic Transfer</td></tr>
+        <tr><td>Hong Kong</td><td>HK</td><td>Bulk Collection, Management Payroll, Telegraphic Transfer</td></tr>
+        <tr><td>Indonesia</td><td>ID</td><td>Bulk Payment, Payroll (Standard + Alternate)</td></tr>
+        <tr><td>India</td><td>IN</td><td>Bulk Collection</td></tr>
+        <tr><td>Vietnam</td><td>VN</td><td>Bulk Payment, Payroll</td></tr>
+    </table>
+
+    <h3>Agent-Generated Specs</h3>
+    <p>Two specifications were generated using the AI migration framework:</p>
+    <ul>
+        <li><code>SG_AccountTransfer_TC001AgentGenerated.spec.ts</code> — ACT payment with new payee</li>
+        <li><code>SG_ManagePayrollTC001AgentGenerated.spec.ts</code> — Manage payroll DBS flow</li>
+    </ul>
+</div>
+
+<!-- ============================================================ -->
+<!--  12. API TEST SPECIFICATIONS                                  -->
+<!-- ============================================================ -->
+<div class="section" id="s12">
+    <h2>12. API Test Specifications</h2>
+    <p>Located in <code>tests/api/IDEALX/</code>. Run under the <code>api</code> project (no browser).</p>
+
+    <table>
+        <tr><th>File</th><th>API Endpoint</th><th>Purpose</th></tr>
+        <tr><td>getEntitlementApi.spec.ts</td><td>Get Entitlement</td><td>Validate user entitlements &amp; permissions</td></tr>
+        <tr><td>getUserDetailWithAuthSignatory.spec.ts</td><td>Get User Detail</td><td>Retrieve user info with auth signatory</td></tr>
+        <tr><td>getUserIdAvailApi.spec.ts</td><td>Get User ID Availability</td><td>Check user ID availability</td></tr>
+        <tr><td>userApi.spec.ts</td><td>User API</td><td>Generic user CRUD operations</td></tr>
+    </table>
+</div>
+
+<!-- ============================================================ -->
+<!--  13. REPORTING                                                -->
+<!-- ============================================================ -->
+<div class="section" id="s13">
+    <h2>13. Reporting (Dual Reporter Strategy)</h2>
+    <p>The framework employs a <strong>dual-reporter strategy</strong> — Playwright HTML for real-time debugging and Allure for historical trend analysis and stakeholder reporting.</p>
+
+    <h3>Playwright HTML Reporter</h3>
+    <table>
+        <tr><th>Aspect</th><th>Detail</th></tr>
+        <tr><td>Output directory</td><td><code>playwright-report/</code></td></tr>
+        <tr><td>Auto-open behaviour</td><td>Opens in browser automatically when a test fails</td></tr>
+        <tr><td>Execution command</td><td><code>npx playwright show-report</code></td></tr>
+    </table>
+    <h4>Capabilities</h4>
+    <ul>
+        <li><strong>Step-by-step trace view:</strong> Replay each test action with DOM snapshots, network logs, and console output</li>
+        <li><strong>Screenshot on failure:</strong> Automatic full-page screenshot captured at the point of failure</li>
+        <li><strong>Video playback:</strong> Retained video recordings for failed tests (configurable via <code>retain-on-failure</code>)</li>
+        <li><strong>Trace viewer:</strong> Interactive timeline with before/after DOM state for each action — available on first retry</li>
+        <li><strong>Filtering &amp; search:</strong> Filter by test status (passed, failed, skipped, flaky), search by test name</li>
+        <li><strong>Attachment support:</strong> Inline display of screenshots, PDFs, and text attachments within the report</li>
+        <li><strong>Shareable:</strong> Self-contained static HTML — can be distributed via email or hosted on any web server</li>
+    </ul>
+
+    <h3>Allure Reporter</h3>
+    <table>
+        <tr><th>Aspect</th><th>Detail</th></tr>
+        <tr><td>Raw results</td><td><code>allure-results/</code> (JSON result files + attachment binaries)</td></tr>
+        <tr><td>Generated report</td><td><code>allure-report/</code> (static HTML dashboard)</td></tr>
+        <tr><td>Generate command</td><td><code>npm run allure:generate</code> → <code>allure generate allure-results --clean -o allure-report</code></td></tr>
+        <tr><td>Open command</td><td><code>npm run allure:open</code> → <code>allure open allure-report</code></td></tr>
+        <tr><td>Combined shortcut</td><td><code>npm run test:report</code> (generate + open in one command)</td></tr>
+    </table>
+    <h4>Capabilities</h4>
+    <ul>
+        <li><strong>Dashboard overview:</strong> At-a-glance pass/fail/broken/skipped distribution with pie charts and severity breakdown</li>
+        <li><strong>Trend charts:</strong> Historical pass/fail trends across multiple runs — tracks regression patterns over time</li>
+        <li><strong>Test categorisation:</strong> Tests grouped by suite, feature, story, severity, and custom labels</li>
+        <li><strong>Environment metadata:</strong> Displays environment details (browser, OS, URL) alongside results</li>
+        <li><strong>Timeline view:</strong> Visualises test execution order and duration on a Gantt-style timeline</li>
+        <li><strong>Defect classification:</strong> Automatically categorises failures into product defects vs. test defects</li>
+        <li><strong>Attachment integration:</strong> Screenshots, trace files, and text logs linked directly to each test step</li>
+        <li><strong>Retries &amp; flaky detection:</strong> Distinguishes flaky tests from genuine failures across retry attempts</li>
+        <li><strong>Exportable:</strong> Report is fully static HTML — can be archived, shared, or deployed to CI dashboards</li>
+    </ul>
+
+    <h3>Artefact Capture Strategy</h3>
+    <p>Configured in <code>playwright.config.ts</code> under the <code>use</code> section:</p>
+    <table>
+        <tr><th>Artefact</th><th>Strategy</th><th>Description</th></tr>
+        <tr><td>Screenshots</td><td><code>only-on-failure</code></td><td>Full-page screenshot captured automatically when a test fails</td></tr>
+        <tr><td>Video</td><td><code>retain-on-failure</code></td><td>Browser session video recorded for all tests; retained only for failures</td></tr>
+        <tr><td>Trace</td><td><code>on-first-retry</code></td><td>Full trace (DOM snapshots, network, console) collected on first retry attempt</td></tr>
+    </table>
+
+    <h3>Reporter Configuration</h3>
+    <div class="code-block">// playwright.config.ts
+reporter: [
+  ['html'],                    // Playwright HTML reporter → playwright-report/
+  ['allure-playwright']        // Allure reporter → allure-results/
+]</div>
+
+    <h3>Report Generation Workflow</h3>
+    <table>
+        <tr><th>Step</th><th>Command</th><th>Output</th></tr>
+        <tr><td>1. Run tests</td><td><code>npx playwright test</code></td><td>Results written to <code>allure-results/</code> + <code>playwright-report/</code></td></tr>
+        <tr><td>2. View Playwright report</td><td><code>npx playwright show-report</code></td><td>Opens HTML report in default browser</td></tr>
+        <tr><td>3. Generate Allure report</td><td><code>npm run allure:generate</code></td><td>Converts JSON → static HTML in <code>allure-report/</code></td></tr>
+        <tr><td>4. Open Allure report</td><td><code>npm run allure:open</code></td><td>Launches Allure dashboard in browser</td></tr>
+        <tr><td>5. Combined (shortcut)</td><td><code>npm run test:report</code></td><td>Steps 3 + 4 in one command</td></tr>
+    </table>
+
+    <h3>When to Use Which Reporter</h3>
+    <table>
+        <tr><th>Scenario</th><th>Recommended Reporter</th><th>Reason</th></tr>
+        <tr><td>Debugging a specific failure</td><td>Playwright HTML</td><td>Step-by-step trace replay with DOM snapshots</td></tr>
+        <tr><td>Investigating flaky tests</td><td>Allure</td><td>Retry history and flaky-test classification</td></tr>
+        <tr><td>Stakeholder / management reporting</td><td>Allure</td><td>Dashboard visuals, trend charts, severity breakdown</td></tr>
+        <tr><td>CI pipeline integration</td><td>Both</td><td>Playwright for artefacts, Allure for aggregated dashboards</td></tr>
+        <tr><td>Quick local verification</td><td>Playwright HTML</td><td>Auto-opens on failure, zero configuration</td></tr>
+        <tr><td>Cross-run trend analysis</td><td>Allure</td><td>Historical trend data persisted across executions</td></tr>
+    </table>
+</div>
+
+<!-- ============================================================ -->
+<!--  14. MCP CONFIGURATION                                        -->
+<!-- ============================================================ -->
+<div class="section" id="s14">
+    <h2>14. MCP Configuration</h2>
+    <p>Model Context Protocol integration configured in <code>.vscode/mcp.json</code>.</p>
+
+    <div class="code-block">{
+  "servers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"],
+      "type": "stdio"
+    }
+  }
+}</div>
+
+    <table>
+        <tr><th>Property</th><th>Value</th></tr>
+        <tr><td>Server name</td><td>playwright</td></tr>
+        <tr><td>Command</td><td>npx</td></tr>
+        <tr><td>Package</td><td>@playwright/mcp@latest</td></tr>
+        <tr><td>Communication</td><td>stdio (standard input/output)</td></tr>
+        <tr><td>Purpose</td><td>Enable Playwright MCP integration with VS Code AI agents</td></tr>
+    </table>
+</div>
+
+<!-- ============================================================ -->
+<!--  15. AI MIGRATION GOVERNANCE                                  -->
+<!-- ============================================================ -->
+<div class="section" id="s15">
+    <h2>15. AI Migration Governance</h2>
+    <p>Three governance documents in <code>tests/testContexts/</code> guide the Protractor → Playwright migration.</p>
+
+    <h3>context.md — Framework Standards &amp; Analysis Phase</h3>
+    <p>Defines the "Automation Test Migration Specialist" role and mandates a 5-phase analysis:</p>
+    <ol>
+        <li>Identify test metadata</li>
+        <li>Extract execution steps</li>
+        <li>Catalog validations</li>
+        <li>Map data dependencies</li>
+        <li>Document element locators</li>
+    </ol>
+    <p>Also covers: conversion rules, checklist template, output specs, exception handling, success criteria, and quality gates.</p>
+
+    <h3>learnings.md — Runtime Observations</h3>
+    <p>Accumulated best practices discovered during live test execution:</p>
+    <ul>
+        <li>Authentication handling — call <code>handleAuthIfPresent()</code> only on first navigation</li>
+        <li>UX loading — only invoke where spinners actually appear</li>
+        <li>Timeout strategy — 15 min for multi-phase, 5 min for single-phase tests</li>
+        <li>Transaction reference capture — try-catch with fallback search</li>
+        <li>Checkbox toggle — label <code>for=&#34;id&#34;</code> click + verify/retry (3 attempts)</li>
+        <li>ShuRu locators — use standard Playwright selectors, not <code>shu-ru</code> prefix</li>
+        <li>Email fields — <code>getByRole('textbox', {name:'Email'}).nth(N)</code></li>
+        <li>Payee Nickname — mandatory field, in-memory locator</li>
+        <li>View page locators — individual <code>id</code>-based selectors</li>
+    </ul>
+
+    <h3>migration-execution-prompt.md — 9-Step Workflow</h3>
+    <table>
+        <tr><th>Step</th><th>Action</th></tr>
+        <tr><td>1</td><td><strong>Inspect</strong> — Per-page DOM analysis before interaction</td></tr>
+        <tr><td>2</td><td><strong>Validate</strong> — Locator &amp; data verification against live DOM</td></tr>
+        <tr><td>3</td><td><strong>Continue</strong> — Execute following framework standards</td></tr>
+        <tr><td>4</td><td>Generate Playwright spec file</td></tr>
+        <tr><td>5</td><td>Execute &amp; iterate until green</td></tr>
+        <tr><td>6</td><td>Validate assertions match Protractor source</td></tr>
+        <tr><td>7a</td><td>Document migration summary</td></tr>
+        <tr><td>7b</td><td>Update learnings.md with new findings</td></tr>
+        <tr><td>8</td><td>Generate HTML migration chat log</td></tr>
+        <tr><td>9</td><td>Final quality-gate review</td></tr>
+    </table>
+</div>
+
+<!-- ============================================================ -->
+<!--  16. ACCOUNTTRANSFERPAGE — DETAILED LOCATORS                  -->
+<!-- ============================================================ -->
+<div class="section" id="s16">
+    <h2>16. AccountTransferPage — Detailed Locators</h2>
+    <p>The largest page class with <strong>60+ XPath-based locators</strong> covering the entire ACT payment lifecycle.</p>
+
+    <h3>Authentication &amp; Dialog</h3>
+    <table>
+        <tr><th>Locator</th><th>Purpose</th></tr>
+        <tr><td>digiToken</td><td>Digital token authentication button</td></tr>
+        <tr><td>enterCode</td><td>Security code input (ShuRu)</td></tr>
+        <tr><td>authNow</td><td>Auth confirmation button</td></tr>
+        <tr><td>authDialog</td><td>Auth dialog container</td></tr>
+        <tr><td>securityAccessCode</td><td>Security access code input</td></tr>
+        <tr><td>authenticateButton</td><td>Authenticate action button</td></tr>
+    </table>
+
+    <h3>Core Payment Form</h3>
+    <table>
+        <tr><th>Locator</th><th>Component</th><th>Purpose</th></tr>
+        <tr><td>fromAccount</td><td>p-auto-complete</td><td>Source account selection</td></tr>
+        <tr><td>amount</td><td>input[type="text"]</td><td>Payment amount</td></tr>
+        <tr><td>existingPayee</td><td>p-auto-complete</td><td>Existing payee dropdown</td></tr>
+        <tr><td>newPayeeTab</td><td>anchor</td><td>New payee tab toggle</td></tr>
+    </table>
+
+    <h3>New Payee Details</h3>
+    <table>
+        <tr><th>Locator</th><th>Input Type</th><th>Field</th></tr>
+        <tr><td>newPayeeName</td><td>textarea</td><td>Full name</td></tr>
+        <tr><td>newPayeeAdd1 / Add2 / Add3</td><td>input / ShuRu</td><td>Address lines 1–3</td></tr>
+        <tr><td>payeeBankRadio</td><td>ShuRu</td><td>Bank type selection</td></tr>
+        <tr><td>newPayeeAcctNumber</td><td>ShuRu</td><td>Account number</td></tr>
+        <tr><td>newPayeeCountry</td><td>p-auto-complete</td><td>Country selection</td></tr>
+        <tr><td>paymentDetail</td><td>textarea</td><td>Payment narration</td></tr>
+    </table>
+
+    <h3>Payee Advisory (Email &amp; Fax)</h3>
+    <table>
+        <tr><th>Locator</th><th>Purpose</th></tr>
+        <tr><td>isBeneAdvising</td><td>Enable beneficiary advising checkbox</td></tr>
+        <tr><td>emailId0 – emailId4</td><td>Up to 5 email addresses</td></tr>
+        <tr><td>faxTab</td><td>Fax details tab</td></tr>
+        <tr><td>faxAreaCode0 / faxCountryCode0 / faxNo0</td><td>Fax number fields</td></tr>
+        <tr><td>message</td><td>Advice content</td></tr>
+        <tr><td>isTransactionNote</td><td>Transaction note checkbox</td></tr>
+        <tr><td>transactionNote</td><td>Transaction note content</td></tr>
+    </table>
+
+    <h3>Action Buttons</h3>
+    <table>
+        <tr><th>Locator</th><th>Purpose</th></tr>
+        <tr><td>saveAsDraft</td><td>Save draft</td></tr>
+        <tr><td>nextButton</td><td>Navigate to next step</td></tr>
+        <tr><td>submitButton</td><td>Submit payment</td></tr>
+        <tr><td>finishedButton</td><td>Complete / finish</td></tr>
+        <tr><td>dismissButton</td><td>Dismiss dialog</td></tr>
+        <tr><td>makePayment</td><td>Make payment action</td></tr>
+    </table>
+
+    <h3>Approval &amp; Challenge</h3>
+    <table>
+        <tr><th>Locator</th><th>Purpose</th></tr>
+        <tr><td>approvalNowCheckBox</td><td>Approve-now flag</td></tr>
+        <tr><td>getChallengeSMS</td><td>Request SMS challenge</td></tr>
+        <tr><td>challengeResponse</td><td>Challenge code input</td></tr>
+        <tr><td>pushBtnButton</td><td>Digital token push</td></tr>
+        <tr><td>approveButton</td><td>Approve payment</td></tr>
+    </table>
+
+    <h3>FX &amp; Payment Date</h3>
+    <table>
+        <tr><th>Locator</th><th>Purpose</th></tr>
+        <tr><td>useFxCheckBox</td><td>Enable FX</td></tr>
+        <tr><td>FXcontract0 / FXcontract1</td><td>FX contract selection</td></tr>
+        <tr><td>FXcontract0Amt</td><td>FX contract amount</td></tr>
+        <tr><td>paymentDate</td><td>Calendar date picker</td></tr>
+        <tr><td>ViewFXrate / Booknow / Confirm</td><td>FX rate workflow</td></tr>
+    </table>
+
+    <h3>Compliance &amp; Remittance</h3>
+    <table>
+        <tr><th>Locator</th><th>Purpose</th></tr>
+        <tr><td>outwardRemit</td><td>Outward remittance toggle</td></tr>
+        <tr><td>purposeCode / subPurposeCode</td><td>Multi-level dropdowns</td></tr>
+        <tr><td>complianceCodeErrorMsg</td><td>Compliance validation error</td></tr>
+    </table>
+
+    <h3>Custom Component Types</h3>
+    <table>
+        <tr><th>Component</th><th>Description</th></tr>
+        <tr><td><code>ShuRu</code></td><td>Custom DBS input — text, checkbox, select variants</td></tr>
+        <tr><td><code>p-auto-complete</code></td><td>PrimeNG autocomplete dropdown</td></tr>
+        <tr><td><code>dbs-calendar</code></td><td>Custom DBS date picker</td></tr>
+        <tr><td><code>multi-level-dropdown</code></td><td>Hierarchical dropdown (purpose codes)</td></tr>
+        <tr><td><code>tabs-component</code></td><td>Custom tabbed interface</td></tr>
+        <tr><td><code>ng-component</code></td><td>Angular dynamic component wrapper</td></tr>
+    </table>
+</div>
+
+<!-- ============================================================ -->
+<!--  FOOTER                                                       -->
+<!-- ============================================================ -->
+<div class="footer">
+    <p><strong>DBS IDEALX Playwright Test Automation Framework — Architecture Report</strong></p>
+    <p>Generated: 10 April 2026 &nbsp;|&nbsp; Playwright v1.58.2 &nbsp;|&nbsp; TypeScript v5.9.3</p>
+    <p>Coverage: 5 Regions (SG, HK, ID, IN, VN) &nbsp;|&nbsp; 15 E2E Specs &nbsp;|&nbsp; 4 API Specs &nbsp;|&nbsp; 8 Page Classes &nbsp;|&nbsp; 60+ Utility Methods</p>
+</div>
+
+</div><!-- /container -->
+</body>
+</html>
