@@ -461,7 +461,7 @@ export class TelegraphicTransferPage {
     this.countryPartyCNHCode = page.locator('//input[@id="counterptycntryCode"]');
     this.countryPartyAndorraDropdown = page.locator('//span[contains(text(),"ANDORRA")]');
     this.specificPaymentPurpose = page.locator('//input[@id="specPmtPurpose"]');
-    this.specificPaymentPurposeDropdown = page.locator('//span[contains(text(),"Advance Payment")]');
+    this.specificPaymentPurposeDropdown = page.locator('(//span[contains(text(),"Advance Payment")])[1]');
     this.isTaxFreeGoods = page.locator('//input[@id="yes"]');
     this.fxAppRefNum = page.locator('//input[@name="ott-regulatory-advising-approve"]');
     this.pmtBOPCategory1 = page.locator('//input[@id="pmtCategory1"]');
@@ -684,6 +684,7 @@ export class TelegraphicTransferPage {
    */
   async uploadSupportingDocument(fileName: string) {
     const filePath = path.join(process.cwd(), 'tests', 'data', fileName);
+    await this.uploadDocumentButton.scrollIntoViewIfNeeded();
     await this.uploadDocumentButton.setInputFiles(filePath);
     await this.waitForUXLoading();
   }

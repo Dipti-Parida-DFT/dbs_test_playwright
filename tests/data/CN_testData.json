@@ -121,7 +121,7 @@
   "TelegraphicTransfer": {
     "loginCompanyId": "CNP2A01",
     "loginUserId": "DBSAUTOCN01",
-    "verifyUserId": "DBSAUTOCN02",
+    "loginUserIdAlt": "DBSAUTOCN02",
     "fromAccount": "2019073000001",
     "fromAccountID": "2024081603",
     "payeeBankID": "AONEHKH0XXX",
