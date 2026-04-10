@@ -1,0 +1,18 @@
+Using playwright test planner create a test plan for the test scenario - 
+Step 1: Login to https://i3bku3uatqeweb01.qe.dragonflyft.com:1443/iws/ssologin with Organisation ID - SHKLT008, User ID - DBSAUTOHK002 and PIN - 123 and follow the below steps.
+Step 2: Navigate Payment & Transfer Menu.
+Step 3: Enter security code - 123 and click on Authenticate Now button.
+Step 4: Click Bulk Collection option.
+Step 5: Select account from "Account" dropdown.
+Step 6: Select Credit Type: Itemized Credit
+Step 7: Add "New payer".
+Step 8: Register for cleanup
+Step 9: Enter Amount (SGD), Transaction code, Purpose of Payment and other optional details for Particulars, Collection details to the payer bank, Message to the payee, Emails, Emails Message
+Step 10: Select Payment date.
+Step 11: Click Next button.
+Step 12: Click Submit button.
+Step 13: Get the full banner text.
+Step 14: Click Finish button.
+Step 15: Search Reference No and Open.
+Step 16: Validate the Reference No details.
+Step 17: This method deletes the existing opened PayeeOrReferenceNo.

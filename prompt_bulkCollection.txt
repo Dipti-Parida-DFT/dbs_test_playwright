@@ -1,0 +1,7 @@
+Using playwright test planner create a test plan for the test scenario - 
+Login to https://i3bku3uatqeweb01.qe.dragonflyft.com:1443/iws/ssologin with Organisation ID - SHKLT008, User ID - DBSAUTOHK002 and PIN - 123, 
+then navigate to Payment & Transfer Menu, then enter 123 security code and 
+submit a Bulk Collection transaction with all details and capture the Internal reference number.
+
+
+Using playwright test generator create playwright scripts in page object model and save the generated scripts to /tests/bulkcollection_AI

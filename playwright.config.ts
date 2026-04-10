@@ -54,8 +54,18 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
     {
+      name: 'payment-forms',
+      testDir: './tests/pay-local-overseas-payee',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
       name: 'api',
       testDir: './tests/api'
+    },
+    {
+      name: 'payroll-ai',
+      testDir: './tests/payroll_AI/tests',
+      use: { ...devices['Desktop Chrome'] },
     },
 
     // {
