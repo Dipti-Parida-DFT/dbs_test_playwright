@@ -1,6 +1,7 @@
 // tests/pages/IDEALX/PayTransfer/BulkPaymentPage.ts
 import { Page, Locator, expect } from '@playwright/test';
 import { WebComponents } from '../../../lib/webComponents';
+import { TIMEOUT } from '../../../lib/timeouts';
 
 export type NewPayeeInput = {
   name: string;
@@ -34,6 +35,7 @@ export class BulkPaymentPage {
     this.bankCharge = page.locator('xpath=//dbs-radio-group[@formcontrolname="bankCharge"]');
     this.amount = page.locator('xpath=//input[@name="payeeAmount"]');
     this.amountPayee1 = page.locator('(//input[@name="payeeAmount"])[1]');
+    this.secondDot = page.locator('//ul[contains(@class,"pages__container")]/li[2]');
 
     //Addded Locator fo Bulk Payment  Author: LC5741501   * Created Date: 11/03/26
     this.payeeResidentStatus = page.locator('xpath=//span[text()="Payee Resident Status"]/parent::div/following-sibling::div//span[@id="fromAccount"]');
@@ -57,6 +59,7 @@ export class BulkPaymentPage {
     this.existingPayeeFilter = page.locator('xpath=//input[@name="payee-selector"]');
     this.addPayee = page.locator('xpath=//button[@name="addPayee"]');
     this.addButton = page.locator('xpath=//button[@name="add"]');
+    this.continueButton = page.locator('//*[@id="cognitive-continue"]');
 
     // Tabs
     this.newPayNow = page.locator('xpath=//*[@id="ux-tab-labelPayNow"]');
@@ -89,12 +92,13 @@ export class BulkPaymentPage {
     this.showOptionalDetails = page.locator('xpath=//div[@id="temp-bulk-create-optDetail_0"]');
 
     // Actions / controls
-    this.approveNowCheckBox = page.locator('xpath=//input[@id="approveNow"]');
+    this.approveNowCheckBox = page.locator('xpath=//label[@for="approveNow"]');
     this.pushOption = page.locator('xpath=//*[@class="push-option-label"]');
     this.batchId = page.locator('xpath=//input[@name="batch-id"]');
     this.getChallengeSMS = page.locator('xpath=//button[@name="get-challenge"]');
     this.challengeResponse = page.locator('xpath=//input[@name="responseCode"]');
-    this.saveAsTemplateCheckbox = page.locator('xpath=//*[@name="saveAsTemplate"]');
+    //this.saveAsTemplateCheckbox = page.locator('xpath=//*[@name="saveAsTemplate"]');
+    this.saveAsTemplateCheckbox = page.locator('//label[@for="saveAsTemplate"]');
     this.templateName = page.locator('xpath=//*[@name="templateName"]');
     this.saveAsDraft = page.locator('xpath=//button[@name="save-as-draft"]');
     this.editButton = page.locator('xpath=//*[@id="bulk-view-edit"]');
@@ -121,6 +125,8 @@ export class BulkPaymentPage {
     this.rejectButton4 = page.locator('xpath=//button[@class="btn btn__secondary medium bg-white text-red-500 ng-star-inserted"]');
     this.rejectStatus2 = page.locator('xpath=//strong[@id="bulk-view-rejectStatus_1"]');
     this.rejectStatus3 = page.locator('xpath=//strong[@id="bulk-view-rejectStatus_2"]');
+    this.rejectReferenceMsg = page.locator('xpath=//p[@id="dialogMessage"]/span');
+    this.deleteReferenceMsg = page.locator('p.dialog-msg');
 
     //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
     this.beneficiaryTab = page.locator('xpath=//span[normalize-space()="Payee / Beneficiaries"]');
@@ -157,10 +163,12 @@ export class BulkPaymentPage {
     this.nextApprover = page.locator('xpath=//dbs-approval-requirement/div/section/div[1]/span[2]');
     this.activityLog = page.locator('xpath=//*[@class="payment-history"]');
     this.totalAmountValue = page.locator('xpath=//*[@id="view-bulk-totalAmount"]');
+    this.cancelButton = page.locator('xpath=//button[@name="cancel"]');
 
     // Payee 1 (view)
     this.payeeNameValue = page.locator('xpath=//*[@id="bulk-view-name_0"]');
     this.payeeNickNameValue = page.locator('xpath=//*[@id="bulk-view-nickName_0"]');
+    this.payeeNickNameSGBulk = page.locator('xpath=//*[@name="new-payee-nick-name"]');
     this.payeeBankName = page.locator('xpath=//*[@id="bulk-view-payeeBankName_0"]');
     this.payeeBranchBankName = page.locator('xpath=//*[@id="bulk-view-payeeBranchName_0"]');
     this.payeeBankSwiftBic = page.locator('xpath=//*[@id="bulk-view-bankDetailsMsgDisplay_0"]');
@@ -251,6 +259,7 @@ export class BulkPaymentPage {
     this.showOptionalButton = page.locator('xpath=//span[@id="show-optional-details-0"]');
 
     // Template view
+    this.templateMenu = page.locator('//a[contains(@href,"#/transfers/manage-templates")]');
     this.viewTemplateName = page.locator('xpath=//span[@id="bulk-viewTemp-name"]');
     this.viewTemplateFromAccount = page.locator('xpath=//span[@id="bulk-viewTemp-accountNum"]');
     this.viewTemplateAmount = page.locator('xpath=//strong[@id="bulk-view-amount_0"]');
@@ -287,6 +296,7 @@ export class BulkPaymentPage {
   readonly fromAccount: Locator;
   readonly billerServiceID: Locator;
   readonly bankCharge: Locator;
+  readonly secondDot: Locator;
   readonly amount: Locator;
   readonly amountPayee1: Locator;
   readonly payeeResidentStatus: Locator;
@@ -309,6 +319,7 @@ export class BulkPaymentPage {
   readonly existingPayeeFilter: Locator;
   readonly addPayee: Locator;
   readonly addButton: Locator;
+  readonly continueButton: Locator;
 
   readonly newPayNow: Locator;
   readonly existingPayeeTabIx: Locator;
@@ -353,6 +364,7 @@ export class BulkPaymentPage {
   readonly pushButton: Locator;
   readonly amountInlineError: Locator;
   readonly errorOneOrMorefieldsNotFilled: Locator;
+  readonly cancelButton: Locator;
 
   readonly deleteButton: Locator;
   readonly deleteDialogButton: Locator;
@@ -366,6 +378,8 @@ export class BulkPaymentPage {
   readonly rejectButton4: Locator;
   readonly rejectStatus2: Locator;
   readonly rejectStatus3: Locator;
+  readonly rejectReferenceMsg: Locator;
+  readonly deleteReferenceMsg: Locator;
 
   //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
   readonly beneficiaryTab: Locator;
@@ -402,6 +416,7 @@ export class BulkPaymentPage {
 
   readonly payeeNameValue: Locator;
   readonly payeeNickNameValue: Locator;
+  readonly payeeNickNameSGBulk: Locator;
   readonly payeeBankName: Locator;
   readonly payeeBranchBankName: Locator;
   readonly payeeBankSwiftBic: Locator;
@@ -487,6 +502,7 @@ export class BulkPaymentPage {
   readonly viewBulkTotalItem: Locator;
   readonly showOptionalButton: Locator;
 
+  readonly templateMenu: Locator;
   readonly viewTemplateName: Locator;
   readonly viewTemplateFromAccount: Locator;
   readonly viewTemplateAmount: Locator;
@@ -523,20 +539,22 @@ export class BulkPaymentPage {
     const { name, nickName, bankId, accountNumber } = input;
 
     await this.newPayeeTab.click();
+    await this.continueButton.waitFor({ state: 'hidden', timeout: TIMEOUT.MIN });
+    await this.safeClick(this.continueButton);
     await this.safeClick(this.newPayeeName);
     await this.safeFill(this.newPayeeName, name);
     await this.page.keyboard.press('Tab');
     await this.newPayeeName.blur();
-    // await this.safeClick(this.newPayeeNickName);
-    // await this.safeFill(this.newPayeeNickName, nickName);
+    await this.safeClick(this.payeeNickNameValue);
+    await this.safeFill(this.payeeNickNameValue, nickName);
     await this.page.keyboard.press('Tab');
-    //await this.newPayeeNickName.blur();
+    await this.payeeNickNameValue.blur();
     await this.payeeBankId.click();
     await this.payeeBankId.fill(bankId);
     await this.page.keyboard.press('Enter');
     await this.payeeBankId.blur();
     await this.safeClick(this.findBankIDButton);
-    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: 15000 });
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: TIMEOUT.MIN });
     await this.payeeBankSearchResults.first().click();
     await this.safeClick(this.newPayeeAccountNumber);
 
@@ -553,6 +571,47 @@ export class BulkPaymentPage {
     return { name, accountNumber };
   }
 
+  /**
+     * Add a new payee flow (reusable in all tests).
+     * Mirrors the exact steps you currently perform, including clipboard paste.
+     */
+  async addNewPayeeSGBulkPayment(input: NewPayeeInput): Promise<NewPayeeResult> {
+    const { name, nickName, bankId, accountNumber } = input;
+
+    await this.newPayeeTab.click();
+    await this.continueButton.waitFor({ state: 'hidden', timeout: TIMEOUT.MIN });
+    await this.safeClick(this.continueButton);
+    await this.safeClick(this.newPayeeName);
+    await this.safeFill(this.newPayeeName, name);
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeName.blur();
+    await this.safeClick(this.payeeNickNameSGBulk);
+    await this.safeFill(this.payeeNickNameSGBulk, nickName);
+    await this.page.keyboard.press('Tab');
+    await this.payeeNickNameSGBulk.blur();
+    await this.payeeBankId.click();
+    await this.payeeBankId.fill(bankId);
+    await this.page.keyboard.press('Enter');
+    await this.payeeBankId.blur();
+    await this.safeClick(this.findBankIDButton);
+    await expect(this.payeeBankSearchResults.first()).toBeVisible({ timeout: TIMEOUT.MIN });
+    await this.payeeBankSearchResults.first().click();
+    await this.safeClick(this.newPayeeAccountNumber);
+
+    // Preserve your clipboard -> paste behavior
+    await this.page.evaluate(async (text) => {
+      await navigator.clipboard.writeText(text);
+    }, accountNumber);
+
+    await this.page.keyboard.press('Control+V');
+    await this.page.keyboard.press('Enter');
+    await this.page.keyboard.press('Tab');
+    await this.newPayeeAccountNumber.blur();
+    await this.safeClick(this.addNewPayeeButton);
+    return { name, accountNumber };
+  }
+
+
   /** Delete Payee fnction */
 
   async openBeneficiariesTabIfPresent(): Promise<boolean> {
@@ -568,8 +627,7 @@ export class BulkPaymentPage {
     await this.safeFill(this.beneficiaryFilter, query);
     await this.beneficiaryFilter.press('Enter'); // try enter
     await this.beneficiaryFilter.blur();         // and blur, in case enter isn't enough
-    // Small debounce for filter to apply
-    await this.page.waitForTimeout(500);
+    await this.waitForUXLoading();
   }
 
 
@@ -577,17 +635,13 @@ export class BulkPaymentPage {
 
     await this.safeClick(this.beneficiaryDelButton);
     if (confirm) {
-      await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: 10000 });
+      await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: TIMEOUT.MIN });
       await this.beneficiaryDelCnfButton.click();
     } else {
-      await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: 10000 });
+      await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: TIMEOUT.MIN });
       await this.beneficiaryDelDismissButton.click();
     }
-
-
-    // Wait for disappearance of a success banner OR row removal if you can detect it.
-    // Fallback: brief pause to let UI settle.
-    await this.page.waitForTimeout(800);
+    await this.waitForUXLoading();
   }
 
 
@@ -600,18 +654,18 @@ export class BulkPaymentPage {
 
   async deletePayeeInRow(textKey: string, confirm = true) {
     const row = this.beneficiaryRowsByText(textKey).first();
-    await expect(row).toBeVisible({ timeout: 15000 });
+    await expect(row).toBeVisible({ timeout: TIMEOUT.MIN });
 
     const rowDeleteButton = row.locator('xpath=.//button[@name="payee-delete"]');
     await this.safeClick(rowDeleteButton);
 
     if (confirm) {
-      await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: 10000 });
+      await expect(this.beneficiaryDelCnfButton).toBeVisible({ timeout: TIMEOUT.MIN });
       await this.beneficiaryDelCnfButton.click();
       // Wait until the row disappears to confirm deletion
-      await expect(row).toHaveCount(0, { timeout: 15000 });
+      await expect(row).toHaveCount(0, { timeout: TIMEOUT.MIN });
     } else {
-      await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: 10000 });
+      await expect(this.beneficiaryDelDismissButton).toBeVisible({ timeout: TIMEOUT.MIN });
       await this.beneficiaryDelDismissButton.click();
       await expect(row).toBeVisible(); // still there
     }
@@ -639,93 +693,125 @@ export class BulkPaymentPage {
      * use getReferenceToken() below.
      */
   async getReferenceText(): Promise<string> {
-    const raw = await this.referenceID.textContent();
+    const raw = await (this.referenceID).first().textContent();
     return (raw ?? '').trim();
   }
 
   //Extract reference ID
-
   async getReferenceID(): Promise<string> {
     const raw = await this.getReferenceText();
     const match = raw.match(/\b(EB[A-Z0-9-]+)\b/i);
     return match?.[1] ?? '';
   }
 
+      /**
+     * Returns the raw banner text (trimmed) for reject. If you only need EBLV…,
+     * use getReferenceToken() below.
+     */
+      async getRejectReferenceText(): Promise<string> {
+        const raw = await this.rejectReferenceMsg.textContent();
+        return (raw ?? '').trim();
+      }
+    
+      //Extract reference ID
+      async getRejectReferenceId(): Promise<string> {
+        const raw = await this.getRejectReferenceText();
+        const match = raw.match(/\b(EB[A-Z0-9-]+)\b/i);
+        return match?.[1] ?? '';
+      }
+
+        /**
+ * Returns the raw banner text (trimmed) for reject. If you only need EBLV…,
+ * use getReferenceToken() below.
+ */
+        async getDeleteReferenceText(): Promise<string> {
+          const raw = await this.deleteReferenceMsg.textContent();
+          return (raw ?? '').trim();
+        }
+      
+        //Extract reference ID
+        async getDeleteReferenceId(): Promise<string> {
+          const raw = await this.getDeleteReferenceText();
+          const match = raw.match(/\b(EB[A-Z0-9-]+)\b/i);
+          return match?.[1] ?? '';
+        }
+  
   /** Former: jiazhai() – waits until create form is ready (fromAccount visible). */
-  async waitForBulkPaymentFormReady(timeout = 20_000) {
+  async waitForBulkPaymentFormReady() {
     await this.waitForUXLoading();
-    await expect(this.fromAccount).toBeVisible({ timeout });
+    await expect(this.fromAccount).toBeVisible({ timeout: TIMEOUT.MIN });
   }
 
   /** Former: jiazhaiForPreviewPage() – Preview page ready (submit enabled). */
-  async waitForPreviewPageReady(timeout = 20_000) {
+  async waitForPreviewPageReady() {
     await this.waitForUXLoading();
-    await expect(this.submitButton).toBeVisible({ timeout });
-    await expect(this.submitButton).toBeEnabled({ timeout });
+    await expect(this.submitButton).toBeVisible({ timeout: TIMEOUT.MIN });
+    await expect(this.submitButton).toBeEnabled({ timeout: TIMEOUT.MIN });
   }
 
   /** Former: jiazhaiForSubmittedPage() – Submitted page ready (finish/done button). */
-  async waitForSubmittedPageReady(timeout = 50_000) {
+  async waitForSubmittedPageReady() {
     await this.waitForUXLoading();
-    await expect(this.finishedButton).toBeVisible({ timeout });
+    await expect(this.finishedButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForViewPaymentPage() – View page ready (fromAccountView + hashValue). */
-  async waitForViewPaymentPageReady(timeout = 30_000) {
+  async waitForViewPaymentPageReady() {
     await this.waitForUXLoading();
-    await expect(this.fromAccountViewLabel).toBeVisible({ timeout });
-    await expect(this.hashValue).toBeVisible({ timeout });
-    await this.page.waitForTimeout(500).catch(() => { });
+    await expect(this.fromAccountViewLabel).toBeVisible({ timeout: TIMEOUT.MEDIUM });
+    await expect(this.hashValue).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForApprovePaymentPage() – Approve button visible. */
-  async waitForApprovePaymentPageReady(timeout = 20_000) {
+  async waitForApprovePaymentPageReady() {
     await this.waitForUXLoading();
-    await expect(this.approveButton).toBeVisible({ timeout });
+    await expect(this.approveButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForDismissDialog() */
-  async waitForDismissDialogReady(timeout = 15_000) {
+  async waitForDismissDialogReady() {
     await this.waitForUXLoading();
-    await expect(this.dismissButton).toBeVisible({ timeout });
+    await expect(this.dismissButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForDismissDeleteDialog() */
-  async waitForDismissDeleteDialogReady(timeout = 30_000) {
+  async waitForDismissDeleteDialogReady() {
     await this.waitForUXLoading();
-    await this.page.waitForTimeout(10000);
-    await expect(this.dismissButton).toBeVisible({ timeout });
+    await this.page.waitForLoadState('networkidle', {
+    timeout: TIMEOUT.VERYMIN,});
+    await expect(this.dismissButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForDismissRejectDialog() */
-  async waitForDismissRejectDialogReady(timeout = 30_000) {
+  async waitForDismissRejectDialogReady() {
     await this.waitForUXLoading();
-    await this.page.waitForTimeout(10000);
-    await expect(this.dismissButton).toBeVisible({ timeout });
+    await this.page.waitForLoadState('networkidle', {
+      timeout: TIMEOUT.VERYMIN,});
+    await expect(this.dismissButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForViewPagination() */
-  async waitForViewPaginationReady(timeout = 15_000) {
+  async waitForViewPaginationReady() {
     await this.waitForUXLoading();
-    await expect(this.showOptionalButton).toBeVisible({ timeout });
+    await expect(this.showOptionalButton).toBeVisible({ timeout: TIMEOUT.MIN });
   }
 
   /** Former: jiazhaiForViewTemplatePage() */
-  async waitForViewTemplatePageReady(timeout = 15_000) {
+  async waitForViewTemplatePageReady() {
     await this.waitForUXLoading();
-    await expect(this.viewTemplateStatus).toBeVisible({ timeout });
+    await expect(this.viewTemplateStatus).toBeVisible({ timeout: TIMEOUT.MIN });
   }
 
   /** Former: jiazhaiCreatePayemntTemplate() */
-  async waitForCreatePaymentTemplateReady(timeout = 20_000) {
+  async waitForCreatePaymentTemplateReady() {
     await this.waitForUXLoading();
-    await expect(this.templatePurposeCodeValue).toBeVisible({ timeout });
+    await expect(this.templatePurposeCodeValue).toBeVisible({ timeout: TIMEOUT.MEDIUM });
     await this.waitForUXLoading();
   }
 
   /** Former: addExistingPayee(testDate) */
-  async addExistingPayee(existingPayeeFilter: string) {
-    await this.safeFill(this.existingPayeeFilter, existingPayeeFilter);
+  async addExistingPayee(existingPayee: string) {
+    await this.safeFill(this.existingPayeeFilter, existingPayee);
     await this.safeClick(this.addButton);
   }
 
@@ -734,7 +820,7 @@ export class BulkPaymentPage {
     await this.waitForViewPaginationReady();
     await tabButton.click({ force: true });
     // In the old code it validated that viewLoadedLabel disappeared; keep a soft check here.
-    await this.viewLoadedLabel.waitFor({ state: 'visible', timeout: 5000 }).catch(() => { });
+    await this.viewLoadedLabel.waitFor({ state: 'visible', timeout: TIMEOUT.VERYMIN }).catch(() => { });
   }
 
   /** Former: checkPaginationForShowAllTab() */
@@ -762,9 +848,9 @@ export class BulkPaymentPage {
       await expect(this.viewPaginationButton).toBeVisible();
     } else {
       // When <= 10, these may not appear—soft checks only
-      const ten = await this.isVisible(this.viewPreTenButton, 1000);
-      const hundred = await this.isVisible(this.viewPreHundredButton, 1000);
-      const pager = await this.isVisible(this.viewPaginationButton, 1000);
+      const ten = await this.isVisible(this.viewPreTenButton);
+      const hundred = await this.isVisible(this.viewPreHundredButton);
+      const pager = await this.isVisible(this.viewPaginationButton);
       // no-ops; used only to stabilize timing
       void ten; void hundred; void pager;
     }
@@ -814,8 +900,8 @@ export class BulkPaymentPage {
       const loc = sel.startsWith('/') ? this.page.locator(`xpath=${sel}`) : this.page.locator(sel);
       try {
         const first = loc.first();
-        if (await first.isVisible({ timeout: 400 }).catch(() => false)) {
-          await first.waitFor({ state: 'hidden', timeout: 15_000 });
+        if (await first.isVisible({ timeout: TIMEOUT.MEDIUM }).catch(() => false)) {
+          await first.waitFor({ state: 'hidden', timeout: TIMEOUT.VERYMIN });
         }
       } catch { /* ignore */ }
     }
@@ -823,20 +909,20 @@ export class BulkPaymentPage {
   }
 
   /** Safe click: visible + enabled + click */
-  async safeClick(locator: Locator, timeout = 15_000) {
-    await expect(locator).toBeVisible({ timeout });
-    await expect(locator).toBeEnabled({ timeout });
+  async safeClick(locator: Locator) {
+    await expect(locator).toBeVisible({ timeout: TIMEOUT.MEDIUM });
+    await expect(locator).toBeEnabled({ timeout: TIMEOUT.MEDIUM });
     await locator.click();
   }
 
   /** Safe fill: visible then fill */
-  async safeFill(locator: Locator, value: string, timeout = 15_000) {
-    await expect(locator).toBeVisible({ timeout });
+  async safeFill(locator: Locator, value: string) {
+    await expect(locator).toBeVisible({ timeout: TIMEOUT.MEDIUM });
     await locator.fill(value ?? '');
   }
 
   /** Quick visible probe */
-  async isVisible(locator: Locator, timeout = 1000) {
-    return locator.isVisible({ timeout }).catch(() => false);
+  async isVisible(locator: Locator) {
+    return locator.isVisible({timeout: TIMEOUT.VERYMIN}).catch(() => false);
   }
 }
