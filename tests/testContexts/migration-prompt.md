@@ -40,3 +40,53 @@ Location: dbs_test_playwright
 -Output only the executable Playwright .spec.ts file
 -Ensure full compliance with context.md rules and learnings.md observations
 -Ensure compliance with existing framework standards
+
+###########################
+
+For Append Point 6:
+
+-Append Test Case TC03 in to the existing Playwright test specification file: 
+SG_ManagePayrollTC001AgentGenerated.spec.ts, reusing the existing structure and framework assets.
+
+########################################################################
+
+Step 2: 
+
+Production-Grade Validation & Execution Prompt
+1. Pre-Execution Context Loading
+-Before executing any test, load and apply the following reference files:
+
+#Rules: context.md — Framework governance, coding standards, and constraints
+#Learnings: learnings.md — Application behavior observations from prior executions (auth handling, UX loading, timeouts, etc.)
+#Cross-reference all test steps against both files to identify potential issues before execution begins.
+
+2. Execution & Validation Objective
+-Execute the newly generated Playwright test specification and validate its end-to-end runtime behavior.
+
+#During execution:
+-Observe and verify all executed test steps, control flow, and sequencing
+-Validate runtime logic, assertions, and expected outcomes
+-Confirm correct usage of test data, fixtures, and existing framework utilities
+-Ensure compliance with existing Playwright framework behavior and conventions
+-Verify adherence to application behavior learnings documented in learnings.md
+-Maintain the complete execution context (runtime observations, failures, and outcomes) to ensure consistency and continuity within the same MCP workflow and any subsequent file generation.
+
+3. Failure Handling & Analysis
+#If any failures occur during execution:
+-Perform a detailed analysis of the failure, including root cause identification
+-Cross-check the failure against known patterns in learnings.md before investigating further
+-Correlate failures with test logic, framework usage, timing, data dependencies, or environment setup
+-Propose corrective actions strictly within the boundaries of the existing Playwright framework
+-Do not introduce new helpers, utilities, abstractions, or framework changes
+
+4. Learning & Retention
+-Record all failure reasons, observations, and corrective learnings internally
+-If a new runtime behavior is discovered (not already in learnings.md), append it to learnings.md under the appropriate section
+-Retain these learnings for future reference to improve accuracy and stability in subsequent conversions and new test authoring
+-Do not include internal learning logs or reasoning in the final output unless explicitly requested
+
+5. Output Constraint
+-If fixes are applied, regenerate only the corrected, executable Playwright .spec.ts file
+-Ensure the final output remains fully compliant with context.md rules and learnings.md observations
+-Ensure compliance with existing framework standards
+-Do not output execution logs, analysis notes, or explanatory commentary unless explicitly requested
