@@ -38,7 +38,7 @@ const loginUserId    = testData.BulkPayment.SIT.loginUserId;
 const fromAccount    = testData.BulkPayment.SIT.fromAccount;
 const payeeBankID    = testData.BulkPayment.payeeBankID;
 
-let _ApprovalsPages: ApprovalsPages;
+let approvalsPages: ApprovalsPages;
 const webComponents = new WebComponents();
 
 //let [copyReference, editReference, rejectReference] = ['', '', ''];
@@ -66,7 +66,7 @@ test.describe.serial('SG_BulkPayment (Create Payments)', () => {
    
 
   test.beforeEach(async ({ page }, testInfo) => {
-    _ApprovalsPages = new ApprovalsPages(page);
+    approvalsPages = new ApprovalsPages(page);
     process.env.currentTestTitle = testInfo.title;
     customBrowser = await chromium.launch({ headless: false });
     test.setTimeout(TIMEOUT.MAX);
@@ -549,4 +549,7 @@ test.describe.serial('SG_BulkPayment (Create Payments)', () => {
   });
 
 });
+
+
+
 
