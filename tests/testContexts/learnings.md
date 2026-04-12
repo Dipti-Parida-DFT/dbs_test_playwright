@@ -54,3 +54,48 @@
 - When validating final status post-release, include `'statusCode'` in the valid statuses array to handle unresolved i18n keys
 - `amountPendingRelease` + ApproveNow during creation → status goes directly to "Pending Release" (skips Verify & Approve phases)
 - User2 (DBSAUTO0001) then releases via Approvals → Release Approved Payment tab
+
+## Checkbox Toggle (Angular Hidden Inputs)
+- Angular wraps native `<input type="checkbox">` inside custom components (e.g., `ShuRu`) — the input is hidden and not directly clickable
+- **Working pattern:** Click the visible `<label for="checkboxId">` element, then verify the checked state and retry up to 3 times
+- `.click()`, `.check()`, `.check({ force: true })`, and `evaluate(el.click())` are all **unreliable** for these hidden checkboxes
+- First-attempt success rate is ~50% — always implement a verify-and-retry loop:
+  ```typescript
+  const checkbox = page.locator('input#checkboxId');
+  const label = page.locator('label[for="checkboxId"]');
+  for (let attempt = 0; attempt < 3; attempt++) {
+    await label.click();
+    await page.waitForTimeout(500);
+    const isChecked = await checkbox.evaluate(el => (el as HTMLInputElement).checked);
+    if (isChecked) break;
+  }
+  ```
+- Applies to: `isBeneAdvising`, `isTransactionNote`, and any other Angular-wrapped checkbox
+
+## ShuRu Locators (Account Transfer)
+- All `ShuRu[@name=...]` and `ShuRu[@formcontrolname=...]` locators in `AccountTransferPage.ts` are **broken** against the current UI
+- The `ShuRu` custom element has been replaced with standard HTML elements in the current app version
+- Replace with CSS selectors or role-based locators targeting the native HTML elements:
+  - `ShuRu[@name="X"]` → `input[name="X"]` or `page.getByRole('textbox', ...)`
+  - `ShuRu[@formcontrolname="X"]` → `label[for="X"]` (for checkboxes) or `input#X`
+- Always validate locators against live DOM before trusting page class definitions
+
+## Email Fields (Account Transfer)
+- After toggling `isBeneAdvising` checkbox, 5 email fields appear as `textbox "Email"` **without** `name` attributes
+- Old locators `ShuRu[@name="email-id-N"]` and `input[name="email-id-N"]` both fail
+- **Working pattern:** `page.getByRole('textbox', { name: 'Email' }).nth(N)` (0-indexed)
+- Use `safeClick → safeFill → blur()` for each email field
+
+## Payee Nickname (Account Transfer)
+- Mandatory field in ACT "New Payee" form — **not present in Protractor source**
+- If not filled, form submission fails with validation error: "Payee Nickname is required"
+- Locator: `input[placeholder="To identify this payee easily"]`
+- No locator exists in `AccountTransferPage.ts` — must be added or used in-memory
+
+## View Page Locators
+- Positional XPath locators like `div[N]/span[2]` are fragile and break when UI layout changes
+- Prefer id-based locators (`#act-view-*`) which are stable across layout changes
+- `#view-act-acctBalance` — element no longer exists on the ACT view page
+- `payeeInfo` positional XPath → use individual locators: `toNewPayeeAcctValue`, `payeeAdd1`, `payeeAdd2`
+- View page `fromAccountValue` shows the underlying DBS account number, not the display name used during input
+

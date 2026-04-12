@@ -45,6 +45,7 @@ tagFamilies:
     - '@bulk-collection'
     - '@bulk-payment'
     - '@management-payroll'
+    - '@management-payroll-alternate'
     - '@payroll'
   - family: journey
     required: false
@@ -52,6 +53,16 @@ tagFamilies:
     - '@create-payment'
     - '@approve-payment'
     - '@reject-payment'
+  -  family: affiliate 
+     required: false
+     allowed:
+     - '@cn'
+     - '@hk'
+     - '@id'
+     - '@in'
+     - '@sg'
+     - '@tw'
+     - '@vn'
 tagDetails:
   '@ui':
     description: UI tests (web user interface).
