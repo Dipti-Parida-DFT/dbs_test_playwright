@@ -50,7 +50,7 @@ test.describe.configure({
 });
 
 // Actions for beforEach and afterEach test hooks
-test.describe('HK_ManagementPayroll (Playwright using PaymentsPages)', () => {
+test.describe('HK_ManagementPayroll (Playwright using PaymentsPages)',{ tag: ['@management-payroll','@regression','@ui'] }, () => {
   let pages: PaymentsPages;
   // Track created payees per test
   type CreatedPayee = { name?: string; accountNumber?: string };
