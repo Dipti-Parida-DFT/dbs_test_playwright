@@ -995,7 +995,7 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)',{ tag: ['@mana
 
 
   //TC007_TC008_SG_ManagePayroll
-  test('TC007_SG_ManagePayroll - Verify Management Payroll creation by Copy ManagePayrollDBS via Transfer Center', async ({ page }) => {
+  test('TC007_TC008_SG_ManagePayroll - Verify Management Payroll creation by Copy & then Edit ManagePayrollDBS via Transfer Center', async ({ page }) => {
 
     //Step 1: Navigate Payment & Transfer Menu.
     await webComponents.waitForUXLoading([], page);
@@ -1334,7 +1334,7 @@ test.describe('SG_ManagePayroll (Playwright using PaymentsPages)',{ tag: ['@mana
    * 9. Dismiss confirmation dialog
    * 10. Validate transaction status is "Rejected"
    */
-  test('TC009_TC010_SG_ManagePayroll - Reject ManagePayrollDBS via Transfer Center', async ({
+  test('TC009_TC010_SG_ManagePayroll - Reject & Delete ManagePayrollDBS via Transfer Center', async ({
     page,
   }) => {
     // PHASE 1: CREATE PAYMENT
