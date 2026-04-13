@@ -1,7 +1,12 @@
-# Protractor → Playwright Migration Execution Prompt
+# Protractor → Playwright Migration Execution Prompt (v02 — Autonomous Retry)
 
-> **Usage:** Copy this prompt and replace `{{TEST_CASE_ID}}` and `{{SOURCE_FILE}}` with actual values.
-> All rules from `context.md` and runtime learnings from `learnings.md` are enforced automatically.
+> **Version:** 02 — Autonomous auto-fix and retry loop (up to 15 failures).
+> **Change from v01:** Removes mid-execution user approval. The system now self-diagnoses
+> failures, applies spec-file fixes, and re-executes automatically. User approval is
+> deferred to a single gate after the loop completes (pass or 15-failure limit).
+>
+> **Usage:** Replace `{{TEST_CASE_ID}}` and `{{SOURCE_FILE}}` with actual values.
+> All rules from `context.md` and `learnings.md` are enforced automatically.
 
 ---
 
@@ -46,7 +51,7 @@ For each locator:
 
 ---
 
-### Step 3 — Continue (Execute Without Interruption)
+### Step 3 — Execute, Auto-Fix, and Retry (Autonomous Loop)
 
 If any mismatch is detected during execution:
 - Do NOT interrupt execution
@@ -56,6 +61,33 @@ If any mismatch is detected during execution:
 - If a required locator is missing in the page class, create it in-memory only
   for the current run and continue
 
+**Automatic Retry Loop (on failure):**
+
+When a test execution fails, enter an autonomous analyze → fix → re-execute loop:
+
+1. **Analyze** — Read the error output, error-context.md (ARIA snapshot), and screenshot
+   to diagnose the root cause (broken locator, missing element, wrong data, timing issue)
+2. **Self-Fix** — Apply the fix to the **spec file only** (in-memory locators, waits,
+   data overrides, interaction patterns). Spec-file changes do NOT require user approval
+   during the retry loop.
+3. **Re-Execute** — Run the test again immediately without asking the user
+4. **Repeat** — If the test fails again, go back to step 1
+
+**Retry limits and safety:**
+- Maximum **15 consecutive failures** before halting the loop
+- If 15 failures are reached, STOP and present the full failure history to the user
+- If a failure indicates an **unsafe or destructive condition** (e.g., data corruption,
+  environment instability, repeated identical error with no new fix possible), STOP
+  immediately and request user intervention — do NOT exhaust all 15 retries
+- Each retry must attempt a **different fix** than the previous one; do NOT retry
+  the same approach that already failed
+
+**What is allowed without user approval during the retry loop:**
+- Editing the spec file (locators, waits, data references, interaction patterns)
+- Creating in-memory locators for broken/missing page class elements
+- Switching to alternative locator strategies (CSS → text → role → XPath)
+- Adjusting timeouts or wait strategies in the spec file
+
 **CRITICAL RULE — Framework File Protection:**
 Do NOT modify ANY existing framework file without explicit user approval:
 - Page class files (e.g., AccountTransferPage.ts, TelegraphicTransferPage.ts)
@@ -64,6 +96,9 @@ Do NOT modify ANY existing framework file without explicit user approval:
 - Configuration files (e.g., playwright.config.ts)
 - Context files (context.md, learnings.md)
 
+All framework file changes must be tracked as **proposed changes** and presented
+to the user for approval only after the retry loop completes (pass or 15-failure limit).
+
 All fixes during execution must be spec-file-only or in-memory.
 
 ---
@@ -71,6 +106,7 @@ All fixes during execution must be spec-file-only or in-memory.
 ### Step 4 — Capture (Record All Mismatches)
 
 Capture every mismatch discovered during execution into a structured log.
+This log is maintained across all runs in the retry loop.
 
 **For each field value mismatch, record:**
 | Item | Value |
@@ -80,6 +116,7 @@ Capture every mismatch discovered during execution into a structured log.
 | Actual value (from UI) | |
 | Page / module name | |
 | Execution step / context | |
+| Run number (in retry loop) | |
 
 **For each locator mismatch, record:**
 | Item | Value |
@@ -91,6 +128,7 @@ Capture every mismatch discovered during execution into a structured log.
 | Execution step / context | |
 | Exists in framework? (yes/no) | |
 | Created in-memory? (yes/no) | |
+| Run number (in retry loop) | |
 
 **For each new UI element not in Protractor source, record:**
 | Item | Value |
@@ -98,14 +136,16 @@ Capture every mismatch discovered during execution into a structured log.
 | Element name | |
 | Working locator | |
 | Why it was needed | |
+| Run number (in retry loop) | |
 
-Do NOT modify any source file during this step.
+Do NOT modify any framework source file during this step.
 
 ---
 
-### Step 5 — Summarize (Post-Execution Consolidated Report)
+### Step 5 — Summarize (Post-Loop Consolidated Report)
 
-After the full execution completes (pass or fail), generate ONE consolidated summary:
+After the test **passes** OR the **15-failure retry limit** is reached,
+generate ONE consolidated summary covering **all runs** in the retry loop:
 
 **Section A — Field Value Mismatches**
 - All JSON vs UI value differences
@@ -120,20 +160,30 @@ After the full execution completes (pass or fail), generate ONE consolidated sum
 - New locator entries (page class, element, proposed locator)
 
 **Section D — Execution Summary**
-- Total steps executed
-- Steps passed / failed
-- Fixes applied in-memory during execution
-- Fixes required for permanent update
+- Total runs in the retry loop
+- Total steps executed / passed / failed
+- Fixes self-applied per run (categorized: locator, data, wait, interaction)
+- Fixes required for permanent framework update
 - Items requiring user approval
 
 ---
 
-### Step 6 — User Approve (Explicit Approval Gate)
+### Step 6 — User Approve (Post-Loop Approval Gate)
 
-Present the complete mismatch and fix summary to the user ONLY after the full flow finishes.
-Request EXPLICIT user approval before making ANY source change.
+This step triggers ONCE — only after the retry loop completes (test passes or 15-failure limit reached).
+Do NOT request approval during the retry loop. Spec-file self-fixes are autonomous.
 
-**Do NOT — under any circumstance — without explicit approval:**
+Present the complete mismatch and fix summary to the user, including:
+- All spec-file changes made during the retry loop (for review / retention decision)
+- All proposed framework file changes (for explicit approval before applying)
+
+**Spec-file changes (retention decision):**
+- Present all spec-file modifications accumulated during the retry loop
+- Ask user: **Keep or Revert?** (bulk or individual)
+- If the test passed, recommend keeping; if 15-failure limit was hit, let user decide
+
+**Framework file changes (explicit approval required):**
+Do NOT — under any circumstance — without explicit approval:
 - Update JSON test data values
 - Update locator definitions in page classes
 - Add new locator entries to page classes
@@ -147,6 +197,12 @@ Request EXPLICIT user approval before making ANY source change.
 ### Step 7 — Update (Apply Approved Changes Only)
 
 Only after user approval:
+
+**7a. Spec-file retention:**
+- If user approved keeping spec-file changes → no action needed (already applied)
+- If user chose to revert → restore the spec file to its pre-retry-loop state
+
+**7b. Framework file updates:**
 1. Update the approved JSON entries
 2. Update the approved locator values in page classes
 3. Add the approved new locator entries to page classes
@@ -157,11 +213,11 @@ Only after user approval:
 - Do not break existing functionality or downstream validations
 - Do not modify unrelated data, locators, or framework code
 - Remain compliant with context.md and learnings.md standards
-- Each file modification must be confirmed individually
+- Each framework file modification must be confirmed individually
 
 ---
 
-### Step 7b — Update Learnings (Record Migration Findings)
+### Step 7c — Update Learnings (Record Migration Findings)
 
 After applying approved changes, propose additions to `tests/testContexts/learnings.md`
 for any new runtime observations discovered during this migration.
@@ -190,7 +246,7 @@ for any new runtime observations discovered during this migration.
 
 ### Step 8 — Report (Generate Migration Chat Log)
 
-After successful conversion (test passes):
+After the retry loop completes (test passes or 15-failure limit):
 1. Generate an HTML migration report file named:
    `{{TEST_CASE_ID}}_Migration_ChatLog.html`
    in the workspace root directory
@@ -198,9 +254,10 @@ After successful conversion (test passes):
 2. The report must include:
 
    **A. Full Migration Journey**
-   - Chronological log of all phases from initial conversion to final pass
+   - Chronological log of all phases from initial conversion to final pass (or halt)
    - Each execution run with pass/fail status and error details
    - All fix attempts with approaches tried and outcomes
+   - Self-fix applied per run (what changed between consecutive runs)
 
    **B. Consolidated Mismatch Summary**
    - All locator mismatches (broken, removed, added) with before/after
@@ -218,11 +275,28 @@ After successful conversion (test passes):
    - Overall migration difficulty rating by category
 
    **D. Overall Migration Timeline — Prompt to Pass**
+   - **Record timestamps:** Capture the wall-clock time when the migration prompt is first
+     received, when each execution run starts and ends, and when the test finally passes
+     (or the 15-failure limit is reached)
    - Total wall-clock time from initial migration prompt to final stable pass
-   - Phase-by-phase breakdown (initial conversion, each execution/fix cycle, optimization, reporting)
+   - Phase-by-phase breakdown with time per phase:
+     - Initial conversion (prompt received → first execution start)
+     - Each execution/fix cycle (run start → failure → analysis → fix applied → next run start)
+     - Final pass run (run start → pass)
+     - Post-pass activities (reporting, summary, approval)
    - Cumulative test execution time table (each run with status, duration, cumulative total, blocker)
    - Time efficiency analysis (percentage split: execution vs analysis/diagnosis vs conversion vs reporting)
    - Summary cards: total migration time, cumulative execution time, analysis/fix time
+   - **Overall time: prompt received → test pass** (single headline number)
+
+   **E. Auto-Retry Loop Statistics**
+   - Total auto-retries executed (out of 15 max)
+   - Self-fixes applied per run (locator, data, wait, interaction pattern)
+   - Failure categories breakdown (locator not found, timeout, assertion mismatch, etc.)
+   - Fix success rate (fixes that resolved the issue vs fixes that did not)
+   - Whether the loop ended by pass or by hitting the 15-failure limit
+   - Spec-file changes accumulated during the loop (count and summary)
+   - Framework changes proposed but deferred to user approval
 
 3. Format: Styled HTML that opens cleanly in both browser and Microsoft Word
 4. Confirm the report file location to the user
@@ -247,8 +321,9 @@ After successful conversion (test passes):
 - Do not retain without explicit confirmation
 
 **Final confirmation must include:**
-- What fixes were applied
+- What fixes were applied (spec-file and framework)
 - What fixes were proposed but not applied
+- What spec-file changes were kept vs reverted
 - Whether all temporary captured data was deleted
 - Whether any retained data remains pending user confirmation
 ```
@@ -261,6 +336,13 @@ After successful conversion (test passes):
 |----------|-------------|---------|
 | `{{TEST_CASE_ID}}` | Test case identifier | `TC01_SG_AccountTransfer` |
 | `{{SOURCE_FILE}}` | Protractor source file path | `SG_AccountTransfer.test.ts` |
+
+## Version History
+
+| Version | Date | Key Changes |
+|---------|------|-------------|
+| v01 | 13 Apr 2026 | Initial prompt — manual approval after each failure |
+| v02 | 13 Apr 2026 | Autonomous retry loop (15 max), single post-loop approval gate, retention decision for spec-file changes |
 
 ## Example Usage
 
