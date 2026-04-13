@@ -13,6 +13,11 @@
   * 8) TC008_CN_TelegraphicTransfer - Copy A CN TT Payment Via Transfer Center
   * 9) TC009_CN_TelegraphicTransfer - Edit A CN TT Payment Via Transfer Center
   * 10)TC010_CN_TelegraphicTransfer - Reject A CN TT Payment Via Transfer Center
+  * 11)TC011_CN_TelegraphicTransfer - Copy A CN TT Payment With IDR Currency
+  * 12)TC012_CN_TelegraphicTransfer - Delete A CN TT Payment Via Transfer Center
+  * 13)TC013_CN_TelegraphicTransfer - Verify A CN TT Payment Via My Verify
+  * 14)TC014_CN_TelegraphicTransfer - Approve A CN TT Payment Via Transfer Center
+  * 15)TC015_CN_TelegraphicTransfer - Release A CN TT Payment Via Transfer Center
   */
 
 //Required Imports
