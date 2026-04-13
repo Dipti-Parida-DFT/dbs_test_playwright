@@ -1,0 +1,162 @@
+version: 1
+tagFamilies:
+  vertical:
+  - family: type
+    required: false
+    allowed:
+    - '@ui'
+    - '@api'
+    - '@e2e'
+  - family: suiteType
+    required: false
+    allowed:
+    - '@smoke'
+    - '@regression'
+    - '@sanity'
+  - family: speed
+    required: false
+    allowed:
+    - '@fast'
+    - '@slow'
+  - family: stability
+    required: false
+    allowed:
+    - '@flaky'
+    - '@stable'
+  - family: environment
+    required: false
+    allowed:
+    - '@sit'
+    - '@uat'
+  horizontal:
+  - family: domain
+    required: false
+    allowed:
+    - '@payments'
+    - '@alert'
+    - '@account'
+    - '@approvals'
+    - '@files'
+    - '@reports'
+  - family: component
+    required: false
+    allowed:
+    - '@telegraphic-transfer'
+    - '@bulk-collection'
+    - '@bulk-payment'
+    - '@management-payroll'
+    - '@management-payroll-alternate'
+    - '@payroll'
+  - family: journey
+    required: false
+    allowed:
+    - '@create-payment'
+    - '@approve-payment'
+    - '@reject-payment'
+  -  family: affiliate 
+     required: false
+     allowed:
+     - '@cn'
+     - '@hk'
+     - '@id'
+     - '@in'
+     - '@sg'
+     - '@tw'
+     - '@vn'
+tagDetails:
+  '@ui':
+    description: UI tests (web user interface).
+    owners:
+    - QA Automation
+  '@api':
+    description: API tests (service/backend endpoints).
+    owners:
+    - QA Automation
+  '@e2e':
+    description: End-to-end tests (full workflow across modules).
+    owners:
+    - QA Automation
+  '@smoke':
+    description: Critical path checks for PR gate
+    owners:
+    - Payments QE
+  '@regression':
+    description: Regression suite covering broad functional validation.
+    owners:
+    - QA Automation
+  '@sanity':
+    description: Sanity suite for quick confidence checks after deployment/build.
+    owners:
+    - QA Automation
+  '@fast':
+    description: Fast-running tests suitable for frequent execution.
+    owners:
+    - QA Automation
+  '@slow':
+    description: Slow-running tests; typically scheduled less frequently.
+    owners:
+    - QA Automation
+  '@flaky':
+    description: Known flaky tests; needs stabilization/triage.
+    owners:
+    - QA Automation
+  '@stable':
+    description: Stable tests with consistent pass rate.
+    owners:
+    - QA Automation
+  '@sit':
+    description: System Integration Testing environment-specific tests.
+    owners:
+    - QA Automation
+  '@uat':
+    description: User Acceptance Testing environment-specific tests.
+    owners:
+    - QA Automation
+  '@payments':
+    description: Payments and transfer flows
+    owners:
+    - Payments QE
+  '@alert':
+    description: Alerts/notifications related tests.
+    owners:
+    - Platform QE
+  '@account':
+    description: Account-related tests (balances, statements, account setup).
+    owners:
+    - Accounts QE
+  '@approvals':
+    description: Approval workflow tests (maker-checker, authorization).
+    owners:
+    - Payments QE
+  '@files':
+    description: File upload/download and file management tests.
+    owners:
+    - Platform QE
+  '@reports':
+    description: Reports and export/download tests.
+    owners:
+    - Reporting QE
+  '@telegraphic-transfer':
+    description: Telegraphic Transfer (TT) payment flow tests.
+    owners:
+    - Payments QE
+  '@bulk-collection':
+    description: Bulk collection file/transaction flow tests.
+    owners:
+    - Collections QE
+  '@payroll':
+    description: Payroll processing flow tests.
+    owners:
+    - Payments QE
+  '@create-payment':
+    description: Create payment flows
+    owners:
+    - Payments QE
+  '@approve-payment':
+    description: Approve payment flows.
+    owners:
+    - Payments QE
+  '@reject-payment':
+    description: Reject payment flows.
+    owners:
+    - Payments QE

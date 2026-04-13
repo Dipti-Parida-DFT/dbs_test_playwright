@@ -722,7 +722,7 @@ export class BulkCollectionPage {
   * @param testData : is a Json object
   * This method Enters Step 2: Amount and other opetional fields 
   */
-  async enterNewPayerAmountOptionalDetailsWhenExistingPayerAdded(testData) {
+  async enterNewPayerAmountOptionalDetailsWhenExistingPayerAdded(testData: { payer1: { amount: string; particulars: string; collectionDetails: string; emailId0: string; emailId1: string; emailId2: string; emailId3: string; emailId4: string; emailMessage: string; }; }) {
 
     // Step 2: Enter Amount (SGD) = add Amount
     await this.webComponents.enterTextarea(this.amount1stPosition, testData.payer1.amount);
@@ -806,7 +806,7 @@ export class BulkCollectionPage {
    * This method validates the details of Expected
    * values(JSON) Vs Actual Selected Payee Or Reference No (from UI) 
    */
-  async validatePayeeOrRefrenceNoDetails(input: NewPayee1ValidationData, reference) {
+  async validatePayeeOrRefrenceNoDetails(input: NewPayee1ValidationData, reference: any) {
     const { fromAccountValue1, fromAccountValue2, paymentTypeValue, amountDeductedValue, amountDeductedEditedValue,
       creditType, referenceValueUserProvided, batchIdValueUserProvided, collectionSummaryLabel, totalPayeesLabel,
       totalPayeesValue, totalAmountLabel, totalAmountValue, totalAmountValueEdited, payeeNameLabelValue,
@@ -954,7 +954,7 @@ export class BulkCollectionPage {
      * This method validates the 2nd Payer details: Expected
      * values(JSON) Vs Actual Selected Payers Or Reference No (from UI) 
      */
-  async validatePayer2ConsolidateValueInBulkCollection(input: NewAndExistingPayerValidationData, reference) {
+  async validatePayer2ConsolidateValueInBulkCollection(input: NewAndExistingPayerValidationData, reference: any) {
     const { toAccountNumberLabel, toAccountNameLabel, paymentTypeValue, totalAmountConsolidated, creditTypeConsolidated,
       referenceValueUserProvided, batchIdValueUserProvided, collectionSummaryLabel, totalPayeesLabel,
       totalPayersConsolidatedLabelValue, totalAmountLabel, totalAmountConsolidatedLabelValue, totalAmountValueEdited,
@@ -1140,7 +1140,7 @@ export class BulkCollectionPage {
    * Author : LC5741501
    * This method delete's the PayeeOrReference No
    */
-  async deleteOpenPayerOrReferenceNo(input: deleteOpenPayeeOrReferenceNo, reference) {
+  async deleteOpenPayerOrReferenceNo(input: deleteOpenPayeeOrReferenceNo, reference: any) {
     const { transactionDeleted, internalReference } = input;
     // Click : Delete button
     await this.webComponents.clickWhenVisibleAndEnabled(this.deleteButonPayroll);

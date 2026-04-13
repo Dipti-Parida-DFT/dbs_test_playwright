@@ -862,7 +862,7 @@ export class BulkPaymentPage {
    * Author : LC5741501
    * This method delete's the PayeeOrReference No
    */
-  async deleteOpenPayerOrReferenceNo(input: deleteOpenPayeeOrReferenceNo, reference) {
+  async deleteOpenPayerOrReferenceNo(input: deleteOpenPayeeOrReferenceNo, reference: any) {
     const { transactionDeleted, internalReference } = input;
     // Click : Delete button
     await this.webComponents.clickWhenVisibleAndEnabled(this.deleteButton);

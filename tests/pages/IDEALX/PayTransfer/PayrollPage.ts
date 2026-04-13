@@ -124,6 +124,48 @@ export type NewPayee1ValidationData = {
   email5LabelValue: string;
 };
 
+export type ManagementPayrollTemplateValidationData = {
+  templateName: string;
+  statusTop: string
+  fromAccountValue1: string;
+  fromAccountValue2: string;
+  paymentTypeValue: string;
+  checkAmountValue: string;
+  amountValue: string;
+  amountEditedValue: string;
+
+  validateDate: string;
+  payrollFilter: string;
+
+  paymentSummaryLabel: string;
+  totalPayeesLabel: string;
+  totalPayeesValue: string;
+  totalAmountLabel: string;
+  totalAmountValue: string;
+  totalAmountValueEdited: string;
+
+  payeeNameLabelValue: string;
+  payeeNicknameLabelValue: string;
+  bankNameLabelValue: string;
+  bankSwiftBicLabelValue: string;
+  accountNumberLabelValue: string;
+  statusLabelValue: string;
+  defaultAmount: string;
+  amountLabelValue: string;
+  amountEditedLabelValue: string,
+  transactionLabelValue: string;
+  purposeCodeLabelValue: string;
+  referenceForPayeeLabelValue: string;
+  particularsLabelValue: string;
+  paymentDetailsLabelValue: string;
+  emailMessageLabelValue: string
+  email1LabelValue: string;
+  email2LabelValue: string;
+  email3LabelValue: string;
+  email4LabelValue: string;
+  email5LabelValue: string;
+};
+
 
 export type NewPayeeResult = {
   name: string;
@@ -205,7 +247,7 @@ export class PayrollPage {
     this.digitalTokenInstructions1 = page.locator('xpath=//div[@class="challenge-step-content"]/span/span[1]');
     this.digitalTokenInstructions2 = page.locator('xpath=//div[@class="challenge-step-content"]/span/span[2]');
     this.enterResponseTextBox = page.locator('xpath=//*[@name="responseCode"]');
-    this.saveAsTemplateCheckbox = page.locator('xpath=//ShuRu[@name="saveAsTemplate"]');
+    this.saveAsTemplateCheckbox = page.locator('xpath=//input[@name="saveAsTemplate"]');
     this.templateName = page.locator('xpath=//*[@name="templateName"]');
     this.saveAsDraftButton = page.locator('xpath=//button[@name="save-as-draft"]');
 
@@ -258,8 +300,10 @@ export class PayrollPage {
     this.viewTemplateName = page.locator('xpath=//*[@id="bulk-viewTemp-name"]');
     this.viewTemplateStatus = page.locator('xpath=//*[@id="bulk-viewTemp-status"]');
     this.viewTemplateFromAccount = page.locator('xpath=//*[@id="bulk-viewTemp-accountNum"]');
+    this.viewTemplateFromAccountName = page.locator('xpath=//*[@id="bulk-viewTemp-accountName"]');
     this.viewTemplateAmount = page.locator('xpath=//*[@id="bulk-view-amount_0"]');
     this.viewTemplatePayeeName = page.locator('xpath=//*[@id="bulk-view-name_0"]');
+    this.viewTemplatePaymentType = page.locator('xpath=//*[@id="bulk-viewTemp-paymentType"]');
 
     //Payee / Beneficiary details in view payment page (some fields are shared with template view, so defined here)
     this.beneficiaryTab = page.locator('xpath=//span[normalize-space()="Payee / Beneficiaries"]');
@@ -278,6 +322,7 @@ export class PayrollPage {
     this.paymentType = page.locator('xpath=//*[@id="bulk-view-paymentType"]');
     //this.paymentDate = page.locator('xpath=//*[@id="bulk-view-paymentDate"]//label');
     this.paymentDate = page.locator('xpath=//*[@id="bulk-view-paymentDate"]');
+    this.logoutButton = page.locator('//div[@id="logout"]');
 
     this.paymentTypeDetailLabel = page.locator('xpath=//dbs-bp-view-summary-section/div[5]/span[2]/span[2]');
     this.amountViewLabel = page.locator('xpath=//*[@id="bulk-view-paymentAmount"]');
@@ -287,7 +332,8 @@ export class PayrollPage {
     this.referenceLabel = page.locator('xpath=//*[@id="viewReference"]');
     this.referenceID = page.locator('xpath=//label[contains(text(),"Payroll Payment")]');
     // Have added this locator for Management Payroll bcs above is not working
-    this.referenceIDPayroll = page.locator('xpath=//label[contains(text(),"Payroll")]');
+    //this.referenceIDPayroll = page.locator('xpath=//label[contains(text(),"Payroll")]');
+    this.referenceIDPayroll = page.locator('xpath=(//label[contains(text(),"Payroll")])[1]');
 
     this.batchIdLabel = page.locator('xpath=//*[@id="bulk-view-batchId"]');
     this.billerServiceIdLabel = page.locator('xpath=//*[@id="bulk-view-billerServiceID"]');
@@ -363,7 +409,7 @@ export class PayrollPage {
     this.transactionDeletedPopupLabel = page.locator('xpath=//h2[text()="Transaction deleted"]');
     this.transactionDeletedPopupLabelMsg = page.locator('xpath=//p[@id="dialogMessage"]/span');
     this.transferSavedPopupLabel = page.locator('xpath=//h2[text()="Transfer saved"]');
-
+    this.transactionDeletedPopupOkButton = page.locator('xpath=//button[@name="dismiss"]');
 
     this.viewVerifyReleaseButton = page.locator('xpath=//button[@name="view-verify-release"]');
     this.verifyReleaseConfirmButton = page.locator('xpath=//button[@name="verify-release"]');
@@ -523,8 +569,10 @@ export class PayrollPage {
   readonly viewTemplateName: Locator;
   readonly viewTemplateStatus: Locator;
   readonly viewTemplateFromAccount: Locator;
+  readonly viewTemplateFromAccountName: Locator;
   readonly viewTemplateAmount: Locator;
   readonly viewTemplatePayeeName: Locator;
+  readonly viewTemplatePaymentType: Locator;
 
   readonly hashValueLabel: Locator;
   readonly fromAccountViewLabel: Locator;
@@ -533,6 +581,7 @@ export class PayrollPage {
   readonly paymentTypeLabel: Locator;
   readonly paymentType: Locator;
   readonly paymentDate: Locator;
+   readonly logoutButton: Locator;
 
 
   readonly paymentTypeDetailLabel: Locator;
@@ -610,6 +659,7 @@ export class PayrollPage {
   readonly transactionDeletedPopupLabel: Locator;
   readonly transactionDeletedPopupLabelMsg: Locator;
   readonly transferSavedPopupLabel: Locator;
+  readonly transactionDeletedPopupOkButton: Locator;
 
   readonly viewVerifyReleaseButton: Locator;
   readonly verifyReleaseConfirmButton: Locator;
@@ -1393,7 +1443,7 @@ export class PayrollPage {
    * This method validates the details of Expected
    * values(JSON) Vs Actual Selected Payee Or Reference No (from UI) 
    */
-  async validatePayeeOrRefrenceNoDetails(input: NewPayee1ValidationData, reference) {
+  async validatePayeeOrRefrenceNoDetails(input: NewPayee1ValidationData, reference: string) {
     const { fromAccountValue1, fromAccountValue2, paymentTypeValue, amountDeductedValue, amountDeductedEditedValue,
       referenceValueUserProvided, batchIdValueUserProvided, paymentSummaryLabel, totalPayeesLabel, totalPayeesValue,
       totalAmountLabel, totalAmountValue, totalAmountValueEdited, payeeNameLabelValue,
@@ -1536,12 +1586,198 @@ export class PayrollPage {
 
   }
 
+
+  /**
+   * Author : LC5741501
+   * This method validates the details of Expected Template values
+   * values(JSON) Vs Actual Template Values(from UI) 
+   */
+  async validateManagementPayrollTemplateDetails(input: ManagementPayrollTemplateValidationData, reference: string) {
+    const { templateName, statusTop, fromAccountValue1, fromAccountValue2, paymentTypeValue, checkAmountValue,
+      amountValue, amountEditedValue, validateDate, payrollFilter, paymentSummaryLabel, totalPayeesLabel, totalPayeesValue, totalAmountLabel,
+      totalAmountValue, totalAmountValueEdited, payeeNameLabelValue, payeeNicknameLabelValue, bankNameLabelValue,
+      bankSwiftBicLabelValue, accountNumberLabelValue, statusLabelValue, defaultAmount, amountLabelValue, amountEditedLabelValue,
+      transactionLabelValue, purposeCodeLabelValue, referenceForPayeeLabelValue, particularsLabelValue,
+      paymentDetailsLabelValue, emailMessageLabelValue, email1LabelValue, email2LabelValue, email3LabelValue,
+      email4LabelValue, email5LabelValue } = input;
+
+    // Assertions
+    // 1) Template Name : Validate UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(templateName)) {
+      await this.webComponents.compareUIVsJsonValue(this.viewTemplateName, templateName);
+    }
+
+    // 2) Status : Validate UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(statusTop)) {
+      await this.webComponents.compareUIVsJsonValue(this.viewTemplateStatus, statusTop);
+    }
+
+    // 3) From : Validate UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(fromAccountValue1)) {
+      await this.webComponents.compareUIVsJsonValue(this.viewTemplateFromAccount, fromAccountValue1);
+    }
+
+    if (await this.webComponents.stringIsNotNullOrBlank(fromAccountValue2)) {
+      await this.webComponents.compareUIVsJsonValue(this.viewTemplateFromAccountName, fromAccountValue2);
+    }
+
+    // 4) Payment Type : Validate UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(paymentTypeValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.viewTemplatePaymentType, paymentTypeValue);
+    }
+
+    // 5) Max total deducted : If checkAmountValue is Not Null/Blank, validate value and 
+    // If amountEdited is not null then check Edited Value else check actual amount value
+    if (await this.webComponents.stringIsNotNullOrBlank(checkAmountValue)) {
+      if (await this.webComponents.stringIsNotNullOrBlank(amountEditedValue)) {
+        await this.webComponents.compareUIVsJsonValue(this.amountViewLabel, amountEditedValue);
+      } else {
+        await this.webComponents.compareUIVsJsonValue(this.amountViewLabel, amountValue);
+      }
+    }
+
+    //6 Payment Date: checking value is Not Null
+    if (await this.webComponents.stringIsNotNullOrBlank(validateDate)) {
+      await this.webComponents.verifyUIElementTextIsNotNull(this.paymentDate);
+    }
+
+    // 7) Filter is Visible 
+    if (await this.webComponents.stringIsNotNullOrBlank(payrollFilter)) {
+      await this.webComponents.waitElementToBeVisible(this.viewPayrollFilter);
+    }
+
+    // 8) Payment summary : Validate UI Vs Json (Payment summary Label) Additional Validation
+    if (await this.webComponents.stringIsNotNullOrBlank(paymentSummaryLabel)) {
+      await this.webComponents.compareUIVsJsonValue(this.paymentSummaryLabel, paymentSummaryLabel);
+    }
+
+    // 9) Total Payees Label : Validate UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(totalPayeesLabel)) {
+      await this.webComponents.compareUIVsJsonValue(this.totalPayeesLabel, totalPayeesLabel);
+    }
+
+    // 10) Total Payees Value : Validate UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(totalPayeesValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.totalPayeesValue, totalPayeesValue);
+    }
+
+    // 11) Total Amount Label : Validate UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(totalAmountLabel)) {
+      await this.webComponents.compareUIVsJsonValue(this.totalAmountLabel, totalAmountLabel);
+    }
+
+    // 12) Total Amount Value : If totalAmountValueEdited is Not Null/Blank, it means its edited and validate it
+    // Else validete the without edited value
+    if (await this.webComponents.stringIsNotNullOrBlank(totalAmountValueEdited)) {
+      await this.webComponents.compareUIVsJsonValue(this.totalAmountValue, totalAmountValueEdited);
+    } else {
+      await this.webComponents.compareUIVsJsonValue(this.totalAmountValue, totalAmountValue);
+    }
+
+    // 13) Payee/Nickname : Validate (Payee Name) UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(payeeNameLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.payeeNameLabel1Value, payeeNameLabelValue);
+    }
+
+    // 14) Payee/Nickname : Validate (Nickname) UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(payeeNicknameLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.payeeNicknameLabelValue, payeeNicknameLabelValue);
+    }
+
+    // 15) Bank/SWIFT BIC: Validate (Bank) UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(bankNameLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.bankNameLabel1Value, bankNameLabelValue);
+    }
+
+    // 16) Bank/SWIFT BIC: Validate (SWIFT) UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(bankSwiftBicLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.bankSwiftBicLabel1, bankSwiftBicLabelValue);
+    }
+
+    // 17) Account number: Validate UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(accountNumberLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.accountNumberLabel1, accountNumberLabelValue);
+    }
+
+    // 18) Status (PendingApproval) : Validate UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(statusLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.status, statusLabelValue);
+    }
+
+    // 19) Default amount: Validate UI Vs Json
+    //If defaultAmount is not null/blank then validate amount value
+    // If amountEditedLabelValue : is edited validate the edited value
+    // else validate the no edited value of amount
+    if (await this.webComponents.stringIsNotNullOrBlank(defaultAmount)) {
+      if (await this.webComponents.stringIsNotNullOrBlank(amountEditedLabelValue)) {
+        await this.webComponents.compareUIVsJsonValue(this.amountFirstLabel, amountEditedLabelValue);
+      } else {
+        await this.webComponents.compareUIVsJsonValue(this.amountFirstLabel, amountLabelValue);
+      }
+    }
+
+    // 20) If Purpose Code: Value is not null/Blank validate the value provided UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(purposeCodeLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.purposeCodeLabel1, purposeCodeLabelValue);
+    }
+
+    // 21) If Transaction Code: Value is not null/Blank validate the value provided UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(transactionLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.transactionCodeLabel1, transactionLabelValue);
+    }
+
+    //22) If Reference for payee: Value is not null/Blank validate the value provided UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(referenceForPayeeLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.referenceForPayeeLabel1, referenceForPayeeLabelValue);
+    }
+
+    //23) If particulars: Value is not null/Blank validate the value provided UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(particularsLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.particularsLabel1, particularsLabelValue);
+    }
+
+    // Click : showOptionalViewButton1
+    await this.webComponents.javaScriptsClick(this.showOptionalViewButton1);
+
+    //24) If Payment details: Value is not null/Blank validate the value provided UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(paymentDetailsLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.paymentDetailLabel1, paymentDetailsLabelValue);
+    }
+
+    // 25) Message to payee (optional): Validate UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(emailMessageLabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.messageLabel1, emailMessageLabelValue);
+    }
+
+    // 26)Emails 1 to 5 : Validate UI Vs Json
+    if (await this.webComponents.stringIsNotNullOrBlank(email1LabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel1Value, email1LabelValue);
+    }
+
+    if (await this.webComponents.stringIsNotNullOrBlank(email2LabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel2Value, email2LabelValue);
+    }
+
+    if (await this.webComponents.stringIsNotNullOrBlank(email3LabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel3Value, email3LabelValue);
+    }
+
+    if (await this.webComponents.stringIsNotNullOrBlank(email4LabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel4Value, email4LabelValue);
+    }
+
+    if (await this.webComponents.stringIsNotNullOrBlank(email5LabelValue)) {
+      await this.webComponents.compareUIVsJsonValue(this.emailListLabel5Value, email5LabelValue);
+    }
+
+  }
+
   /**
    * Author : LC5741501
    * This method validates the details of Expected
    * values(JSON) Vs Actual Selected Payee Or Reference No (from UI) 
    */
-  async editAmountSGD(testData) {
+  async editAmountSGD(testData: any) {
 
     // Click : Edit button
     await this.webComponents.clickWhenVisibleAndEnabled(this.editButton);
@@ -1556,7 +1792,7 @@ export class PayrollPage {
    * Author : LC5741501
    * This method delete's the PayeeOrReference No
    */
-  async deleteOpenPayeeOrReferenceNo(input: deleteOpenPayeeOrReferenceNo, reference) {
+  async deleteOpenPayeeOrReferenceNo(input: deleteOpenPayeeOrReferenceNo, reference: string) {
     const { transactionDeleted, internalReference } = input;
     // Click : Delete button
     await this.webComponents.clickWhenVisibleAndEnabled(this.deleteButonPayroll);

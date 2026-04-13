@@ -2,7 +2,7 @@
   * Author: LC5741501
   * Created Date: 24/03/26
   * Class path "tests/PayTransfer/ID_ManagePayrollAlternate.spec.ts"
-  * Description: This Specification contains the test cases related Indonesia Bulk Payment
+  * Description: This Specification contains the test cases related Indonesia Manage Payroll Alternate
   * 1) TC001_ID_ManagePayrollAlternate - Verify payee is not able to create Manage Payroll Alternate with item amount greater than 1000000000 IDR
   * 2) TC002_ID_ManagePayrollAlternate - Verify payee is able to create Manage Payroll Alternate with item amount equal to 1000000000 IDR
   * 3) TC003_ID_ManagePayrollAlternate - Verify payee(existing and new Payee) is able to create Manage Payroll Alternate with item amount equal to 1000000000 IDR
@@ -39,7 +39,7 @@ test.describe.configure({
 });
 
 // Actions for beforEach and afterEach test hooks
-test.describe('ID_Manage Payroll Alternate (Playwright using PaymentsPages)', () => {
+test.describe('ID_Manage Payroll Alternate (Playwright using PaymentsPages)',{ tag: ['@management-payroll-alternate','@ui','@id'] }, () => {
   let pages: PaymentsPages;
   // Track created payees per test
   type CreatedPayee = { name?: string; accountNumber?: string };
