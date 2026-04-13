@@ -481,13 +481,14 @@ export class TelegraphicTransferPage {
     this.existingCNPaymentNature = page.locator('//input[@id="PaymentNature"]');
     this.existingCNPaymentNatureDropdown = page.locator('(//span[contains(@class,"autocomplete-list")])[1]');
     this.pmtBOPCategory2Dropdown = page.locator('//span[contains(text(),"Capital")]');
-    this.pmtBOPCodeSeries2Dropdown = page.locator('//span[contains(text(),"521010")]');
+    this.pmtBOPCodeSeries2Dropdown = page.locator('(//span[contains(text(),"521010")])[1]');
     this.pmtBOPCategory2 = page.locator('//input[@id="pmtCategory2"]');
     this.pmtBOPCodeSeries2 = page.locator('//input[@id="seriesCode2"]');
     this.pmtBOP1Amount = page.locator('//input[@name="bop-amount-1"]');
     this.pmtBOP2Amount = page.locator('//input[@name="bop-amount-2"]');
     this.pmtBOPCodeSeries3Dropdown = page.locator('(//span[contains(text(),"Capital")])[2]');
-    this.userIdInput1 = page.locator('input[name="userId"], input[placeholder*="User" i]');
+    this.pmtBOPCodeSeries4Dropdown = page.locator('(//span[contains(text(),"521010")])[2]');
+    this.IDRPayeeCurrencyDropdown = page.locator('//span[contains(text(),"IDR")]');
     }
 
     readonly authenticate: Locator;
@@ -658,7 +659,8 @@ export class TelegraphicTransferPage {
     readonly pmtBOP1Amount: Locator;
     readonly pmtBOP2Amount: Locator;
     readonly pmtBOPCodeSeries3Dropdown: Locator;
-    readonly userIdInput1: Locator;
+    readonly pmtBOPCodeSeries4Dropdown: Locator;
+    readonly IDRPayeeCurrencyDropdown: Locator;
 
   private async selectBankCharge(charge: BankChargeType) {
   switch (charge) {
@@ -1297,7 +1299,7 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
       await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPayeeAddress2.blur();
 
-      await this.webComponents.javaScriptsClick(this.intermediaryBankCheckbox);
+      await this.intermediaryBankCheckbox.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.intermediaryBankLocation);
       await this.webComponents.typeTextThroughKeyBoardAction(this.page, intermediaryLocation);
@@ -1317,7 +1319,7 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
       await this.webComponents.clickWhenVisibleAndEnabled(this.specificPaymentPurposeDropdown);
       await this.specificPaymentPurpose.blur();
 
-      await this.webComponents.javaScriptsClick(this.isTaxFreeGoods);
+      await this.isTaxFreeGoods.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.fxAppRefNum);
       await this.webComponents.enterTextarea(this.fxAppRefNum, fxAppRefNum);
@@ -1365,7 +1367,7 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
       await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.newTTPaymentRemark.blur();
 
-      await this.webComponents.javaScriptsClick(this.newTTPayeeMsgCheckbox);
+      await this.newTTPayeeMsgCheckbox.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail1);
       await this.webComponents.enterTextarea(this.newTTPayeeEmail1, email1);
@@ -1397,14 +1399,14 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
       await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab'); 
       await this.newTTPayeeRemark.blur();
 
-      await this.webComponents.javaScriptsClick(this.additionalNoteCheckbox);
+      await this.additionalNoteCheckbox.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.additionalNoteRemark);
       await this.webComponents.enterTextarea(this.additionalNoteRemark, additionalNote);
       await this.webComponents.pressGivenButtonThroughKeyBoardAction(this.page, 'Tab');
       await this.additionalNoteRemark.blur();
 
-      await this.webComponents.javaScriptsClick(this.orderingBankMsgCheckbox);
+      await this.orderingBankMsgCheckbox.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.orderingBankMsg);
       await this.webComponents.enterTextarea(this.orderingBankMsg, remitterIdentity);
@@ -1434,7 +1436,7 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
       await this.webComponents.clickWhenVisibleAndEnabled(this.specificPaymentPurposeDropdown);
       await this.specificPaymentPurpose.blur();
 
-      await this.webComponents.javaScriptsClick(this.isTaxFreeGoods);
+      await this.isTaxFreeGoods.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPaymentNature);
       await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPaymentNatureDropdown);
@@ -1485,7 +1487,7 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
       await this.webComponents.enterTextarea(this.newTTPaymentRemark, payeeBankMsg);
       await this.newTTPaymentRemark.blur();
 
-      await this.webComponents.javaScriptsClick(this.newTTPayeeMsgCheckbox);
+      await this.newTTPayeeMsgCheckbox.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail1);
       await this.webComponents.enterTextarea(this.newTTPayeeEmail1, email1);
@@ -1516,7 +1518,7 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
       await this.webComponents.enterTextarea(this.newTTPayeeRemark, payeeMsg);
       await this.newTTPayeeRemark.blur();
 
-      await this.webComponents.javaScriptsClick(this.additionalNoteCheckbox);
+      await this.additionalNoteCheckbox.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.additionalNoteRemark);
       await this.webComponents.enterTextarea(this.additionalNoteRemark, additionalNote);
@@ -1550,7 +1552,7 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
       await this.webComponents.clickWhenVisibleAndEnabled(this.specificPaymentPurposeDropdown);
       await this.specificPaymentPurpose.blur();
 
-      await this.webComponents.javaScriptsClick(this.isTaxFreeGoods);
+      await this.isTaxFreeGoods.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPaymentNature);
       await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPaymentNatureDropdown);
@@ -1601,7 +1603,7 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
       await this.webComponents.enterTextarea(this.newTTPaymentRemark, payeeBankMsg);
       await this.newTTPaymentRemark.blur();
 
-      await this.webComponents.javaScriptsClick(this.newTTPayeeMsgCheckbox);
+      await this.newTTPayeeMsgCheckbox.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail1);
       await this.webComponents.enterTextarea(this.newTTPayeeEmail1, email1);
@@ -1632,13 +1634,13 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
       await this.webComponents.enterTextarea(this.newTTPayeeRemark, payeeMsg);
       await this.newTTPayeeRemark.blur();
 
-      await this.webComponents.javaScriptsClick(this.additionalNoteCheckbox);
+      await this.additionalNoteCheckbox.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.additionalNoteRemark);
       await this.webComponents.enterTextarea(this.additionalNoteRemark, additionalNote);
       await this.additionalNoteRemark.blur();
 
-      await this.webComponents.javaScriptsClick(this.orderingBankMsgCheckbox);
+      await this.orderingBankMsgCheckbox.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.orderingBankMsg);
       await this.webComponents.enterTextarea(this.orderingBankMsg, remitterIdentity);
@@ -1667,7 +1669,7 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
       await this.webComponents.clickWhenVisibleAndEnabled(this.specificPaymentPurposeDropdown);
       await this.specificPaymentPurpose.blur();
 
-      await this.webComponents.javaScriptsClick(this.isTaxFreeGoods);
+      await this.isTaxFreeGoods.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPaymentNature);
       await this.webComponents.clickWhenVisibleAndEnabled(this.existingCNPaymentNatureDropdown);
@@ -1691,7 +1693,7 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
       await this.pmtBOPCategory2.blur();
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCodeSeries2);
-      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCodeSeries2Dropdown);
+      await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOPCodeSeries4Dropdown);
       await this.pmtBOPCodeSeries2.blur();
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.pmtBOP1Amount);
@@ -1736,7 +1738,7 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
       await this.webComponents.enterTextarea(this.newTTPaymentRemark, payeeBankMsg);
       await this.newTTPaymentRemark.blur();
 
-      await this.webComponents.javaScriptsClick(this.newTTPayeeMsgCheckbox);
+      await this.newTTPayeeMsgCheckbox.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.newTTPayeeEmail1);
       await this.webComponents.enterTextarea(this.newTTPayeeEmail1, email1);
@@ -1767,13 +1769,13 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
       await this.webComponents.enterTextarea(this.newTTPayeeRemark, payeeMsg);
       await this.newTTPayeeRemark.blur();
 
-      await this.webComponents.javaScriptsClick(this.additionalNoteCheckbox);
+      await this.additionalNoteCheckbox.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.additionalNoteRemark);
       await this.webComponents.enterTextarea(this.additionalNoteRemark, additionalNote);
       await this.additionalNoteRemark.blur();
 
-      await this.webComponents.javaScriptsClick(this.orderingBankMsgCheckbox);
+      await this.orderingBankMsgCheckbox.evaluate(el => (el as HTMLElement).click());
 
       await this.webComponents.clickWhenVisibleAndEnabled(this.orderingBankMsg);
       await this.webComponents.enterTextarea(this.orderingBankMsg, remitterIdentity);

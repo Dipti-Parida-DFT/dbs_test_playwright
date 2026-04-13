@@ -127,6 +127,7 @@
     "payeeBankID": "AONEHKH0XXX",
     "paymentCurrency": "SGD",
     "payeeCurrency": "CNY",
+    "newPayeeCurrency": "IDR",
     "amountA1": "10",
     "amountA2": "1500",
     "amountV": "3500",
