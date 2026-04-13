@@ -26,6 +26,10 @@ export class PaymentTemplatesPage {
     this.templateDeletedPopupMessage1template = page.locator('//span[normalize-space(text())="1 template(s) has been successfully deleted."]');
     this.okButton = page.locator('//button[@name="dismiss"]');
   }
+    this.dimissButton = page.locator('//button[@name="dismiss"]');
+    this.templateRefMsG = page.locator('//p[@id="dialogMessage"]');
+  } 
+
   readonly templateMenu: Locator;
   readonly createNewTemplateButton: Locator;
   readonly manageTemplateFilter: Locator;
@@ -42,4 +46,23 @@ export class PaymentTemplatesPage {
   readonly templateDeletedPopupLabel: Locator;
   readonly templateDeletedPopupMessage1template: Locator;
   readonly okButton: Locator;
+  readonly dimissButton: Locator;
+  readonly templateRefMsG: Locator;
+
+    /**
+     * Returns the raw banner text (trimmed). If you only need EBLV…,
+     * use getReferenceToken() below.
+     */
+    async getTemplateReferenceText(): Promise<string> {
+      const raw = await this.templateRefMsG.textContent();
+      return (raw ?? '').trim();
+    }
+  
+    //Extract reference ID
+    async getTemplateReferenceId(): Promise<string> {
+      const raw = await this.getTemplateReferenceText();
+      const match = raw.match(/\b(EB[A-Z0-9-]+)\b/i);
+      return match?.[1] ?? '';
+    }
+
 }
