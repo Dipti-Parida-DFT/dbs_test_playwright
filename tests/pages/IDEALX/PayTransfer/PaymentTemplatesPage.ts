@@ -25,10 +25,9 @@ export class PaymentTemplatesPage {
     this.templateDeletedPopupLabel = page.locator('//h2[normalize-space(text())="Template(s) deleted"]');
     this.templateDeletedPopupMessage1template = page.locator('//span[normalize-space(text())="1 template(s) has been successfully deleted."]');
     this.okButton = page.locator('//button[@name="dismiss"]');
-  }
     this.dimissButton = page.locator('//button[@name="dismiss"]');
     this.templateRefMsG = page.locator('//p[@id="dialogMessage"]');
-  } 
+  }
 
   readonly templateMenu: Locator;
   readonly createNewTemplateButton: Locator;
