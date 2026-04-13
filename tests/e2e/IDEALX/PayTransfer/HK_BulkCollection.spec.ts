@@ -52,7 +52,7 @@ test.describe.configure({
 });
 
 // Actions for beforEach and afterEach test hooks
-test.describe('HK_BulkCollection (Playwright using PaymentsPages)',{ tag: ['@bulk-collection','@regression','@ui','@hk'] },  () => {
+test.describe('HK_BulkCollection (Playwright using PaymentsPages)',{ tag: ['@bulk-collection','@ui','@hk'] },  () => {
   let pages: PaymentsPages;
   // Track created payees per test
   type CreatedPayee = { name?: string; accountNumber?: string };
