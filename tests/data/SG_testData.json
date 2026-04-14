@@ -167,7 +167,7 @@
     "editAmount": "20",
     "fxRef0": "FxReference0",
     "fxAmount0": "10",
-    "existingPayee": "SPI307-ACT-ExistingPayee",
+    "existingPayee": "ACT PAYEE",
     "newPayeeName": "ACT AUTO NewPayeeName01",
     "newPayeeAdd1": "ACT AUTO newPayeeAdd1",
     "newPayeeAdd2": "ACT AUTO newPayeeAdd2",

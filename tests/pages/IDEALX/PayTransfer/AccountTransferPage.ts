@@ -50,9 +50,9 @@ export class AccountTransferPage {
 
     this.saveAsDraft = page.locator('xpath=//button[@name="save-as-draft"]');
     this.nextButton = page.locator('xpath=//button[@name="next"]');
-    this.approvalNowCheckBox = page.locator('xpath=//ShuRu[@name="approveNow"]');
+    this.approvalNowCheckBox = page.locator('input[name="approveNow"]');
     this.getChallengeSMS = page.locator('xpath=//button[@name="get-challenge"]');
-    this.challengeResponse = page.locator('xpath=//ShuRu[@name="responseCode"]');
+    this.challengeResponse = page.locator('input[name="responseCode"]');
     this.savaAsTemplateCheckBox = page.locator('xpath=//ShuRu[@name="saveAsTemplate"]');
     this.templateName = page.locator('xpath=//ShuRu[@name="templateName"]');
     this.submitButton = page.locator('xpath=//button[@name="submit"]');

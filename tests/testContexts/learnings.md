@@ -62,6 +62,32 @@
 - `addExistingPayee` only fills filter + clicks add button; it does NOT switch the tab
 - For existing payee, only `fromAccount`, payee selection, and `amount` are needed — no additional details (reference, emails, etc.)
 
+## Existing Payee Autocomplete (ACT — Account Transfer)
+- The `existingPayee` locator targets the `p-auto-complete[@formcontrolname="payee"]` container — NOT the input
+- Must target the **inner input** for interaction: `pages.AccountTransferPage.existingPayee.locator('input')`
+- Using `.fill()` is too fast — autocomplete dropdown does not filter properly
+- **Working pattern:** Click inner input → clear → `typeTextThroughKeyBoardAction` (types char-by-char) → `waitForTimeout(2000)` → ArrowDown → Enter
+- Test data must match an **exact existing payee name** in the SIT environment autocomplete dropdown
+- `"ACT PAYEE"` confirmed working — maps to `ACT PAYEE - DBSSSGSGXXX - 32323233232` (DBS Bank)
+- `"SPI307-ACT-ExistingPayee"` does NOT exist in SIT — causes wrong payee selection (TT payee instead of ACT)
+- Wrong payee selection leads to payment type mismatch → form validation error ("Original remitter identity is required")
+
+## ApprovalNow M-Challenge Section (Expandable)
+- After clicking `approvalNowCheckBox`, the M-Challenge section may be **collapsed** behind the "Alternatively, use your digital token or security device for approval" link
+- The "Get Challenge via SMS" button (`getChallengeSMS`) is NOT always immediately visible
+- **Do NOT** use `waitForApproveNowPopUp()` — the ApproveNow section expands **inline** on the preview page, NOT as a dialog/popup
+- **Working pattern:** Check if `getChallengeSMS` is visible → if not, click the "Alternatively, use your digital token" text to expand → then wait for SMS button
+- The `pushApprovePopUp` locator (`mat-mdc-dialog-title`) targets a dialog that does NOT appear in the M-Challenge flow
+
+## ApprovalNow Payments — Delete Button Disabled
+- Payments submitted with ApprovalNow (M-Challenge) are auto-approved and reach Completed status immediately
+- The Delete button is **disabled** for Approved/Completed payments on the view page
+- Do NOT add a delete step for ApprovalNow test cases — or make it conditional:
+  ```typescript
+  const isDeleteEnabled = await deleteButton.isEnabled({ timeout: 5_000 }).catch(() => false);
+  if (isDeleteEnabled) { /* delete */ } else { /* skip */ }
+  ```
+
 ## Common Mistakes
 - Adding `waitForUXLoading` after every click — only where spinner actually appears
 - Duplicating `handleAuthIfPresent` on repeated `paymentMenu` navigation within same test
@@ -106,6 +132,8 @@
 | `isTransactionNoteLabel` | _(did not exist)_ | `label[for="isTransactionNote"]` | Angular hidden checkbox — click label instead |
 | `isTransactionNoteCheckbox` | `ShuRu[@formcontrolname="isTransactionNote"]` | `input#isTransactionNote` | For verify-and-retry checked state |
 | `validateEmail1`–`validateEmail5` | `emailList` (single aggregate) | `(//*[@id="act-view-emailList"]//span[1]/span/span/span)[N]` | Individual email locators for precise view page validation |
+| `approvalNowCheckBox` | `ShuRu[@name="approveNow"]` | `input[name="approveNow"]` | ShuRu replaced with native input (TC02 fix) |
+| `challengeResponse` | `ShuRu[@name="responseCode"]` | `input[name="responseCode"]` | ShuRu replaced with native input (TC02 fix) |
 
 - The **old locators** (`newPayeeAdd3`, `payeeBankRadio`, `newPayeeAcctNumber`, `isBeneAdvising`, `isTransactionNote`, `emailList`) still exist in the page class for backward compatibility but should NOT be used in new tests
 

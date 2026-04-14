@@ -1,31 +1,7 @@
 # Migration Prompt v03 — Ready-to-Use Examples
 
-> Copy-paste-ready prompts using the v03 unified two-stage template.
-> Update the variable values below, then copy the example.
-
----
-
-## Example Variables — Update These Before Use
-
-### Example 1 — Create Mode
-
-| Variable | Value |
-|----------|-------|
-| `{{TEST_CASE_ID}}` | `TC02_Create an ACT Payment with existing Payee` |
-| `{{SOURCE_FILE}}` | `SG_AccountTransfer.test.ts` |
-| `{{SOURCE_PATH}}` | `C:\Automation\dbs-test (2)\dbs-test\src\e2e\IDEALX\PayTransfer` |
-| `{{TARGET_SPEC_FILE}}` | `SG_AccountTransferTC002AgentGenerated.spec.ts` |
-
-### Example 2 — Append Mode
-
-| Variable | Value |
-|----------|-------|
-| `{{TEST_CASE_ID}}` | `TC02_Create an ACT Payment with existing Payee` |
-| `{{SOURCE_FILE}}` | `SG_AccountTransfer.test.ts` |
-| `{{SOURCE_PATH}}` | `C:\Automation\dbs-test (2)\dbs-test\src\e2e\IDEALX\PayTransfer` |
-| `{{TARGET_SPEC_FILE}}` | `SG_AccountTransferTC001AgentGenerated.spec.ts` |
-| `{{EXISTING_TC_SHORT}}` | `TC01` |
-| `{{NEW_TC_SHORT}}` | `TC02` |
+> These are copy-paste-ready prompts using the v03 unified two-stage template.
+> Replace the test case names, file names, and paths with your actual values.
 
 ---
 
@@ -38,9 +14,9 @@ Apply all rules, constraints, and standards defined in:
 - `tests/testContexts/context.md` (framework standards)
 - `tests/testContexts/learnings.md` (runtime learnings from prior executions)
 
-Migrate `{{TEST_CASE_ID}}` from Protractor source `{{SOURCE_FILE}}`
-(located at `{{SOURCE_PATH}}`)
-into Playwright spec file `{{TARGET_SPEC_FILE}}`.
+Migrate `TC02_Create an ACT Payment with existing Payee` from Protractor source `SG_AccountTransfer.test.ts`
+(located at `C:\Automation\dbs-test (2)\dbs-test\src\e2e\IDEALX\PayTransfer`)
+into Playwright spec file `SG_AccountTransferTC002AgentGenerated.spec.ts`.
 
 Mode: `create`
 Execution Mode: `parallel`
@@ -61,11 +37,11 @@ Apply all rules, constraints, and standards defined in the authoritative context
 Also refer to the application behavior observations in tests/testContexts/learnings.md
 for runtime learnings discovered during prior test executions.
 
-Convert Test Case `{{TEST_CASE_ID}}` from the Protractor
+Convert Test Case `TC02_Create an ACT Payment with existing Payee` from the Protractor
 source file into an equivalent Playwright test specification, preserving functional
 behavior, execution flow, and all existing validations.
 
-Extract ONLY the test case matching `{{TEST_CASE_ID}}`
+Extract ONLY the test case matching `TC02_Create an ACT Payment with existing Payee`
 from the source file. Do not convert other test cases in the same source file.
 
 ### 1.2 — Pre-Conversion Analysis
@@ -83,8 +59,8 @@ Before and during conversion:
 ### 1.3 — Source & Target
 
 **Source Test File:**
-- Location: `{{SOURCE_PATH}}`
-- File: `{{SOURCE_FILE}}`
+- Location: `C:\Automation\dbs-test (2)\dbs-test\src\e2e\IDEALX\PayTransfer`
+- File: `SG_AccountTransfer.test.ts`
 
 **Target Playwright Framework:**
 - Location: `dbs_test_playwright`
@@ -105,7 +81,7 @@ Before and during conversion:
 ### 1.5 — Deliverable
 
 Create a ready-to-execute Playwright test specification file named:
-`{{TARGET_SPEC_FILE}}`
+`SG_AccountTransferTC002AgentGenerated.spec.ts`
 
 ### 1.6 — Conversion Output Constraint
 
@@ -141,7 +117,7 @@ runtime behavior.
 
 **Execution command:**
 ```
-npx playwright test {{TARGET_SPEC_FILE}} --headed --reporter=list
+npx playwright test SG_AccountTransferTC002AgentGenerated.spec.ts --headed --reporter=list
 ```
 
 **During execution:**
@@ -234,36 +210,8 @@ Only after user approval, apply approved framework changes.
 
 ### 2.9 — Report
 
-Generate: `{{TEST_CASE_ID}}_Migration_ChatLog.html`
-with Sections A (Journey), B (Mismatches), C (Metrics), D (Timeline), E (Auto-Retry Stats), F (Final Output).
-
-**MANDATORY — Section D: Overall Migration Timeline (Prompt to Pass)**
-
-This section MUST be included in every report. It tracks the complete wall-clock time
-from when the migration prompt was first received until the final stable passing run.
-
-1. **Headline number:** Single prominent banner showing total migration time
-   (e.g., "Overall Migration Time: ~2.5 hours")
-2. **Phase-by-phase breakdown table:** Each phase with activity description and duration:
-   - Stage 1 — Conversion (prompt received → spec file created/appended)
-   - Each execution run (run start → failure → analysis → fix → next run)
-   - Final pass run
-   - Post-pass activities (learnings update, reporting, user interactions)
-3. **Cumulative test execution time table:** Each run with status, duration, and running total
-4. **Time efficiency analysis:** Percentage split across:
-   - Stage 1 Conversion
-   - Test Execution (cumulative)
-   - Analysis, Diagnosis & Fix Application
-   - Post-Pass & Reporting
-5. **Summary metric cards:** Visual cards for conversion time, execution time,
-   analysis time, and total migration time
-
-**Timestamp tracking (enforced from prompt start):**
-- The "Record the wall-clock timestamp when this prompt is first received" instruction
-  at the top of Stage 1 provides the start time
-- Each run's start/end is captured from test execution output
-- Final pass time is the end marker
-- Post-pass activities (learnings, report, cleanup) are tracked until completion
+Generate: `TC02_Create an ACT Payment with existing Payee_Migration_ChatLog.html`
+with Sections A (Journey), B (Mismatches), C (Metrics), D (Timeline), E (Auto-Retry Stats).
 
 ### 2.10 — Cleanup
 
@@ -274,7 +222,7 @@ Sanitize sensitive data, remove temporary artifacts, provide final confirmation.
 
 ## Example 2 — Append a Test Case into an Existing Migrated Spec File
 
-**Use when:** You already have a migrated spec file (e.g., with {{EXISTING_TC_SHORT}}) and want to
+**Use when:** You already have a migrated spec file (e.g., with TC01) and want to
 **add another test case below it** in the same file.
 
 ```
@@ -282,9 +230,9 @@ Apply all rules, constraints, and standards defined in:
 - `tests/testContexts/context.md` (framework standards)
 - `tests/testContexts/learnings.md` (runtime learnings from prior executions)
 
-Migrate `{{TEST_CASE_ID}}` from Protractor source `{{SOURCE_FILE}}`
-(located at `{{SOURCE_PATH}}`)
-into Playwright spec file `{{TARGET_SPEC_FILE}}`.
+Migrate `TC02_Create an ACT Payment with existing Payee` from Protractor source `SG_AccountTransfer.test.ts`
+(located at `C:\Automation\dbs-test (2)\dbs-test\src\e2e\IDEALX\PayTransfer`)
+into Playwright spec file `SG_AccountTransferTC001AgentGenerated.spec.ts`.
 
 Mode: `append`
 Execution Mode: `parallel`
@@ -305,11 +253,11 @@ Apply all rules, constraints, and standards defined in the authoritative context
 Also refer to the application behavior observations in tests/testContexts/learnings.md
 for runtime learnings discovered during prior test executions.
 
-Convert Test Case `{{TEST_CASE_ID}}` from the Protractor
+Convert Test Case `TC02_Create an ACT Payment with existing Payee` from the Protractor
 source file into an equivalent Playwright test specification, preserving functional
 behavior, execution flow, and all existing validations.
 
-Extract ONLY the test case matching `{{TEST_CASE_ID}}`
+Extract ONLY the test case matching `TC02_Create an ACT Payment with existing Payee`
 from the source file. Do not convert other test cases in the same source file.
 
 ### 1.2 — Pre-Conversion Analysis
@@ -327,12 +275,12 @@ Before and during conversion:
 ### 1.3 — Source & Target
 
 **Source Test File:**
-- Location: `{{SOURCE_PATH}}`
-- File: `{{SOURCE_FILE}}`
+- Location: `C:\Automation\dbs-test (2)\dbs-test\src\e2e\IDEALX\PayTransfer`
+- File: `SG_AccountTransfer.test.ts`
 
 **Target Playwright Framework:**
 - Location: `dbs_test_playwright`
-- **Target Spec File (existing):** `{{TARGET_SPEC_FILE}}`
+- **Target Spec File (existing):** `SG_AccountTransferTC001AgentGenerated.spec.ts`
 
 **Reference Files:**
 1. Rules: `tests/testContexts/context.md` — Framework governance and coding standards
@@ -349,8 +297,8 @@ Before and during conversion:
 
 ### 1.5 — Deliverable
 
-Append Test Case `{{TEST_CASE_ID}}` into the existing
-Playwright test specification file: `{{TARGET_SPEC_FILE}}`,
+Append Test Case `TC02_Create an ACT Payment with existing Payee` into the existing
+Playwright test specification file: `SG_AccountTransferTC001AgentGenerated.spec.ts`,
 reusing the existing structure and framework assets.
 
 ### 1.5a — Append Mode Rules
@@ -361,8 +309,8 @@ reusing the existing structure and framework assets.
    - Understand what credentials, page objects, and shared state are already set up
 
 2. **Place the new `test()` block inside the existing `test.describe` block:**
-   - Add the new `test('{{TEST_CASE_ID}}', async ({ page }) => { ... })`
-     block AFTER the last existing `test()` block ({{EXISTING_TC_SHORT}}) but BEFORE the closing `});`
+   - Add the new `test('TC02_Create an ACT Payment with existing Payee', async ({ page }) => { ... })`
+     block AFTER the last existing `test()` block (TC01) but BEFORE the closing `});`
      of `test.describe`
    - Do NOT create a second `test.describe` block
    - Do NOT duplicate imports, `beforeEach`, or `afterEach` blocks
@@ -374,22 +322,22 @@ reusing the existing structure and framework assets.
      at the top of the file alongside existing imports
 
 4. **Execution mode — `parallel`:**
-   - {{NEW_TC_SHORT}} is independent of {{EXISTING_TC_SHORT}}, so no serial configuration is needed
+   - TC02 is independent of TC01, so no serial configuration is needed
    - Tests can run in any order; no shared state between tests
 
 5. **Do NOT modify existing test blocks:**
-   - Do NOT rename, reorder, or alter the existing {{EXISTING_TC_SHORT}} `test()` block
+   - Do NOT rename, reorder, or alter the existing TC01 `test()` block
    - Do NOT change existing assertions, locators, or test data references
 
 ### 1.6 — Conversion Output Constraint
 
-- Output only the updated Playwright .spec.ts file with {{NEW_TC_SHORT}} appended
+- Output only the updated Playwright .spec.ts file with TC02 appended
 - Ensure full compliance with context.md rules and learnings.md observations
 - Ensure compliance with existing framework standards
 
 ### 1.7 — Stage 1 Gate
 
-Stage 1 is complete when {{NEW_TC_SHORT}} has been appended to the spec file and the file is
+Stage 1 is complete when TC02 has been appended to the spec file and the file is
 syntactically valid. Proceed automatically to Stage 2 without user confirmation.
 
 ---
@@ -414,10 +362,10 @@ Execute the newly appended test case and validate its end-to-end runtime behavio
 
 **Execution command (Run Scope = `new` — only the appended TC):**
 ```
-npx playwright test {{TARGET_SPEC_FILE}} -g "{{TEST_CASE_ID}}" --headed --reporter=list
+npx playwright test SG_AccountTransferTC001AgentGenerated.spec.ts -g "TC02_Create an ACT Payment with existing Payee" --headed --reporter=list
 ```
 
-> **Note:** Only {{NEW_TC_SHORT}} is executed. {{EXISTING_TC_SHORT}} is NOT re-executed since this is parallel mode
+> **Note:** Only TC02 is executed. TC01 is NOT re-executed since this is parallel mode
 > with Run Scope = `new`.
 
 **During execution:**
@@ -491,8 +439,8 @@ Do NOT modify ANY existing framework file without explicit user approval:
   context.md, or learnings.md
 
 **CRITICAL RULE — Existing Test Protection (Append Mode):**
-During the retry loop, fixes must ONLY affect the newly appended {{NEW_TC_SHORT}} test block.
-Do NOT modify the existing {{EXISTING_TC_SHORT}} test block under any circumstance.
+During the retry loop, fixes must ONLY affect the newly appended TC02 test block.
+Do NOT modify the existing TC01 test block under any circumstance.
 
 ### 2.5 — Capture (Record All Mismatches)
 
@@ -514,36 +462,8 @@ Only after user approval, apply approved framework changes.
 
 ### 2.9 — Report
 
-Generate: `{{TEST_CASE_ID}}_Migration_ChatLog.html`
-with Sections A (Journey), B (Mismatches), C (Metrics), D (Timeline), E (Auto-Retry Stats), F (Final Output).
-
-**MANDATORY — Section D: Overall Migration Timeline (Prompt to Pass)**
-
-This section MUST be included in every report. It tracks the complete wall-clock time
-from when the migration prompt was first received until the final stable passing run.
-
-1. **Headline number:** Single prominent banner showing total migration time
-   (e.g., "Overall Migration Time: ~2.5 hours")
-2. **Phase-by-phase breakdown table:** Each phase with activity description and duration:
-   - Stage 1 — Conversion (prompt received → spec file created/appended)
-   - Each execution run (run start → failure → analysis → fix → next run)
-   - Final pass run
-   - Post-pass activities (learnings update, reporting, user interactions)
-3. **Cumulative test execution time table:** Each run with status, duration, and running total
-4. **Time efficiency analysis:** Percentage split across:
-   - Stage 1 Conversion
-   - Test Execution (cumulative)
-   - Analysis, Diagnosis & Fix Application
-   - Post-Pass & Reporting
-5. **Summary metric cards:** Visual cards for conversion time, execution time,
-   analysis time, and total migration time
-
-**Timestamp tracking (enforced from prompt start):**
-- The "Record the wall-clock timestamp when this prompt is first received" instruction
-  at the top of Stage 1 provides the start time
-- Each run's start/end is captured from test execution output
-- Final pass time is the end marker
-- Post-pass activities (learnings, report, cleanup) are tracked until completion
+Generate: `TC02_Create an ACT Payment with existing Payee_Migration_ChatLog.html`
+with Sections A (Journey), B (Mismatches), C (Metrics), D (Timeline), E (Auto-Retry Stats).
 
 ### 2.10 — Cleanup
 
@@ -570,4 +490,4 @@ Sanitize sensitive data, remove temporary artifacts, provide final confirmation.
 | Imports | Full imports generated | Only adds missing imports |
 | Execution command | Runs the new file | Runs with `-g` flag to target only the new TC |
 | Existing TCs | Not applicable | Protected — never modified |
-| Resulting file | Contains only {{NEW_TC_SHORT}} | Contains {{EXISTING_TC_SHORT}} + {{NEW_TC_SHORT}} |
+| Resulting file | Contains only TC02 | Contains TC01 + TC02 |
