@@ -33,11 +33,11 @@ export class AccountTransferPage {
     this.paymentDetail = page.locator('xpath=//textarea[@name="paymentDetail"]');
 
     this.isBeneAdvising = page.locator('xpath=//ShuRu[@formcontrolname="isBeneAdvising"]');
-    this.emailId0 = page.locator('xpath=//ShuRu[@name="email-id-0"]');
-    this.emailId1 = page.locator('xpath=//ShuRu[@name="email-id-1"]');
-    this.emailId2 = page.locator('xpath=//ShuRu[@name="email-id-2"]');
-    this.emailId3 = page.locator('xpath=//ShuRu[@name="email-id-3"]');
-    this.emailId4 = page.locator('xpath=//ShuRu[@name="email-id-4"]');
+    this.emailId0 = page.locator('xpath=//input[@name="email-id-0"]');
+    this.emailId1 = page.locator('xpath=//input[@name="email-id-1"]');
+    this.emailId2 = page.locator('xpath=//input[@name="email-id-2"]');
+    this.emailId3 = page.locator('xpath=//input[@name="email-id-3"]');
+    this.emailId4 = page.locator('xpath=//input[@name="email-id-4"]');
 
     this.faxTab = page.locator('xpath=//ng-component/dbs-act-step-4/div/dbs-payee-advising/div/div/div[2]/div[2]/tabs-component/ul/li[2]');
     this.faxAreaCode0 = page.locator('xpath=//ShuRu[@name="fax-area-code-0"]');
@@ -175,7 +175,59 @@ export class AccountTransferPage {
 
     // Push approve popup
     this.pushApprovePopUp = page.locator('xpath=//*[@class="mat-mdc-dialog-title mdc-dialog__title"]');
+    
+    // ---------- New Locators Account Transfer  ----------
+
+    // ── In-memory locators for elements broken or missing in AccountTransferPage.ts ──
+    this.newPayeeNickNameInput    = page.locator('input[placeholder="To identify this payee easily"]');
+    // Postal code — UI renamed from "Address line 3"; use text navigation from label
+    this.postalCodeInput          = page.getByText('Postal code').locator('..').locator('..').getByRole('textbox');
+    // Account number — try CSS name first, fall back to text-based locator
+    this.newPayeeAcctNumberInput  = page.locator('input[name="new-payee-acct-number"]').or(page.locator('xpath=//div[contains(text(),"wallet account number")]/parent::div//input'));
+    // DBS Bank — now a radio button, not a ShuRu input
+    this.dbsBankRadio             = page.getByText('DBS Bank SINGAPORE', { exact: true }).first();
+
+    // Angular-wrapped checkboxes — interact via visible <label> with retry loop
+    // (learnings.md: .click()/.check()/.evaluate(el.click()) are unreliable for hidden inputs)
+    this.isBeneAdvisingLabel      = page.locator('label[for="isBeneAdvising"]');
+    this.isBeneAdvisingCheckbox   = page.locator('input#isBeneAdvising');
+    this.isTransactionNoteLabel   = page.locator('label[for="isTransactionNote"]');
+    this.isTransactionNoteCheckbox = page.locator('input#isTransactionNote');
+
+    // Email Validation 
+    this.validateEmail1 = page.locator('xpath=(//*[@id="act-view-emailList"]//span[1]/span/span/span)[1]');
+    this.validateEmail2 = page.locator('xpath=(//*[@id="act-view-emailList"]//span[1]/span/span/span)[2]');
+    this.validateEmail3 = page.locator('xpath=(//*[@id="act-view-emailList"]//span[1]/span/span/span)[3]');
+    this.validateEmail4 = page.locator('xpath=(//*[@id="act-view-emailList"]//span[1]/span/span/span)[4]');
+    this.validateEmail5 = page.locator('xpath=(//*[@id="act-view-emailList"]//span[1]/span/span/span)[5]');
+
+    // Delete confirmation popup
+    this.transactionDeletedPopupLabel = page.locator('xpath=//h2[text()="Transaction deleted"]');
+    this.transactionDeletedPopupLabelMsg = page.locator('xpath=//p[@id="dialogMessage"]/span');
+  
   }
+
+  // ---------- New Locators Account Transfer  ----------
+
+    readonly newPayeeNickNameInput: Locator;
+    readonly postalCodeInput: Locator;
+    readonly newPayeeAcctNumberInput: Locator;
+    readonly dbsBankRadio: Locator;
+
+    readonly isBeneAdvisingLabel: Locator;
+    readonly isBeneAdvisingCheckbox: Locator;
+    readonly isTransactionNoteLabel: Locator;
+    readonly isTransactionNoteCheckbox: Locator;
+
+    readonly validateEmail1: Locator;
+    readonly validateEmail2: Locator;
+    readonly validateEmail3: Locator;
+    readonly validateEmail4: Locator;
+    readonly validateEmail5: Locator;
+
+    readonly transactionDeletedPopupLabel: Locator;
+    readonly transactionDeletedPopupLabelMsg: Locator;
+
 
   // ---------- Locators ----------
   readonly paymentMenu: Locator;

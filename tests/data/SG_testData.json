@@ -152,8 +152,8 @@
     "exchangeRate": "1 USD = 1.4065 SGD"
   },
   "AccountTransfer": {
-    "loginCompanyId": "SPI307",
-    "loginUserId": "SPI307A16",
+    "loginCompanyId": "SG2BFE1",
+    "loginUserId": "DBSAUTOSGACCTRNSFR01",
     "verifyUserId": "SPI307A17",
     "loginUserNonDol": "SPI307A18",
     "fromAccount": "03030303",
@@ -188,7 +188,9 @@
     "rejectReason": "Reject ACT for AUTO TEST",
     "deductAmt": "SGD 16.32",
     "deductAmt1": "8.16",
-    "paymentType": "Singapore Account Transfer"
+    "paymentType": "Singapore Account Transfer",
+    "newlySubmittedPayment": "Create",
+    "transactionDeleted": "Transaction deleted"
   },
   "ManagePayroll": {
         "SIT": {
