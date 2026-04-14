@@ -163,6 +163,7 @@
     "paymentCurrencyFCY": "USD",
     "amountA1": "10",
     "amountA2": "1,100",
+    "amountPartialApprove" : "90000001",
     "amountV": "3,100",
     "editAmount": "20",
     "fxRef0": "FxReference0",
