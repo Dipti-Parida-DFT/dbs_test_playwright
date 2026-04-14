@@ -201,6 +201,42 @@ When a test execution fails, enter an autonomous analyze → fix → re-execute 
 3. **Re-Execute** — Run the test again immediately without asking the user
 4. **Repeat** — If the test fails again, go back to step 1
 
+**Proactive Audit — Locator & Test Data Verification:**
+
+Do NOT wait for multiple runtime failures to discover broken locators or bad test data.
+Apply these proactive checks before and after every execution to avoid wasting retries:
+
+**Before the first run (mandatory pre-flight check):**
+- Scan ALL locators used by this TC in the page class file(s)
+- Cross-reference each locator against known-broken patterns in learnings.md
+  (e.g., `ShuRu[@name=...]` locators are documented as broken → replace proactively)
+- If any locator matches a known-broken pattern, fix it BEFORE executing
+- Verify that all test data values used by autocomplete/dropdown fields exist in the
+  target environment (check learnings.md for confirmed working values)
+- Review all interaction patterns: container vs inner element, instant fill vs
+  char-by-char typing, popup vs inline expandable sections
+
+**After EVERY failure (mandatory DOM-based audit):**
+- Read the error-context.md (ARIA snapshot) from the failed run
+- Use the ARIA snapshot to verify ALL remaining locators and test data for upcoming
+  steps — not just the element that failed
+- Cross-reference ARIA element names, roles, states, and text against:
+  - The page class locators for this TC
+  - The test data values (especially autocomplete, dropdown, radio, checkbox fields)
+  - The interaction patterns (is it a dialog or inline? is the button visible or
+    collapsed behind an expandable section?)
+- Identify and fix ALL predictable failures visible in the DOM before re-executing
+- If the ARIA snapshot shows elements from upcoming steps, validate their locators
+  proactively rather than waiting for the test to reach them and fail
+
+**What to audit each time:**
+- All locators in the page class used by this TC (broken patterns, ShuRu, positional XPath)
+- All test data values used for autocomplete, dropdown, and radio/checkbox fields
+- All interaction patterns (container vs inner element, instant fill vs char-by-char typing)
+- All wait strategies (popup vs inline, dialog vs expandable section)
+- UI structure visible in the ARIA snapshot (collapsed sections, disabled buttons,
+  missing elements, changed labels)
+
 **Retry limits and safety:**
 - Maximum **15 consecutive failures** before halting the loop
 - If 15 failures are reached, STOP and present the full failure history to the user
@@ -476,6 +512,42 @@ When a test execution fails, enter an autonomous analyze → fix → re-execute 
    during the retry loop.
 3. **Re-Execute** — Run the test again immediately without asking the user
 4. **Repeat** — If the test fails again, go back to step 1
+
+**Proactive Audit — Locator & Test Data Verification:**
+
+Do NOT wait for multiple runtime failures to discover broken locators or bad test data.
+Apply these proactive checks before and after every execution to avoid wasting retries:
+
+**Before the first run (mandatory pre-flight check):**
+- Scan ALL locators used by this TC in the page class file(s)
+- Cross-reference each locator against known-broken patterns in learnings.md
+  (e.g., `ShuRu[@name=...]` locators are documented as broken → replace proactively)
+- If any locator matches a known-broken pattern, fix it BEFORE executing
+- Verify that all test data values used by autocomplete/dropdown fields exist in the
+  target environment (check learnings.md for confirmed working values)
+- Review all interaction patterns: container vs inner element, instant fill vs
+  char-by-char typing, popup vs inline expandable sections
+
+**After EVERY failure (mandatory DOM-based audit):**
+- Read the error-context.md (ARIA snapshot) from the failed run
+- Use the ARIA snapshot to verify ALL remaining locators and test data for upcoming
+  steps — not just the element that failed
+- Cross-reference ARIA element names, roles, states, and text against:
+  - The page class locators for this TC
+  - The test data values (especially autocomplete, dropdown, radio, checkbox fields)
+  - The interaction patterns (is it a dialog or inline? is the button visible or
+    collapsed behind an expandable section?)
+- Identify and fix ALL predictable failures visible in the DOM before re-executing
+- If the ARIA snapshot shows elements from upcoming steps, validate their locators
+  proactively rather than waiting for the test to reach them and fail
+
+**What to audit each time:**
+- All locators in the page class used by this TC (broken patterns, ShuRu, positional XPath)
+- All test data values used for autocomplete, dropdown, and radio/checkbox fields
+- All interaction patterns (container vs inner element, instant fill vs char-by-char typing)
+- All wait strategies (popup vs inline, dialog vs expandable section)
+- UI structure visible in the ARIA snapshot (collapsed sections, disabled buttons,
+  missing elements, changed labels)
 
 **Retry limits and safety:**
 - Maximum **15 consecutive failures** before halting the loop
