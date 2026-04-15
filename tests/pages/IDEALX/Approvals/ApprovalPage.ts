@@ -19,6 +19,7 @@ export class ApprovalPage {
     this.IDPayrollOption = page.locator('//span[contains(@class,"ui-autocomplete-list-item-label") and normalize-space()="ID - Payroll"]');
 
     // --- Approval actions ---
+    this.paymentTypeInput = page.locator('#approve-paymentType');
     this.approveButton = page.locator('//*[@name="approve"]');
     this.reviewApproveButton = page.locator('//*[@id="transactionApprove"]');
     this.pushApproveButton = page.locator('//button[@id="push-btn"]');
@@ -52,6 +53,7 @@ export class ApprovalPage {
 
   // ---------- Locators ----------
   readonly approvalMenu: Locator;
+  readonly paymentTypeInput: Locator;
 
   readonly referenceFilter: Locator;
   readonly transactionReferenceLink: Locator;
@@ -90,6 +92,18 @@ export class ApprovalPage {
   readonly groupNameLink: Locator;
 
   // ---------- Waits / Page Ready ----------
+
+  /** Select Payment Type for Approval Page */ 
+  async selectPaymentType(type: string) {
+    //await this.paymentTypeInput.click();
+    await this.paymentTypeInput.fill(type);
+  
+    const option = this.page
+      .locator('.ui-autocomplete-list-item-label', { hasText: type });
+  
+    //await option.waitFor({ state: 'visible' });
+    await option.first().click();
+  }
 
   /** Former: jiazhai() */
   async waitForApprovalPageReady(timeout = 30_000) {

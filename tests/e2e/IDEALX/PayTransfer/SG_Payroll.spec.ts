@@ -10,7 +10,7 @@
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
-import { NavigatePages, PaymentsPages } from '../../../pages/IDEALX/index';
+import {   PaymentsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
 import { CONSTANTS } from '../../../lib/constants';
 import { TIMEOUT } from '../../../lib/timeouts';
@@ -159,10 +159,10 @@ test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
     // Step 10: Click Submit button.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.submitButton);
     await webComponents.waitForUXLoading([], page);
-    await webComponents.waitElementToBeVisible(pages.PayrollPage.finishButton);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.finishedButton);
 
     // Step 11: Click Finish button
-    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.finishButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.finishedButton);
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.PayrollPage.payroll);
 
@@ -294,7 +294,7 @@ test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
     // Step 10: Click Submit button.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.submitButton);
     await webComponents.waitForUXLoading([], page);
-    await webComponents.waitElementToBeVisible(pages.PayrollPage.finishButton);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.finishedButton);
 
     // Step 11: Get Reference No.
     const referenceText = await pages.PayrollPage.getReferenceText();
@@ -304,7 +304,7 @@ test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
     console.log('Captured referenceID:', reference);
 
     // Step 12: Click Finish button
-    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.finishButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.finishedButton);
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.PayrollPage.payroll);
 
@@ -373,10 +373,10 @@ test.describe('SG_Payroll (Playwright using PaymentsPages)', () => {
     // Step 17: Click Submit button.
     await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.submitButton);
     await webComponents.waitForUXLoading([], page);
-    await webComponents.waitElementToBeVisible(pages.PayrollPage.finishButton);
+    await webComponents.waitElementToBeVisible(pages.PayrollPage.finishedButton);
 
     // Step 18: Click Finish button
-    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.finishButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.finishedButton);
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.PayrollPage.payroll);
 

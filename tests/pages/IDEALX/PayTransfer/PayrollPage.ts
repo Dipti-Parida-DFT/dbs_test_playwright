@@ -141,6 +141,7 @@ export class PayrollPage {
     this.payrollAlternate = page.locator('xpath=//*[@id="icon__payroll_payment_alternate"]');
     this.vnPayrollIcon = page.locator('xpath=//*[@class="menu-item__icon icon icon__payroll_payment"]');
     this.continueBtn = page.locator('xpath=//*[@id="cognitive-continue"]');
+    this.secondDot = page.locator('//ul[contains(@class,"pages__container")]/li[2]');
 
     // Core fields
     this.fromAccount = page.locator('xpath=//p-auto-complete[@formcontrolname="fromAccount"]');
@@ -193,7 +194,7 @@ export class PayrollPage {
     this.acceptAndApproveButton = page.locator('xpath=//button[@class="btn btn__primary ng-star-inserted"]');
     this.approveSubmitButton = page.locator('xpath=//*[@name="approve"]'); // same as approveButton
     this.toolbarApproveButton = page.locator('xpath=//ng-component/div/div/div/div/div[1]/button[4]');
-    this.finishButton = page.locator('xpath=//button[@name="finish"]');
+    this.finishedButton = page.locator('xpath=//button[@name="finish"]');
     this.copyButton = page.locator('xpath=//button[@name="copy"]');
 
     this.approveNowCheckbox = page.locator('xpath=//*[@id="approveNow"]');
@@ -393,7 +394,7 @@ export class PayrollPage {
     //this.showOptionalDetails = page.locator('xpath=//span[@id="show-optional-details-0"]');
 
     // Links / schedules / search
-    this.idPayrollScheduleLink = page.locator('xpath=//a[contains(@href,"/csr/common/schedule/bom") and text()="Indonesia Payroll"]');
+    this.IDPayrollScheduleLink = page.locator('xpath=//a[contains(@href,"/csr/common/schedule/bom") and text()="Indonesia Payroll"]');
     this.searchButton = page.locator('xpath=//*[@name="search"]');
     this.pendingModifyApprovalLink = page.locator('xpath=//a[contains(@href,"/csr/common/schedule/bom/procSchdApprove") and text()="Pending Modify Approval"]');
 
@@ -410,6 +411,7 @@ export class PayrollPage {
   readonly payrollAlternate: Locator;
   readonly vnPayrollIcon: Locator;
   readonly continueBtn: Locator;
+  readonly secondDot: Locator;
 
   readonly fromAccount: Locator;
   readonly bankChargesYou: Locator;
@@ -460,7 +462,7 @@ export class PayrollPage {
   readonly acceptAndApproveButton: Locator;
   readonly approveSubmitButton: Locator;
   readonly toolbarApproveButton: Locator;
-  readonly finishButton: Locator;
+  readonly finishedButton: Locator;
   readonly copyButton: Locator;
   readonly approveNowCheckbox: Locator;
   readonly pushApprovalOption: Locator;
@@ -640,7 +642,7 @@ export class PayrollPage {
 
 
   // Links / search / export
-  readonly idPayrollScheduleLink: Locator;
+  readonly IDPayrollScheduleLink: Locator;
   readonly searchButton: Locator;
   readonly pendingModifyApprovalLink: Locator;
   readonly exportCsvButton: Locator;
@@ -1204,6 +1206,7 @@ export class PayrollPage {
     return match?.[1] ?? '';
   }
 
+
   /** Wait until the Payroll form controls (e.g., fromAccount) are ready */
   async waitForPayrollFormReady(timeout = 20_000) {
     await this.waitForUXLoading();
@@ -1221,7 +1224,7 @@ export class PayrollPage {
   /** Wait until submitted page is ready (finish/done visible) */
   async waitForSubmittedPageReady(timeout = 20_000) {
     await this.waitForUXLoading();
-    await expect(this.finishButton).toBeVisible({ timeout });
+    await expect(this.finishedButton).toBeVisible({ timeout });
   }
 
   /** Wait until Pay & Transfer page is ready (Payroll visible) */

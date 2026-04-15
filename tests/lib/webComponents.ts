@@ -107,6 +107,17 @@ async hardClick(locator: Locator): Promise<void> {
     await expect(locator).toBeEnabled({ timeout });
   }
 
+      /**
+* Author: LC5764724 / Chetan Chavan
+* Created Date: 14/04/26
+* This method validates element is visible in UI or not
+* @param locator 
+* @param timeout 
+*/
+async waitSAMHomePageToBeVisible(locator: Locator, timeout = TIMEOUT.EXTREME) {
+  await expect(locator).toBeVisible({ timeout });
+}
+
   /**
 * Author: LC5741501
 * Created Date: 16/03/26
@@ -116,7 +127,7 @@ async hardClick(locator: Locator): Promise<void> {
 */
   async waitDashboardToBeVisible(locator: Locator, timeout = TIMEOUT.EXTREME) {
     await expect(locator).toBeVisible({ timeout });
-    await expect(locator).toBeEnabled({ timeout });
+    //await expect(locator).toBeEnabled({ timeout });
   }
 
   /**

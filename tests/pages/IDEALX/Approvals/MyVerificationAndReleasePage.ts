@@ -16,14 +16,14 @@ export class MyVerificationAndReleasePage {
     this.transactionReferenceLink = page.locator('//button[@id="transaction-reference_0"]');
     this.transactionListResult = page.locator('//*[@id="transactionListResult"]');
     this.transactionMoreResults = page.locator('//*[@id="labelMoreResults"]');
-
+    this.paymentTypeInput = page.locator('#approve-paymentType');
+    this.showAdditionalFilter = page.locator('//*[@id="transactionAdditionalFilter"]');
+    this.searchButton = page.locator('xpath=//*[@name="search"]');
     this.verifyTxnButton = page.locator('//*[@id="transactionVerify"]');
     this.releaseTxnButton = page.locator('//*[@id="transactionRelease"]');
-    this.viewVerifyReleaseButton = page.locator('xpath=//button[@name="view-verify-release"]');
-    this.previewVerifyReleaseButton = page.locator('//button[@name="txn-preview-verify-release"]');
-    this.verifyReleaseConfirmButton = page.locator('xpath=//button[@name="verify-release"]');
-    this.byTransactionFilter = page.locator('//input[@id="byTXN-filter"]');
-
+    this.verifyReleaseButton = page.locator('//button[@name="verify-release"]');
+    this.viewReleaseBtn = page.locator('//*[@name="view-verify-release"]');
+    this.hashValueLabel = page.locator('xpath=//*[@id="bulk-view-hashValue"]');
     /* =======================
      * By File
      * ======================= */
@@ -62,11 +62,13 @@ export class MyVerificationAndReleasePage {
   readonly transactionMoreResults: Locator;
   readonly verifyTxnButton: Locator;
   readonly releaseTxnButton: Locator;
-  readonly previewVerifyReleaseButton: Locator;
-  readonly byTransactionFilter: Locator;
-  readonly viewVerifyReleaseButton: Locator;
-  readonly verifyReleaseConfirmButton: Locator;
+  readonly verifyReleaseButton: Locator;
+  readonly viewReleaseBtn: Locator;
+  readonly hashValueLabel: Locator;
 
+  readonly paymentTypeInput: Locator;
+  readonly showAdditionalFilter: Locator;
+  readonly searchButton: Locator;
   readonly byFileTab: Locator;
   readonly fileNameLink: Locator;
   readonly fileFilterInput: Locator;
@@ -88,6 +90,18 @@ export class MyVerificationAndReleasePage {
    * Page readiness (Former jiazhai*)
    * ======================= */
 
+  async selectPaymentType(type: string) {
+    await this.showAdditionalFilter.click();
+    await this.paymentTypeInput.fill(type);
+    const paymentTypeOption = (text: string) =>
+    this.page.locator('.ui-autocomplete-list-item-label', { hasText: text });
+    const option = paymentTypeOption(type);
+    await option.first().waitFor({ state: 'visible' });
+    await option.first().click();
+    await this.searchButton.click();
+    await this.waitForUXLoading();
+  }
+  
   async waitForTransactionListReady(timeout = 30_000) {
     await this.waitForUXLoading();
     await expect(this.transactionReferenceLink).toBeVisible({ timeout });
@@ -102,7 +116,13 @@ export class MyVerificationAndReleasePage {
   async waitForReleaseByTransactionReady(timeout = 30_000) {
     await this.waitForUXLoading();
     await expect(this.releaseTxnButton).toBeVisible({ timeout });
-    //await expect(this.transactionReferenceLink).toBeVisible({ timeout });
+   // await expect(this.transactionReferenceLink).toBeVisible({ timeout });
+  }
+
+  async waitForReleasePageReady(timeout = 30_000) {
+    await this.waitForUXLoading();
+    await expect(this.viewReleaseBtn).toBeVisible({ timeout });
+    await expect(this.hashValueLabel).toBeVisible({ timeout });
   }
 
   async waitForVerifyByFileReady(timeout = 30_000) {
@@ -158,7 +178,7 @@ export class MyVerificationAndReleasePage {
       (await this.transactionReferenceLink.textContent())?.trim() ?? '';
 
     await this.safeClick(this.verifyTxnButton);
-    await this.safeClick(this.previewVerifyReleaseButton);
+    await this.safeClick(this.verifyReleaseButton);
 
     if (await this.hasSuccessMessage()) {
       await this.safeClick(this.finishButton);
@@ -178,24 +198,21 @@ export class MyVerificationAndReleasePage {
     await this.waitForReleaseByTransactionReady();
 
     if (verifyReference && approvalReference) {
-      await this.safeFill(this.byTransactionFilter, approvalReference);
+      await this.safeFill(this.transactionFilter, approvalReference);
     } else {
-      await this.openByPaymentType(paymentType);
+      await this.selectPaymentType(paymentType);
     }
 
+    await expect(this.transactionReferenceLink).toBeVisible({ timeout: 20000 }); 
     releaseReference =
       (await this.transactionReferenceLink.textContent())?.trim() ?? '';
 
-    await this.safeClick(this.transactionReferenceLink);
-    await this.safeClick(this.viewVerifyReleaseButton);
-    await this.safeClick(this.verifyReleaseConfirmButton);
+    await this.transactionReferenceLink.click();
+    await this.waitForReleasePageReady();
+    await this.safeClick(this.viewReleaseBtn);
+    await this.safeClick(this.verifyReleaseButton);
     await this.safeClick(this.dismissButton);
-
-    if (await this.hasSuccessMessage()) {
-      await this.safeClick(this.finishButton);
-      return releaseReference;
-    }
-    return '';
+    return releaseReference;
   }
 
   /* =======================
