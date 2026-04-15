@@ -54,6 +54,11 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
     {
+      name: 'e2e-newUI',
+      testDir: './tests/e2e/IDEALX/PayTransfer/NewUI',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
       name: 'api',
       testDir: './tests/api'
     },

@@ -130,7 +130,7 @@ export type PartiourTTPayeeResult = {
 };
 
 
-export class TelegraphicTransferPage {
+export class NewUITelegraphicTransferPage {
   constructor(private readonly page: Page) {
     this.authenticate = page.locator('//button[@type="button" and @class="btn btn__primary"]');
     this.makePayment = page.locator('//mat-icon[@id="icon__make_payment"]');
@@ -287,7 +287,12 @@ export class TelegraphicTransferPage {
     this.newUIIntermediaryBankId = page.locator('//input[@class="input-full"]'); 
     this.newUISearchIntermediaryBankId = page.locator('#ux-bank-search-0');
     this.acknowledgeBtn = page.locator('//button[text()="I acknowledge"]');
-    
+    this.referceBankPayment = page.locator('#md-input-0-input');
+    this.addEmailTextBox = page.locator('//*[@placeholder="Add emails"]');
+    this.searchPurposeCodeTextBox = page.locator('//input[@placeholder="Purpose code number or description"]');
+    this.selectPurposeCodeOption = page.locator("//div[@id='select-item-Goods trade']");
+    this.purposeCodeDropdown = page.locator('//input[@name="gstPurposeCode"]');
+
     }
 
     readonly authenticate: Locator;
@@ -444,6 +449,11 @@ export class TelegraphicTransferPage {
     readonly newUIIntermediaryBankId: Locator;
     readonly newUISearchIntermediaryBankId: Locator;
     readonly acknowledgeBtn: Locator;
+    readonly referceBankPayment: Locator;
+    readonly addEmailTextBox: Locator;
+    readonly searchPurposeCodeTextBox: Locator;
+    readonly selectPurposeCodeOption: Locator;
+    readonly purposeCodeDropdown: Locator;
 
   
   private async selectBankCharge(charge: BankChargeType) {

@@ -9,6 +9,7 @@ import { TelegraphicTransferPage } from './TelegraphicTransferPage';
 import { ApprovalPage } from './ApprovalPage';
 import { BulkCollectionPage } from './BulkCollectionPage';
 import { PaymentTemplatesPage } from './PaymentTemplatesPage';
+import { NewUITelegraphicTransferPage } from './NewUI/NewUITelegraphicTransferPage';
 
 export {
   AccountTransferPage,
@@ -19,6 +20,7 @@ export {
   ApprovalPage,
   BulkCollectionPage,
   PaymentTemplatesPage,
+  NewUITelegraphicTransferPage,
 };
 
 export class PaymentsPages {
@@ -30,6 +32,7 @@ export class PaymentsPages {
   public ApprovalPage: ApprovalPage;
   public BulkCollectionPage: BulkCollectionPage;
   public PaymentTemplatesPage: PaymentTemplatesPage;
+  public NewUITelegraphicTransferPage: NewUITelegraphicTransferPage;
   
   constructor(private readonly page: Page) {
     this.AccountTransferPage = new AccountTransferPage(page);
@@ -40,5 +43,6 @@ export class PaymentsPages {
     this.ApprovalPage = new ApprovalPage(page);
     this.BulkCollectionPage = new BulkCollectionPage(page);
     this.PaymentTemplatesPage = new PaymentTemplatesPage(page);
+    this.NewUITelegraphicTransferPage = new NewUITelegraphicTransferPage(page);
   }
 }

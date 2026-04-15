@@ -64,6 +64,11 @@
         "Cancelled": "Cancelled"
     },
   "TelegraphicTransfer": {
+    "newUI" :{
+      "loginCompanyId": "SG2BE11",
+      "loginUserId": "SG2BE11S01",
+      "existingAccountNumber": "1234567"
+    },
     "loginCompanyId": "SG2BFE1",
     "loginUserId": "DBSAUTOSG01",
     "loginUserIdAlt": "DBSAUTOSG02",

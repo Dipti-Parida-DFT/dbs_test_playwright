@@ -136,7 +136,13 @@
         "purposeCodeLabelValue": "",
         "transactionCodeLabelValue": "22 - Salary Credit"
     },
-  "TelegraphicTransfer": {
+    "TelegraphicTransfer": {
+        "newUI": {  
+            "loginCompanyId": "HK105",
+            "loginUserId": "DBSAUTOHK01",
+            "existingPayee": "12312321323",
+            "fromAccountNP": "CASA10005"
+        },
     "loginCompanyId": "HK105",
     "loginUserId": "DBSAUTOHK01",
 
