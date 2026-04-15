@@ -53,8 +53,8 @@ export class AccountTransferPage {
     this.approvalNowCheckBox = page.locator('input[name="approveNow"]');
     this.getChallengeSMS = page.locator('xpath=//button[@name="get-challenge"]');
     this.challengeResponse = page.locator('input[name="responseCode"]');
-    this.savaAsTemplateCheckBox = page.locator('xpath=//ShuRu[@name="saveAsTemplate"]');
-    this.templateName = page.locator('xpath=//ShuRu[@name="templateName"]');
+    this.savaAsTemplateCheckBox = page.locator('input[name="saveAsTemplate"]');
+    this.templateName = page.locator('input[name="templateName"]');
     this.submitButton = page.locator('xpath=//button[@name="submit"]');
     this.finishedButton = page.locator('xpath=//button[@name="finish"]');
     this.dismissButton = page.locator('xpath=//button[@name="dismiss"]');
@@ -158,7 +158,7 @@ export class AccountTransferPage {
     // Edit / Copy / Template
     this.editButton = page.locator('xpath=//*[@id="act-view-edit"]');
     this.copyButton = page.locator('xpath=//*[@name="copy"]');
-    this.templateNameValue = page.locator('xpath=//*[@id="act-viewTemp-templateName"]');
+    this.templateNameValue = page.getByText('Template name:').locator('xpath=following-sibling::*[1]');
     this.editTemplate = page.locator('xpath=//*[@id="act-viewTemp-edit"]');
     this.actTmpStatusValue = page.locator('xpath=//*[@id="act-viewTemp-status"]');
 

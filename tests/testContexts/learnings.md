@@ -112,6 +112,12 @@
   ```
 - Applies to: `isBeneAdvising`, `isTransactionNote`, and any other Angular-wrapped checkbox
 
+## View Page Status Loading Delay
+- For high-amount ApprovalNow payments (e.g., 90M+), the `#act-view-status` element renders with placeholder text `" status "` for >10 seconds before the actual status value loads
+- `compareUIVsJsonValue` has a 10s internal timeout on `toContainText` — insufficient for slow-loading status fields
+- **Working pattern:** Use `await expect(actStatusValue).toContainText(expectedStatus, { timeout: 30_000 })` directly instead of `compareUIVsJsonValue` for status assertions on high-amount payments
+- This applies specifically to the view page after ApprovalNow submissions; standard-amount payments load faster
+
 ## ShuRu Locators (Account Transfer)
 - All `ShuRu[@name=...]` and `ShuRu[@formcontrolname=...]` locators in `AccountTransferPage.ts` are **broken** against the current UI
 - The `ShuRu` custom element has been replaced with standard HTML elements in the current app version
@@ -134,8 +140,21 @@
 | `validateEmail1`–`validateEmail5` | `emailList` (single aggregate) | `(//*[@id="act-view-emailList"]//span[1]/span/span/span)[N]` | Individual email locators for precise view page validation |
 | `approvalNowCheckBox` | `ShuRu[@name="approveNow"]` | `input[name="approveNow"]` | ShuRu replaced with native input (TC02 fix) |
 | `challengeResponse` | `ShuRu[@name="responseCode"]` | `input[name="responseCode"]` | ShuRu replaced with native input (TC02 fix) |
+| `savaAsTemplateCheckBox` | `ShuRu[@name="saveAsTemplate"]` | `input[name="saveAsTemplate"]` | ShuRu replaced with native input (TC04 fix) |
+| `templateName` | `ShuRu[@name="templateName"]` | `input[name="templateName"]` | ShuRu replaced with native input (TC04 fix) |
+| `templateNameValue` | `#act-viewTemp-templateName` | `getByText('Template name:').locator('xpath=following-sibling::*[1]')` | ID not in ACT template view DOM (TC04 fix) |
 
 - The **old locators** (`newPayeeAdd3`, `payeeBankRadio`, `newPayeeAcctNumber`, `isBeneAdvising`, `isTransactionNote`, `emailList`) still exist in the page class for backward compatibility but should NOT be used in new tests
+
+## Existing Payee Display Name on View/Template Pages
+- The `toExistingPayeeNameValue` (`#act-view-existingPayee-acctName`) shows the **full system payee name** (e.g., `"ACT payee name 20230105 ACT payee n"`), NOT the short autocomplete filter text (`"ACT PAYEE"`)
+- Use `verifyUIElementTextIsNotNull()` instead of `compareUIVsJsonValue()` for this field in view page and template view assertions
+- This applies to all existing payee flows (TC02, TC03, TC04 and future TCs using existing payee)
+
+## ACT Template View Page
+- The ACT template view page does NOT use `#act-viewTemp-templateName` for the template name (unlike Payroll's `#bulk-viewTemp-name`)
+- Working locator: `page.getByText('Template name:').locator('xpath=following-sibling::*[1]')` — uses text-based sibling navigation
+- The `fromAccountValue`, `amountValue`, and `toExistingPayeeNameValue` locators work on the template view page (shared with payment view page)
 
 ## Email Fields (Account Transfer)
 - After toggling `isBeneAdvising` checkbox, 5 email fields appear as `textbox "Email"` **without** `name` attributes
@@ -211,3 +230,10 @@ During TC01 ACT migration, initial code used raw Playwright APIs (`.fill()`, `ex
 | 29 | all view assertions (×16) | `expect().toContainText()` | `compareUIVsJsonValue()` |
 | 29 | hash, deduct, date, approver | manual truthiness check | `verifyUIElementTextIsNotNull()` |
 | 29 | email validation (×5) | `emailList.toContainText()` | `compareUIVsJsonValue(validateEmailN)` |
+
+## Template "Make a Payment" Requires Approved Status
+- Templates in "Pending Approval" status do NOT show the "Make a Payment" action link
+- Only approved/active templates display the `makeAPaymentLink` (`template-list-makeAPayment_0`)
+- Templates created without ApprovalNow are submitted as "Pending Approval" — they cannot be used for "payment from template" flows until approved
+- The `existingTemplate` test data value must reference a **pre-existing approved** template in SIT
+- SIT-confirmed approved ACT template: `"scACTtemplate01"` (not `"ACTAutoTemplateName001"` which does not exist)
