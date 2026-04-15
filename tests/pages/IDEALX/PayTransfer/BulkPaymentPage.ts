@@ -36,7 +36,6 @@ export class BulkPaymentPage {
     this.bankCharge = page.locator('xpath=//dbs-radio-group[@formcontrolname="bankCharge"]');
     this.amount = page.locator('xpath=//input[@name="payeeAmount"]');
     this.amountPayee1 = page.locator('(//input[@name="payeeAmount"])[1]');
-    this.secondDot = page.locator('//ul[contains(@class,"pages__container")]/li[2]');
 
     //Addded Locator fo Bulk Payment  Author: LC5741501   * Created Date: 11/03/26
     this.payeeResidentStatus = page.locator('xpath=//span[text()="Payee Resident Status"]/parent::div/following-sibling::div//span[@id="fromAccount"]');
@@ -45,7 +44,6 @@ export class BulkPaymentPage {
     this.payeeCategoryOptionEnterprise = page.locator('xpath=//span[text()="Enterprise"]');
     this.earliestAvailableDateCheckbox = page.locator('xpath=//span[text()="Earliest Available Date "]');
 
-    this.continueButton = page.locator('//*[@id="cognitive-continue"]');
     this.payeeRef = page.locator('xpath=//input[@name="payeeRef"]');
     this.payeeParticulars = page.locator('xpath=//input[@name="payeeParticulars"]');
     this.paymentDetailsTextarea = page.locator('xpath=//textarea[@name="payeeDetails"]');
@@ -297,10 +295,8 @@ export class BulkPaymentPage {
   readonly debitTypeSelect: Locator;
   readonly consolidatedDebit: Locator;
   readonly fromAccount: Locator;
-  readonly continueButton: Locator;
   readonly billerServiceID: Locator;
   readonly bankCharge: Locator;
-  readonly secondDot: Locator;
   readonly amount: Locator;
   readonly amountPayee1: Locator;
   readonly payeeResidentStatus: Locator;

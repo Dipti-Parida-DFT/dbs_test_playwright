@@ -1,4 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
+import { WebComponents } from '../../../lib/webComponents';
+import { TIMEOUT } from '../../../lib/timeouts';
 
 export class MyVerificationAndReleasePage {
   constructor(private readonly page: Page) {
@@ -102,57 +104,56 @@ export class MyVerificationAndReleasePage {
     await this.waitForUXLoading();
   }
   
-  async waitForTransactionListReady(timeout = 30_000) {
+  async waitForTransactionListReady() {
     await this.waitForUXLoading();
-    await expect(this.transactionReferenceLink).toBeVisible({ timeout });
+    await expect(this.transactionReferenceLink).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
-  async waitForVerifyByTransactionReady(timeout = 30_000) {
+  async waitForVerifyByTransactionReady() {
     await this.waitForUXLoading();
-    await expect(this.verifyTxnButton).toBeVisible({ timeout });
-    await expect(this.transactionReferenceLink).toBeVisible({ timeout });
+    await expect(this.verifyTxnButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
+    await expect(this.transactionReferenceLink).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
-  async waitForReleaseByTransactionReady(timeout = 30_000) {
+  async waitForReleaseByTransactionReady() {
     await this.waitForUXLoading();
-    await expect(this.releaseTxnButton).toBeVisible({ timeout });
-   // await expect(this.transactionReferenceLink).toBeVisible({ timeout });
+    await expect(this.releaseTxnButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
-  async waitForReleasePageReady(timeout = 30_000) {
+  async waitForReleasePageReady() {
     await this.waitForUXLoading();
-    await expect(this.viewReleaseBtn).toBeVisible({ timeout });
-    await expect(this.hashValueLabel).toBeVisible({ timeout });
+    await expect(this.viewReleaseBtn).toBeVisible({ timeout: TIMEOUT.MEDIUM });
+    await expect(this.hashValueLabel).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
-  async waitForVerifyByFileReady(timeout = 30_000) {
+  async waitForVerifyByFileReady() {
     await this.waitForUXLoading();
-    await expect(this.verifyFileButton).toBeVisible({ timeout });
+    await expect(this.verifyFileButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
-  async waitForReleaseByFileReady(timeout = 30_000) {
+  async waitForReleaseByFileReady() {
     await this.waitForUXLoading();
-    await expect(this.releaseFileButton).toBeVisible({ timeout });
+    await expect(this.releaseFileButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
-  async waitForByGroupReady(timeout = 30_000) {
+  async waitForByGroupReady() {
     await this.waitForUXLoading();
-    await expect(this.groupNameLink).toBeVisible({ timeout });
+    await expect(this.groupNameLink).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
-  async waitForPreviewGroupReady(timeout = 30_000) {
+  async waitForPreviewGroupReady() {
     await this.waitForUXLoading();
-    await expect(this.previewGroupButton).toBeVisible({ timeout });
+    await expect(this.previewGroupButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
-  async waitForDismissReady(timeout = 30_000) {
+  async waitForDismissReady() {
     await this.waitForUXLoading();
-    await expect(this.dismissButton).toBeVisible({ timeout });
+    await expect(this.dismissButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
-  async waitForCompletedPageReady(timeout = 30_000) {
+  async waitForCompletedPageReady() {
     await this.waitForUXLoading();
-    await expect(this.finishButton).toBeVisible({ timeout });
+    await expect(this.finishButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /* =======================
@@ -171,7 +172,7 @@ export class MyVerificationAndReleasePage {
     if (reference.trim()) {
       await this.safeFill(this.transactionFilter, reference);
     } else {
-      await this.openByPaymentType(paymentType);
+      await this.selectPaymentType(paymentType);
     }
 
     verifyReference =
@@ -179,12 +180,8 @@ export class MyVerificationAndReleasePage {
 
     await this.safeClick(this.verifyTxnButton);
     await this.safeClick(this.verifyReleaseButton);
-
-    if (await this.hasSuccessMessage()) {
-      await this.safeClick(this.finishButton);
-      return verifyReference;
-    }
-    return '';
+    await this.safeClick(this.dismissButton);
+    return verifyReference;
   }
 
   async releaseSingleTransaction(
@@ -203,7 +200,7 @@ export class MyVerificationAndReleasePage {
       await this.selectPaymentType(paymentType);
     }
 
-    await expect(this.transactionReferenceLink).toBeVisible({ timeout: 20000 }); 
+    await expect(this.transactionReferenceLink).toBeVisible({ timeout: TIMEOUT.MEDIUM }); 
     releaseReference =
       (await this.transactionReferenceLink.textContent())?.trim() ?? '';
 
@@ -219,33 +216,17 @@ export class MyVerificationAndReleasePage {
    * Utilities
    * ======================= */
 
-  private async openByPaymentType(paymentType: string) {
-    await this.page.locator('//*[@id="transactionAdditionalFilter"]').click();
-    await this.page
-      .locator("//p-auto-complete[@formcontrolname='paymentTypeRec']")
-      .fill(paymentType);
-    await this.page.keyboard.press('Enter');
-    await this.waitForTransactionListReady();
-  }
-
-  private async hasSuccessMessage(): Promise<boolean> {
-    const success = this.page.locator(
-      '.alert-success, .ant-message-success, .toast-success'
-    );
-    return success.isVisible({ timeout: 10_000 }).catch(() => false);
-  }
-
   /* =======================
    * Common helpers (same as ApprovalPage)
    * ======================= */
 
-  async safeClick(locator: Locator, timeout = 60_000) {
+  async safeClick(locator: Locator,  timeout: number = TIMEOUT.LONG) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
     await locator.click();
   }
 
-  async safeFill(locator: Locator, value: string, timeout = 30_000) {
+  async safeFill(locator: Locator, value: string, timeout: number = TIMEOUT.MEDIUM) {
     await expect(locator).toBeVisible({ timeout });
     await locator.fill(value);
   }
@@ -261,8 +242,8 @@ export class MyVerificationAndReleasePage {
 
     for (const selector of spinners) {
       const spinner = this.page.locator(selector).first();
-      if (await spinner.isVisible({ timeout: 1000 }).catch(() => false)) {
-        await spinner.waitFor({ state: 'hidden', timeout: 180_000 });
+      if (await spinner.isVisible({ timeout: TIMEOUT.MIN }).catch(() => false)) {
+        await spinner.waitFor({ state: 'hidden', timeout: TIMEOUT.MAX });
       }
     }
     await this.page.waitForLoadState('networkidle');
