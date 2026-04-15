@@ -134,7 +134,6 @@ export type NewPayeeResult = {
 export class PayrollPage {
   constructor(private readonly page: Page) {
     // --- Create Page / Entry points ---
-    //this.payroll = page.locator('xpath=//*[@id="icon__payroll_payment"]');
     this.payroll = page.locator('xpath=//*[@id="icon__payroll_payment"]/parent::span');
     this.managePayroll = page.locator('xpath=//*[@id="icon__mgmt_payroll"]');
     this.managePayrollAlternate = page.locator('xpath=//*[@id="icon__mgmt_payroll_alternate"]');
@@ -198,7 +197,6 @@ export class PayrollPage {
     this.copyButton = page.locator('xpath=//button[@name="copy"]');
 
     this.approveNowCheckbox = page.locator('xpath=//*[@id="approveNow"]');
-    //this.approveNowCheckbox = page.locator('xpath=//label[@for="approveNow"]/div/p]');
     this.pushApprovalOption = page.locator('xpath=//*[@class="push-option-label"]');
     this.getChallengeTextButton = page.locator('xpath=//button[@name="get-challenge"]');
     this.getChallengeSMSButton = page.locator('xpath=//button[@name="get-challenge"]');
@@ -229,7 +227,6 @@ export class PayrollPage {
     this.payeeBankId = page.locator('xpath=//*[@id="bulk-newPayee-bankId"]');
     this.findBankIDButton = page.locator('xpath=//*[@id="new-payee-bank-id-button"]');
     this.payeeBankSearchResults = page.locator('xpath=//table[@class="swift-results ng-star-inserted"]');
-    //this.payeeBankSearchResults = page.locator('xpath=//table[@class="swift-results ng-star-inserted"]/tr/td/label//input');
     this.enterBankDetailsManuallyButton = page.locator('xpath=//div[starts-with(@class, "manual clearfix")]');
     this.bsbCode = page.locator('xpath=//ShuRu[@name="bp-swift-select-bsbCode"]');
     this.payeeCategorySG = page.locator('xpath=//input[@id="payeeCategory"]');
@@ -277,7 +274,6 @@ export class PayrollPage {
     this.balanceLabel = page.locator('xpath=//*[@id="bulk-view-acctBalance"]');
     this.paymentTypeLabel = page.locator('xpath=//*[@id="bulk-view-paymentType"]');
     this.paymentType = page.locator('xpath=//*[@id="bulk-view-paymentType"]');
-    //this.paymentDate = page.locator('xpath=//*[@id="bulk-view-paymentDate"]//label');
     this.paymentDate = page.locator('xpath=//*[@id="bulk-view-paymentDate"]');
 
     this.paymentTypeDetailLabel = page.locator('xpath=//dbs-bp-view-summary-section/div[5]/span[2]/span[2]');
@@ -335,8 +331,6 @@ export class PayrollPage {
     this.referenceForPayeeLabel2 = page.locator('xpath=//dbs-view-transfer-list[2]//*[@id="reference-for-payee"]');
     this.particularsLabel1 = page.locator('xpath=//dbs-view-transfer-list[1]/div/div[1]/div[2]/div[4]/div[2]/strong');
     this.particularsLabel2 = page.locator('xpath=//dbs-view-transfer-list[2]/div/div[1]/div[2]/div[4]/div[2]/strong');
-    //this.showOptionalViewButton1 = page.locator('xpath=//*[@id="bulk-viewTemp-optDetail_0"]');
-    //this.showOptionalViewButton1 = page.locator('xpath=(//span[text()="Show optional details"])[2]');
     this.showOptionalViewButton1 = page.locator('xpath=(//span[text()="Show optional details"])[2]');
 
     this.showOptionalViewButton2 = page.locator('xpath=//*[@id="bulk-viewTemp-optDetail_1"]');
@@ -391,10 +385,8 @@ export class PayrollPage {
     this.viewPaginationButton = page.locator('xpath=//*[@id="pagination-1"]');
     this.viewRejectedCountLabel = page.locator('xpath=//span[@id="radio-label-0"]');
     this.viewBulkTotalItemLabel = page.locator('xpath=//span[@id="view-bulk-totalItem"]');
-    //this.showOptionalDetails = page.locator('xpath=//span[@id="show-optional-details-0"]');
 
     // Links / schedules / search
-    this.IDPayrollScheduleLink = page.locator('xpath=//a[contains(@href,"/csr/common/schedule/bom") and text()="Indonesia Payroll"]');
     this.searchButton = page.locator('xpath=//*[@name="search"]');
     this.pendingModifyApprovalLink = page.locator('xpath=//a[contains(@href,"/csr/common/schedule/bom/procSchdApprove") and text()="Pending Modify Approval"]');
 
@@ -642,7 +634,6 @@ export class PayrollPage {
 
 
   // Links / search / export
-  readonly IDPayrollScheduleLink: Locator;
   readonly searchButton: Locator;
   readonly pendingModifyApprovalLink: Locator;
   readonly exportCsvButton: Locator;
