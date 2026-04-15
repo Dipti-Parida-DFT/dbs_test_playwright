@@ -334,7 +334,7 @@ test.describe.serial('ID_Payroll (Approve and Release Payment)', () => {
      */
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await loginPage.login(loginCompanyId, loginUserId, '123');
+    await loginPage.login(loginCompanyId, loginUserId, (String(CONSTANTS.PIN)));
   
     /**
      * Step 4: Open My Approval
@@ -384,13 +384,13 @@ test.describe.serial('ID_Payroll (Approve and Release Payment)', () => {
   });
 
   test('TC005_IDPayroll - Release payroll payment via My Release', async ({ page }) => {
-    test.setTimeout(180000);
+    test.setTimeout(TIMEOUT.MAX);
     /**
      * Step 1: Login to IDEALX
      */
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await loginPage.login(loginCompanyId, loginUserId, '123'); 
+    await loginPage.login(loginCompanyId, loginUserId, (String(CONSTANTS.PIN))); 
   
     /**
      * Step 2: Open My Approval Page
