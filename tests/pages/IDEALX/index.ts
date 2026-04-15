@@ -1,14 +1,9 @@
-/*
- * Module index for Playwright Page Objects
- */
-
-
-import { NavigatePages } from './Navigate/index';
-import { PaymentsPages } from './PayTransfer/index';
+import { PaymentsPages } from './PayTransfer';
 import { ApprovalsPages } from './Approvals';
+import { NavigatePages } from '../Navigate';
 
 export {
-  NavigatePages,
   PaymentsPages,
-  ApprovalsPages
+  ApprovalsPages,
+  NavigatePages
 };

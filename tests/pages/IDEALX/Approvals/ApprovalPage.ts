@@ -1,4 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
+import { WebComponents } from '../../../lib/webComponents';
+import { TIMEOUT } from '../../../lib/timeouts';
 
 export class ApprovalPage {
   constructor(private readonly page: Page) {
@@ -19,6 +21,7 @@ export class ApprovalPage {
     this.IDPayrollOption = page.locator('//span[contains(@class,"ui-autocomplete-list-item-label") and normalize-space()="ID - Payroll"]');
 
     // --- Approval actions ---
+    this.paymentTypeInput = page.locator('#approve-paymentType');
     this.approveButton = page.locator('//*[@name="approve"]');
     this.reviewApproveButton = page.locator('//*[@id="transactionApprove"]');
     this.pushApproveButton = page.locator('//button[@id="push-btn"]');
@@ -52,6 +55,7 @@ export class ApprovalPage {
 
   // ---------- Locators ----------
   readonly approvalMenu: Locator;
+  readonly paymentTypeInput: Locator;
 
   readonly referenceFilter: Locator;
   readonly transactionReferenceLink: Locator;
@@ -91,41 +95,53 @@ export class ApprovalPage {
 
   // ---------- Waits / Page Ready ----------
 
+  /** Select Payment Type for Approval Page */ 
+  async selectPaymentType(type: string) {
+    //await this.paymentTypeInput.click();
+    await this.paymentTypeInput.fill(type);
+  
+    const option = this.page
+      .locator('.ui-autocomplete-list-item-label', { hasText: type });
+  
+    //await option.waitFor({ state: 'visible' });
+    await option.first().click();
+  }
+
   /** Former: jiazhai() */
-  async waitForApprovalPageReady(timeout = 30_000) {
+  async waitForApprovalPageReady() {
     await this.waitForUXLoading();
-    await expect(this.showAdditionalFilter).toBeVisible({ timeout });
+    await expect(this.showAdditionalFilter).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForReview() */
-  async waitForReviewPageReady(timeout = 30_000) {
+  async waitForReviewPageReady() {
     await this.waitForUXLoading();
-    await expect(this.reviewApproveButton).toBeVisible({ timeout });
+    await expect(this.reviewApproveButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForByFile() */
-  async waitForByFileListReady(timeout = 20_000) {
+  async waitForByFileListReady() {
     await this.waitForUXLoading();
-    await expect(this.byFileFileNameLink).toBeVisible({ timeout });
+    await expect(this.byFileFileNameLink).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForByGroup() */
-  async waitForGroupApprovalReady(timeout = 20_000) {
+  async waitForGroupApprovalReady() {
     await this.waitForUXLoading();
-    await expect(this.groupApproveButton).toBeVisible({ timeout });
-    await expect(this.groupNameLink).toBeVisible({ timeout });
+    await expect(this.groupApproveButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
+    await expect(this.groupNameLink).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForCompletedPage() */
-  async waitForCompletedPageReady(timeout = 20_000) {
+  async waitForCompletedPageReady() {
     await this.waitForUXLoading();
-    await expect(this.finishButton).toBeVisible({ timeout });
+    await expect(this.finishButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   /** Former: jiazhaiForSuccessPage() */
-  async waitForSuccessPageReady(timeout = 20_000) {
+  async waitForSuccessPageReady() {
     await this.waitForUXLoading();
-    await expect(this.doneButton).toBeVisible({ timeout });
+    await expect(this.doneButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   // ---------- Business Methods ----------
@@ -174,13 +190,13 @@ export class ApprovalPage {
 
   // ---------- Common Helpers (Aligned with Other Pages) ----------
 
-  async safeClick(locator: Locator, timeout = 60_000) {
+  async safeClick(locator: Locator, timeout: number = TIMEOUT.LONG) {
     await expect(locator).toBeVisible({ timeout });
     await expect(locator).toBeEnabled({ timeout });
     await locator.click();
   }
 
-  async safeFill(locator: Locator, value: string, timeout = 35_000) {
+  async safeFill(locator: Locator, value: string, timeout: number = TIMEOUT.LONG) {
     await expect(locator).toBeVisible({ timeout });
     await locator.fill(value);
   }
@@ -196,8 +212,8 @@ export class ApprovalPage {
 
     for (const selector of spinners) {
       const spinner = this.page.locator(selector).first();
-      if (await spinner.isVisible({ timeout: 1000 }).catch(() => false)) {
-        await spinner.waitFor({ state: 'hidden', timeout: 180_000 });
+      if (await spinner.isVisible({ timeout: TIMEOUT.MIN }).catch(() => false)) {
+        await spinner.waitFor({ state: 'hidden', timeout: TIMEOUT.MAX });
       }
     }
 

@@ -15,6 +15,16 @@ export class LoginPage {
   readonly dashboard: Locator;
   readonly authenticate: Locator;
 
+  //SAM Locators
+  readonly samUserIDInput: Locator;
+  readonly samPwdInput: Locator;
+  readonly samSecurityAccessCodeInput: Locator;
+  readonly samLoginButton: Locator;
+  readonly IdealxLogoutButton: Locator;
+  readonly SAMLogoutButton: Locator;
+  readonly IdealxDashboardLink: Locator;
+  readonly SAMPostLoginIndicator: Locator;
+  
   constructor(page: Page) {
     this.page = page;
     this.orgIdInput = page.locator('input[name="orgId"], input[placeholder*="Organisation" i]');
@@ -23,36 +33,23 @@ export class LoginPage {
     this.loginButton = page.locator('button:has-text("Login"), button[type="submit"]');
     this.dashboard = page.locator('xpath=//span[normalize-space(text())="Dashboard"]');
 
-    // Use a unique selector for the Pay & Transfer nav item
     this.postLoginIndicator = page.locator('#nav-item-navBBTopPaymentsLinkText');
+    this.IdealxDashboardLink = page.locator('//span[contains(@class,"nav-item__main-title") and normalize-space()="Dashboard"]');
+    this.IdealxLogoutButton = page.locator('//div[@id="logout"]');
+    //SAM Locators
+    this.samUserIDInput = page.locator('xpath=//*[@id="UID"]');
+    this.samPwdInput = page.locator('xpath=//*[@id="password"]');
+    this.samSecurityAccessCodeInput = page.locator('xpath=//*[@id="sac"]');
+    this.samLoginButton = page.locator('xpath=//*[@name="submit_csrLogin"]');
+    this.SAMLogoutButton = page.locator('xpath=//a[@title="Logout and Exit this system"]');
+    this.SAMPostLoginIndicator = page.locator('xpath=//a[text()="HOME" and @href="/samweb/csr/home"]');
+    this.SAMPostLoginIndicator = page.locator('xpath=//td[@class="headline" and normalize-space()="Application Manager"]');
     this.authenticate = page.locator('//button[@type="button" and @class="btn btn__primary"]');
   }
 
   async goto() {
-    // 1) Normalize env to uppercase safely
-    const env = (CONSTANTS.ENV ?? '').toUpperCase();
-
-    // 2) Pick the right URL based on env
-    let url: string;
-    switch (env) {
-      case 'SIT':
-        url = CONSTANTS.SITURL;
-        break;
-
-      case 'UAT':
-        url = CONSTANTS.UATURL;
-        break;
-
-      case 'PROD':
-        url = CONSTANTS.PRODURL;
-        break;
-
-      default:
-        throw new Error(`Unsupported ENV value: "${env}". Expected SIT | UAT | PROD.`);
-    }
-
-    // 3) Navigate with sensible waits/timeouts
-    await this.page.goto(url, { waitUntil: 'domcontentloaded', timeout: TIMEOUT.LONG });
+  await this.page.goto(
+    'https://i3bku3uatqeweb01.qe.dragonflyft.com:1443/iws/ssologin');
   }
 
   async login(orgId?: string, userId?: string, pin?: string) {
@@ -64,12 +61,11 @@ export class LoginPage {
       pin: pin ?? defaultCreds.pin
     };
 
-    await webComponents.enterText(this.orgIdInput, creds.orgId);
-    await webComponents.enterText(this.userIdInput, creds.userId);
-    await webComponents.enterText(this.pinInput, creds.pin);
-    await this.loginButton.click();
-    await webComponents.waitDashboardToBeVisible(this.dashboard); // Wait for Pay & Transfer is visible till (20_0000)
-    //await this.page.waitForTimeout(TIMEOUT.MAX); // Wait for potential redirects
+  await webComponents.enterText(this.orgIdInput, creds.orgId);
+  await webComponents.enterText(this.userIdInput, creds.userId);
+  await webComponents.enterText(this.pinInput, creds.pin);
+  await this.loginButton.click();
+  await webComponents.waitDashboardToBeVisible(this.dashboard);
   }
 
   async loginWithDefaultCredentials() {
