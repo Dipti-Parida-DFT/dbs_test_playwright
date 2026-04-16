@@ -237,3 +237,17 @@ During TC01 ACT migration, initial code used raw Playwright APIs (`.fill()`, `ex
 - Templates created without ApprovalNow are submitted as "Pending Approval" — they cannot be used for "payment from template" flows until approved
 - The `existingTemplate` test data value must reference a **pre-existing approved** template in SIT
 - SIT-confirmed approved ACT template: `"scACTtemplate01"` (not `"ACTAutoTemplateName001"` which does not exist)
+
+## ACT Save-as-Draft — Dialog Reference Pattern
+- Save-as-draft shows a **dialog popup** (not a submitted confirmation page like Next → Submit flow)
+- Capture the reference via `transactionDeletedPopupLabelMsg` (`//p[@id="dialogMessage"]/span`) + `webComponents.getReferenceID()` — NOT body text extraction
+- Click `dismissButton` after capturing the reference, followed by `waitForUXLoading`
+- This matches the SG_ManagePayroll save-as-draft pattern (`transferSavedPopupLabel` → `transactionDeletedPopupLabelMsg` → `getReferenceID`)
+- `AccountTransferPage` does not extend the base `Page` class, so `getDialogReferenceId()` is NOT available — use the `getTextFromElement` + `getReferenceID` pattern instead
+
+## ACT Save-as-Draft — Status Assertion
+- Draft payments show status `"Saved"` on the view page (`testData.status.Saved`)
+- The `#act-view-status` element has the **same loading delay** as ApprovalNow payments — it renders `" status "` placeholder for >10s before the actual value loads
+- `compareUIVsJsonValue` has a 10s internal timeout which is **insufficient** — use `await expect(actStatusValue).toContainText(expectedStatus, { timeout: 30_000 })` directly
+- This loading delay applies to **all** ACT view page status assertions, not just ApprovalNow high-amount payments
+- The `saveAsDraft` button locator (`button[@name="save-as-draft"]`) is standard HTML — no ShuRu issues

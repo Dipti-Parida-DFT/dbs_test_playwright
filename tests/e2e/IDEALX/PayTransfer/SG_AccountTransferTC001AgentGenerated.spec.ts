@@ -8,6 +8,7 @@
  * 3) TC03_Create an ACT Payment with ApprovalNow without Mchanllenge
  * 4) TC04_Create an ACT Payment with Save as Template
  * 5) TC05_Create an ACT Payment from Template
+ * 6) TC06_Create an ACT with Save as Draft
  */
 
 import { test, expect } from '@playwright/test';
@@ -911,6 +912,132 @@ test.describe('SG_AccountTransfer_TC001 (Playwright)', () => {
     await webComponents.verifyUIElementTextIsNotNull(pages.AccountTransferPage.toExistingPayeeNameValue);
 
     console.log(`TC05 – Payment from template '${testData.AccountTransfer.existingTemplate}' created: ${reference}`);
+
+  });
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TC06 — Create an ACT with Save as Draft
+  // ═══════════════════════════════════════════════════════════════════════════
+  test('TC06_Create an ACT with Save as Draft', async ({ page }) => {
+
+    // ── Step 1: Navigate Payment & Transfer Menu ─────────────────────────────
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.AccountTransferPage.paymentMenu);
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+
+    // ── Step 2: Handle Authentication dialog if present ──────────────────────
+    await webComponents.handleAuthIfPresent(
+      pages.AccountTransferPage.authDialog,
+      pages.AccountTransferPage.securityAccessCode,
+      pages.AccountTransferPage.authenticateButton,
+    );
+
+    // ── Step 3: Wait for Transfer Center and click Make Payment ──────────────
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.makePayment);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 4: Wait for ACT form; select From Account via autocomplete ──────
+    await pages.AccountTransferPage.waitForAccountFormReady();
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.fromAccount);
+    await webComponents.typeTextThroughKeyBoardAction(page, fromAccount);
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'ArrowDown');
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'Enter');
+
+    // ── Step 5: Enter payment amount ─────────────────────────────────────────
+    await webComponents.enterTextarea(pages.AccountTransferPage.amount, testData.AccountTransfer.amountA1);
+
+    // ── Step 6: Select Existing Payee via autocomplete ───────────────────────
+    // (learnings.md: target inner input of p-auto-complete, type char-by-char, ArrowDown+Enter)
+    await webComponents.isElementVisible(page, pages.AccountTransferPage.existingPayee, { timeout: TIMEOUT.LONG });
+    await pages.AccountTransferPage.existingPayee.locator('input').click();
+    await pages.AccountTransferPage.existingPayee.locator('input').fill('');
+    await webComponents.typeTextThroughKeyBoardAction(page, testData.AccountTransfer.existingPayee);
+    await page.waitForTimeout(2000);
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'ArrowDown');
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'Enter');
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 7: Enter payment detail ─────────────────────────────────────────
+    await webComponents.enterTextarea(pages.AccountTransferPage.paymentDetail, testData.AccountTransfer.paymentDetail);
+
+    // ── Step 8: Toggle Bene Advising checkbox ────────────────────────────────
+    // (learnings.md: Angular hidden checkbox — click visible label; verify + retry up to 3×)
+    for (let attempt = 0; attempt < 3; attempt++) {
+      await pages.AccountTransferPage.isBeneAdvisingLabel.click();
+      await page.waitForTimeout(500);
+      const isChecked = await pages.AccountTransferPage.isBeneAdvisingCheckbox
+        .evaluate(el => (el as HTMLInputElement).checked)
+        .catch(() => false);
+      if (isChecked) break;
+    }
+
+    // ── Step 9: Fill email addresses (5 emails per Protractor source) ────────
+    await webComponents.enterTextarea(pages.AccountTransferPage.emailId0, testData.AccountTransfer.emailIdO);
+    await webComponents.enterTextarea(pages.AccountTransferPage.emailId1, testData.AccountTransfer.emailId1);
+    await webComponents.enterTextarea(pages.AccountTransferPage.emailId2, testData.AccountTransfer.emailId2);
+    await webComponents.enterTextarea(pages.AccountTransferPage.emailId3, testData.AccountTransfer.emailId3);
+    await webComponents.enterTextarea(pages.AccountTransferPage.emailId4, testData.AccountTransfer.emailId4);
+
+    // ── Step 10: Enter message to beneficiary ────────────────────────────────
+    await webComponents.enterTextarea(pages.AccountTransferPage.message, testData.AccountTransfer.message);
+
+    // ── Step 11: Toggle Transaction Note checkbox ────────────────────────────
+    for (let attempt = 0; attempt < 3; attempt++) {
+      await pages.AccountTransferPage.isTransactionNoteLabel.click();
+      await page.waitForTimeout(500);
+      const isChecked = await pages.AccountTransferPage.isTransactionNoteCheckbox
+        .evaluate(el => (el as HTMLInputElement).checked)
+        .catch(() => false);
+      if (isChecked) break;
+    }
+
+    // ── Step 12: Enter transaction note ──────────────────────────────────────
+    await webComponents.enterTextarea(pages.AccountTransferPage.transactionNote, testData.AccountTransfer.transactionNote);
+
+    // ── Step 13: Click Save as Draft ─────────────────────────────────────────
+    // (Key difference from TC01–TC04: uses saveAsDraft instead of Next → Submit)
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.saveAsDraft);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 14: Capture reference ID from dialog ────────────────────────────
+    // (Save-as-draft shows a dialog with reference — use SG_ManagePayroll pattern)
+    await webComponents.waitElementToBeVisible(pages.AccountTransferPage.transactionDeletedPopupLabelMsg);
+    const referenceText = await webComponents.getTextFromElement(pages.AccountTransferPage.transactionDeletedPopupLabelMsg);
+    const reference = await webComponents.getReferenceID(referenceText);
+    console.log('TC06 – referenceID:', reference);
+
+    // ── Step 15: Dismiss the dialog ──────────────────────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.dismissButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 16: Navigate back to Transfer Center via Payment menu ───────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 17: Search for the saved draft and open view page ───────────────
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    if (reference.trim().length > 0) {
+      await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    } else {
+      await pages.TransferCentersPage.openViewPaymentViaSearch(
+        'SG - Account Transfer',
+        testData.status.Saved,
+      );
+    }
+
+    // ── Step 18: Wait for the view payment page to be fully loaded ───────────
+    await pages.AccountTransferPage.waitForViewPage();
+
+    // ── Step 19: Validate view page fields ───────────────────────────────────
+    await webComponents.compareUIVsJsonValue(pages.AccountTransferPage.fromAccountValue, fromAccount);
+    await webComponents.compareUIVsJsonValue(pages.AccountTransferPage.amountValue, testData.AccountTransfer.amountA1);
+    // Payee display name is full system name, not the short filter text (learnings.md)
+    await webComponents.verifyUIElementTextIsNotNull(pages.AccountTransferPage.toExistingPayeeNameValue);
+    // Status "Saved" — use explicit timeout (view page status loads slowly, same as ApprovalNow pattern)
+    await expect(pages.AccountTransferPage.actStatusValue).toContainText(testData.status.Saved, { timeout: 30_000 });
+
+    console.log(`TC06 – Draft payment saved: ${reference}`);
 
   });
 });

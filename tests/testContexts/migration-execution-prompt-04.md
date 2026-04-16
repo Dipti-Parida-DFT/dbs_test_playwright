@@ -19,6 +19,8 @@
 | `{{SOURCE_FILE}}` | `SG_AccountTransfer.test.ts` |
 | `{{SOURCE_PATH}}` | `C:\Automation\dbs-test (2)\dbs-test\src\e2e\IDEALX\PayTransfer` |
 | `{{TARGET_SPEC_FILE}}` | `SG_AccountTransferTC002AgentGenerated.spec.ts` |
+| `{{EXECUTION_MODE}}` | `parallel` |
+| `{{RUN_SCOPE}}` | `new` |
 
 ### Example 2 — Append Mode
 
@@ -30,6 +32,13 @@
 | `{{TARGET_SPEC_FILE}}` | `SG_AccountTransferTC001AgentGenerated.spec.ts` |
 | `{{EXISTING_TC_SHORT}}` | `TC01` |
 | `{{NEW_TC_SHORT}}` | `TC02` |
+| `{{EXECUTION_MODE}}` | `parallel` |
+| `{{RUN_SCOPE}}` | `new` |
+
+
+### Note:
+Perform test script conversion in **Stage 1**.  
+In **Stage 2**, execute the test in **headless mode** and continuously generate execution reports until all issues mentioned in the prompt are fixed.
 
 ---
 
