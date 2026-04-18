@@ -32,7 +32,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    //baseURL: 'https://10.8.59.68:7443',
+    baseURL: 'https://i3bku3uatqeweb01.qe.dragonflyft.com:1443',
     /* Allow insecure HTTPS for self-signed certs */
     headless: !!process.env.CI,
     ignoreHTTPSErrors: true,
