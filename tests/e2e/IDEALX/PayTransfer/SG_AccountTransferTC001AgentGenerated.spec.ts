@@ -9,6 +9,9 @@
  * 4) TC04_Create an ACT Payment with Save as Template
  * 5) TC05_Create an ACT Payment from Template
  * 6) TC06_Create an ACT with Save as Draft
+ * 7) TC07_Copy an ACT via Transfer Center
+ * 8) TC08_Edit an ACT Payment via Transfer Center
+ * 9) TC09_TC10_Reject and delete an ACT Payment via Transfer Center
  */
 
 import { test, expect } from '@playwright/test';
@@ -1038,6 +1041,422 @@ test.describe('SG_AccountTransfer_TC001 (Playwright)', () => {
     await expect(pages.AccountTransferPage.actStatusValue).toContainText(testData.status.Saved, { timeout: 30_000 });
 
     console.log(`TC06 – Draft payment saved: ${reference}`);
+
+  });
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // TC07 — Copy an ACT via Transfer Center
+  // ════════════════════════════════════════════════════════════════════════════
+  test('TC07_Copy an ACT via Transfer Center', async ({ page }) => {
+
+    // ── Step 1: Navigate to the Payment & Transfer menu ──────────────────────
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.AccountTransferPage.paymentMenu);
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+
+    // ── Step 2: Handle Authentication dialog if present ──────────────────────
+    await webComponents.handleAuthIfPresent(
+      pages.AccountTransferPage.authDialog,
+      pages.AccountTransferPage.securityAccessCode,
+      pages.AccountTransferPage.authenticateButton,
+    );
+
+    // ── Step 3: Wait for Transfer Center and search for an existing ACT payment ──
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    await pages.TransferCentersPage.openViewPaymentViaSearch(
+      'SG - Account Transfer',
+      testData.status.PendingApproval,
+    );
+
+    // ── Step 4: Wait for the view payment page to load ───────────────────────
+    await pages.AccountTransferPage.waitForViewPage();
+
+    // ── Step 5: Click Copy button ────────────────────────────────────────────
+    await webComponents.javaScriptsClick(pages.AccountTransferPage.copyButton);
+
+    // ── Step 6: Wait for ACT form to load with copied data ───────────────────
+    await webComponents.waitForUXLoading([], page);
+    await pages.AccountTransferPage.waitForAccountFormReady();
+
+    // ── Step 7: Clear amount and enter new amount ────────────────────────────
+    // amountV is "3,100" (formatted) — strip comma for raw numeric input; field auto-formats
+    const rawAmount = testData.AccountTransfer.amountV.replace(/,/g, '');
+    await webComponents.enterTextarea(pages.AccountTransferPage.amount, rawAmount);
+    await page.waitForTimeout(2000);
+
+    // ── Step 8: Click Next to go to preview page ─────────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.nextButton);
+    await webComponents.waitForUXLoading([], page);
+    await pages.AccountTransferPage.waitForPreviewPage();
+
+    // ── Step 9: Click Submit ─────────────────────────────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.submitButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 10: Wait for submission confirmation page ────────────────────────
+    await pages.AccountTransferPage.waitForSubmittedPage();
+
+    // ── Step 11: Capture transaction reference ID ────────────────────────────
+    let reference = '';
+    try {
+      const bodyText = await page.locator('body').textContent({ timeout: TIMEOUT.MEDIUM });
+      reference = await webComponents.getReferenceID(bodyText ?? '');
+      console.log('TC07 – referenceID:', reference);
+    } catch (err) {
+      // Could not capture reference — proceed with fallback search
+    }
+
+    // ── Step 12: Navigate back to Transfer Center via Payment menu ────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 13: Search for the copied payment and open view page ─────────────
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    if (reference.trim().length > 0) {
+      await pages.TransferCentersPage.searchAndOpenByReference(reference);
+    } else {
+      await pages.TransferCentersPage.openViewPaymentViaSearch(
+        'SG - Account Transfer',
+        testData.status.PendingVerification,
+      );
+    }
+
+    // ── Step 14: Wait for the view payment page to be fully loaded ────────────
+    await pages.AccountTransferPage.waitForViewPage();
+
+    // ── Step 15: Validate view page fields ───────────────────────────────────
+    await webComponents.verifyUIElementTextIsNotNull(pages.AccountTransferPage.fromAccountValue);
+    await webComponents.compareUIVsJsonValue(pages.AccountTransferPage.amountValue, testData.AccountTransfer.amountV);
+    // Status — use explicit 30s timeout (learnings.md: status loads slowly on ACT view page)
+    await expect(pages.AccountTransferPage.actStatusValue).toContainText(testData.status.PendingVerification, { timeout: 30_000 });
+
+    console.log(`TC07 – Copied payment reference: ${reference}`);
+
+  });
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // TC08 — Edit an ACT Payment via Transfer Center
+  // ════════════════════════════════════════════════════════════════════════════
+  test('TC08_Edit an ACT Payment via Transfer Center', async ({ page }) => {
+
+    // ── PHASE 1: CREATE an ACT Payment (self-contained — no dependency on prior TCs) ──
+
+    // ── Step 1: Navigate to the Payment & Transfer menu ──────────────────────
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.AccountTransferPage.paymentMenu);
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+
+    // ── Step 2: Handle Authentication dialog if present ──────────────────────
+    await webComponents.handleAuthIfPresent(
+      pages.AccountTransferPage.authDialog,
+      pages.AccountTransferPage.securityAccessCode,
+      pages.AccountTransferPage.authenticateButton,
+    );
+
+    // ── Step 3: Wait for Transfer Center and click Make Payment ────────────
+    await pages.AccountTransferPage.waitForTransferCenterReady();
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.makePayment);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 4: Wait for ACT form to be ready ────────────────────────────────
+    await pages.AccountTransferPage.waitForAccountFormReady();
+
+    // ── Step 5: Select "From Account" ────────────────────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.fromAccount);
+    await webComponents.typeTextThroughKeyBoardAction(page, fromAccount);
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'ArrowDown');
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'Enter');
+
+    // ── Step 5: Select existing payee ────────────────────────────────────────
+    await webComponents.isElementVisible(page, pages.AccountTransferPage.existingPayee, { timeout: TIMEOUT.LONG });
+    await pages.AccountTransferPage.existingPayee.locator('input').click();
+    await pages.AccountTransferPage.existingPayee.locator('input').fill('');
+    await webComponents.typeTextThroughKeyBoardAction(page, testData.AccountTransfer.existingPayee);
+    await page.waitForTimeout(2000);
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'ArrowDown');
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'Enter');
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 6: Enter amount ─────────────────────────────────────────────────
+    const rawAmount = testData.AccountTransfer.amountV.replace(/,/g, '');
+    await webComponents.enterTextarea(pages.AccountTransferPage.amount, rawAmount);
+
+    // ── Step 7: Click Next ───────────────────────────────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.nextButton);
+    await webComponents.waitForUXLoading([], page);
+    await pages.AccountTransferPage.waitForPreviewPage();
+
+    // ── Step 8: Click Submit ─────────────────────────────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.submitButton);
+    await webComponents.waitForUXLoading([], page);
+    await pages.AccountTransferPage.waitForSubmittedPage();
+
+    // ── Step 9: Capture the transaction reference ID ─────────────────────────
+    let createdReference = '';
+    const bodyText = await page.locator('body').textContent({ timeout: TIMEOUT.MEDIUM });
+    createdReference = await webComponents.getReferenceID(bodyText ?? '');
+    console.log('TC08 – Created ACT reference:', createdReference);
+
+    // ── Step 10: Navigate back to Transfer Center via Payment menu ────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── PHASE 2: SEARCH and EDIT the created ACT Payment ─────────────────────
+
+    // ── Step 11: Search for the created payment in Transfer Center ────────────
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    if (createdReference.trim().length > 0) {
+      await pages.TransferCentersPage.searchAndOpenByReference(createdReference);
+    } else {
+      await pages.TransferCentersPage.openViewPaymentViaSearch(
+        'SG - Account Transfer',
+        testData.status.PendingApproval,
+      );
+    }
+
+    // ── Step 12: Wait for the view payment page to load ──────────────────────
+    await pages.AccountTransferPage.waitForViewPage();
+
+    // ── Step 13: Click Edit button ───────────────────────────────────────────
+    await webComponents.javaScriptsClick(pages.AccountTransferPage.editButton);
+
+    // ── Step 14: Handle continue dialog if present ───────────────────────────
+    try {
+      await pages.AccountTransferPage.continueBtn.click({ timeout: 5000 });
+    } catch {
+      // Continue button may not appear — proceed
+    }
+    await webComponents.waitForUXLoading([], page);
+    await pages.AccountTransferPage.waitForAccountFormReady();
+
+    // ── Step 15: Clear amount and enter new (edit) amount ────────────────────
+    await webComponents.enterTextarea(pages.AccountTransferPage.amount, testData.AccountTransfer.editAmount);
+    await page.waitForTimeout(2000);
+
+    // ── Step 16: Click Next to go to preview page ────────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.nextButton);
+    await webComponents.waitForUXLoading([], page);
+    await pages.AccountTransferPage.waitForPreviewPage();
+
+    // ── Step 17: Click Submit ────────────────────────────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.submitButton);
+    await webComponents.waitForUXLoading([], page);
+    await pages.AccountTransferPage.waitForSubmittedPage();
+
+    // ── Step 18: Capture the edited transaction reference ID ─────────────────
+    let editedReference = '';
+    const editBodyText = await page.locator('body').textContent({ timeout: TIMEOUT.MEDIUM });
+    editedReference = await webComponents.getReferenceID(editBodyText ?? '');
+    console.log('TC08 – Edited ACT reference:', editedReference);
+
+    // ── Step 19: Navigate back to Transfer Center via Payment menu ────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── PHASE 3: VALIDATE the edited payment ─────────────────────────────────
+
+    // ── Step 20: Search for the edited payment and open view page ─────────────
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    const searchRef = editedReference.trim().length > 0 ? editedReference : createdReference;
+    if (searchRef.trim().length > 0) {
+      await pages.TransferCentersPage.searchAndOpenByReference(searchRef);
+    } else {
+      await pages.TransferCentersPage.openViewPaymentViaSearch(
+        'SG - Account Transfer',
+        testData.status.PendingApproval,
+      );
+    }
+
+    // ── Step 21: Wait for the view payment page ──────────────────────────────
+    await pages.AccountTransferPage.waitForViewPage();
+
+    // ── Step 22: Validate view page fields after edit ────────────────────────
+    await webComponents.verifyUIElementTextIsNotNull(pages.AccountTransferPage.fromAccountValue);
+    await webComponents.compareUIVsJsonValue(pages.AccountTransferPage.amountValue, testData.AccountTransfer.editAmount);
+    // Status — use explicit 30s timeout (learnings.md: status loads slowly on ACT view page)
+    await expect(pages.AccountTransferPage.actStatusValue).toContainText(testData.status.PendingApproval, { timeout: 30_000 });
+
+    console.log(`TC08 – Edit validated. Reference: ${searchRef}`);
+
+  });
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // TC09_TC10 — Reject and Delete an ACT Payment via Transfer Center
+  // ════════════════════════════════════════════════════════════════════════════
+  test('TC09_TC10_Reject and delete an ACT Payment via Transfer Center', async ({ page }) => {
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // PHASE 1: CREATE an ACT Payment (self-contained — no dependency on prior TCs)
+    // ══════════════════════════════════════════════════════════════════════════
+
+    // ── Step 1: Navigate to the Payment & Transfer menu ──────────────────────
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.AccountTransferPage.paymentMenu);
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+
+    // ── Step 2: Handle Authentication dialog if present ──────────────────────
+    await webComponents.handleAuthIfPresent(
+      pages.AccountTransferPage.authDialog,
+      pages.AccountTransferPage.securityAccessCode,
+      pages.AccountTransferPage.authenticateButton,
+    );
+
+    // ── Step 3: Wait for Transfer Center and click Make Payment ──────────────
+    await pages.AccountTransferPage.waitForTransferCenterReady();
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.makePayment);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 4: Wait for ACT form to be ready ────────────────────────────────
+    await pages.AccountTransferPage.waitForAccountFormReady();
+
+    // ── Step 5: Select "From Account" ────────────────────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.fromAccount);
+    await webComponents.typeTextThroughKeyBoardAction(page, fromAccount);
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'ArrowDown');
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'Enter');
+
+    // ── Step 6: Select existing payee ────────────────────────────────────────
+    await webComponents.isElementVisible(page, pages.AccountTransferPage.existingPayee, { timeout: TIMEOUT.LONG });
+    await pages.AccountTransferPage.existingPayee.locator('input').click();
+    await pages.AccountTransferPage.existingPayee.locator('input').fill('');
+    await webComponents.typeTextThroughKeyBoardAction(page, testData.AccountTransfer.existingPayee);
+    await page.waitForTimeout(2000);
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'ArrowDown');
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'Enter');
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 7: Enter amount (use amountA1 — small amounts get "Pending Approval" status) ─
+    await webComponents.enterTextarea(pages.AccountTransferPage.amount, testData.AccountTransfer.amountA1);
+
+    // ── Step 8: Click Next ───────────────────────────────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.nextButton);
+    await webComponents.waitForUXLoading([], page);
+    await pages.AccountTransferPage.waitForPreviewPage();
+
+    // ── Step 9: Click Submit ─────────────────────────────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.submitButton);
+    await webComponents.waitForUXLoading([], page);
+    await pages.AccountTransferPage.waitForSubmittedPage();
+
+    // ── Step 10: Capture the transaction reference ID ────────────────────────
+    let createdReference = '';
+    const bodyText = await page.locator('body').textContent({ timeout: TIMEOUT.MEDIUM });
+    createdReference = await webComponents.getReferenceID(bodyText ?? '');
+    console.log('TC09_TC10 – Created ACT reference:', createdReference);
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // PHASE 2: REJECT the created ACT Payment via Transfer Center
+    // ══════════════════════════════════════════════════════════════════════════
+
+    // ── Step 11: Navigate back to Transfer Center via Payment menu ────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 12: Search for the created payment in Transfer Center ────────────
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    if (createdReference.trim().length > 0) {
+      await pages.TransferCentersPage.searchAndOpenByReference(createdReference);
+    } else {
+      await pages.TransferCentersPage.openViewPaymentViaSearch(
+        'SG - Account Transfer',
+        testData.status.PendingApproval,
+      );
+    }
+
+    // ── Step 15: Wait for the view payment page to load ──────────────────────
+    await pages.AccountTransferPage.waitForViewPage();
+
+    // ── Step 16: Scroll to bottom (Protractor TC09 pattern) ──────────────────
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.waitForTimeout(2000);
+
+    // ── Step 17: Click Reject button ─────────────────────────────────────────
+    await webComponents.javaScriptsClick(pages.AccountTransferPage.rejectButton);
+
+    // ── Step 15: Enter rejection reason in the dialog ────────────────────────
+    // (Using BulkPaymentPage.reasonForRejection — working input[@name] locator;
+    //  AccountTransferPage.reasonForRejection uses broken ShuRu[@name] pattern)
+    await webComponents.waitElementToBeVisible(pages.BulkPaymentPage.reasonForRejection);
+    await webComponents.enterText(pages.BulkPaymentPage.reasonForRejection, testData.AccountTransfer.rejectReason);
+
+    // ── Step 16: Click Reject confirmation button in the dialog ──────────────
+    await webComponents.waitElementToBeVisible(pages.BulkPaymentPage.rejectDialogButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.rejectDialogButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 17: Capture reference from the reject success dialog ────────────
+    await webComponents.waitElementToBeVisible(pages.AccountTransferPage.transactionDeletedPopupLabelMsg);
+    const rejectDialogText = await webComponents.getTextFromElement(pages.AccountTransferPage.transactionDeletedPopupLabelMsg);
+    const rejectedReference = await webComponents.getReferenceID(rejectDialogText);
+    console.log('TC09_TC10 – Rejected reference:', rejectedReference);
+
+    // ── Step 18: Dismiss the success dialog ──────────────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.dismissButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // PHASE 3: VALIDATE Rejected status via Transfer Center
+    // ══════════════════════════════════════════════════════════════════════════
+
+    // ── Step 19: Navigate to Transfer Center ─────────────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 20: Search for the rejected payment and open view page ──────────
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    const refToSearch = rejectedReference.trim().length > 0 ? rejectedReference : createdReference;
+    if (refToSearch.trim().length > 0) {
+      await pages.TransferCentersPage.searchAndOpenByReference(refToSearch);
+    } else {
+      await pages.TransferCentersPage.openViewPaymentViaSearch(
+        'SG - Account Transfer',
+        testData.status.Rejected,
+      );
+    }
+
+    // ── Step 21: Wait for the view payment page ──────────────────────────────
+    await pages.AccountTransferPage.waitForViewPage();
+
+    // ── Step 22: Validate status = "Rejected" ────────────────────────────────
+    await expect(pages.AccountTransferPage.actStatusValue).toContainText(testData.status.Rejected, { timeout: 30_000 });
+    console.log('TC09_TC10 – Reject validated. Status: Rejected');
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // PHASE 4: DELETE the rejected ACT Payment via Transfer Center
+    // ══════════════════════════════════════════════════════════════════════════
+
+    // ── Step 23: Delete the rejected payment using shared delete helper ──────
+    // Reuse PayrollPage.deleteOpenPayeeOrReferenceNo() — same shared delete dialog
+    await pages.PayrollPage.deleteOpenPayeeOrReferenceNo({
+      transactionDeleted: testData.AccountTransfer.transactionDeleted,
+      internalReference: refToSearch
+    }, refToSearch);
+
+    console.log('TC09_TC10 – Payment deleted');
+
+    // ── Step 23b: Dismiss the "Transaction deleted" popup ────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.transactionDeletedPopupOkButton);
+    await webComponents.waitForUXLoading([], page);
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // PHASE 5: VALIDATE deletion — "No information to display"
+    // ══════════════════════════════════════════════════════════════════════════
+
+    // ── Step 24: Navigate to Transfer Center ─────────────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 25: Wait for Transfer Center and search for the deleted reference ─
+    await pages.TransferCentersPage.waitForTransferCenterReady();
+    await webComponents.waitElementToBeVisible(pages.TransferCentersPage.transferCenterFilter);
+    await webComponents.enterText(pages.TransferCentersPage.transferCenterFilter, refToSearch);
+    await webComponents.waitForUXLoading([], page);
+
+    // ── Step 26: Validate "No information to display" message ────────────────
+    await webComponents.isElementVisible(page, pages.TransferCentersPage.noInformationLabel, { timeout: TIMEOUT.LONG });
+    await expect(pages.TransferCentersPage.noInformationLabel).toContainText('No information to display', { timeout: 30_000 });
+
+    console.log(`TC09_TC10 – Delete validated. Reference ${refToSearch} no longer found.`);
 
   });
 });

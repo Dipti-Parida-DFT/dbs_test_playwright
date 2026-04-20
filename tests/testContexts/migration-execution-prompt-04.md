@@ -70,6 +70,19 @@ Mode: `create`
 Follow Stage 1 and Stage 2 below in strict order.
 Record the wall-clock timestamp when this prompt is first received.
 
+Also initialize a **Token Consumption Tracker** — a running log that records the
+estimated token usage for every LLM turn during this migration session.
+
+**Token Tracking Method (self-contained — works on any machine):**
+- After EACH LLM response in this session, append an entry to the tracker:
+  | Turn # | Phase | Estimated Input Tokens | Estimated Output Tokens |
+  |--------|-------|----------------------|------------------------|
+- **Estimation formula:** character count ÷ 4 (standard approximation for English/code)
+  - Input = system prompt + user message + tool results received in that turn
+  - Output = assistant response + tool calls made in that turn
+- Maintain a running cumulative total across all turns
+- At the end of the session, include the final totals in the HTML report (§2.9 Section G)
+
 ---
 
 ## ═══════════════════════════════════════════════════════════════════
@@ -510,7 +523,7 @@ After the retry loop completes (test passes or 15-failure limit):
      - Post-pass activities (reporting, summary, approval)
    - Cumulative test execution time table (each run with status, duration, cumulative total, blocker)
    - Time efficiency analysis (percentage split: conversion vs execution vs analysis/diagnosis vs reporting)
-   - Summary cards: total migration time, cumulative execution time, analysis/fix time
+   - Summary cards: total migration time, cumulative execution time, analysis/fix time, total estimated tokens consumed
    - **Overall time: prompt received → test pass** (single headline number)
 
    **E. Auto-Retry Loop Statistics**
@@ -527,6 +540,23 @@ After the retry loop completes (test passes or 15-failure limit):
    - Framework changes applied (after approval)
    - Framework changes proposed but not applied
    - Learnings added to learnings.md
+
+   **G. Token Consumption (Estimated)**
+   - **Methodology:** Character count ÷ 4 per LLM turn (input + output),
+     accumulated across all turns in the migration session
+   - Total estimated prompt tokens (input) across all LLM turns
+   - Total estimated completion tokens (output) across all LLM turns
+   - Total estimated tokens (input + output) for the entire migration
+   - Per-phase token breakdown:
+     - Stage 1 (conversion) tokens
+     - Stage 2 (execution + auto-fix loop) tokens
+     - Post-pass (reporting, approvals, learnings) tokens
+   - Summary cards for: Total Tokens, Input Tokens, Output Tokens
+   - Model(s) used during the session (e.g., claude-opus-4.6, gpt-4o-mini)
+   - Token tracking table (per-turn log with cumulative running total)
+   - **Note in report:** "Token counts are estimated using character-count ÷ 4
+     approximation. For exact counts, check VS Code Developer Tools (Ctrl+Shift+I)
+     → Network tab → filter by 'copilot' → inspect the `usage` field in API responses."
 
 3. Format: Styled HTML that opens cleanly in both browser and Microsoft Word
 4. Confirm the report file location to the user
@@ -612,6 +642,19 @@ Run Scope: `new`
 
 Follow Stage 1 and Stage 2 below in strict order.
 Record the wall-clock timestamp when this prompt is first received.
+
+Also initialize a **Token Consumption Tracker** — a running log that records the
+estimated token usage for every LLM turn during this migration session.
+
+**Token Tracking Method (self-contained — works on any machine):**
+- After EACH LLM response in this session, append an entry to the tracker:
+  | Turn # | Phase | Estimated Input Tokens | Estimated Output Tokens |
+  |--------|-------|----------------------|------------------------|
+- **Estimation formula:** character count ÷ 4 (standard approximation for English/code)
+  - Input = system prompt + user message + tool results received in that turn
+  - Output = assistant response + tool calls made in that turn
+- Maintain a running cumulative total across all turns
+- At the end of the session, include the final totals in the HTML report (§2.9 Section G)
 
 ---
 
@@ -1128,7 +1171,7 @@ After the retry loop completes (test passes or 15-failure limit):
      - Post-pass activities (reporting, summary, approval)
    - Cumulative test execution time table (each run with status, duration, cumulative total, blocker)
    - Time efficiency analysis (percentage split: conversion vs execution vs analysis/diagnosis vs reporting)
-   - Summary cards: total migration time, cumulative execution time, analysis/fix time
+   - Summary cards: total migration time, cumulative execution time, analysis/fix time, total estimated tokens consumed
    - **Overall time: prompt received → test pass** (single headline number)
 
    **E. Auto-Retry Loop Statistics**
@@ -1145,6 +1188,23 @@ After the retry loop completes (test passes or 15-failure limit):
    - Framework changes applied (after approval)
    - Framework changes proposed but not applied
    - Learnings added to learnings.md
+
+   **G. Token Consumption (Estimated)**
+   - **Methodology:** Character count ÷ 4 per LLM turn (input + output),
+     accumulated across all turns in the migration session
+   - Total estimated prompt tokens (input) across all LLM turns
+   - Total estimated completion tokens (output) across all LLM turns
+   - Total estimated tokens (input + output) for the entire migration
+   - Per-phase token breakdown:
+     - Stage 1 (conversion) tokens
+     - Stage 2 (execution + auto-fix loop) tokens
+     - Post-pass (reporting, approvals, learnings) tokens
+   - Summary cards for: Total Tokens, Input Tokens, Output Tokens
+   - Model(s) used during the session (e.g., claude-opus-4.6, gpt-4o-mini)
+   - Token tracking table (per-turn log with cumulative running total)
+   - **Note in report:** "Token counts are estimated using character-count ÷ 4
+     approximation. For exact counts, check VS Code Developer Tools (Ctrl+Shift+I)
+     → Network tab → filter by 'copilot' → inspect the `usage` field in API responses."
 
 3. Format: Styled HTML that opens cleanly in both browser and Microsoft Word
 4. Confirm the report file location to the user
@@ -1238,3 +1298,4 @@ After the retry loop completes (test passes or 15-failure limit):
 | v02 | 13 Apr 2026 | Autonomous retry loop (15 max), single post-loop approval gate |
 | v03 | 13 Apr 2026 | Unified two-stage prompt: Stage 1 (Convert) + Stage 2 (Execute + Auto-Fix + Report). Combines migration-prompt.md and migration-execution-prompt-02.md into a single end-to-end workflow. Added append mode, execution command, locator exhaustion guidance, timeline with Stage 1 breakdown. |
 | v04 | 14 Apr 2026 | Single self-contained file. Both examples include ALL rules inline with full detail. Added: (1) MANDATORY Write Provisionally + Deferred Approval rule in 2.4, (2) Source TC Guard in 1.1, (3) Full serial mode patterns in 1.5a, (4) Execution order clarification for 2.2/2.3 vs STEP A, (5) Explicit "What is NEVER allowed" list in 2.4, (6) STEP A items 3-4 write directly to page class / JSON files, (7) §2.3 aligned with provisional write model, (8) §2.1 Run Scope conditional execution command, (9) Flaky test handling, (10) §2.10 rewritten with explicit cleanup trigger, artifact purge table, and sequencing (purge after learnings applied). |
+| v04.1 | 17 Apr 2026 | Added token consumption tracking: (1) Token Consumption Tracker initialization with self-contained estimation formula (char÷4) that works on any machine without external tools, (2) Running per-turn token log maintained throughout migration session, (3) New §2.9 Section G — Token Consumption report with per-phase breakdown, summary cards, model tracking, and per-turn table, (4) Updated Section D summary cards to include total estimated tokens consumed, (5) Both Example 1 and Example 2 updated identically. |

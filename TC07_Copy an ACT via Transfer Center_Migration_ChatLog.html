@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TC07 Migration Report — Copy an ACT via Transfer Center</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 30px; color: #222; line-height: 1.6; }
+  h1 { color: #1a3c6e; border-bottom: 3px solid #1a3c6e; padding-bottom: 8px; }
+  h2 { color: #2a5da8; margin-top: 30px; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+  h3 { color: #444; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
+  th { background: #eaf0f9; font-weight: 600; }
+  tr:nth-child(even) { background: #f9f9f9; }
+  .pass { color: #1b8a1b; font-weight: bold; }
+  .fail { color: #c0392b; font-weight: bold; }
+  .card { display: inline-block; border: 1px solid #ccc; border-radius: 8px; padding: 16px 24px; margin: 8px 12px 8px 0; text-align: center; background: #f7faff; min-width: 160px; }
+  .card .label { font-size: 0.85em; color: #666; }
+  .card .value { font-size: 1.5em; font-weight: bold; color: #1a3c6e; }
+  code { background: #f0f0f0; padding: 2px 5px; border-radius: 3px; font-size: 0.92em; }
+  .timeline { border-left: 3px solid #2a5da8; padding-left: 18px; margin-left: 6px; }
+  .timeline .event { margin-bottom: 14px; }
+  .timeline .event .time { font-weight: 600; color: #2a5da8; }
+</style>
+</head>
+<body>
+
+<h1>TC07 — Copy an ACT via Transfer Center — Migration Report</h1>
+<p><strong>Date:</strong> 16 April 2026<br>
+<strong>Source:</strong> <code>SG_AccountTransfer.test.ts</code> (Protractor, lines 407–434)<br>
+<strong>Target:</strong> <code>SG_AccountTransferTC001AgentGenerated.spec.ts</code> (Playwright)<br>
+<strong>Mode:</strong> Append (parallel) — TC07 appended after TC06<br>
+<strong>Execution:</strong> Headless</p>
+
+<!-- Summary Cards -->
+<div>
+  <div class="card"><div class="label">Total Migration Time</div><div class="value">~18 min</div></div>
+  <div class="card"><div class="label">Total Runs</div><div class="value">3</div></div>
+  <div class="card"><div class="label">Auto-Retries</div><div class="value">1 of 15</div></div>
+  <div class="card"><div class="label">Final Status</div><div class="value pass">PASSED</div></div>
+</div>
+
+<!-- A. Full Migration Journey -->
+<h2>A. Full Migration Journey</h2>
+<div class="timeline">
+  <div class="event">
+    <div class="time">Stage 1 — Conversion</div>
+    <p>Read Protractor source TC07 (lines 407–434). Identified key flow: navigate to Transfer Center → search existing ACT payment → open view page → click Copy → modify amount → Next → Submit → capture reference → navigate back → validate view page (fromAccount, amount, status PendingVerification).</p>
+    <p>TC07 is independent (parallel mode). In the Protractor source it uses <code>reference2</code> from TC05, but with fallback to status-based search. Since TC07 runs independently in Playwright, the fallback pattern is used directly.</p>
+    <p>Appended TC07 with 15 steps into the existing spec file after TC06.</p>
+  </div>
+
+  <div class="event">
+    <div class="time">Stage 2 Step A — Pre-flight Audit</div>
+    <p>All locators verified: <code>copyButton</code>, <code>amount</code>, <code>nextButton</code>, <code>submitButton</code>, <code>fromAccountValue</code>, <code>amountValue</code>, <code>actStatusValue</code>. No ShuRu-broken patterns detected. Status assertion uses explicit 30s timeout per learnings.</p>
+  </div>
+
+  <div class="event">
+    <div class="time">Run 1 — <span class="fail">FAILED</span> (1.7m)</div>
+    <p><strong>Error:</strong> <code>waitForPreviewPage</code> timed out — submit button not found after clicking Next.</p>
+    <p><strong>Root Cause:</strong> Amount field received <code>"3,100"</code> (with comma). Validation error: "Amount is invalid." The page stayed on Step 1 (Input Details).</p>
+    <p><strong>ARIA Snapshot Diagnosis:</strong> Confirmed form still on "Input Details" with error message "One or more of the fields below have not been properly filled up." Amount field shows <code>3,100</code> with error "Amount is invalid."</p>
+    <p><strong>Fix Applied:</strong> Strip commas from <code>amountV</code> before entering: <code>testData.AccountTransfer.amountV.replace(/,/g, '')</code></p>
+  </div>
+
+  <div class="event">
+    <div class="time">Run 2 — <span class="pass">PASSED</span> (1.3m)</div>
+    <p>Reference: <code>EBACT60416685428</code>. All validations passed: fromAccount not null, amount matches "3,100", status "Pending Verification".</p>
+  </div>
+
+  <div class="event">
+    <div class="time">Run 3 (Final + HTML Report) — <span class="pass">PASSED</span> (1.1m)</div>
+    <p>Reference: <code>EBACT60416685429</code>. HTML report generated via <code>--reporter=list,html</code>.</p>
+  </div>
+</div>
+
+<!-- B. Consolidated Mismatch Summary -->
+<h2>B. Consolidated Mismatch Summary</h2>
+
+<h3>Locator Mismatches</h3>
+<p>None — all existing page class locators worked correctly.</p>
+
+<h3>Data Mismatches</h3>
+<table>
+  <tr><th>Field</th><th>Expected (JSON)</th><th>Issue</th><th>Resolution</th></tr>
+  <tr><td>Amount input</td><td><code>"3,100"</code></td><td>Comma in value rejected by amount field — "Amount is invalid"</td><td>Strip commas: <code>.replace(/,/g, '')</code></td></tr>
+</table>
+
+<h3>New UI Elements</h3>
+<p>None discovered.</p>
+
+<!-- C. Provisional Changes Applied -->
+<h2>C. Provisional Changes Applied</h2>
+
+<h3>Spec File Changes</h3>
+<table>
+  <tr><th>Run #</th><th>Step</th><th>Old Value</th><th>New Value</th><th>Reason</th></tr>
+  <tr><td>2</td><td>Step 7 — amount input</td><td><code>enterTextarea(amount, testData.AccountTransfer.amountV)</code></td><td><code>const rawAmount = amountV.replace(/,/g, ''); enterTextarea(amount, rawAmount)</code></td><td>Comma causes "Amount is invalid"</td></tr>
+</table>
+
+<h3>Page Class Changes</h3>
+<p>None.</p>
+
+<h3>JSON Test Data Changes</h3>
+<p>None.</p>
+
+<!-- D. Migration Metrics -->
+<h2>D. Migration Metrics &amp; Change Summary</h2>
+<table>
+  <tr><th>Metric</th><th>Value</th></tr>
+  <tr><td>Total execution runs</td><td>3 (1 fail + 2 pass)</td></tr>
+  <tr><td>Locator changes</td><td>0</td></tr>
+  <tr><td>Test data changes</td><td>0</td></tr>
+  <tr><td>Spec file changes</td><td>1 (comma strip for amount)</td></tr>
+  <tr><td>Page class changes</td><td>0</td></tr>
+  <tr><td>Files modified</td><td>1 (<code>SG_AccountTransferTC001AgentGenerated.spec.ts</code>)</td></tr>
+  <tr><td>Migration difficulty</td><td>Low — single data format issue</td></tr>
+</table>
+
+<!-- D2. Timeline -->
+<h2>D2. Overall Migration Timeline</h2>
+
+<table>
+  <tr><th>Phase</th><th>Description</th><th>Duration</th></tr>
+  <tr><td>Stage 1</td><td>Read Protractor source + convert + append TC07</td><td>~4 min</td></tr>
+  <tr><td>Pre-flight</td><td>Locator and data audit</td><td>~1 min</td></tr>
+  <tr><td>Run 1</td><td>Execute → FAIL (amount invalid)</td><td>1.7 min</td></tr>
+  <tr><td>Diagnosis + Fix</td><td>Read ARIA snapshot → apply comma strip fix</td><td>~2 min</td></tr>
+  <tr><td>Run 2</td><td>Execute → PASS</td><td>1.5 min</td></tr>
+  <tr><td>Run 3</td><td>Execute with HTML report → PASS</td><td>1.3 min</td></tr>
+  <tr><td>Post-pass</td><td>Approvals, learnings, report generation</td><td>~5 min</td></tr>
+</table>
+
+<h3>Cumulative Execution Time</h3>
+<table>
+  <tr><th>Run</th><th>Status</th><th>Duration</th><th>Cumulative</th><th>Blocker</th></tr>
+  <tr><td>1</td><td class="fail">FAIL</td><td>1.7m</td><td>1.7m</td><td>Amount comma → "Amount is invalid"</td></tr>
+  <tr><td>2</td><td class="pass">PASS</td><td>1.3m (1.5m total)</td><td>3.2m</td><td>—</td></tr>
+  <tr><td>3</td><td class="pass">PASS</td><td>1.1m (1.3m total)</td><td>4.5m</td><td>— (HTML report run)</td></tr>
+</table>
+
+<!-- E. Auto-Retry Loop Statistics -->
+<h2>E. Auto-Retry Loop Statistics</h2>
+<table>
+  <tr><th>Metric</th><th>Value</th></tr>
+  <tr><td>Total auto-retries executed</td><td>1 of 15 max</td></tr>
+  <tr><td>Self-fixes applied</td><td>1 (spec-level: comma strip)</td></tr>
+  <tr><td>Failure categories</td><td>1× assertion/validation (amount field rejection)</td></tr>
+  <tr><td>Fix success rate</td><td>100% (1/1 fix resolved the issue)</td></tr>
+  <tr><td>Loop ended by</td><td>PASS on retry 1</td></tr>
+  <tr><td>Spec-file changes accumulated</td><td>1 (Step 7 amount input)</td></tr>
+  <tr><td>Framework changes proposed</td><td>0</td></tr>
+</table>
+
+<!-- F. Final Output -->
+<h2>F. Final Output</h2>
+<h3>Spec File Changes (kept after approval)</h3>
+<ul>
+  <li><strong>TC07 appended</strong> — 15 steps: login → navigate → search existing payment → view page → copy → modify amount → next → submit → capture reference → navigate → search → validate view page</li>
+  <li><strong>Step 7 fix</strong> — comma stripped from amount before input</li>
+</ul>
+
+<h3>Framework Changes Applied</h3>
+<p>None.</p>
+
+<h3>Learnings Added to learnings.md</h3>
+<ol>
+  <li><strong>ACT Amount Input — Comma-Formatted Values Rejected:</strong> Strip commas from formatted test data values before entering into amount field</li>
+  <li><strong>ACT Copy Flow — Standard Submit Reference Pattern:</strong> Copy follows Next → Submit → body text reference capture; status is "Pending Verification"</li>
+</ol>
+
+</body>
+</html>

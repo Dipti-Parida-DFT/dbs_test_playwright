@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TC08 — Edit an ACT Payment via Transfer Center | Migration Report</title>
+  <style>
+    :root { --pass: #22c55e; --fail: #ef4444; --warn: #f59e0b; --bg: #0f172a; --card: #1e293b; --text: #e2e8f0; --border: #334155; --accent: #3b82f6; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); padding: 2rem; line-height: 1.6; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    h1 { font-size: 1.75rem; margin-bottom: 0.25rem; }
+    .subtitle { color: #94a3b8; margin-bottom: 2rem; font-size: 0.95rem; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+    .badge-pass { background: var(--pass); color: #000; }
+    .badge-fail { background: var(--fail); color: #fff; }
+    .badge-warn { background: var(--warn); color: #000; }
+
+    /* Summary Cards */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; }
+    .card-label { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+    .card-value { font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem; }
+    .card-value.pass { color: var(--pass); }
+    .card-value.fail { color: var(--fail); }
+
+    /* Section */
+    .section { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .section h2 { font-size: 1.15rem; margin-bottom: 1rem; color: #f8fafc; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+    .section h3 { font-size: 1rem; margin: 1rem 0 0.5rem; color: #cbd5e1; }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.9rem; }
+    th, td { padding: 0.6rem 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: #94a3b8; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    tr:last-child td { border-bottom: none; }
+    code { background: #334155; padding: 1px 6px; border-radius: 4px; font-size: 0.85em; color: #e2e8f0; }
+    pre { background: #334155; padding: 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; margin: 0.5rem 0; }
+
+    /* Steps list */
+    .steps { list-style: none; counter-reset: step; }
+    .steps li { position: relative; padding: 0.4rem 0 0.4rem 2.5rem; border-left: 2px solid var(--border); margin-left: 1rem; }
+    .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: -12px; top: 0.35rem; width: 22px; height: 22px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; }
+    .steps li:last-child { border-left: none; }
+
+    /* Token tracker */
+    .token-table td:nth-child(3), .token-table td:nth-child(4) { text-align: right; font-family: 'Cascadia Code', 'Fira Code', monospace; }
+    .token-table th:nth-child(3), .token-table th:nth-child(4) { text-align: right; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <h1>TC08 — Edit an ACT Payment via Transfer Center</h1>
+  <p class="subtitle">Protractor → Playwright Migration Report &nbsp;|&nbsp; v04.1 prompt &nbsp;|&nbsp; Append Mode</p>
+
+  <!-- ═══════════════════ Section A: Summary Cards ═══════════════════ -->
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Final Status</div>
+      <div class="card-value pass">PASSED</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Attempts</div>
+      <div class="card-value">2</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Auto-Fixes</div>
+      <div class="card-value">1</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Execution Time</div>
+      <div class="card-value">1.4 min</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Lines Added</div>
+      <div class="card-value">~150</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Reference ID</div>
+      <div class="card-value" style="font-size:1rem;">EBACT60417685430</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ Section B: Source → Target Mapping ═══════════════════ -->
+  <div class="section">
+    <h2>B. Source → Target Mapping</h2>
+    <table>
+      <tr><th>Attribute</th><th>Value</th></tr>
+      <tr><td>Source File</td><td><code>SG_AccountTransfer.test.ts</code> (lines 282–311)</td></tr>
+      <tr><td>Target File</td><td><code>SG_AccountTransferTC001AgentGenerated.spec.ts</code></td></tr>
+      <tr><td>Mode</td><td>Append (TC08 added after TC07)</td></tr>
+      <tr><td>Protractor Steps</td><td>~30 lines (edit flow only — depends on TC01 reference)</td></tr>
+      <tr><td>Playwright Steps</td><td>~150 lines (self-contained: create + edit + validate)</td></tr>
+      <tr><td>Design Divergence</td><td>Protractor TC08 depends on shared <code>reference</code> from TC01. Playwright version creates its own ACT payment first to ensure parallel-safe execution.</td></tr>
+    </table>
+  </div>
+
+  <!-- ═══════════════════ Section C: Conversion Steps ═══════════════════ -->
+  <div class="section">
+    <h2>C. Conversion Steps (3 Phases)</h2>
+
+    <h3>Phase 1 — Create an ACT Payment (Self-Contained)</h3>
+    <ol class="steps">
+      <li>Navigate to Pay &amp; Transfer menu (<code>paymentMenu</code>)</li>
+      <li>Handle Authentication dialog if present</li>
+      <li>Wait for Transfer Center ready → Click Make Payment</li>
+      <li>Wait for ACT form → Select From Account via autocomplete</li>
+      <li>Select existing payee (p-auto-complete: click inner input → fill → type → ArrowDown → Enter)</li>
+      <li>Enter amount (strip commas from <code>amountV</code>: "3,100" → "3100")</li>
+      <li>Click Next → Wait for preview page</li>
+      <li>Click Submit → Wait for submitted page</li>
+      <li>Capture transaction reference from body text</li>
+      <li>Navigate back to Transfer Center via Payment menu</li>
+    </ol>
+
+    <h3>Phase 2 — Search and Edit the Created Payment</h3>
+    <ol class="steps">
+      <li>Wait for Transfer Center → Search by reference</li>
+      <li>Wait for view payment page</li>
+      <li>Click Edit button (<code>javaScriptsClick</code>)</li>
+      <li>Handle continue dialog (<code>continueBtn</code>, 5s timeout try/catch)</li>
+      <li>Clear amount → Enter <code>editAmount</code> ("20")</li>
+      <li>Click Next → Wait for preview page</li>
+      <li>Click Submit → Wait for submitted page</li>
+      <li>Capture edited transaction reference</li>
+      <li>Navigate back to Transfer Center</li>
+    </ol>
+
+    <h3>Phase 3 — Validate the Edited Payment</h3>
+    <ol class="steps">
+      <li>Wait for Transfer Center → Search by edited reference</li>
+      <li>Wait for view payment page</li>
+      <li>Validate: fromAccountValue is not null</li>
+      <li>Validate: amountValue = "20" (<code>editAmount</code>)</li>
+      <li>Validate: status = "Pending Approval" (30s timeout)</li>
+    </ol>
+  </div>
+
+  <!-- ═══════════════════ Section D: Execution Log ═══════════════════ -->
+  <div class="section">
+    <h2>D. Execution Log</h2>
+    <table>
+      <tr><th>#</th><th>Attempt</th><th>Result</th><th>Duration</th><th>Notes</th></tr>
+      <tr>
+        <td>1</td>
+        <td>Initial run</td>
+        <td><span class="badge badge-fail">FAIL</span></td>
+        <td>1.2 min</td>
+        <td>
+          <code>waitForAccountFormReady()</code> timeout — <code>fromAccount</code> not visible.<br>
+          Root cause: Missing <code>waitForTransferCenterReady()</code> before <code>makePayment</code> click.
+          The page was still on the Transfer Center landing view when the test tried to find the ACT form.
+        </td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>After auto-fix</td>
+        <td><span class="badge badge-pass">PASS</span></td>
+        <td>1.4 min</td>
+        <td>
+          Fix: Added <code>waitForTransferCenterReady()</code> before <code>makePayment</code> — matching TC01 pattern.<br>
+          Console output: Created ref <code>EBACT60417685430</code>, edited ref <code>EBACT60417685430</code>, validations passed.
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ═══════════════════ Section E: Auto-Fix Details ═══════════════════ -->
+  <div class="section">
+    <h2>E. Auto-Fix Details</h2>
+    <table>
+      <tr><th>#</th><th>Error</th><th>Root Cause</th><th>Fix Applied</th></tr>
+      <tr>
+        <td>1</td>
+        <td><code>expect(locator).toBeVisible()</code> failed for <code>fromAccount</code> — element not found (15s timeout)</td>
+        <td>After clicking <code>paymentMenu</code>, the Transfer Center page loads first. The <code>makePayment</code> button was clicked before TC was ready, so the navigation to ACT form never completed.</td>
+        <td>Added <code>await pages.AccountTransferPage.waitForTransferCenterReady();</code> before <code>clickWhenVisibleAndEnabled(makePayment)</code> — matching the TC01 proven pattern.</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ═══════════════════ Section F: Learnings Added ═══════════════════ -->
+  <div class="section">
+    <h2>F. Learnings Added to learnings.md</h2>
+    <table>
+      <tr><th>Learning</th><th>Key Insight</th></tr>
+      <tr>
+        <td>ACT Edit Flow — Transfer Center Navigation Pattern</td>
+        <td>Must call <code>waitForTransferCenterReady()</code> after <code>paymentMenu</code> click and before <code>makePayment</code> click. <code>editButton</code> uses <code>javaScriptsClick</code>, <code>continueBtn</code> needs try/catch. Reference stays the same after edit. Status remains "Pending Approval".</td>
+      </tr>
+      <tr>
+        <td>ACT Edit Flow — Self-Contained Test Pattern</td>
+        <td>Protractor TC08 depends on shared <code>reference</code> from TC01. Playwright version creates its own ACT payment first for parallel-safe execution. Pattern follows SG_ManagePayroll TC007_TC008 approach.</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ═══════════════════ Section G: Token Consumption ═══════════════════ -->
+  <div class="section">
+    <h2>G. Estimated Token Consumption</h2>
+    <p style="color:#94a3b8;font-size:0.85rem;margin-bottom:1rem;">Method: character-count ÷ 4 estimation (±10% accuracy). See <code>token-tracking-guide.md</code> for methodology.</p>
+    <table class="token-table">
+      <tr><th>Turn</th><th>Action</th><th>Input (est.)</th><th>Output (est.)</th></tr>
+      <tr><td>1</td><td>Stage 1: Read source files (TC08 Protractor, target spec, context, learnings, page objects, test data)</td><td>~45,000</td><td>~8,000</td></tr>
+      <tr><td>2</td><td>Stage 1: Convert TC08 — write ~150 lines of Playwright code</td><td>~12,000</td><td>~18,000</td></tr>
+      <tr><td>3</td><td>Pre-flight audit — validate locators, learnings patterns, imports</td><td>~35,000</td><td>~6,000</td></tr>
+      <tr><td>4</td><td>Fix #1: existingPayee autocomplete pattern (3→2 args + setup steps)</td><td>~4,000</td><td>~3,000</td></tr>
+      <tr><td>5</td><td>Attempt 1: Execute test → FAIL (waitForAccountFormReady timeout)</td><td>~2,000</td><td>~4,000</td></tr>
+      <tr><td>6</td><td>Diagnose: Read error context + screenshot → identify missing waitForTransferCenterReady</td><td>~8,000</td><td>~2,000</td></tr>
+      <tr><td>7</td><td>Fix #2: Add waitForTransferCenterReady before makePayment</td><td>~3,000</td><td>~2,000</td></tr>
+      <tr><td>8</td><td>Attempt 2: Execute test → PASS (1.4 min)</td><td>~2,000</td><td>~1,500</td></tr>
+      <tr><td>9</td><td>Post-migration: Update learnings.md + generate HTML report</td><td>~6,000</td><td>~20,000</td></tr>
+    </table>
+    <table style="margin-top:1rem;">
+      <tr><th></th><th style="text-align:right;">Tokens</th></tr>
+      <tr><td>Total Estimated Input</td><td style="text-align:right;font-family:monospace;"><strong>~117,000</strong></td></tr>
+      <tr><td>Total Estimated Output</td><td style="text-align:right;font-family:monospace;"><strong>~64,500</strong></td></tr>
+      <tr><td><strong>Grand Total (Input + Output)</strong></td><td style="text-align:right;font-family:monospace;font-weight:700;">~181,500</td></tr>
+    </table>
+  </div>
+
+  <!-- ═══════════════════ Section H: Key Decisions ═══════════════════ -->
+  <div class="section">
+    <h2>H. Key Migration Decisions</h2>
+    <table>
+      <tr><th>Decision</th><th>Rationale</th></tr>
+      <tr>
+        <td>Create ACT payment within TC08 (not depend on TC01 reference)</td>
+        <td>Playwright tests run in parallel with isolated browser contexts. Shared state via variables between test blocks doesn't work. Self-contained tests are mandatory.</td>
+      </tr>
+      <tr>
+        <td>Use <code>javaScriptsClick</code> for <code>editButton</code></td>
+        <td>Matches Protractor <code>jsClick</code> pattern. Standard <code>.click()</code> may fail on Angular components with overlay elements.</td>
+      </tr>
+      <tr>
+        <td>Try/catch for <code>continueBtn</code> with 5s timeout</td>
+        <td>The "Continue" dialog appears conditionally (cognitive/compliance check). If not present, test should proceed without failing.</td>
+      </tr>
+      <tr>
+        <td>Use <code>enterTextarea</code> for amount (not <code>.fill()</code>)</td>
+        <td>Learnings L-002: <code>.fill()</code> silently fails on ShuRu-based Angular components. <code>enterTextarea</code> includes click-clear-type-blur handling.</td>
+      </tr>
+      <tr>
+        <td>30s timeout for status assertion</td>
+        <td>Learnings: ACT view page <code>#act-view-status</code> renders placeholder text for >10s before actual value loads. Default 10s <code>compareUIVsJsonValue</code> timeout is insufficient.</td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>

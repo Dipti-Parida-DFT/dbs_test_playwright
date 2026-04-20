@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TC09_TC10 — Reject and Delete an ACT Payment via Transfer Center — Migration Chat Log</title>
+  <style>
+    :root {
+      --bg: #f9fafb;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --accent-light: #dbeafe;
+      --success: #16a34a;
+      --fail: #dc2626;
+      --warn: #d97706;
+      --text: #111827;
+      --muted: #6b7280;
+      --code-bg: #f3f4f6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 2rem; max-width: 1020px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; margin-bottom: .25rem; }
+    .subtitle { color: var(--muted); font-size: .9rem; margin-bottom: 1.5rem; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 9999px; font-size: .75rem; font-weight: 600; }
+    .badge-pass { background: #dcfce7; color: var(--success); }
+    .badge-fail { background: #fee2e2; color: var(--fail); }
+    .badge-warn { background: #fef3c7; color: var(--warn); }
+    .badge-info { background: var(--accent-light); color: var(--accent); }
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .summary-card { background: var(--card); border: 1px solid var(--border); border-radius: .5rem; padding: 1rem; }
+    .summary-card h3 { font-size: .75rem; text-transform: uppercase; color: var(--muted); margin-bottom: .25rem; }
+    .summary-card .value { font-size: 1.2rem; font-weight: 700; }
+    .summary-card .sub { font-size: .75rem; color: var(--muted); font-weight: 400; }
+    .headline { text-align: center; background: var(--accent-light); border: 2px solid var(--accent); border-radius: .5rem; padding: 1.25rem; margin-bottom: 2rem; }
+    .headline h2 { font-size: 1rem; color: var(--accent); margin-bottom: .25rem; }
+    .headline .big { font-size: 2rem; font-weight: 800; color: var(--accent); }
+    section { background: var(--card); border: 1px solid var(--border); border-radius: .5rem; padding: 1.25rem; margin-bottom: 1.25rem; }
+    section h2 { font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: .5rem; margin-bottom: .75rem; }
+    section h3 { font-size: .95rem; margin: .75rem 0 .35rem; }
+    table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    th, td { text-align: left; padding: .5rem .75rem; border-bottom: 1px solid var(--border); }
+    th { background: var(--bg); font-weight: 600; }
+    code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: .82rem; }
+    pre { background: var(--code-bg); padding: 1rem; border-radius: .5rem; overflow-x: auto; font-size: .82rem; line-height: 1.5; margin: .5rem 0; }
+    ul, ol { padding-left: 1.25rem; }
+    li { margin-bottom: .35rem; }
+    .attempt { border-left: 3px solid var(--border); padding-left: 1rem; margin-bottom: 1rem; }
+    .attempt.pass { border-left-color: var(--success); }
+    .attempt.fail { border-left-color: var(--fail); }
+    .attempt h4 { font-size: .95rem; margin-bottom: .25rem; }
+    .phase-list { list-style: none; padding: 0; }
+    .phase-list li { padding: 4px 0; }
+    .phase-list li::before { content: '✓ '; color: var(--success); font-weight: bold; }
+    .pct-bar { display: inline-block; height: 10px; border-radius: 5px; vertical-align: middle; }
+    .note { background: #fffbeb; border: 1px solid #fde68a; border-radius: .5rem; padding: .75rem 1rem; font-size: .82rem; color: #92400e; margin-top: .75rem; }
+  </style>
+</head>
+<body>
+  <h1>TC09_TC10 — Reject and Delete an ACT Payment via Transfer Center</h1>
+  <p class="subtitle">Migration Chat Log &mdash; April 17, 2026 &nbsp; <span class="badge badge-pass">PASSED</span></p>
+
+  <!-- ── Headline: Total Conversion Time ─────────────────────── -->
+  <div class="headline">
+    <h2>Overall Migration Time: Prompt Received → Test Pass</h2>
+    <div class="big">~58 minutes</div>
+    <span style="font-size:.85rem;color:var(--accent)">Stage 1 conversion (~8 min) + Stage 2 execution &amp; auto-fix (~42 min) + Post-pass (~8 min)</span>
+  </div>
+
+  <!-- ── Summary Cards ───────────────────────────────────────── -->
+  <div class="summary-grid">
+    <div class="summary-card">
+      <h3>Test Case</h3>
+      <div class="value">TC09 + TC10</div>
+    </div>
+    <div class="summary-card">
+      <h3>Total Attempts</h3>
+      <div class="value">6 <span class="sub">(5 fail + 1 pass)</span></div>
+    </div>
+    <div class="summary-card">
+      <h3>Execution Mode</h3>
+      <div class="value">Headless</div>
+    </div>
+    <div class="summary-card">
+      <h3>Final Pass Runtime</h3>
+      <div class="value">1 m 24 s</div>
+    </div>
+    <div class="summary-card">
+      <h3>Cumulative Exec Time</h3>
+      <div class="value">~14.5 min</div>
+    </div>
+    <div class="summary-card">
+      <h3>Analysis / Fix Time</h3>
+      <div class="value">~27.5 min</div>
+    </div>
+    <div class="summary-card">
+      <h3>Framework Files Changed</h3>
+      <div class="value">0</div>
+    </div>
+    <div class="summary-card">
+      <h3>Spec Lines Added</h3>
+      <div class="value">~190</div>
+    </div>
+    <div class="summary-card">
+      <h3>Estimated Total Tokens</h3>
+      <div class="value">~475 K</div>
+    </div>
+    <div class="summary-card">
+      <h3>Difficulty Rating</h3>
+      <div class="value">Hard</div>
+      <span class="sub">Business-logic blocker (maker-checker)</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- SECTION A — Full Migration Journey                        -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <h2>A. Full Migration Journey (Chronological)</h2>
+    <ol>
+      <li><strong>Stage 1 — Source analysis &amp; conversion (~8 min):</strong>
+        Read Protractor TC09 (lines 313–338) and TC10 (lines 339–363) from <code>SG_ManagePayroll.spec.ts</code>.
+        Read reference TC009_TC010 (ManagePayroll reject+delete, lines 1337–1519).
+        Designed 5-phase self-contained test. Appended ~190 lines to <code>SG_AccountTransferTC001AgentGenerated.spec.ts</code>.
+        Pre-flight audit passed (no compile errors, locators validated).
+      </li>
+      <li><strong>Attempt 1 — amountV (3,100), standard flow:</strong> FAIL.
+        Reject button <code>[disabled]</code> on view page. Status was "Pending Verification".</li>
+      <li><strong>Fix 1→2:</strong> Switched from <code>amountV</code> ("3,100") to <code>amountA1</code> ("10") — hypothesis: small amounts skip verification.</li>
+      <li><strong>Attempt 2 — amountA1 (10), standard flow:</strong> FAIL.
+        <code>waitForSubmittedPage()</code> timed out. Submit button clicked but page did not navigate. SIT environment timing issue.</li>
+      <li><strong>Fix 2→3:</strong> Switched back to <code>amountV</code> with added scroll-to-bottom + <code>isEnabled()</code> retry loop before clicking Reject.</li>
+      <li><strong>Attempt 3 — amountV (3,100), scroll workaround:</strong> FAIL.
+        Reject button still <code>[disabled]</code>. Scrolling confirmed irrelevant — the issue is status-based, not visibility.</li>
+      <li><strong>Fix 3→4:</strong> Added ApprovalNow flow (approvalNowCheckBox → pushOption → challengeResponse) to bypass verification step.</li>
+      <li><strong>Attempt 4 — amountV (3,100), ApprovalNow flow:</strong> FAIL.
+        ApprovalNow checkbox <code>[disabled]</code> with message: "This payment cannot be approved now since it needs to be verified by the verifier first."</li>
+      <li><strong>Fix 4→5:</strong> Reverted to <code>amountA1</code> ("10") with standard submit flow. Removed ApprovalNow steps. Previous attempt 2 failure was likely SIT transient — retry same approach.</li>
+      <li><strong>Attempt 5 — amountA1 (10), standard flow:</strong> FAIL.
+        Phases 1–4 all succeeded (create, reject, validate rejected, delete). Phase 5 failed: CDK overlay backdrop blocked <code>paymentMenu</code> click. <code>deleteOpenPayeeOrReferenceNo()</code> does not dismiss its success popup.</li>
+      <li><strong>Fix 5→6:</strong> Added <code>clickWhenVisibleAndEnabled(pages.PayrollPage.transactionDeletedPopupOkButton)</code> after delete helper call to dismiss the "Transaction deleted" popup.</li>
+      <li><strong>Attempt 6 — amountA1 (10), with popup dismiss:</strong> <strong>PASS</strong> (1 m 24 s).
+        All 5 phases completed. Reference: EBACT60417685434.</li>
+      <li><strong>Post-pass:</strong> User approval obtained. Learnings.md updated (5 new sections). HTML report generated.</li>
+    </ol>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- SECTION B — Consolidated Mismatch Summary                 -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <h2>B. Consolidated Mismatch Summary</h2>
+
+    <h3>Locator Mismatches</h3>
+    <table>
+      <tr><th>Locator</th><th>Page Class</th><th>Issue</th><th>Resolution</th></tr>
+      <tr>
+        <td><code>reasonForRejection</code></td>
+        <td>AccountTransferPage</td>
+        <td>Uses broken <code>ShuRu[@name="reasonForRejection"]</code></td>
+        <td>Used <code>BulkPaymentPage.reasonForRejection</code> (<code>input[@name="reasonForRejection"]</code>) instead — spec-level cross-page reference, no framework change needed</td>
+      </tr>
+    </table>
+
+    <h3>Data / Behavior Mismatches</h3>
+    <table>
+      <tr><th>Item</th><th>Expected (Protractor)</th><th>Actual (SIT Runtime)</th><th>Resolution</th></tr>
+      <tr>
+        <td>Payment status with amountV</td>
+        <td>"Pending Approval" (assumed by Protractor serial flow)</td>
+        <td>"Pending Verification" — Reject disabled</td>
+        <td>Switched to <code>amountA1</code> ("10") which produces "Pending Approval"</td>
+      </tr>
+      <tr>
+        <td>ApprovalNow availability</td>
+        <td>Assumed available (tried as workaround)</td>
+        <td>Checkbox disabled — "needs verifier first"</td>
+        <td>Dropped ApprovalNow approach; used small-amount flow instead</td>
+      </tr>
+      <tr>
+        <td>Delete popup auto-dismissal</td>
+        <td>Protractor TC ends after delete (no further navigation)</td>
+        <td><code>deleteOpenPayeeOrReferenceNo()</code> leaves popup open with CDK overlay</td>
+        <td>Added explicit <code>transactionDeletedPopupOkButton</code> click</td>
+      </tr>
+    </table>
+
+    <h3>Missing Elements</h3>
+    <p>None — all locators used existed in page classes. The only issue was the broken ShuRu pattern on <code>AccountTransferPage.reasonForRejection</code>, which was bypassed via <code>BulkPaymentPage</code>.</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- SECTION C — Migration Metrics & Change Summary            -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <h2>C. Migration Metrics &amp; Change Summary</h2>
+
+    <h3>Execution Statistics</h3>
+    <table>
+      <tr><th>Metric</th><th>Value</th></tr>
+      <tr><td>Total runs</td><td>6</td></tr>
+      <tr><td>Passed</td><td>1</td></tr>
+      <tr><td>Failed</td><td>5</td></tr>
+      <tr><td>Pass rate</td><td>16.7%</td></tr>
+    </table>
+
+    <h3>Locator Changes</h3>
+    <table>
+      <tr><th>Type</th><th>Count</th><th>Details</th></tr>
+      <tr><td>Broken → bypassed (cross-page)</td><td>1</td><td><code>AccountTransferPage.reasonForRejection</code> → <code>BulkPaymentPage.reasonForRejection</code></td></tr>
+      <tr><td>Removed</td><td>0</td><td>—</td></tr>
+      <tr><td>Added to page class</td><td>0</td><td>—</td></tr>
+    </table>
+
+    <h3>Test Data Changes</h3>
+    <table>
+      <tr><th>Field</th><th>Original Plan</th><th>Final</th><th>Reason</th></tr>
+      <tr><td>Amount</td><td><code>amountV</code> ("3,100")</td><td><code>amountA1</code> ("10")</td><td>Large amount → "Pending Verification" → Reject disabled</td></tr>
+    </table>
+
+    <h3>Critical Issues</h3>
+    <table>
+      <tr><th>Issue</th><th>Severity</th><th>Runs Blocked</th><th>Resolution</th></tr>
+      <tr><td>Reject disabled for "Pending Verification"</td><td>High</td><td>3 (attempts 1, 3, 4)</td><td>Use small amount to get "Pending Approval" status</td></tr>
+      <tr><td>Delete popup not auto-dismissed</td><td>Medium</td><td>1 (attempt 5)</td><td>Added explicit OK button click</td></tr>
+      <tr><td>SIT transient Submit failure</td><td>Low</td><td>1 (attempt 2)</td><td>Resolved on retry — SIT environment flake</td></tr>
+    </table>
+
+    <h3>Files Created / Modified</h3>
+    <table>
+      <tr><th>File</th><th>Action</th><th>Details</th></tr>
+      <tr><td><code>SG_AccountTransferTC001AgentGenerated.spec.ts</code></td><td>Modified (appended)</td><td>~190 lines — TC09_TC10 test block</td></tr>
+      <tr><td><code>learnings.md</code></td><td>Modified (appended)</td><td>5 new learning sections</td></tr>
+      <tr><td><code>TC09_TC10_…_Migration_ChatLog.html</code></td><td>Created</td><td>This report</td></tr>
+    </table>
+
+    <h3>Page Object Changes Pending Approval</h3>
+    <p>None — no framework page class modifications were required. The broken <code>reasonForRejection</code> locator in <code>AccountTransferPage.ts</code> was bypassed at the spec level using <code>BulkPaymentPage</code>.</p>
+
+    <h3>Overall Migration Difficulty Rating</h3>
+    <table>
+      <tr><th>Category</th><th>Rating</th><th>Reason</th></tr>
+      <tr><td>Locator complexity</td><td>Low</td><td>Only 1 broken ShuRu locator, bypassed via cross-page reference</td></tr>
+      <tr><td>Business logic complexity</td><td><span style="color:var(--fail);font-weight:700">High</span></td><td>Maker-checker principle: amount determines status → determines button enablement. Required 4 attempts to discover correct flow.</td></tr>
+      <tr><td>Test structure complexity</td><td>Medium</td><td>5-phase self-contained test; Protractor assumed serial dependency on prior TCs</td></tr>
+      <tr><td><strong>Overall</strong></td><td><strong>Hard</strong></td><td>Business-logic blocker dominated; locator issues were minor</td></tr>
+    </table>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- SECTION D — Overall Migration Timeline                    -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <h2>D. Overall Migration Timeline — Prompt to Pass</h2>
+
+    <h3>Phase-by-Phase Breakdown</h3>
+    <table>
+      <tr><th>Phase</th><th>Activity</th><th>Duration</th></tr>
+      <tr><td>Stage 1</td><td>Source analysis + conversion + pre-flight audit</td><td>~8 min</td></tr>
+      <tr><td>Attempt 1</td><td>Execution (amountV) + analysis</td><td>~4 min exec + ~3 min analysis</td></tr>
+      <tr><td>Attempt 2</td><td>Fix (→amountA1) + execution + analysis</td><td>~1 min fix + ~3 min exec + ~2 min analysis</td></tr>
+      <tr><td>Attempt 3</td><td>Fix (→amountV+scroll) + execution + analysis</td><td>~2 min fix + ~2.5 min exec + ~3 min analysis</td></tr>
+      <tr><td>Attempt 4</td><td>Fix (→ApprovalNow) + execution + analysis</td><td>~2 min fix + ~2 min exec + ~3 min analysis</td></tr>
+      <tr><td>Attempt 5</td><td>Fix (revert→amountA1) + execution + analysis</td><td>~1 min fix + ~2.3 min exec + ~2 min analysis</td></tr>
+      <tr><td>Attempt 6</td><td>Fix (popup dismiss) + execution</td><td>~1 min fix + ~1.6 min exec</td></tr>
+      <tr><td>Post-pass</td><td>User approval + learnings update + HTML report</td><td>~8 min</td></tr>
+      <tr style="font-weight:700;background:#dbeafe"><td colspan="2">Total: Prompt Received → Test Pass</td><td>~58 min</td></tr>
+    </table>
+
+    <h3>Cumulative Test Execution Time</h3>
+    <table>
+      <tr><th>Run</th><th>Status</th><th>Duration</th><th>Cumulative</th><th>Blocker</th></tr>
+      <tr><td>1</td><td><span class="badge badge-fail">FAIL</span></td><td>~4.0 min</td><td>4.0 min</td><td>Reject button disabled (PendingVerification)</td></tr>
+      <tr><td>2</td><td><span class="badge badge-fail">FAIL</span></td><td>~3.0 min</td><td>7.0 min</td><td>Submit didn't navigate (SIT transient)</td></tr>
+      <tr><td>3</td><td><span class="badge badge-fail">FAIL</span></td><td>~2.5 min</td><td>9.5 min</td><td>Reject button still disabled after scroll</td></tr>
+      <tr><td>4</td><td><span class="badge badge-fail">FAIL</span></td><td>~2.0 min</td><td>11.5 min</td><td>ApprovalNow checkbox disabled</td></tr>
+      <tr><td>5</td><td><span class="badge badge-fail">FAIL</span></td><td>~2.3 min</td><td>13.8 min</td><td>CDK overlay after delete popup</td></tr>
+      <tr><td>6</td><td><span class="badge badge-pass">PASS</span></td><td>1.6 min</td><td>15.4 min</td><td>—</td></tr>
+    </table>
+
+    <h3>Time Efficiency Analysis</h3>
+    <table>
+      <tr><th>Activity</th><th>Time</th><th>% of Total</th><th>Visual</th></tr>
+      <tr><td>Stage 1 — Conversion</td><td>~8 min</td><td>14%</td><td><span class="pct-bar" style="width:56px;background:var(--accent)"></span></td></tr>
+      <tr><td>Test Execution (cumulative)</td><td>~15.4 min</td><td>27%</td><td><span class="pct-bar" style="width:108px;background:var(--success)"></span></td></tr>
+      <tr><td>Analysis / Diagnosis / Fix</td><td>~26.6 min</td><td>46%</td><td><span class="pct-bar" style="width:184px;background:var(--warn)"></span></td></tr>
+      <tr><td>Post-pass (reporting, approval, learnings)</td><td>~8 min</td><td>14%</td><td><span class="pct-bar" style="width:56px;background:var(--muted)"></span></td></tr>
+    </table>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- SECTION E — Auto-Retry Loop Statistics                    -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <h2>E. Auto-Retry Loop Statistics</h2>
+    <table>
+      <tr><th>Metric</th><th>Value</th></tr>
+      <tr><td>Total auto-retries executed</td><td>6 of 15 max</td></tr>
+      <tr><td>Loop ended by</td><td>Pass (attempt 6)</td></tr>
+      <tr><td>Spec-file edits accumulated</td><td>5 edits across 6 attempts</td></tr>
+      <tr><td>Framework changes proposed</td><td>0</td></tr>
+    </table>
+
+    <h3>Self-Fixes Applied Per Run</h3>
+    <table>
+      <tr><th>Run Transition</th><th>Fix Type</th><th>Description</th><th>Resolved?</th></tr>
+      <tr><td>1 → 2</td><td>Data</td><td>Changed amount from <code>amountV</code> to <code>amountA1</code></td><td>⚠️ Partial (transient SIT failure)</td></tr>
+      <tr><td>2 → 3</td><td>Interaction + Data</td><td>Reverted to <code>amountV</code>, added scroll + isEnabled retry</td><td>✗ No (status-based, not scroll)</td></tr>
+      <tr><td>3 → 4</td><td>Flow change</td><td>Added ApprovalNow flow (checkbox + push + challenge)</td><td>✗ No (ApprovalNow disabled)</td></tr>
+      <tr><td>4 → 5</td><td>Revert + Data</td><td>Reverted to <code>amountA1</code>, removed ApprovalNow</td><td>✓ Phases 1–4 passed</td></tr>
+      <tr><td>5 → 6</td><td>Interaction</td><td>Added popup dismiss (<code>transactionDeletedPopupOkButton</code>)</td><td>✓ Full pass</td></tr>
+    </table>
+
+    <h3>Failure Categories Breakdown</h3>
+    <table>
+      <tr><th>Category</th><th>Occurrences</th><th>Runs</th></tr>
+      <tr><td>UI element disabled (business logic)</td><td>3</td><td>#1, #3, #4</td></tr>
+      <tr><td>Navigation timeout (SIT transient)</td><td>1</td><td>#2</td></tr>
+      <tr><td>Overlay blocking interaction</td><td>1</td><td>#5</td></tr>
+    </table>
+
+    <h3>Fix Success Rate</h3>
+    <table>
+      <tr><th>Metric</th><th>Value</th></tr>
+      <tr><td>Total fixes applied</td><td>5</td></tr>
+      <tr><td>Fixes that resolved the issue</td><td>2 (transitions 4→5 and 5→6)</td></tr>
+      <tr><td>Fixes that did NOT resolve</td><td>2 (transitions 2→3 and 3→4)</td></tr>
+      <tr><td>Partially resolved</td><td>1 (transition 1→2 — correct approach but SIT transient)</td></tr>
+      <tr><td>Fix success rate</td><td>40% direct, 60% including partial</td></tr>
+    </table>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- Source Mapping (kept from original)                       -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <h2>Source Mapping</h2>
+    <table>
+      <tr><th>Item</th><th>Detail</th></tr>
+      <tr><td>Protractor TC09</td><td><code>SG_ManagePayroll.spec.ts</code> lines 313–338 (AccountTransfer section)</td></tr>
+      <tr><td>Protractor TC10</td><td><code>SG_ManagePayroll.spec.ts</code> lines 339–363 (AccountTransfer section)</td></tr>
+      <tr><td>Reference Pattern</td><td><code>SG_ManagePayroll.spec.ts</code> TC009_TC010 (ManagePayroll Reject+Delete, lines 1337–1519)</td></tr>
+      <tr><td>Playwright Target</td><td><code>SG_AccountTransferTC001AgentGenerated.spec.ts</code> (appended)</td></tr>
+      <tr><td>Test Name</td><td><code>TC09_TC10_Reject and delete an ACT Payment via Transfer Center</code></td></tr>
+    </table>
+  </section>
+
+  <!-- ── Design Decisions ────────────────────────────────────── -->
+  <section>
+    <h2>Design Decisions</h2>
+    <ul>
+      <li><strong>Self-contained test:</strong> Protractor TC09/TC10 depended on payment created by prior serial TCs. Playwright version creates its own ACT payment in Phase 1, then rejects, validates, deletes, and validates in one test block.</li>
+      <li><strong>Combined TC09+TC10:</strong> Merged into a single 5-phase test since TC10 (delete) operates on the same payment that TC09 rejects — they must run sequentially on the same transaction.</li>
+      <li><strong>Amount selection:</strong> Uses <code>amountA1</code> ("10") with existing payee — small amounts skip verification and land in "Pending Approval" status where Reject is enabled.</li>
+      <li><strong>BulkPaymentPage locators for reject dialog:</strong> <code>AccountTransferPage.reasonForRejection</code> uses broken <code>ShuRu[@name]</code> pattern. Used <code>BulkPaymentPage.reasonForRejection</code> (<code>input[@name="reasonForRejection"]</code>) instead.</li>
+      <li><strong>Shared delete helper:</strong> Reused <code>PayrollPage.deleteOpenPayeeOrReferenceNo()</code> for the delete dialog — same shared component across payment modules.</li>
+    </ul>
+  </section>
+
+  <!-- ── 5-Phase Test Flow ───────────────────────────────────── -->
+  <section>
+    <h2>Test Flow (5 Phases)</h2>
+    <ul class="phase-list">
+      <li><strong>Phase 1 — Create ACT Payment:</strong> Navigate → Auth → Transfer Center → Make Payment → Existing Payee → Amount (10) → Next → Submit → Capture reference</li>
+      <li><strong>Phase 2 — Reject Payment:</strong> Navigate to Transfer Center → Search by reference → Open view page → Scroll to bottom → Click Reject → Enter reason → Confirm reject → Capture rejected ref → Dismiss dialog</li>
+      <li><strong>Phase 3 — Validate Rejected:</strong> Navigate to Transfer Center → Search by reference → Open view page → Assert status = "Rejected"</li>
+      <li><strong>Phase 4 — Delete Payment:</strong> Call <code>deleteOpenPayeeOrReferenceNo()</code> → Dismiss "Transaction deleted" popup</li>
+      <li><strong>Phase 5 — Validate Deleted:</strong> Navigate to Transfer Center → Enter reference in filter → Assert "No information to display"</li>
+    </ul>
+  </section>
+
+  <!-- ── Attempt Log ─────────────────────────────────────────── -->
+  <section>
+    <h2>Attempt Log (Detailed)</h2>
+
+    <div class="attempt fail">
+      <h4>Attempt 1 — <span class="badge badge-fail">FAIL</span></h4>
+      <p><strong>Amount:</strong> amountV (3,100) &nbsp; <strong>Duration:</strong> ~4 min &nbsp; <strong>Error:</strong> Reject button <code>[disabled]</code> on view page</p>
+      <p><strong>Root cause:</strong> With amountV, payment status is "Pending Verification". Maker-checker principle — same user who creates cannot reject in PendingVerification state.</p>
+      <p><strong>Self-fix applied → next run:</strong> Changed <code>amountV</code> → <code>amountA1</code> ("10")</p>
+    </div>
+
+    <div class="attempt fail">
+      <h4>Attempt 2 — <span class="badge badge-fail">FAIL</span></h4>
+      <p><strong>Amount:</strong> amountA1 (10) &nbsp; <strong>Duration:</strong> ~3 min &nbsp; <strong>Error:</strong> <code>waitForSubmittedPage()</code> timed out</p>
+      <p><strong>Root cause:</strong> Submit clicked but page didn't transition. ARIA showed preview page still visible. SIT environment transient issue.</p>
+      <p><strong>Self-fix applied → next run:</strong> Reverted to <code>amountV</code>, added scroll + <code>isEnabled()</code> retry before Reject click</p>
+    </div>
+
+    <div class="attempt fail">
+      <h4>Attempt 3 — <span class="badge badge-fail">FAIL</span></h4>
+      <p><strong>Amount:</strong> amountV (3,100) &nbsp; <strong>Duration:</strong> ~2.5 min &nbsp; <strong>Error:</strong> <code>reasonForRejection</code> timeout (75s)</p>
+      <p><strong>Root cause:</strong> Reject button remained disabled. Confirmed: amount determines status, NOT scroll position.</p>
+      <p><strong>Self-fix applied → next run:</strong> Added ApprovalNow flow (checkbox + pushOption + challengeResponse)</p>
+    </div>
+
+    <div class="attempt fail">
+      <h4>Attempt 4 — <span class="badge badge-fail">FAIL</span></h4>
+      <p><strong>Amount:</strong> amountV (3,100) + ApprovalNow &nbsp; <strong>Duration:</strong> ~2 min &nbsp; <strong>Error:</strong> <code>pushOption</code> timeout</p>
+      <p><strong>Root cause:</strong> "Approve now" checkbox disabled: "This payment cannot be approved now since it needs to be verified by the verifier first."</p>
+      <p><strong>Self-fix applied → next run:</strong> Reverted to <code>amountA1</code>, removed all ApprovalNow steps</p>
+    </div>
+
+    <div class="attempt fail">
+      <h4>Attempt 5 — <span class="badge badge-fail">FAIL</span></h4>
+      <p><strong>Amount:</strong> amountA1 (10) &nbsp; <strong>Duration:</strong> ~2.3 min &nbsp; <strong>Error:</strong> CDK overlay blocked <code>paymentMenu</code> click (line 1442)</p>
+      <p><strong>Root cause:</strong> <code>deleteOpenPayeeOrReferenceNo()</code> leaves "Transaction deleted" popup open. Overlay backdrop blocks all clicks.</p>
+      <p><strong>Self-fix applied → next run:</strong> Added <code>transactionDeletedPopupOkButton</code> click after delete helper</p>
+    </div>
+
+    <div class="attempt pass">
+      <h4>Attempt 6 — <span class="badge badge-pass">PASS</span></h4>
+      <p><strong>Amount:</strong> amountA1 (10) &nbsp; <strong>Duration:</strong> 1 m 24 s &nbsp; <strong>Reference:</strong> EBACT60417685434</p>
+      <pre>TC09_TC10 – Created ACT reference: EBACT60417685434
+TC09_TC10 – Rejected reference: EBACT60417685434
+TC09_TC10 – Reject validated. Status: Rejected
+TC09_TC10 – Payment deleted
+TC09_TC10 – Delete validated. Reference EBACT60417685434 no longer found.</pre>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- SECTION F — Final Output                                  -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <h2>F. Final Output</h2>
+
+    <h3>Spec File Changes (Diff from Initial Conversion)</h3>
+    <table>
+      <tr><th>Change</th><th>Lines</th><th>Description</th></tr>
+      <tr><td>Amount field</td><td>Step 7</td><td><code>amountV</code> → <code>amountA1</code> (initial used amountV, final uses amountA1)</td></tr>
+      <tr><td>Popup dismiss</td><td>After Step 23</td><td>Added <code>transactionDeletedPopupOkButton</code> click + <code>waitForUXLoading</code> (2 lines added)</td></tr>
+      <tr><td>ApprovalNow steps</td><td>—</td><td>Added then removed (net zero change)</td></tr>
+      <tr><td>Scroll workaround</td><td>—</td><td>Added then reverted (net zero change)</td></tr>
+    </table>
+
+    <h3>Framework Changes Applied After Approval</h3>
+    <p>None.</p>
+
+    <h3>Framework Changes Proposed But Not Applied</h3>
+    <p>None proposed. The broken <code>AccountTransferPage.reasonForRejection</code> (<code>ShuRu[@name]</code>) was bypassed at spec level via <code>BulkPaymentPage</code> — no page class edit needed.</p>
+
+    <h3>Learnings Added to learnings.md</h3>
+    <table>
+      <tr><th>#</th><th>Learning</th></tr>
+      <tr><td>1</td><td>ACT Reject+Delete — Payment Status / ApprovalNow Constraints (amountA1 → PendingApproval; amountV → PendingVerification)</td></tr>
+      <tr><td>2</td><td>ACT Reject Flow — BulkPaymentPage Locators (bypass broken ShuRu)</td></tr>
+      <tr><td>3</td><td>ACT Reject Flow — Dialog Reference Capture (transactionDeletedPopupLabelMsg)</td></tr>
+      <tr><td>4</td><td>ACT Delete Flow — Popup Dismiss Required (transactionDeletedPopupOkButton)</td></tr>
+      <tr><td>5</td><td>ACT Delete Validation — Transfer Center Filter (noInformationLabel)</td></tr>
+    </table>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- SECTION G — Token Consumption (Estimated)                 -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section>
+    <h2>G. Token Consumption (Estimated)</h2>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <h3>Total Tokens</h3>
+        <div class="value">~475 K</div>
+      </div>
+      <div class="summary-card">
+        <h3>Input Tokens</h3>
+        <div class="value">~380 K</div>
+      </div>
+      <div class="summary-card">
+        <h3>Output Tokens</h3>
+        <div class="value">~95 K</div>
+      </div>
+      <div class="summary-card">
+        <h3>Model</h3>
+        <div class="value">Claude Opus 4.6</div>
+        <span class="sub">via Copilot Business</span>
+      </div>
+    </div>
+
+    <h3>Per-Phase Token Breakdown</h3>
+    <table>
+      <tr><th>Phase</th><th>Input</th><th>Output</th><th>Total</th></tr>
+      <tr><td>Stage 1 — Conversion</td><td>~60 K</td><td>~25 K</td><td>~85 K</td></tr>
+      <tr><td>Stage 2 — Execution + Auto-fix (6 runs)</td><td>~280 K</td><td>~55 K</td><td>~335 K</td></tr>
+      <tr><td>Post-pass — Reporting, Approvals, Learnings</td><td>~40 K</td><td>~15 K</td><td>~55 K</td></tr>
+      <tr style="font-weight:700"><td>Total</td><td>~380 K</td><td>~95 K</td><td>~475 K</td></tr>
+    </table>
+
+    <h3>Per-Turn Tracking (Summarized by Phase)</h3>
+    <table>
+      <tr><th>Turn Group</th><th>Turns</th><th>Est. Input</th><th>Est. Output</th><th>Cumulative Total</th></tr>
+      <tr><td>Stage 1: Source read + conversion</td><td>~8</td><td>~60 K</td><td>~25 K</td><td>85 K</td></tr>
+      <tr><td>Attempt 1: Run + analysis</td><td>~5</td><td>~45 K</td><td>~8 K</td><td>138 K</td></tr>
+      <tr><td>Attempt 2: Fix + run + analysis</td><td>~5</td><td>~45 K</td><td>~8 K</td><td>191 K</td></tr>
+      <tr><td>Attempt 3: Fix + run + analysis</td><td>~5</td><td>~48 K</td><td>~10 K</td><td>249 K</td></tr>
+      <tr><td>Attempt 4: Fix + run + analysis</td><td>~5</td><td>~50 K</td><td>~10 K</td><td>309 K</td></tr>
+      <tr><td>Attempt 5: Fix + run + analysis</td><td>~5</td><td>~48 K</td><td>~10 K</td><td>367 K</td></tr>
+      <tr><td>Attempt 6: Fix + run (pass)</td><td>~4</td><td>~44 K</td><td>~9 K</td><td>420 K</td></tr>
+      <tr><td>Post-pass: Approval + learnings + report</td><td>~4</td><td>~40 K</td><td>~15 K</td><td>475 K</td></tr>
+    </table>
+
+    <div class="note">
+      <strong>Note:</strong> Token counts are estimated using character-count ÷ 4 approximation.
+      For exact counts, check VS Code Developer Tools (Ctrl+Shift+I) → Network tab → filter by 'copilot' → inspect the <code>usage</code> field in API responses.
+    </div>
+  </section>
+
+  <p style="text-align:center;color:var(--muted);font-size:.8rem;margin-top:2rem">
+    Generated by Copilot Agent &mdash; Claude Opus 4.6 &mdash; April 17, 2026
+  </p>
+</body>
+</html>

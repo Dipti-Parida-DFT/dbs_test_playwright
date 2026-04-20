@@ -251,3 +251,64 @@ During TC01 ACT migration, initial code used raw Playwright APIs (`.fill()`, `ex
 - `compareUIVsJsonValue` has a 10s internal timeout which is **insufficient** — use `await expect(actStatusValue).toContainText(expectedStatus, { timeout: 30_000 })` directly
 - This loading delay applies to **all** ACT view page status assertions, not just ApprovalNow high-amount payments
 - The `saveAsDraft` button locator (`button[@name="save-as-draft"]`) is standard HTML — no ShuRu issues
+
+## ACT Amount Input — Comma-Formatted Values Rejected
+- `amountV` test data is `"3,100"` (displayed format with comma separator)
+- `enterTextarea()` sends the value literally — the amount field rejects comma input with validation error "Amount is invalid"
+- **Working pattern:** Strip commas before entering: `amountV.replace(/,/g, '')`
+- The field auto-formats the raw number to display format after input
+- Applies to any test entering comma-formatted amounts from test data (not just copy flow)
+- View page `amountValue` displays the formatted value (`"3,100"`) — use the original `amountV` for view page assertions
+
+## ACT Copy Flow — Standard Submit Reference Pattern
+- Copy + Submit follows the same Next → Submit → body text reference capture as TC01/TC04
+- No dialog-based reference (unlike save-as-draft TC06)
+- `copyButton` (`xpath=//*[@name="copy"]`) uses `javaScriptsClick` (matching Protractor `jsClick`)
+- After copy-submit, the payment status is `"Pending Verification"` (`testData.status.PendingVerification`)
+
+## ACT Edit Flow — Transfer Center Navigation Pattern
+- Editing a payment requires navigating to Transfer Center FIRST, then clicking Edit on the view page
+- After clicking `paymentMenu`, the page lands on Transfer Center — **must call `waitForTransferCenterReady()` before clicking `makePayment`**
+- Skipping `waitForTransferCenterReady()` causes `waitForAccountFormReady()` to fail because `makePayment` click fires before the Transfer Center DOM is ready
+- `editButton` (`#act-view-edit`) uses `javaScriptsClick` (matching Protractor `jsClick`)
+- `continueBtn` (`#cognitive-continue`) may appear after clicking Edit — wrap in try/catch with 5s timeout
+- After editing amount and submitting, the reference ID is the SAME as the original (not a new reference)
+- Edit flow validates `editAmount` ("20") on the view page via `compareUIVsJsonValue(amountValue, editAmount)`
+- Status after edit remains `"Pending Approval"` (`testData.status.PendingApproval`)
+
+## ACT Edit Flow — Self-Contained Test Pattern
+- Protractor TC08 depends on `reference` variable from TC01 (shared state) — this breaks parallel execution
+- Playwright migration creates the ACT payment FIRST within TC08, then edits it (self-contained)
+- Pattern: Create payment (reuse TC01 flow) → capture reference → navigate to Transfer Center → search → edit → validate
+- Reference pattern: SG_ManagePayroll.spec.ts TC007_TC008 `createAndEdit` approach
+
+## ACT Reject+Delete Flow — Payment Status / ApprovalNow Constraints
+- Protractor TC09/TC10 depend on a payment in "Pending Approval" status (set by prior serial TCs)
+- With `amountV` (3,100) + existing payee → payment status is **"Pending Verification"** → Reject button is **disabled** (maker-checker: same user who creates cannot reject in PendingVerification)
+- ApprovalNow checkbox is also **disabled** for this payment type/user with message: "This payment cannot be approved now since it needs to be verified by the verifier first"
+- With `amountA1` (10) + existing payee → payment goes to **"Pending Approval"** → Reject button is **enabled**
+- Small-amount payments with existing payee bypass the verification step and land directly in "Pending Approval"
+- **Working pattern for self-contained Reject/Delete:** Create with `amountA1` (existing payee) → Submit → search in Transfer Center → Reject → validate Rejected → Delete → validate "No information to display"
+
+## ACT Reject Flow — BulkPaymentPage Locators
+- `AccountTransferPage.reasonForRejection` uses **broken** `ShuRu[@name="reasonForRejection"]` locator — do NOT use
+- `BulkPaymentPage.reasonForRejection` uses **working** `input[@name="reasonForRejection"]` — use this for reject dialog
+- `BulkPaymentPage.rejectDialogButton` has the same XPath as AccountTransferPage version and works correctly
+- Reject button on view page: use `javaScriptsClick(pages.AccountTransferPage.rejectButton)` after scrolling to bottom
+- Scroll pattern: `page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))` + `waitForTimeout(2000)` before clicking Reject
+
+## ACT Reject Flow — Dialog Reference Capture
+- After reject confirmation, a success dialog appears with the reference in `transactionDeletedPopupLabelMsg`
+- Capture via `getTextFromElement(transactionDeletedPopupLabelMsg)` → `getReferenceID(text)`
+- Dismiss via `clickWhenVisibleAndEnabled(pages.AccountTransferPage.dismissButton)` + `waitForUXLoading`
+
+## ACT Delete Flow — Popup Dismiss Required
+- `PayrollPage.deleteOpenPayeeOrReferenceNo()` validates the "Transaction deleted" popup but does **NOT** click OK to dismiss it
+- The popup leaves a CDK overlay backdrop (`cdk-overlay-backdrop cdk-overlay-dark-backdrop`) blocking all UI interactions
+- **Must click** `pages.PayrollPage.transactionDeletedPopupOkButton` (`button[@name="dismiss"]`) after `deleteOpenPayeeOrReferenceNo()` if the test continues navigating
+- TC01 doesn't need this because the test ends after delete; TC09/TC10 continues to verify deletion in Transfer Center
+
+## ACT Delete Validation — Transfer Center Filter
+- After deleting a payment, search for the reference in Transfer Center filter (`transferCenterFilter`)
+- Validate `noInformationLabel` (`//p[text()="No information to display"]`) is visible
+- Use `isElementVisible` + `expect().toContainText()` for the "No information to display" assertion
