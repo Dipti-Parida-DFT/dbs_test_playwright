@@ -11,7 +11,7 @@
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
-import { NavigatePages, PaymentsPages } from '../../../pages/IDEALX/index';
+import {   PaymentsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
 import { CONSTANTS } from '../../../lib/constants';
 import { TIMEOUT } from '../../../lib/timeouts';
@@ -52,7 +52,7 @@ test.describe.configure({
 });
 
 // Actions for beforEach and afterEach test hooks
-test.describe('HK_BulkCollection (Playwright using PaymentsPages)', () => {
+test.describe('HK_BulkCollection (Playwright using PaymentsPages)',{ tag: ['@bulk-collection','@ui','@hk'] },  () => {
   let pages: PaymentsPages;
   // Track created payees per test
   type CreatedPayee = { name?: string; accountNumber?: string };

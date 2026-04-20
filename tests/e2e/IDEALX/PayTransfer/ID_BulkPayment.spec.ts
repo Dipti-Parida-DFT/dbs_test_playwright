@@ -12,7 +12,7 @@
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
-import { NavigatePages, PaymentsPages } from '../../../pages/IDEALX/index';
+import {   PaymentsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
 import { chromium, Browser } from 'playwright';
 import { WebComponents } from '../../../lib/webComponents';
@@ -39,7 +39,7 @@ test.describe.configure({
 });
 
 // Actions for beforEach and afterEach test hooks
-test.describe('ID_Bulk Payment (Playwright using PaymentsPages)', () => {
+test.describe('ID_Bulk Payment (Playwright using PaymentsPages)',{ tag: ['@bulk-payment','@ui','@id'] }, () => {
   let pages: PaymentsPages;
   // Track created payees per test
   type CreatedPayee = { name?: string; accountNumber?: string };

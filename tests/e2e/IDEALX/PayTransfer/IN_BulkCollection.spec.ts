@@ -12,7 +12,7 @@ import { test, expect, Page } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { NavigatePages, PaymentsPages } from '../../../pages/IDEALX/index';
+import {   PaymentsPages } from '../../../pages/IDEALX/index';
 import { LoginPage } from '../../../pages/IDEALX/LoginPage';
 
 

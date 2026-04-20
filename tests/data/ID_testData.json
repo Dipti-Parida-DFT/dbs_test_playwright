@@ -24,6 +24,7 @@
         "SIT": {
             "loginCompanyId": "SPID02",
             "loginUserId": "DBSAUTOID01",
+            "loginUserId2": "SPID02V01",
             "fromAccount": "1500825313",
             "payeeBankID": "494"
         },
