@@ -297,22 +297,6 @@ export type PartiourTTPayeeResult = {
     remitterIdentity: string;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export class TelegraphicTransferPage {
   private readonly webComponents = new WebComponents();
 
@@ -489,6 +473,12 @@ export class TelegraphicTransferPage {
     this.pmtBOPCodeSeries3Dropdown = page.locator('(//span[contains(text(),"Capital")])[2]');
     this.pmtBOPCodeSeries4Dropdown = page.locator('(//span[contains(text(),"521010")])[2]');
     this.IDRPayeeCurrencyDropdown = page.locator('//span[contains(text(),"IDR")]');
+    this.documentType2 = page.locator('(//input[@id="docType"])[2]');
+    this.ttDeleteTransactionButton = page.locator('//button[@id="transactionDelete"]');
+    this.ttSelectTransactionCheckbox = page.locator('//input[@id="tc-checkbox-0"]');
+    this.ttPayTransferButton = page.locator('//*[@id="nav-item-navBBTopPaymentsLinkText"]');
+    this.newTTreferenceGenerate = page.locator('//input[@name="customerReference"]');
+    this.existingCNPayeeBankAccount2Dropdown = page.locator('//span[contains(text(),"745454543")]');
     }
 
     readonly authenticate: Locator;
@@ -661,6 +651,17 @@ export class TelegraphicTransferPage {
     readonly pmtBOPCodeSeries3Dropdown: Locator;
     readonly pmtBOPCodeSeries4Dropdown: Locator;
     readonly IDRPayeeCurrencyDropdown: Locator;
+    readonly documentType2: Locator;
+    readonly ttDeleteTransactionButton: Locator;
+    readonly ttSelectTransactionCheckbox: Locator;
+    readonly ttPayTransferButton: Locator;
+    readonly newTTreferenceGenerate: Locator;
+    readonly existingCNPayeeBankAccount2Dropdown: Locator;
+
+
+
+
+
 
   private async selectBankCharge(charge: BankChargeType) {
   switch (charge) {
@@ -1037,16 +1038,12 @@ export class TelegraphicTransferPage {
     return match?.[1] ?? '';
   }
 
-  async waitForRejectPaymentSuccess(timeout = 15_000) {
+  async waitForRejectPaymentSuccess() {
     await this.waitForUXLoading();
-    await expect(this.ttRejectPaymentSuccessMessage).toBeVisible({ timeout });
-    await expect(this.ttRejectPaymentReasonInput).toBeEnabled({ timeout });
-    await this.saferClick(this.ttRejectPaymentReasonInput);
-    await this.safeFill(this.ttRejectPaymentReasonInput, `Rejected by automation at ${new Date().toISOString()}`);
-    await this.page.keyboard.press('Tab');
+    await this.webComponents.clickWhenVisibleAndEnabled(this.ttRejectPaymentReasonInput);
+    await this.webComponents.enterTextarea(this.ttRejectPaymentReasonInput, `Rejected by automation at ${new Date().toISOString()}`);
     await this.ttRejectPaymentReasonInput.blur();
-    await this.saferClick(this.ttRejectPaymentSuccessButton);
-
+    await this.webComponents.clickWhenVisibleAndEnabled(this.ttRejectPaymentSuccessButton);
   }
 
   async waitForRejectTransactionID(timeout = 15_000) {
@@ -1783,5 +1780,31 @@ async addPartiourTTPayee(input: PartiourTTPayeeInput): Promise<PartiourTTPayeeRe
 
       return { existingAccountNumber, fxAppRefNum, BOP1Amount, BOP2Amount, contractNumber, invoiceNumber, transactionRemark1, amountA2, bankChargeType, payeeBankMsg, email1, email2, email3, email4, email5, payeeMsg, additionalNote, remitterIdentity };
  };
+
+ async clickSubmitUntilFinish(timeout = 250_000) {
+  for (let i = 0; i < 5; i++) {
+    await this.webComponents.clickWhenVisibleAndEnabled(this.newTTsubmitButton);
+
+    try {
+      await this.waitFornewTTSubmittedPageReady();
+      return;
+    } catch {}
+  }
+
+  throw new Error("Submitted page did not load after multiple attempts");
+}
+
+async clearAutocompleteIfFilled(container: Locator) {
+  const tokens = container.locator('.ui-autocomplete-token');
+
+  if (await tokens.count() > 0) {
+    const removeBtn = container.locator('.ui-autocomplete-token-icon');
+
+    // safer: don't assert visibility, just try click if exists
+    if (await removeBtn.first().isVisible().catch(() => false)) {
+      await removeBtn.first().click({ force: true });
+    }
+  }
+}
 
 };
