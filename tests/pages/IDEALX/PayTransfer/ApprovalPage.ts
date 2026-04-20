@@ -1,7 +1,13 @@
 // pages/ApprovalPage.ts
 import { Page, Locator, expect } from '@playwright/test';
+import { WebComponents } from '../../../lib/webComponents';
+
 
 export class ApprovalPage {
+
+  private readonly webComponents = new WebComponents();
+
+  
   constructor(private readonly page: Page) {
     this.approvalMenu = page.locator('//div[@id="nav-item-navBBTopMyApprovalsLinkText"]');
     this.approvalVerifyTab = page.locator('//a[@href="#/approvals/verify"]');
@@ -15,6 +21,8 @@ export class ApprovalPage {
 
     this.approveReleaseButton = page.locator('//button[@id="transactionRelease"]');
     this.approveReleaseSubmitButton = page.locator('//button[@name="txn-preview-verify-release"]');
+    this.approveRejectButton = page.locator('//button[@id="transactionReject"]');
+
     
     this.verifyPaymentTab = page.locator('//a[contains(@href,"/approvals/verify")]');
     this.transactionFilter = page.locator('//input[@id="byTXN-filter"]');
@@ -36,6 +44,7 @@ export class ApprovalPage {
   readonly approveReleaseTab: Locator;
   readonly approveReleaseButton: Locator;
   readonly approveReleaseSubmitButton: Locator;
+  readonly approveRejectButton: Locator;
   readonly verifyPaymentTab: Locator;
   readonly transactionFilter: Locator;
   readonly searchFirstCheckBox: Locator;
@@ -110,5 +119,13 @@ export class ApprovalPage {
     await this.saferClick(this.approveReleaseSubmitButton);
     await this.saferClick(this.approveVerifyFinishButton);
   }
+
+    async searchReferenceInApproval(reference: string) {
+    await this.safeFill(this.approvalVerifySearch, reference);
+    await this.page.waitForTimeout(5000); // Wait for search results to update
+    await this.safeFill(this.approvalVerifySearch, reference);
+    await this.approveVerifyCheckbox.first().evaluate(el => (el as HTMLElement).click());
+  }
+
 
 }
