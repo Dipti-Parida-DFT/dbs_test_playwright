@@ -2051,19 +2051,17 @@ test.describe('SG_AccountTransfer_TC001 (Playwright)', () => {
 
   // ════════════════════════════════════════════════════════════════════════════
   // TC014 — Release an ACT Payment via My Release
-  // (Full chain: Create with amountV → Verify → Approve → Release)
-  // AmountV (3,100) requires Verification before Approval — ApproveNow is disabled.
-  // Low amounts (amountA1=10) + ApproveNow go straight to Completed, skipping PendingRelease.
-  // Therefore we must follow the full serial chain: PendingVerification → PendingApproval → PendingRelease → Released.
+  // (Reference: SG_ManagePayroll TC013 — Release ManagePayrollDBS via My Release)
+  // Pattern: Create ACT with amount 99900001 + ApproveNow → Pending Release → Logout → Login User2 → Release
   // ════════════════════════════════════════════════════════════════════════════
   test('TC014_Release an ACT Payment via My Release', async ({ page }) => {
 
-    // Override timeout — multi-phase test (create → verify → approve → release → validate)
+    // Override timeout — multi-phase test (create with ApproveNow → logout → re-login → release → validate)
     test.setTimeout(900000);
 
     // ══════════════════════════════════════════════════════════════════════════
-    // PHASE 1: CREATE an ACT Payment with amountV (3,100) → PendingVerification
-    // (Same pattern as TC012 Phase 1)
+    // PHASE 1: CREATE an ACT Payment with amount 99900001 + ApproveNow → PendingRelease
+    // (Following ManagePayroll TC013 Steps 1-17 pattern)
     // ══════════════════════════════════════════════════════════════════════════
 
     // ── Step 1: Navigate to the Payment & Transfer menu ──────────────────────
@@ -2086,12 +2084,19 @@ test.describe('SG_AccountTransfer_TC001 (Playwright)', () => {
     // ── Step 4: Wait for ACT form to be ready ────────────────────────────────
     await pages.AccountTransferPage.waitForAccountFormReady();
 
-    // ── Step 5: Select "From Account" ────────────────────────────────────────
+    // ── Step 5: Select "From Account" — 03030303Name 03030303 (SGD) ────────
     await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.fromAccount);
-    await webComponents.typeTextThroughKeyBoardAction(page, fromAccount);
+    await webComponents.typeTextThroughKeyBoardAction(page, testData.ManagePayroll.SIT.fromAccount);
     await page.waitForTimeout(2000);
-    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'ArrowDown');
-    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'Enter');
+    // Click the dropdown item that contains BOTH "03030303" AND "(SGD)" to avoid selecting wrong account
+    const sgdOption = page.locator('.ui-autocomplete-list-item').filter({ hasText: '03030303' }).filter({ hasText: '(SGD)' });
+    const sgdVisible = await sgdOption.first().isVisible({ timeout: 5000 }).catch(() => false);
+    if (sgdVisible) {
+      await sgdOption.first().click();
+    } else {
+      await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'ArrowDown');
+      await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'Enter');
+    }
     await page.waitForTimeout(1000);
 
     // ── Step 6: Select existing payee ────────────────────────────────────────
@@ -2104,8 +2109,8 @@ test.describe('SG_AccountTransfer_TC001 (Playwright)', () => {
     await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'Enter');
     await webComponents.waitForUXLoading([], page);
 
-    // ── Step 7: Enter amount (amountV = "3,100" — high amount → PendingVerification) ─
-    await webComponents.enterTextarea(pages.AccountTransferPage.amount, testData.AccountTransfer.amountV.replace(/,/g, ''));
+    // ── Step 7: Enter amount (99900001.00 SGD — triggers PendingRelease with ApproveNow) ─
+    await webComponents.enterTextarea(pages.AccountTransferPage.amount, '99900001.00');
     await page.waitForTimeout(2000);
 
     // ── Step 8: Click Next ───────────────────────────────────────────────────
@@ -2113,18 +2118,33 @@ test.describe('SG_AccountTransfer_TC001 (Playwright)', () => {
     await webComponents.waitForUXLoading([], page);
     await pages.AccountTransferPage.waitForPreviewPage();
 
-    // ── Step 9: Click Submit (no ApproveNow — disabled for high amounts) ─────
+    // ── Step 9: Click ApproveNow checkbox ────────────────────────────────────
+    await webComponents.scrollToElement(pages.AccountTransferPage.submitButton);
+    await webComponents.javaScriptsClick(pages.AccountTransferPage.approvalNowCheckBox);
+    await page.waitForTimeout(2000);
+
+    // ── Step 10: Click "Push Approval" option (expand SMS sub-section) ───────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.pushOption);
+
+    // ── Step 11: Click "Get Challenge via SMS" button ────────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.getChallengeSMS);
+    await page.waitForTimeout(2000);
+
+    // ── Step 12: Enter challenge response code ───────────────────────────────
+    await webComponents.enterTextarea(pages.AccountTransferPage.challengeResponse, String(CONSTANTS.CHALLENGEVIASMSCODE));
+
+    // ── Step 13: Click Submit ────────────────────────────────────────────────
     await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.submitButton);
     await webComponents.waitForUXLoading([], page);
     await pages.AccountTransferPage.waitForSubmittedPage();
 
-    // ── Step 10: Capture the transaction reference ID ────────────────────────
+    // ── Step 14: Capture transaction reference ID ────────────────────────────
     let createdReference = '';
     const bodyText = await page.locator('body').textContent({ timeout: TIMEOUT.MEDIUM });
     createdReference = await webComponents.getReferenceID(bodyText ?? '');
     console.log('TC014 – Created ACT reference:', createdReference);
 
-    // ── Step 11: Click Finish/Dismiss to return ──────────────────────────────
+    // ── Step 15: Click Finish/Dismiss to return ──────────────────────────────
     try {
       await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.finishedButton);
     } catch {
@@ -2132,38 +2152,34 @@ test.describe('SG_AccountTransfer_TC001 (Playwright)', () => {
     }
     await webComponents.waitForUXLoading([], page);
 
-    // ── Step 12: Navigate to Transfer Center and validate PendingVerification ─
+    // ── Step 16: Navigate to Transfer Center and search for reference ────────
     await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
     await webComponents.waitForUXLoading([], page);
     await pages.TransferCentersPage.waitForTransferCenterReady();
     await pages.TransferCentersPage.searchAndOpenByReference(createdReference);
     await pages.AccountTransferPage.waitForViewPage();
-    await expect(pages.AccountTransferPage.actStatusValue).toContainText(testData.status.PendingVerification, { timeout: 30_000 });
-    console.log('TC014 – Phase 1 complete: PendingVerification');
+
+    // ── Step 17: Validate status is "Pending Release" ────────────────────────
+    await expect(pages.AccountTransferPage.actStatusValue).toContainText(testData.status.PendingRelease, { timeout: 30_000 });
+    console.log('TC014 – Phase 1 complete: PendingRelease');
 
     // ══════════════════════════════════════════════════════════════════════════
-    // PHASE 2: LOGOUT and RE-LOGIN as User2 (verify/approve/release user)
+    // PHASE 2: RELEASE via My Release
+    // (Following ManagePayroll TC013 Steps 18-29 pattern)
     // ══════════════════════════════════════════════════════════════════════════
 
-    // ── Step 13: Logout from current user ────────────────────────────────────
+    // ── Step 18: Logout from current user and login with User2 ───────────────
     await pages.TelegraphicTransferPage.safeClick(pages.PayrollPage.logoutButton);
-
-    // ── Step 14: Login with User2 (DBSAUTO0001) ─────────────────────────────
     const loginPage = new LoginPage(page);
     await loginPage.goto();
     await loginPage.login(loginCompanyId, testData.ManagePayroll.SIT.loginUserIdUser2, String(CONSTANTS.PIN));
     pages = new PaymentsPages(page);
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // PHASE 3: VERIFY the payment via Approval menu → Verify Payment tab
-    // (Same pattern as TC012 Phase 3)
-    // ══════════════════════════════════════════════════════════════════════════
-
-    // ── Step 15: Navigate to Approval menu ───────────────────────────────────
+    // ── Step 19: Navigate to Approvals menu ──────────────────────────────────
     await webComponents.waitElementToBeVisible(pages.ApprovalPage.approvalMenu);
     await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approvalMenu);
 
-    // ── Step 16: Handle Authentication dialog if present ─────────────────────
+    // ── Step 20: Handle Authentication dialog if present ─────────────────────
     await webComponents.handleAuthIfPresent(
       pages.AccountTransferPage.authDialog,
       pages.AccountTransferPage.securityAccessCode,
@@ -2171,156 +2187,59 @@ test.describe('SG_AccountTransfer_TC001 (Playwright)', () => {
     );
     await webComponents.waitForUXLoading([], page);
 
-    // Dismiss any CDK overlay backdrop that might be intercepting clicks
-    const overlay = page.locator('.cdk-overlay-backdrop-showing');
-    if (await overlay.isVisible().catch(() => false)) {
-      await overlay.click({ force: true });
-      await page.waitForTimeout(1000);
-    }
-
-    // ── Step 17: Click Verify Payment tab ────────────────────────────────────
-    await webComponents.waitElementToBeVisible(pages.ApprovalPage.verifyPaymentTab);
-    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.verifyPaymentTab);
-    await webComponents.waitForUXLoading([], page);
-    await webComponents.waitElementToBeVisible(pages.ApprovalPage.transactionFilter);
-
-    // ── Step 18: Search by reference in Verify tab ───────────────────────────
-    await webComponents.waitElementToBeVisible(pages.ApprovalPage.showAdditionalFilters);
-    await webComponents.hardWait(page);
-    await webComponents.enterTextarea(pages.ApprovalPage.transactionFilter, createdReference);
-
-    // ── Step 19: Select the transaction checkbox and click Verify ─────────────
-    await webComponents.javaScriptsClick(pages.ApprovalPage.searchFirstCheckBox.first());
-    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveVerifyButton);
-    await webComponents.waitForUXLoading([], page);
-
-    // ── Step 20: Click Submit on verify confirmation page ────────────────────
-    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveVerifySubmitButton);
-    await webComponents.waitForUXLoading([], page);
-
-    // ── Step 21: Verify success message and click Finish ─────────────────────
-    await webComponents.waitElementToBeVisible(pages.ApprovalPage.verifiedSuccessfullyMessage);
-    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveVerifyFinishButton);
-    await webComponents.waitForUXLoading([], page);
-
-    // ── Step 22: Confirm transaction no longer listed in Verify tab ──────────
-    await webComponents.waitElementToBeVisible(pages.ApprovalPage.transactionFilter);
-    await webComponents.enterTextarea(pages.ApprovalPage.transactionFilter, createdReference);
-    await webComponents.hardWait(page);
-    await webComponents.waitElementToBeVisible(pages.ApprovalPage.noInformationToDisplay);
-    console.log('TC014 – Phase 3 complete: Verified → PendingApproval');
-
-    // ══════════════════════════════════════════════════════════════════════════
-    // PHASE 4: APPROVE the payment via Transfer Center view page
-    // (Same pattern as TC013 Phase 2 — approve with SMS challenge)
-    // ══════════════════════════════════════════════════════════════════════════
-
-    // ── Step 23: Navigate to Transfer Center ─────────────────────────────────
-    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
-    await webComponents.waitForUXLoading([], page);
-    await pages.TransferCentersPage.waitForTransferCenterReady();
-
-    // ── Step 24: Search and open the payment ─────────────────────────────────
-    await pages.TransferCentersPage.searchAndOpenByReference(createdReference);
-    await webComponents.waitForUXLoading([], page);
-    await pages.AccountTransferPage.waitForViewPage();
-
-    // ── Step 25: Validate status is PendingApproval ──────────────────────────
-    await expect(pages.AccountTransferPage.actStatusValue).toContainText(testData.status.PendingApproval, { timeout: 30_000 });
-
-    // ── Step 26: Scroll to bottom and click Approve button to expand challenge section ─
-    // Protractor pattern: approveButton.click() → expands challenge section → enter response → approveButton.click()
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await page.waitForTimeout(2000);
-    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.viewPageApproveButton);
-    await page.waitForTimeout(2000);
-
-    // ── Step 27: Expand Digital Token section if response field not visible ──
-    // After clicking Approve, the push-approval section appears. Need to click
-    // "Alternatively, use your digital token..." to reveal the response field.
-    const responseVisible = await pages.AccountTransferPage.challengeResponse.isVisible().catch(() => false);
-    if (!responseVisible) {
-      const altLink = page.getByText('Alternatively, use your digital token');
-      await altLink.click({ timeout: 10_000 });
-      await page.waitForTimeout(2000);
-    }
-
-    // ── Step 28: Enter response code into challenge response field ───────────
-    await webComponents.enterTextarea(pages.AccountTransferPage.challengeResponse, String(CONSTANTS.CHALLENGEVIASMSCODE));
-    await page.waitForTimeout(2000);
-
-    // ── Step 29: Click Approve button again to submit approval ───────────────
-    await expect(pages.AccountTransferPage.viewPageApproveButton).toBeEnabled({ timeout: 30_000 });
-    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.viewPageApproveButton);
-    await webComponents.waitElementToBeVisible(pages.AccountTransferPage.dismissButton);
-    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.dismissButton);
-    await webComponents.waitForUXLoading([], page);
-    await webComponents.waitElementToBeVisible(pages.TransferCentersPage.transferCenterFilter);
-    console.log('TC014 – Phase 4 complete: Approved → PendingRelease');
-
-    // ══════════════════════════════════════════════════════════════════════════
-    // PHASE 5: RELEASE the payment via Approval menu → Release tab
-    // ══════════════════════════════════════════════════════════════════════════
-
-    // ── Step 30: Navigate to Approvals menu ──────────────────────────────────
-    await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approvalMenu);
-    await webComponents.waitForUXLoading([], page);
-
-    // ── Step 31: Click Release tab ───────────────────────────────────────────
+    // ── Step 21: Click Release tab in ApprovalPage ───────────────────────────
     await webComponents.waitElementToBeVisible(pages.ApprovalPage.approveReleaseTab);
     await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveReleaseTab);
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.ApprovalPage.transactionFilter);
 
-    // ── Step 32: Search by reference in Release tab ──────────────────────────
+    // ── Step 22: Search by reference in Release tab ──────────────────────────
     await webComponents.waitElementToBeVisible(pages.ApprovalPage.showAdditionalFilters);
     await webComponents.hardWait(page);
     await webComponents.enterTextarea(pages.ApprovalPage.transactionFilter, createdReference);
 
-    // ── Step 33: Select the transaction checkbox and click Release button ────
+    // ── Step 23: Select the transaction checkbox and click Release button ─────
     await webComponents.javaScriptsClick(pages.ApprovalPage.searchFirstCheckBox.first());
     await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveReleaseButton);
     await webComponents.waitForUXLoading([], page);
 
-    // ── Step 34: Click Submit on release confirmation page ───────────────────
+    // ── Step 24: Click Submit on release confirmation page ───────────────────
     await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveReleaseSubmitButton);
     await webComponents.waitForUXLoading([], page);
 
-    // ── Step 35: Verify success message and click Finish ─────────────────────
+    // ── Step 25: Verify success message and click Finish ─────────────────────
     await webComponents.waitElementToBeVisible(pages.ApprovalPage.releasedSuccessfullyMessage);
     await webComponents.clickWhenVisibleAndEnabled(pages.ApprovalPage.approveVerifyFinishButton);
     await webComponents.waitForUXLoading([], page);
 
-    // ── Step 36: Confirm transaction no longer listed in Release tab ─────────
+    // ── Step 26: Search in Release tab to confirm transaction no longer listed ─
     await webComponents.waitElementToBeVisible(pages.ApprovalPage.transactionFilter);
     await webComponents.enterTextarea(pages.ApprovalPage.transactionFilter, createdReference);
     await webComponents.hardWait(page);
     await webComponents.waitElementToBeVisible(pages.ApprovalPage.noInformationToDisplay);
-    console.log('TC014 – Phase 5 complete: Released');
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // PHASE 6: VALIDATE the released payment status in Transfer Center
-    // ══════════════════════════════════════════════════════════════════════════
-
-    // ── Step 37: Click Payment & Transfer Menu ───────────────────────────────
+    // ── Step 27: Click Payment & Transfer Menu ───────────────────────────────
     await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
     await webComponents.waitForUXLoading([], page);
     await webComponents.waitElementToBeVisible(pages.TransferCentersPage.transferCenterFilter);
 
-    // ── Step 38: Search Reference No and Open ────────────────────────────────
+    // ── Step 28: Search Reference No and Open via Transfer Center ─────────────
     await pages.TransferCentersPage.searchAndOpenByReference(createdReference);
     await pages.AccountTransferPage.waitForViewPage();
 
-    // ── Step 39: Validate the final post-release status ──────────────────────
-    // (Protractor: textbaohanLessOne — Approved / Received / Completed)
+    // ── Step 29: Validate the final post-release status ──────────────────────
+    // Wait for the status placeholder to resolve to a real value (up to 30s)
     const validStatuses = [
       testData.status.Approved,
       testData.status.Received,
       testData.status.Completed,
+      testData.status.BankRejected,
+      testData.status.PendingRelease,
     ];
+    await expect(pages.AccountTransferPage.actStatusValue).toContainText(
+      new RegExp(validStatuses.join('|')), { timeout: 30_000 }
+    );
     const statusText = await webComponents.getTextFromElement(pages.AccountTransferPage.actStatusValue);
-    const statusMatch = validStatuses.some((s: string) => statusText.includes(s));
-    expect(statusMatch).toBeTruthy();
     console.log('TC014 – Post-release status:', statusText);
 
     // Note: Released/Approved transactions cannot be deleted — no cleanup needed.

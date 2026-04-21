@@ -349,3 +349,13 @@ During TC01 ACT migration, initial code used raw Playwright APIs (`.fill()`, `ex
 - After approval, validate status against valid set: Approved / PartialApproved / Received / PendingRelease / Completed / BankRejected
 - Approved transactions **cannot be deleted** — Delete button is disabled. No cleanup step needed
 - DO NOT skip `getChallengeSMS` click — unlike initial assumption, the SMS challenge is NOT auto-sent on the ACT approve view page; it must be explicitly requested
+
+## ACT Release via My Release — Two-Phase ApproveNow + Release Flow (TC014)
+- TC014 creates an ACT payment with amount `99900001.00` + ApproveNow → status becomes **"Pending Release"**, then logs out and re-logs in with User2 to release it
+- **From Account selection (SGD):** The autocomplete dropdown shows multiple accounts with overlapping names. Filtering by `(SGD)` alone picks the WRONG account (e.g., "021account (SGD)"). Must chain two filters: `.filter({ hasText: '03030303' }).filter({ hasText: '(SGD)' })` to uniquely target the correct "03030303Name 03030303 (SGD)" account
+- `testData.ManagePayroll.SIT.fromAccount` = `"03030303Na"` — used as the search/type text for the autocomplete input
+- **ApproveNow on preview page (TC014 pattern):** Scroll to submit button → `javaScriptsClick(approvalNowCheckBox)` → wait 2s → click `pushOption` (expand SMS section) → click `getChallengeSMS` → enter challenge response → Submit
+- After ApproveNow with amount 99900001.00, status = `"Pending Release"` — confirmed in Transfer Center view page
+- **Release flow (ManagePayroll TC013 pattern):** Logout → Login User2 (`testData.ManagePayroll.SIT.loginUserIdUser2` = "DBSAUTO0001") → Approval menu → `approveReleaseTab` → search reference → select checkbox + click `approveReleaseButton` → click `approveReleaseSubmitButton` → verify `releasedSuccessfullyMessage` → click finish
+- **Post-release status validation:** Use `toContainText(regex, { timeout: 30_000 })` instead of immediate `getTextFromElement` — the status field shows placeholder text for >10s before resolving to real value (Approved / Received / Completed / BankRejected / PendingRelease)
+- Released/Approved transactions **cannot be deleted** — no cleanup step needed
