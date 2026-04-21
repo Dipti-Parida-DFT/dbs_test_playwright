@@ -16,7 +16,7 @@ export function loadJson<T>(
   }
 ): T {
   const repoRoot = process.cwd();
-  const baseDir = options?.baseDir ?? path.join(repoRoot, "test-data");
+  const baseDir = options?.baseDir ?? repoRoot;
 
   const absPath = path.isAbsolute(filePath)
     ? filePath
