@@ -1,0 +1,295 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e4]:
+    - generic [ref=e7]:
+      - banner [ref=e8]:
+        - generic [ref=e11]:
+          - img [ref=e12]:
+            - img [ref=e13]
+          - list [ref=e19]:
+            - listitem [ref=e20]:
+              - generic [ref=e21] [cursor=pointer]:
+                - img [ref=e22]:
+                  - img [ref=e23]
+                - generic [ref=e25]: LEONA ALBRECHT
+                - generic [ref=e26]: Singapore
+      - navigation [ref=e27]:
+        - generic [ref=e29]:
+          - generic [ref=e31] [cursor=pointer]:
+            - img [ref=e32]:
+              - img [ref=e33]
+            - generic [ref=e35]: Dashboard
+          - generic [ref=e37] [cursor=pointer]:
+            - img [ref=e38]:
+              - img [ref=e39]
+            - generic [ref=e41]: Approvals
+          - generic [ref=e43] [cursor=pointer]:
+            - img [ref=e44]:
+              - img [ref=e45]
+            - generic [ref=e47]: Accounts
+          - generic [ref=e49] [cursor=pointer]:
+            - img [ref=e50]:
+              - img [ref=e51]
+            - generic [ref=e53]: Pay & Transfer
+          - generic [ref=e55] [cursor=pointer]:
+            - img [ref=e56]:
+              - img [ref=e57]
+            - generic [ref=e59]: Foreign Exchange
+          - generic [ref=e61] [cursor=pointer]:
+            - img [ref=e62]:
+              - img [ref=e63]
+            - generic [ref=e66]: Merchant Services
+          - generic [ref=e68] [cursor=pointer]:
+            - img [ref=e69]:
+              - img [ref=e70]
+            - generic [ref=e72]: Files
+          - generic [ref=e74] [cursor=pointer]:
+            - img [ref=e75]:
+              - img [ref=e76]
+            - generic [ref=e78]: Reports
+          - generic [ref=e80] [cursor=pointer]:
+            - img [ref=e81]:
+              - img [ref=e82]
+            - generic [ref=e84]: Apply
+      - contentinfo:
+        - generic [ref=e85]:
+          - list [ref=e86]:
+            - listitem [ref=e87]:
+              - generic [ref=e89] [cursor=pointer]:
+                - img [ref=e90]:
+                  - img [ref=e91]
+                - generic [ref=e93]: Manage organisation
+          - list [ref=e94]:
+            - listitem [ref=e95]:
+              - generic [ref=e96] [cursor=pointer]:
+                - img [ref=e97]:
+                  - img [ref=e98]
+                - generic [ref=e100]: Logout
+    - generic [ref=e104]:
+      - heading "Pay Local / Overseas Payee" [level=1] [ref=e107]
+      - list [ref=e109]:
+        - listitem [ref=e110]:
+          - button [ref=e111] [cursor=pointer]:
+            - img [ref=e112]:
+              - img [ref=e113]
+        - listitem [ref=e116]:
+          - button [ref=e117] [cursor=pointer]:
+            - img [ref=e118]:
+              - img [ref=e119]
+    - generic [ref=e126]:
+      - generic [ref=e128]:
+        - generic [ref=e130]: Pay a local or overseas payee in any currency. Uses DBS Account Transfer, DBS PriorityPay, Telegraphic Transfer, or available local transfer types
+        - list [ref=e131]:
+          - listitem [ref=e132]: 1. Input Details
+          - listitem [ref=e133]: 2. Verify Details
+          - listitem [ref=e134]: 3. Submit for Approval
+      - generic [ref=e137]:
+        - paragraph [ref=e138]:
+          - img [ref=e139]:
+            - img [ref=e140]
+        - list [ref=e142]:
+          - listitem [ref=e143]: One or more of the fields below have not been properly filled up. Please amend and submit again.
+      - generic [ref=e144]:
+        - generic [ref=e145]:
+          - generic [ref=e146]:
+            - generic [ref=e148]:
+              - 'heading "Step 1: Transfer from" [level=2] [ref=e149]'
+              - generic [ref=e150]:
+                - generic [ref=e153]:
+                  - generic [ref=e154]: Account
+                  - generic [ref=e157]:
+                    - generic [ref=e158]:
+                      - textbox "Select" [ref=e159]
+                      - img [ref=e161] [cursor=pointer]:
+                        - img [ref=e162]
+                    - generic [ref=e165] [cursor=pointer]: 03030303Name 03030303 (SGD)
+                - generic [ref=e169]:
+                  - generic [ref=e170]: Amount
+                  - generic [ref=e171]:
+                    - paragraph [ref=e172]: Send payee
+                    - generic [ref=e174]:
+                      - generic [ref=e175]:
+                        - textbox "Select currency" [ref=e176]
+                        - img [ref=e178] [cursor=pointer]:
+                          - img [ref=e179]
+                      - generic [ref=e182] [cursor=pointer]: SGD
+                    - textbox "Input amount" [ref=e186]: "10"
+            - generic [ref=e191]:
+              - 'heading "Step 2: Transfer to" [level=2] [ref=e192]'
+              - generic [ref=e194]:
+                - list [ref=e196]:
+                  - listitem [ref=e197] [cursor=pointer]:
+                    - tab "Existing payee" [expanded] [ref=e198]
+                  - listitem [ref=e199] [cursor=pointer]:
+                    - tab "New PayNow" [ref=e200]
+                  - listitem [ref=e201] [cursor=pointer]:
+                    - tab "New payee" [ref=e202]
+                - tabpanel [ref=e204]:
+                  - generic [ref=e207]:
+                    - generic [ref=e208]: Existing payee
+                    - generic [ref=e209]:
+                      - generic [ref=e211]:
+                        - generic [ref=e212]:
+                          - textbox "Select" [ref=e213]
+                          - img [ref=e215] [cursor=pointer]:
+                            - img [ref=e216]
+                        - generic [ref=e219] [cursor=pointer]: 012701 - ABFLHKH0XXX - 2022012701
+                      - generic [ref=e221]:
+                        - generic [ref=e222]:
+                          - strong [ref=e224]: "012701"
+                          - generic [ref=e225]: 1, 2
+                        - generic [ref=e226]:
+                          - strong [ref=e228]: AB INTERNATIONAL FINANCE LTD
+                          - generic [ref=e229]: "SWIFT/BIC: ABFLHKH0XXX"
+                          - generic [ref=e230]: "Account number: 2022012701"
+                      - generic [ref=e234]:
+                        - paragraph [ref=e235]:
+                          - img [ref=e236]:
+                            - img [ref=e237]
+                        - list [ref=e239]:
+                          - listitem [ref=e240]: Do you know you can obtain better savings if you transact FX through us? Amend your trade to the recipient currency now and enjoy XX % savings from prevailing bank rates
+            - generic [ref=e241]:
+              - generic [ref=e243]:
+                - generic [ref=e246]:
+                  - generic [ref=e247]:
+                    - text: Intermediary bank
+                    - paragraph [ref=e248]: (optional)
+                  - generic [ref=e249]:
+                    - paragraph [ref=e250]: Enter intermediary bank details if your payee requires another bank to receive this transfer on behalf of their bank.
+                    - checkbox "Provide intermediary bank details"
+                    - paragraph [ref=e253] [cursor=pointer]: Provide intermediary bank details
+                - 'heading "Step 3: Payment date" [level=2] [ref=e254]'
+                - generic [ref=e257]:
+                  - generic [ref=e258]: Payment date
+                  - generic [ref=e259]:
+                    - paragraph [ref=e260]: This is the actual date your account will be deducted.
+                    - generic [ref=e262]:
+                      - generic [ref=e264]:
+                        - radio "Earliest available date (shown next page - Verify Details)" [checked]
+                        - generic [ref=e265] [cursor=pointer]: Earliest available date (shown next page - Verify Details)
+                      - generic [ref=e267]:
+                        - radio "Choose date"
+                        - generic [ref=e268] [cursor=pointer]: Choose date
+                      - textbox "DD MMM YYYY" [ref=e276]: 21 Apr 2026
+                - generic [ref=e279]:
+                  - generic [ref=e280]: Payment type
+                  - generic [ref=e283]: Singapore Telegraphic Transfer
+              - generic [ref=e284]:
+                - 'heading "Step 4: Bank charges" [level=2] [ref=e285]'
+                - generic [ref=e289]:
+                  - generic [ref=e290]: Bank charges
+                  - generic [ref=e293]:
+                    - generic [ref=e295]:
+                      - radio "Both you and your payee (SHAR/SHA) You pay DBS fees. Other banks' fees will be paid by the payee."
+                      - paragraph [ref=e297] [cursor=pointer]:
+                        - text: Both you and your payee (SHAR/SHA)
+                        - text: You pay DBS fees. Other banks' fees will be paid by the payee.
+                    - generic [ref=e299]:
+                      - radio "You (DEBT/OUR) You pay DBS and other banks' fees." [checked]
+                      - paragraph [ref=e301] [cursor=pointer]:
+                        - text: You (DEBT/OUR)
+                        - text: You pay DBS and other banks' fees.
+                    - generic [ref=e303]:
+                      - radio "Your payee (CRED/BEN) You pay no fees. DBS and other banks' fees will be paid by the payee."
+                      - paragraph [ref=e305] [cursor=pointer]:
+                        - text: Your payee (CRED/BEN)
+                        - text: You pay no fees. DBS and other banks' fees will be paid by the payee.
+              - generic [ref=e306]:
+                - 'heading "Step 5: Messages and notes" [level=2] [ref=e307]'
+                - generic [ref=e308]:
+                  - generic [ref=e311]:
+                    - generic [ref=e312]:
+                      - text: Payment details to the payee bank
+                      - paragraph [ref=e313]: (optional)
+                    - generic [ref=e314]:
+                      - paragraph [ref=e315]: The payee may receive this message once their bank processes this transfer.
+                      - generic [ref=e317]:
+                        - textbox [ref=e319]
+                        - generic [ref=e320]: 140 characters left
+                  - generic [ref=e323]:
+                    - generic [ref=e324]: Message to the payee
+                    - generic [ref=e325]:
+                      - generic [ref=e326]:
+                        - checkbox "Send up to 5 notifications to other payee or other third-parties, including reference/invoice numbers and payment details."
+                        - generic [ref=e329] [cursor=pointer]:
+                          - text: Send up to
+                          - generic [ref=e330]: 5 notifications
+                          - strong [ref=e331]
+                          - text: to other payee or other third-parties, including reference/invoice numbers and payment details.
+                      - generic [ref=e332]: By using this feature, I agree with the following terms and conditions
+                  - generic [ref=e335]:
+                    - generic [ref=e336]:
+                      - text: Reference
+                      - paragraph [ref=e337]: (optional)
+                    - generic [ref=e338]:
+                      - generic [ref=e339]:
+                        - text: Your statement reference
+                        - paragraph [ref=e340]: This will be shown in your statement for reconciliation.
+                      - generic [ref=e343]:
+                        - textbox [ref=e345]
+                        - generic [ref=e346]: 16 characters left
+                  - generic [ref=e348]:
+                    - generic [ref=e349]:
+                      - generic [ref=e350]:
+                        - text: Additional notes
+                        - paragraph [ref=e351]: (optional)
+                      - generic [ref=e353]:
+                        - checkbox "Message to your Approver Use this to send a message related to this transfer."
+                        - generic [ref=e356] [cursor=pointer]:
+                          - text: Message to your Approver
+                          - paragraph [ref=e357]: Use this to send a message related to this transfer.
+                    - generic [ref=e358]:
+                      - generic [ref=e359]: Original remitter identity
+                      - generic [ref=e361]:
+                        - generic [ref=e362]:
+                          - generic [ref=e364]:
+                            - textbox [ref=e366]
+                            - generic [ref=e367]: 105 characters left
+                          - generic [ref=e368]: Original remitter identity is required.
+                        - generic [ref=e369]:
+                          - generic [ref=e370]: If you are transferring money on behalf of someone else, we will need the original sender's details for regulatory purposes.
+                          - generic [ref=e371]: For Individual, please input <original remitter legal name> & <date of birth> (DDMMMYYYY).
+                          - generic [ref=e372]: For Business, please input <original remitter legal name> & <country of registration>.
+          - generic [ref=e374]:
+            - button "Cancel" [ref=e375] [cursor=pointer]
+            - button "Save as draft" [ref=e376] [cursor=pointer]
+            - button "Next" [active] [ref=e377] [cursor=pointer]
+          - generic [ref=e380]:
+            - paragraph [ref=e381]:
+              - img [ref=e382]:
+                - img [ref=e383]
+            - list [ref=e385]:
+              - listitem [ref=e386]: Singapore Telegraphic Transfer Payments Policy
+        - generic [ref=e390]:
+          - heading "Transfer summary" [level=2] [ref=e391]
+          - generic [ref=e392]:
+            - generic [ref=e393]:
+              - heading "From" [level=3] [ref=e394]
+              - generic [ref=e395]: 03030303Name
+              - generic [ref=e396]: 03030303 (SGD)
+            - generic [ref=e397]:
+              - heading "Send payee" [level=3] [ref=e398]
+              - generic [ref=e399]: SGD 10.00
+              - generic [ref=e400]: Likely to receive in 1-2 working days
+            - generic [ref=e401]:
+              - heading "Your account will be deducted" [level=3] [ref=e402]
+              - generic [ref=e403]: SGD 10.00
+            - generic [ref=e404]:
+              - heading "Payment date" [level=3] [ref=e405]
+              - generic [ref=e406]: Earliest available date (shown next page - Verify Details)
+            - generic [ref=e407]:
+              - heading "Payment type" [level=3] [ref=e408]
+              - generic [ref=e409]: Singapore Telegraphic Transfer
+            - generic [ref=e410]:
+              - heading "Payee name" [level=3] [ref=e411]
+              - generic [ref=e412]: "012701"
+              - heading "Payee account" [level=3] [ref=e413]
+              - generic [ref=e414]: "2022012701"
+            - generic [ref=e415]:
+              - heading "Total amount deducted" [level=3] [ref=e416]
+              - generic [ref=e417]: SGD 10.00
+              - heading "+ DBS bank charges" [level=3] [ref=e418]
+  - img [ref=e423] [cursor=pointer]
+```

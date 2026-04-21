@@ -60,10 +60,10 @@ export class AccountTransferPage {
     this.dismissButton = page.locator('xpath=//button[@name="dismiss"]');
     this.payeeCode = page.locator('xpath=//p-auto-complete[@formcontrolname="payeeCode"]');
 
-    this.useFxCheckBox = page.locator('xpath=//ShuRu[@id="useFX" and @type="checkbox"]');
-    this.FXcontract0 = page.locator('xpath=//ShuRu[@id="fx-contract-0" and @type="checkbox"]');
-    this.FXcontract0Amt = page.locator('xpath=//ShuRu[@name="fx-amount-0"]');
-    this.FXcontract1 = page.locator('xpath=//ShuRu[@id="fx-contract-1" and @type="checkbox"]');
+    this.useFxCheckBox = page.locator('input#useFX');
+    this.FXcontract0 = page.locator('input#fx-contract-0');
+    this.FXcontract0Amt = page.locator('input[name="fx-amount-0"]');
+    this.FXcontract1 = page.locator('input#fx-contract-1');
 
     this.paymentDate = page.locator('xpath=//dbs-calendar[@formcontrolname="paymentDate"]');
     this.outwardRemit = page.locator('xpath=//p-auto-complete[@formcontrolname="outwardRemit"]');

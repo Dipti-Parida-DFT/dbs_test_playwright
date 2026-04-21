@@ -312,3 +312,14 @@ During TC01 ACT migration, initial code used raw Playwright APIs (`.fill()`, `ex
 - After deleting a payment, search for the reference in Transfer Center filter (`transferCenterFilter`)
 - Validate `noInformationLabel` (`//p[text()="No information to display"]`) is visible
 - Use `isElementVisible` + `expect().toContainText()` for the "No information to display" assertion
+
+## ACT Edit with FX Contracts — Non-DOL User Deduction Validation (TC11)
+- TC11 creates a payment with `amountA1` (small amount → Pending Approval), then edits with cross-currency (USD) and FX contracts
+- Protractor validates **deduction amounts at three checkpoints** — all three must be preserved in migration:
+  1. **Form page** (after FX contract selection, before Next): `deductAmt` and `TotalAmtDeduct` against `testData.AccountTransfer.deductAmt` ("SGD 16.32")
+  2. **Preview page** (after Next): `deductAmountValue` and `totalDeductValue` against `deductAmt`; `AmtToDeductValue` and `AmtToDeductValue1` against `deductAmt1` ("8.16")
+  3. **View page** (after submit + re-navigate): `amountValue` against `editAmount`; `deductAmountValue` and `totalDeductValue` against `deductAmt`; `AmtToDeductValue` and `AmtToDeductValue1` against `deductAmt1`
+- FX deduction amounts are **static in test data** (`deductAmt`/`deductAmt1`) — they are NOT dynamic FX rates. Validate against test data, not captured UI values
+- All deduction locators exist in `AccountTransferPage.ts`: `deductAmt`, `TotalAmtDeduct`, `deductAmountValue`, `AmtToDeductValue`, `AmtToDeductValue1`, `totalDeductValue`
+- Use `webComponents.compareUIVsJsonValue()` for all deduction assertions — no `console.log` or raw `expect()`
+- The "Original remitter identity" field does NOT need explicit filling for TC11 — it auto-populates when using the correct existing payee and from-account combination

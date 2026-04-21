@@ -4,6 +4,8 @@
         "/^\\$content = Get-Content \"c:\\\\Automation\\\\dbs_test_playwright\\\\tests\\\\e2e\\\\IDEALX\\\\PayTransfer\\\\SG_AccountTransferTC001AgentGenerated\\.spec\\.ts\"; \"Total lines: \\$\\(\\$content\\.Count\\)\"; \\$content \\| Select-Object -Last 120 \\| ForEach-Object \\{ \"\\$\\(\\$content\\.Count - 119 \\+ \\[array\\]::IndexOf\\(\\(\\$content \\| Select-Object -Last 120\\), \\$_\\)\\): \\$_\" \\}$/": {
             "approve": true,
             "matchCommandLine": true
-        }
+        },
+        "ForEach-Object": true,
+        "Test-Path": true
     }
 }
