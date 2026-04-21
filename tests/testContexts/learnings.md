@@ -323,3 +323,29 @@ During TC01 ACT migration, initial code used raw Playwright APIs (`.fill()`, `ex
 - All deduction locators exist in `AccountTransferPage.ts`: `deductAmt`, `TotalAmtDeduct`, `deductAmountValue`, `AmtToDeductValue`, `AmtToDeductValue1`, `totalDeductValue`
 - Use `webComponents.compareUIVsJsonValue()` for all deduction assertions — no `console.log` or raw `expect()`
 - The "Original remitter identity" field does NOT need explicit filling for TC11 — it auto-populates when using the correct existing payee and from-account combination
+
+## ACT Verify via My Verify — Re-Login User (TC012)
+- TC012 creates a high-amount ACT payment (amountV = "3,100" → PendingVerification), then logs out and re-logs in with a verify user to verify it via Approval → Verify Payment tab
+- The verify user must be `DBSAUTO0001` (same as `testData.ManagePayroll.SIT.loginUserIdUser2`) — NOT `testData.AccountTransfer.verifyUserId` ("SPI307A17")
+- `SPI307A17` triggers a Dashboard-not-found error after login — likely lacks proper entitlements for the SIT environment
+- **Working login path:** `testData.ManagePayroll.SIT.loginUserIdUser2` → "DBSAUTO0001" — successfully lands on Dashboard and can navigate to Approval menu
+- After verify: transaction moves from "Pending Verification" → "Pending Approval" in Transfer Center
+- Post-verify delete uses `PayrollPage.deleteOpenPayeeOrReferenceNo()` + `transactionDeletedPopupOkButton` dismiss (same as TC09/TC10 pattern)
+- The Verify tab search requires `hardWait(page)` before entering reference in `transactionFilter` — otherwise filter may not register input
+- After verification, search the same reference in Verify tab to confirm `noInformationToDisplay` appears (transaction no longer pending verification)
+
+## ACT Approve via Transfer Center — SMS Challenge Flow (TC013)
+- TC013 creates a small-amount ACT payment (amountA1 → PendingApproval), then approves it via the view page SMS challenge flow
+- The approve flow on the ACT view page follows the **same pattern as ManagePayroll TC012**:
+  1. Scroll to `PayrollPage.approveSubmitButton` + `javaScriptsClick` (expand approve section)
+  2. Click `PayrollPage.pushApprovalOption` (expand SMS sub-section)
+  3. Click `AccountTransferPage.getChallengeSMS` (request SMS code)
+  4. Enter challenge response via `AccountTransferPage.challengeResponse` with `CONSTANTS.CHALLENGEVIASMSCODE`
+  5. Wait for `viewPageApproveButton` to be enabled (30s timeout)
+  6. Click `viewPageApproveButton` → dismiss dialog → validate status
+- **Two `button[name="approve"]` on view page:** `#push-btn` ("Approve now", mobile push, disabled) + toolbar "Approve" button
+- Use `viewPageApproveButton` (`button[name="approve"]:not(#push-btn)`) to target the toolbar Approve button specifically — avoids Playwright strict mode violation
+- The `viewPageApproveButton` locator was added to `AccountTransferPage.ts` (declaration + initialization)
+- After approval, validate status against valid set: Approved / PartialApproved / Received / PendingRelease / Completed / BankRejected
+- Approved transactions **cannot be deleted** — Delete button is disabled. No cleanup step needed
+- DO NOT skip `getChallengeSMS` click — unlike initial assumption, the SMS challenge is NOT auto-sent on the ACT approve view page; it must be explicitly requested

@@ -71,6 +71,7 @@ export class AccountTransferPage {
     this.subPurposeCode = page.locator('xpath=//multi-level-dropdown[@formcontrolname="subPurposeCode"]');
     this.Country = page.locator("xpath=//p-auto-complete[@formcontrolname='selectedCountry']");
     this.approveButton = page.locator('xpath=//button[@name="approve"]');
+    this.viewPageApproveButton = page.locator('button[name="approve"]:not(#push-btn)');
 
     this.pushBtnButton = page.locator('xpath=//button[@id="push-btn"]');
     this.pushOption = page.locator('xpath=//*[@class="push-option-label"]');
@@ -293,6 +294,7 @@ export class AccountTransferPage {
   readonly subPurposeCode: Locator;
   readonly Country: Locator;
   readonly approveButton: Locator;
+  readonly viewPageApproveButton: Locator;
 
   readonly pushBtnButton: Locator;
   readonly pushOption: Locator;

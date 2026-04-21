@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>TC012 – Verify an ACT Payment via My Verify – Migration Report</title>
+<style>
+  body{font-family:Segoe UI,Arial,sans-serif;margin:2rem;background:#f8f9fa;color:#212529}
+  h1{color:#0d6efd}h2{color:#495057;border-bottom:2px solid #dee2e6;padding-bottom:.3rem}
+  table{border-collapse:collapse;width:100%;margin-bottom:1.5rem}
+  th,td{border:1px solid #dee2e6;padding:.5rem .75rem;text-align:left}
+  th{background:#e9ecef}
+  .pass{color:#198754;font-weight:700}.fail{color:#dc3545;font-weight:700}
+  .phase{background:#cfe2ff;font-weight:600}
+  code{background:#e9ecef;padding:.15rem .35rem;border-radius:3px;font-size:.9em}
+  pre{background:#212529;color:#f8f9fa;padding:1rem;border-radius:6px;overflow-x:auto;font-size:.85em}
+  .badge{display:inline-block;padding:.25rem .6rem;border-radius:4px;font-size:.85em;font-weight:600}
+  .badge-pass{background:#d1e7dd;color:#0f5132}.badge-fail{background:#f8d7da;color:#842029}
+  .badge-fix{background:#fff3cd;color:#664d03}
+  details{margin:.5rem 0}summary{cursor:pointer;font-weight:600}
+</style>
+</head>
+<body>
+
+<h1>TC012 – Verify an ACT Payment via My Verify</h1>
+<p><strong>Migration Date:</strong> 21 Apr 2026 &nbsp;|&nbsp;
+   <strong>Source:</strong> Protractor <code>SG_AccountTransfer.test.ts</code> (TC012, lines 421-433) &nbsp;|&nbsp;
+   <strong>Target:</strong> Playwright <code>SG_AccountTransferTC001AgentGenerated.spec.ts</code></p>
+
+<h2>1. Summary</h2>
+<table>
+  <tr><th>Item</th><th>Detail</th></tr>
+  <tr><td>Test Name</td><td><code>TC012_Verify an ACT Payment via My Verify</code></td></tr>
+  <tr><td>Final Result</td><td><span class="badge badge-pass">PASS</span></td></tr>
+  <tr><td>Execution Time</td><td>2.3 min (headed, Chromium)</td></tr>
+  <tr><td>Retries Required</td><td>2 (1 failure → 1 fix → pass)</td></tr>
+  <tr><td>Provisional Changes</td><td>1 spec file edit (login user fix)</td></tr>
+  <tr><td>Page-Class Changes</td><td>None</td></tr>
+  <tr><td>Test-Data Changes</td><td>None</td></tr>
+</table>
+
+<h2>2. Test Structure (5 Phases, 27 Steps)</h2>
+<table>
+  <tr><th>#</th><th>Phase / Step</th><th>Action</th></tr>
+  <tr class="phase"><td colspan="3">PHASE 1 — Create ACT Payment (existing payee, high amount → PendingVerification)</td></tr>
+  <tr><td>1</td><td>Navigate Payment Menu</td><td>Click paymentMenu, handle auth dialog</td></tr>
+  <tr><td>2</td><td>Handle Auth</td><td><code>handleAuthIfPresent()</code></td></tr>
+  <tr><td>3</td><td>Wait for Transfer Center</td><td><code>waitForTransferCenterReady()</code>, click Make Payment</td></tr>
+  <tr><td>4</td><td>Wait for ACT form</td><td><code>waitForAccountFormReady()</code></td></tr>
+  <tr><td>5</td><td>Select From Account</td><td>Keyboard type + ArrowDown + Enter</td></tr>
+  <tr><td>6</td><td>Select Existing Payee</td><td>Click inner input, type char-by-char, ArrowDown, Enter</td></tr>
+  <tr><td>7</td><td>Enter Amount</td><td><code>amountV.replace(/,/g, '')</code> → "3100"</td></tr>
+  <tr><td>8</td><td>Click Next</td><td>Navigate to preview page</td></tr>
+  <tr><td>9</td><td>Click Submit</td><td>Submit the payment</td></tr>
+  <tr><td>10</td><td>Capture Reference</td><td>Extract EBLV reference from body text</td></tr>
+  <tr><td>11</td><td>Click Finish/Dismiss</td><td>Return to Transfer Center</td></tr>
+  <tr><td>12</td><td>Validate PendingVerification</td><td>Search by reference, assert status = "Pending Verification"</td></tr>
+
+  <tr class="phase"><td colspan="3">PHASE 2 — Logout &amp; Re-login with Verify User</td></tr>
+  <tr><td>13</td><td>Logout</td><td><code>safeClick(logoutButton)</code></td></tr>
+  <tr><td>14</td><td>Login as DBSAUTO0001</td><td><code>loginPage.login(companyId, "DBSAUTO0001", PIN)</code></td></tr>
+
+  <tr class="phase"><td colspan="3">PHASE 3 — Verify Payment via Approval Menu</td></tr>
+  <tr><td>15</td><td>Navigate to Approval menu</td><td>Click approvalMenu</td></tr>
+  <tr><td>16</td><td>Handle Auth</td><td><code>handleAuthIfPresent()</code></td></tr>
+  <tr><td>17</td><td>Click Verify Payment tab</td><td>Wait for transactionFilter</td></tr>
+  <tr><td>18</td><td>Search by reference</td><td><code>hardWait</code> + enter reference in filter</td></tr>
+  <tr><td>19</td><td>Select &amp; Verify</td><td>Click checkbox, click approveVerifyButton</td></tr>
+  <tr><td>20</td><td>Submit verification</td><td>Click approveVerifySubmitButton</td></tr>
+  <tr><td>21</td><td>Confirm success</td><td>Wait for verifiedSuccessfullyMessage, click Finish</td></tr>
+  <tr><td>22</td><td>Confirm no longer listed</td><td>Search reference → noInformationToDisplay visible</td></tr>
+
+  <tr class="phase"><td colspan="3">PHASE 4 — Validate Status in Transfer Center</td></tr>
+  <tr><td>23</td><td>Navigate Payment Menu</td><td>Click paymentMenu</td></tr>
+  <tr><td>24</td><td>Search &amp; Open</td><td><code>searchAndOpenByReference(ref)</code></td></tr>
+  <tr><td>25</td><td>Validate PendingApproval</td><td>Assert status = "Pending Approval"</td></tr>
+
+  <tr class="phase"><td colspan="3">PHASE 5 — Cleanup (Delete)</td></tr>
+  <tr><td>26</td><td>Delete payment</td><td><code>deleteOpenPayeeOrReferenceNo()</code></td></tr>
+  <tr><td>27</td><td>Dismiss popup</td><td>Click transactionDeletedPopupOkButton</td></tr>
+</table>
+
+<h2>3. Execution History</h2>
+<table>
+  <tr><th>Run</th><th>Result</th><th>Duration</th><th>Failure Point</th><th>Fix Applied</th></tr>
+  <tr>
+    <td>1</td>
+    <td><span class="badge badge-fail">FAIL</span></td>
+    <td>5.7 min</td>
+    <td>Step 14 — <code>waitDashboardToBeVisible</code> after login with <code>SPI307A17</code></td>
+    <td><span class="badge badge-fix">Changed login user from <code>testData.AccountTransfer.verifyUserId</code> ("SPI307A17") to <code>testData.ManagePayroll.SIT.loginUserIdUser2</code> ("DBSAUTO0001")</span></td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><span class="badge badge-pass">PASS</span></td>
+    <td>2.3 min</td>
+    <td>—</td>
+    <td>—</td>
+  </tr>
+</table>
+
+<h2>4. Provisional Change Log</h2>
+
+<h3>4.1 Spec File — <code>SG_AccountTransferTC001AgentGenerated.spec.ts</code></h3>
+<details>
+  <summary>Change 1: Appended TC012 test block (lines 1717–1900)</summary>
+  <p>New 5-phase test case with 27 steps. Follows the SG_ManagePayroll TC011 pattern for verify-via-approval flow.</p>
+</details>
+<details>
+  <summary>Change 2 (Fix): Login user for Phase 2 re-login</summary>
+  <pre>
+// BEFORE (Run 1 — FAILED):
+await loginPage.login(loginCompanyId, testData.AccountTransfer.verifyUserId, String(CONSTANTS.PIN));
+// verifyUserId = "SPI307A17" → Dashboard not found after login
+
+// AFTER (Run 2 — PASSED):
+await loginPage.login(loginCompanyId, testData.ManagePayroll.SIT.loginUserIdUser2, String(CONSTANTS.PIN));
+// loginUserIdUser2 = "DBSAUTO0001" → Dashboard loads successfully
+  </pre>
+</details>
+
+<h3>4.2 Page Classes</h3>
+<p>No changes required. All locators existed in <code>ApprovalPage.ts</code>, <code>AccountTransferPage.ts</code>, <code>PayrollPage.ts</code>, and <code>TelegraphicTransferPage.ts</code>.</p>
+
+<h3>4.3 Test Data</h3>
+<p>No changes. Used existing fields: <code>AccountTransfer.amountV</code>, <code>AccountTransfer.existingPayee</code>, <code>ManagePayroll.SIT.loginUserIdUser2</code>.</p>
+
+<h2>5. Learnings Captured</h2>
+<ul>
+  <li><strong>Verify User:</strong> <code>testData.AccountTransfer.verifyUserId</code> ("SPI307A17") does NOT work for re-login in SIT — use <code>testData.ManagePayroll.SIT.loginUserIdUser2</code> ("DBSAUTO0001") instead.</li>
+  <li><strong>Verify Tab Search:</strong> Requires <code>hardWait(page)</code> before entering reference in <code>transactionFilter</code> — otherwise filter may not register input.</li>
+  <li><strong>Post-verify Status:</strong> After verification through Approval menu, ACT payment transitions from "Pending Verification" → "Pending Approval" in Transfer Center.</li>
+  <li><strong>Delete Pattern:</strong> Post-verify delete uses <code>deleteOpenPayeeOrReferenceNo()</code> + <code>transactionDeletedPopupOkButton</code> dismiss (same as TC09/TC10).</li>
+</ul>
+
+<h2>6. Protractor ↔ Playwright Mapping</h2>
+<table>
+  <tr><th>Protractor (TC012)</th><th>Playwright Equivalent</th></tr>
+  <tr><td><code>loginIDEALX(verifyUserId)</code></td><td><code>loginPage.login(companyId, ManagePayroll.SIT.loginUserIdUser2, PIN)</code></td></tr>
+  <tr><td><code>approvalPage.clickApproval()</code></td><td><code>clickWhenVisibleAndEnabled(approvalMenu)</code></td></tr>
+  <tr><td><code>verifySingleTxnUnderList(ref)</code></td><td>Manual steps 17-21: click Verify tab → search → checkbox → verify → submit → finish</td></tr>
+  <tr><td><code>getTextFromElement(statusLabel)</code></td><td><code>expect(actStatusValue).toContainText(PendingApproval)</code></td></tr>
+  <tr><td><code>reference3</code> (from TC07)</td><td>Self-contained: creates its own payment in Phase 1</td></tr>
+</table>
+
+</body>
+</html>

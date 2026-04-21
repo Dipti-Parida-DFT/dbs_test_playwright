@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TC013 — Approve an ACT Payment via Transfer Center Migration Report</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 1100px; margin: 0 auto; padding: 24px; background: #f7f8fa; }
+    h1 { color: #1a237e; border-bottom: 3px solid #1a237e; padding-bottom: 8px; margin-bottom: 24px; font-size: 1.8em; }
+    h2 { color: #283593; margin: 24px 0 12px 0; font-size: 1.3em; border-left: 4px solid #283593; padding-left: 10px; }
+    h3 { color: #455a64; margin: 16px 0 8px 0; font-size: 1.1em; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0 20px 0; font-size: 0.92em; }
+    th { background: #1a237e; color: #fff; padding: 10px 12px; text-align: left; font-weight: 600; }
+    td { padding: 8px 12px; border: 1px solid #dde; vertical-align: top; }
+    tr:nth-child(even) { background: #f0f2f8; }
+    tr:nth-child(odd) { background: #fff; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; }
+    .pass { background: #c8e6c9; color: #1b5e20; }
+    .fail { background: #ffcdd2; color: #b71c1c; }
+    .warn { background: #fff3e0; color: #e65100; }
+    .info { background: #e3f2fd; color: #0d47a1; }
+    .code { font-family: 'Consolas', 'Courier New', monospace; background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 0.88em; word-break: break-all; }
+    .section { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+    .summary-card { background: #fff; border: 1px solid #dde; border-radius: 8px; padding: 16px; text-align: center; }
+    .summary-card .number { font-size: 2em; font-weight: 700; }
+    .summary-card .label { color: #666; font-size: 0.9em; }
+    .timeline { position: relative; padding-left: 30px; }
+    .timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: #ccc; }
+    .timeline-item { position: relative; margin-bottom: 16px; padding: 12px; background: #fff; border-radius: 6px; border: 1px solid #eee; }
+    .timeline-item::before { content: ''; position: absolute; left: -24px; top: 16px; width: 10px; height: 10px; border-radius: 50%; }
+    .timeline-item.pass-item::before { background: #4caf50; }
+    .timeline-item.fail-item::before { background: #f44336; }
+    .timeline-item.fix-item::before { background: #ff9800; }
+    .timeline-item .run-header { font-weight: 600; margin-bottom: 4px; }
+    .timeline-item .run-detail { color: #666; font-size: 0.9em; }
+    hr { border: none; border-top: 1px solid #dde; margin: 20px 0; }
+    .meta { color: #888; font-size: 0.85em; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+
+<h1>TC013 — Approve an ACT Payment via Transfer Center</h1>
+<p class="meta">
+  <strong>Migration Report</strong> &nbsp;|&nbsp;
+  Generated: 21 April 2026 &nbsp;|&nbsp;
+  Source: <span class="code">SG_AccountTransfer.test.ts</span> (Protractor, lines 434–459) &nbsp;&rarr;&nbsp;
+  Target: <span class="code">SG_AccountTransferTC001AgentGenerated.spec.ts</span> (Playwright) &nbsp;|&nbsp;
+  Reference Pattern: <span class="code">SG_ManagePayroll.spec.ts TC012</span> (Approve with "Get Challenge via SMS")
+</p>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="section">
+<h2>A. Migration Journey — Chronological Execution Log</h2>
+
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="number" style="color:#1a237e;">4</div>
+    <div class="label">Total Execution Runs</div>
+  </div>
+  <div class="summary-card">
+    <div class="number" style="color:#4caf50;">1</div>
+    <div class="label">Passed</div>
+  </div>
+  <div class="summary-card">
+    <div class="number" style="color:#f44336;">3</div>
+    <div class="label">Failed</div>
+  </div>
+</div>
+
+<div class="timeline">
+
+  <div class="timeline-item fail-item">
+    <div class="run-header">Run 1 — <span class="badge fail">FAIL</span></div>
+    <div class="run-detail">
+      <strong>Error:</strong> Step 20 — <span class="code">PayrollPage.toolbarApproveButton</span> (<span class="code">//ng-component/div/div/div/div/div[1]/button[4]</span>) not found on ACT view page<br>
+      <strong>Root Cause:</strong> Fragile positional XPath from ManagePayroll page object does not match ACT view page DOM structure<br>
+      <strong>Fix Applied:</strong> Switched approve button from <span class="code">PayrollPage.toolbarApproveButton</span> to <span class="code">AccountTransferPage.approveButton</span> (<span class="code">button[@name="approve"]</span>)
+    </div>
+  </div>
+
+  <div class="timeline-item fail-item">
+    <div class="run-header">Run 2 — <span class="badge fail">FAIL</span></div>
+    <div class="run-detail">
+      <strong>Error:</strong> Step 20 — Strict mode violation: <span class="code">button[@name="approve"]</span> resolved to 2 elements<br>
+      <strong>Root Cause:</strong> ACT view page has two buttons with <span class="code">name="approve"</span>:
+        (1) <span class="code">button#push-btn[name="approve"]</span> ("Approve now" — mobile push, disabled) and
+        (2) <span class="code">button[name="approve"]</span> ("Approve" — toolbar, initially disabled until challenge entered)<br>
+      <strong>Fix Applied:</strong>
+        (a) Added <span class="code">viewPageApproveButton</span> locator (<span class="code">button[name="approve"]:not(#push-btn)</span>) to <span class="code">AccountTransferPage.ts</span><br>
+        (b) Rewrote approve flow: removed PayrollPage approve/push/SMS calls, instead scroll &rarr; expand alt digital token link &rarr; enter challenge &rarr; wait for viewPageApproveButton enabled &rarr; click<br>
+      <strong>Note:</strong> Initial assumption was that SMS challenge is auto-sent on the ACT view page — this turned out to be incorrect
+    </div>
+  </div>
+
+  <div class="timeline-item fail-item">
+    <div class="run-header">Run 3 — <span class="badge fail">FAIL</span></div>
+    <div class="run-detail">
+      <strong>Error:</strong> Approve button remained disabled — challenge response not accepted without explicit SMS request<br>
+      <strong>Root Cause:</strong> The SMS challenge is NOT auto-sent on the ACT approve view page. The <span class="code">getChallengeSMS</span> button must be explicitly clicked (matching the Protractor source and ManagePayroll TC012 pattern)<br>
+      <strong>Fix Applied:</strong> Restored the full ManagePayroll TC012 approve flow:
+        (1) <span class="code">scrollToElement(approveSubmitButton)</span> + <span class="code">javaScriptsClick</span>,
+        (2) <span class="code">clickWhenVisibleAndEnabled(pushApprovalOption)</span>,
+        (3) <span class="code">clickWhenVisibleAndEnabled(getChallengeSMS)</span>,
+        (4) Enter challenge response,
+        (5) Wait for <span class="code">viewPageApproveButton</span> enabled + click
+    </div>
+  </div>
+
+  <div class="timeline-item pass-item">
+    <div class="run-header">Run 4 — <span class="badge pass">PASS</span> (1.4 min) &check; Final</div>
+    <div class="run-detail">
+      <strong>Result:</strong> All 22 steps passed across 3 phases (Create &rarr; Approve via SMS &rarr; Validate)<br>
+      <strong>Execution Time:</strong> 1.4 min (1.6 min total including setup)<br>
+      <strong>Status Validated:</strong> Post-approval status matched one of: Approved / PartialApproved / Received / PendingRelease / Completed / BankRejected
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="section">
+<h2>B. Consolidated Mismatch Summary</h2>
+
+<h3>B1. Locator Mismatches — Approve Button Strict Mode</h3>
+<table>
+  <tr><th>Element</th><th>Page Class</th><th>Old Locator (Broken)</th><th>Working Locator</th><th>Step</th><th>Run Fixed</th></tr>
+  <tr>
+    <td>Toolbar Approve Button</td>
+    <td>PayrollPage</td>
+    <td class="code">//ng-component/div/div/div/div/div[1]/button[4]</td>
+    <td class="code">button[name="approve"]:not(#push-btn)</td>
+    <td>20</td>
+    <td>Run 2</td>
+  </tr>
+  <tr>
+    <td>Approve Button (generic)</td>
+    <td>AccountTransferPage</td>
+    <td class="code">button[@name="approve"]</td>
+    <td class="code">button[name="approve"]:not(#push-btn) (viewPageApproveButton)</td>
+    <td>20</td>
+    <td>Run 2</td>
+  </tr>
+</table>
+
+<h3>B2. New Locators Added to Page Class</h3>
+<table>
+  <tr><th>Locator Name</th><th>Selector</th><th>Page Class</th><th>Why Needed</th></tr>
+  <tr>
+    <td class="code">viewPageApproveButton</td>
+    <td class="code">button[name="approve"]:not(#push-btn)</td>
+    <td>AccountTransferPage.ts</td>
+    <td>Two buttons share <span class="code">name="approve"</span> — need to exclude <span class="code">#push-btn</span> ("Approve now" mobile push) to avoid strict mode violation</td>
+  </tr>
+</table>
+
+<h3>B3. Flow Mismatches — Approve Section Behavior</h3>
+<table>
+  <tr><th>Aspect</th><th>Initial Assumption</th><th>Actual Behavior</th><th>Fix</th></tr>
+  <tr>
+    <td>SMS Challenge</td>
+    <td>Auto-sent when approve section expands on view page</td>
+    <td>Must explicitly click <span class="code">getChallengeSMS</span> button to request SMS code</td>
+    <td>Restored <span class="code">getChallengeSMS</span> click per Protractor source and ManagePayroll TC012 pattern</td>
+  </tr>
+  <tr>
+    <td>Approve Section Expansion</td>
+    <td>Use "Alternatively, use your digital token" link to expand</td>
+    <td>Follow ManagePayroll pattern: <span class="code">approveSubmitButton</span> &rarr; <span class="code">pushApprovalOption</span> &rarr; <span class="code">getChallengeSMS</span></td>
+    <td>Replaced custom expand logic with ManagePayroll TC012 step sequence</td>
+  </tr>
+</table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="section">
+<h2>C. Migration Metrics &amp; Change Summary</h2>
+
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="number" style="color:#1a237e;">22</div>
+    <div class="label">Total Test Steps</div>
+  </div>
+  <div class="summary-card">
+    <div class="number" style="color:#4caf50;">22</div>
+    <div class="label">Steps Passed (Final)</div>
+  </div>
+  <div class="summary-card">
+    <div class="number" style="color:#ff9800;">1.4m</div>
+    <div class="label">Execution Time (Final)</div>
+  </div>
+</div>
+
+<h3>Test Phases</h3>
+<table>
+  <tr><th>Phase</th><th>Steps</th><th>Description</th></tr>
+  <tr>
+    <td>Phase 1: Create ACT</td>
+    <td>1–11</td>
+    <td>Navigate &rarr; select From Account &rarr; select existing payee &rarr; enter amount (amountA1) &rarr; Next &rarr; Submit &rarr; capture reference &rarr; Finish/Dismiss</td>
+  </tr>
+  <tr>
+    <td>Phase 2: Approve via SMS</td>
+    <td>12–20</td>
+    <td>Navigate to Transfer Center &rarr; validate PendingApproval &rarr; re-navigate &rarr; scroll to approve section &rarr; expand (approveSubmitButton + pushApprovalOption) &rarr; getChallengeSMS &rarr; enter response &rarr; wait for Approve enabled &rarr; click viewPageApproveButton &rarr; dismiss dialog</td>
+  </tr>
+  <tr>
+    <td>Phase 3: Validate</td>
+    <td>21–22</td>
+    <td>Search reference in Transfer Center &rarr; validate status is one of Approved/PartialApproved/Received/PendingRelease/Completed/BankRejected</td>
+  </tr>
+</table>
+
+<h3>Change Log — Provisional Changes per Run</h3>
+<table>
+  <tr><th>Run #</th><th>File Modified</th><th>Element/Field</th><th>Old Value</th><th>New Value</th><th>Reason</th></tr>
+  <tr>
+    <td>1</td>
+    <td>spec file</td>
+    <td>Step 20 approve locator</td>
+    <td class="code">PayrollPage.toolbarApproveButton</td>
+    <td class="code">AccountTransferPage.approveButton</td>
+    <td>toolbarApproveButton positional XPath not found on ACT page</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>AccountTransferPage.ts</td>
+    <td>NEW locator</td>
+    <td class="code">(did not exist)</td>
+    <td class="code">viewPageApproveButton = button[name="approve"]:not(#push-btn)</td>
+    <td>Strict mode: 2 elements match <span class="code">button[@name="approve"]</span></td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>spec file</td>
+    <td>Steps 16–20 approve flow</td>
+    <td class="code">PayrollPage approve/push/SMS/toolbar calls</td>
+    <td class="code">Scroll + expand alt link + challengeResponse + viewPageApproveButton</td>
+    <td>Assumed SMS auto-sent; rewrote without getChallengeSMS</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>spec file</td>
+    <td>Step 20 dismiss</td>
+    <td class="code">PayrollPage.dismissButton</td>
+    <td class="code">AccountTransferPage.dismissButton</td>
+    <td>Use ACT-specific dismiss</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>spec file</td>
+    <td>Steps 16–19 approve flow</td>
+    <td class="code">Scroll + alt link expand + challengeResponse</td>
+    <td class="code">scrollToElement(approveSubmitButton) + pushApprovalOption + getChallengeSMS + challengeResponse</td>
+    <td>SMS NOT auto-sent; must follow ManagePayroll TC012 pattern with explicit getChallengeSMS click</td>
+  </tr>
+</table>
+
+<h3>Files Created / Modified</h3>
+<table>
+  <tr><th>File</th><th>Action</th><th>Description</th></tr>
+  <tr>
+    <td class="code">SG_AccountTransferTC001AgentGenerated.spec.ts</td>
+    <td><span class="badge pass">Modified</span></td>
+    <td>TC013 appended — 3 phases (Create &rarr; Approve via SMS &rarr; Validate), iteratively fixed across 4 runs</td>
+  </tr>
+  <tr>
+    <td class="code">AccountTransferPage.ts</td>
+    <td><span class="badge pass">Modified</span></td>
+    <td>Added <span class="code">viewPageApproveButton</span> locator (declaration + initialization)</td>
+  </tr>
+  <tr>
+    <td class="code">learnings.md</td>
+    <td><span class="badge pass">Updated</span></td>
+    <td>Added "ACT Approve via Transfer Center — SMS Challenge Flow (TC013)" section</td>
+  </tr>
+  <tr>
+    <td class="code">TC013_Approve an ACT Payment via Transfer Center_Migration_ChatLog.html</td>
+    <td><span class="badge pass">Created</span></td>
+    <td>This migration report</td>
+  </tr>
+</table>
+
+<h3>Critical Issues Faced</h3>
+<table>
+  <tr><th>Issue</th><th>Severity</th><th>Runs Blocked</th><th>Resolution</th></tr>
+  <tr>
+    <td>toolbarApproveButton positional XPath mismatch</td>
+    <td><span class="badge warn">Medium</span></td>
+    <td>1</td>
+    <td>Switched to ACT-specific <span class="code">approveButton</span> locator</td>
+  </tr>
+  <tr>
+    <td>Strict mode — two <span class="code">button[name="approve"]</span></td>
+    <td><span class="badge fail">High</span></td>
+    <td>1</td>
+    <td>Created <span class="code">viewPageApproveButton</span> with <span class="code">:not(#push-btn)</span> exclusion</td>
+  </tr>
+  <tr>
+    <td>SMS challenge not auto-sent</td>
+    <td><span class="badge fail">High</span></td>
+    <td>1</td>
+    <td>Restored explicit <span class="code">getChallengeSMS</span> click per Protractor/ManagePayroll pattern</td>
+  </tr>
+</table>
+
+<h3>Overall Migration Difficulty Rating</h3>
+<table>
+  <tr><th>Category</th><th>Rating</th><th>Notes</th></tr>
+  <tr><td>Locator Migration</td><td><span class="badge warn">Medium</span></td><td>1 new locator needed (<span class="code">viewPageApproveButton</span>); strict mode required <span class="code">:not(#push-btn)</span></td></tr>
+  <tr><td>Flow Conversion</td><td><span class="badge fail">High</span></td><td>3 iterations to nail the approve section interaction sequence (SMS not auto-sent; must follow ManagePayroll TC012 exactly)</td></tr>
+  <tr><td>Test Logic Conversion</td><td><span class="badge info">Low</span></td><td>Create phase reused existing patterns; validate phase straightforward</td></tr>
+  <tr><td><strong>Overall</strong></td><td><span class="badge warn">Medium</span></td><td>4 runs to pass; primary blocker was understanding the approve section behavior on the ACT view page</td></tr>
+</table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="section">
+<h2>D. Key Learnings — ACT Approve Flow</h2>
+
+<h3>Approve Section on ACT View Page</h3>
+<ul>
+  <li>The ACT view page for "Pending Approval" payments shows an approve section with two buttons: <span class="code">button#push-btn[name="approve"]</span> ("Approve now" — mobile push) and <span class="code">button[name="approve"]</span> ("Approve" — toolbar)</li>
+  <li>Both share <span class="code">name="approve"</span> — use <span class="code">viewPageApproveButton</span> = <span class="code">button[name="approve"]:not(#push-btn)</span> to uniquely target the toolbar button</li>
+  <li>The SMS challenge is <strong>NOT auto-sent</strong> — must explicitly click <span class="code">getChallengeSMS</span> to request it</li>
+  <li>After entering the challenge response code, the toolbar Approve button becomes <strong>enabled</strong> (wait with 30s timeout)</li>
+</ul>
+
+<h3>ManagePayroll TC012 Pattern — Must Follow Exactly</h3>
+<ul>
+  <li>Step 16: <span class="code">scrollToElement(approveSubmitButton)</span> + <span class="code">javaScriptsClick</span> — expand the approve checkbox section</li>
+  <li>Step 17: <span class="code">clickWhenVisibleAndEnabled(pushApprovalOption)</span> — expand the SMS sub-section</li>
+  <li>Step 18: <span class="code">clickWhenVisibleAndEnabled(getChallengeSMS)</span> — request the SMS challenge code</li>
+  <li>Step 19: <span class="code">enterTextarea(challengeResponse, CHALLENGEVIASMSCODE)</span> — enter '12345678'</li>
+  <li>Step 19b: <span class="code">expect(viewPageApproveButton).toBeEnabled({ timeout: 30_000 })</span></li>
+  <li>Step 20: <span class="code">clickWhenVisibleAndEnabled(viewPageApproveButton)</span> &rarr; dismiss dialog</li>
+</ul>
+
+<h3>Post-Approval</h3>
+<ul>
+  <li>Approved transactions <strong>cannot be deleted</strong> (Delete button is disabled) — no cleanup step needed</li>
+  <li>Final status depends on bank processing speed — validate against a set of valid statuses rather than a single expected value</li>
+</ul>
+</div>
+
+<hr>
+<p class="meta" style="text-align:center;">
+  End of Migration Report &nbsp;|&nbsp; TC013_Approve an ACT Payment via Transfer Center &nbsp;|&nbsp; 21 April 2026
+</p>
+
+</body>
+</html>
