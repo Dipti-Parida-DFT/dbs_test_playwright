@@ -358,4 +358,47 @@ async hardClick(locator: Locator): Promise<void> {
   }
 
 
+  /**
+   * Author: LC5741501 Agent Generated
+   * Created Date: 23/04/2026
+   * Clicks a pagination dot by its 1-based index.
+   * Works with Angular carousel / wizard pagination dots.
+   * @param dotLocator  Locator for the specific pagination dot (defined in the page class)
+   * @param timeout     Optional timeout to wait for the dot to be visible
+   */
+  async clickPaginationDot(dotLocator: Locator, timeout = TIMEOUT.LONG) {
+    await expect(dotLocator).toBeVisible({ timeout });
+    await dotLocator.click();
+    await dotLocator.page().waitForTimeout(TIMEOUT.MICROMIN);
+  }
+
+
+  /**
+   * Author: LC5741501 Agent Generated
+   * Created Date: 23/04/2026
+   * Selects a value from a p-auto-complete (PrimeNG autocomplete) dropdown.
+   * Types the text, waits for suggestions, then clicks the first matching suggestion.
+   * Falls back to ArrowDown + Enter if no dropdown suggestion is visible.
+   * @param page       Playwright Page
+   * @param container  Locator for the p-auto-complete container element
+   * @param text       The text to type and select from the dropdown
+   */
+  async selectAutoComplete(page: Page, container: Locator, text: string) {
+    const input = container.locator('input');
+    await input.click();
+    await input.fill('');
+    await page.keyboard.type(text);
+    await page.waitForTimeout(TIMEOUT.MODERATE);
+    // Try clicking the first suggestion in the dropdown
+    const suggestion = container.locator('ul li').first();
+    if (await suggestion.isVisible({ timeout: TIMEOUT.VERYMIN }).catch(() => false)) {
+      await suggestion.click();
+    } else {
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+    }
+    await page.waitForTimeout(TIMEOUT.BRIEF);
+  }
+
+
 }

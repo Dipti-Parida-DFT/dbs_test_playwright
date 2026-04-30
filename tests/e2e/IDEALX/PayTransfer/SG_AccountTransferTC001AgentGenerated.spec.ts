@@ -918,7 +918,20 @@ test.describe('SG_AccountTransfer_TC001 (Playwright)', () => {
     await webComponents.verifyUIElementTextIsNotNull(pages.AccountTransferPage.amountValue);
     await webComponents.verifyUIElementTextIsNotNull(pages.AccountTransferPage.toExistingPayeeNameValue);
 
-    console.log(`TC05 – Payment from template '${testData.AccountTransfer.existingTemplate}' created: ${reference}`);
+    // ══════════════════════════════════════════════════════════════════════════
+    // CLEANUP PHASE : Delete the created transaction
+    // ══════════════════════════════════════════════════════════════════════════
+
+    // ── Step 15: Delete the created payment from the view page ───────────────
+    await pages.PayrollPage.deleteOpenPayeeOrReferenceNo({
+      transactionDeleted: testData.AccountTransfer.transactionDeleted,
+      internalReference: reference
+    }, reference);
+
+    // ── Step 15b: Dismiss the "Transaction deleted" popup ────────────────────
+    await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.transactionDeletedPopupOkButton);
+    await webComponents.waitForUXLoading([], page);
+
 
   });
 

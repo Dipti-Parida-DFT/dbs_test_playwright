@@ -112,6 +112,23 @@
   ```
 - Applies to: `isBeneAdvising`, `isTransactionNote`, and any other Angular-wrapped checkbox
 
+## INTL New Payee Form (Cross Border ACH — TC004)
+- The INTL New Payee form has **different input names** than the standard (domestic) new payee form:
+  - Payee name: `new-payee-payeeName`
+  - Payee nickname: `new-payee-nick-name` (NOT `new-payee-nickname` — note the extra hyphen)
+  - Address line 1: `new-payee-add1`
+  - Bank ID search: `swift-selector` (NOT `bulk-newPayee-bankId`)
+  - Routing code: `new-payee-routing-code`
+  - Account number: `new-payee-acct-number`
+  - Payee category: **no name attribute** — use `getByPlaceholder('Please select')`
+- **Payee nickname is mandatory** — the form won't enable "Add payee" without it
+- **Payee category is mandatory for INTL payees** — dropdown has no `name` attr; use click → ArrowDown → Enter to select first option
+- **Bank ID search** uses `keyboard.type()` (NOT `fill()`) to trigger auto-search. After typing, wait 5s, then click `.search-result-container` first result
+- **"Add payee" button stays disabled** until ALL mandatory fields are filled: payee name, nickname, address, bank ID (resolved), routing code, account number, payee category
+- The Protractor source did NOT fill nickname or payee category — these were added to the UI after the Protractor test was written
+- Use `page.evaluate` to dump all `<input>` elements' `name`, `placeholder`, `value` attributes to discover actual field names when ARIA snapshot doesn't show them
+- **Strict mode violations**: INTL form fields like `purposePaymentLine`, `additionalInfoLine`, `paymentDetailLine` may resolve to **2 elements** when multiple payees exist on the form — always use `.first()` on these locators in the spec
+
 ## View Page Status Loading Delay
 - For high-amount ApprovalNow payments (e.g., 90M+), the `#act-view-status` element renders with placeholder text `" status "` for >10 seconds before the actual status value loads
 - `compareUIVsJsonValue` has a 10s internal timeout on `toContainText` — insufficient for slow-loading status fields
@@ -340,6 +357,72 @@ During TC01 ACT migration, initial code used raw Playwright APIs (`.fill()`, `ex
   1. Scroll to `PayrollPage.approveSubmitButton` + `javaScriptsClick` (expand approve section)
   2. Click `PayrollPage.pushApprovalOption` (expand SMS sub-section)
   3. Click `AccountTransferPage.getChallengeSMS` (request SMS code)
+
+## Cross Border ACH — Pagination Dot Navigation
+- The Cross Border ACH menu item is on the **second page** of the Pay & Transfer carousel
+- The page dot locator `(//li[contains(@class, "page-point")])[2]` works — exact class match fails because Angular adds extra classes (`ng-star-inserted`)
+- Use `webComponents.clickPaginationDot(locator)` utility — locator defined in the page class, not hardcoded in spec or utility
+
+## Cross Border ACH — PrimeNG Autocomplete Pattern
+- `fromAccount`, `paymentCountry`, `debitType`, `selectedIntermediaryCountry` all use `p-auto-complete` Angular components
+- **Working pattern:** Click inner `input` → clear → type text char-by-char → wait 3s for suggestions → try clicking `ul li` first suggestion → fallback to ArrowDown + Enter
+- Use `webComponents.selectAutoComplete(page, container, text)` utility — reusable across all `p-auto-complete` fields
+- `debitType` only appears **after** `paymentCountry` is selected — add `waitForUXLoading` between selections
+- The page class method `CrossBoarderACHPage.selectAutoComplete()` delegates to the WebComponents utility
+
+## Cross Border ACH — Existing Payee Tab
+- The existing payee tab ID is `#ux-tab-labelExistingPayee` (not `#labelExistingPayee_0`)
+- After filtering, if no matching payee is found (no "Add" button visible), clear the filter and select the first available payee
+- SIT-confirmed payee: `"AAAAAA-HK-TESTING"` → resolves to `AAAAAA-HK-TESTING-CBA-0091` with account `34567890`
+
+## Cross Border ACH — Intermediary Bank Search
+- Bank ID search field: `input#ux-bank-search-0` (NOT `//bp-payee-intermediary//input` which matches 4 elements → strict mode violation)
+- After entering bank ID, the search result appears in a `table tr td` element — click it to select
+- Use `enterText()` (not `enterTextarea()`) for the bank search input
+
+## Cross Border ACH — Angular Hidden Checkbox (Message to Payee)
+- `#isBeneAdvising0` is a hidden Angular checkbox — `clickWhenVisibleAndEnabled` fails because element is `hidden`
+- **Working pattern:** Click `label[for="isBeneAdvising0"]` using `javaScriptsClick()`
+- Do NOT use `.or()` with `getByText('Send up to 5 notifications')` — resolves to 2 elements (label + span), causing strict mode violation
+- Use exact `label[for="..."]` selector only
+
+## Cross Border ACH — View Page (Transfer Center)
+- View page uses `crsbrd-view-*` IDs: `hashValue`, `fromAccount`, `paymentCountry`, `payAmt`, `debitType`, `paymentDate`, `custRef`, `batchID`, `name_0`, `payee-bankCode_0`, `acctNum_0`, `amount_0`, `pendingStatus_0`, `paymentDetails_0`, `adviceContent_0`, `email_0`
+- `#crsbrd-view-acctBalance` does NOT exist on the view page — skip balance validation
+- `#crsbrd-view-payee-bankName_0` exists but is **hidden** (empty `<strong>` tag) — skip bank name validation
+- FX section uses `#fxDolViewSection` table with `tbody/tr/td[N]/span` locators for contract ref, exchange rate, amount to transfer/deduct
+- Status locator: `#bulk-viewTemp-status`
+- Payment summary ("Total payees:1", "Total amount (HKD): 1.00") — use `page.getByText(/Total payees:\s*\d/)` regex pattern (not ID-based)
+- "Show optional details" button on view page: `#crsbrd-show-optBtn_0`
+- Activity log container class: `payment-history` — validate all log entries (Action, User, Date) against this single parent element using `compareUIVsJsonValue`
+
+## Cross Border ACH — Preview & Submitted Page Wait
+- Preview page: wait for `submitButton` visibility (not `fromAccountPreview` which may not exist)
+- Submitted page: wait for `page.getByText('Pending Approval').first()` visibility
+- Do NOT use `.or()` for wait locators — if both branches resolve, Playwright strict mode fails
+
+## Cross Border ACH — Timeout Constants
+- Use `TIMEOUT.ULTRA` (900s / 15min) for `test.setTimeout()` — `TIMEOUT.MAX` (100s) is too short for ~1.5min Cross Border ACH flow
+- Use named TIMEOUT constants (`BRIEF`, `MICROMIN`, `MODERATE`, `VERYMIN`) instead of hardcoded ms values in `waitForTimeout` calls
+- New constants added: `BRIEF` (1s), `MODERATE` (3s) — existing: `MICROMIN` (2s), `VERYMIN` (5s)
+
+## Cross Border ACH — Edit Payment (TC002)
+- The **edit form reuses the same `payeeAmount` locator** (`//input[@name="payeeAmount"]`) as the create form — no separate locator needed
+- The **edit button** on the view page is `#crsbrd-view-edit` — works reliably
+- **Reference ID does NOT change after edit** — the same reference is returned on the submitted page
+- **Clear + fill pattern**: Use `.click()` → `.fill('')` → `enterTextarea()` to replace existing amount value in edit form
+- The **edit flow** follows the same Next → Preview → Submit → Submitted sequence as create
+- **`waitForFormReady()`** works correctly for both create and edit forms — pre-filled fields don't cause issues
+- **Typical duration**: Create → Validate → Edit → Validate → Delete completes in ~2.1 minutes
+
+## Cross Border ACH — Approve Payment (TC003)
+- **Digital token section is collapsed by default**: After clicking the Approve button, the M-Challenge/SMS section is hidden behind "Alternatively, use your digital token or security device for approval". Must click `pushOption` (`push-option-label`) to expand before `getChallengeSMS` becomes visible.
+- **Approved payments cannot be deleted**: The Delete button is **disabled** on approved payment view pages. Do NOT include a delete cleanup phase for approve test cases.
+- **Approve locators live on AccountTransferPage**: Use `viewPageApproveButton`, `getChallengeSMS`, `challengeResponse`, `dismissButton`, `pushOption` — all from `AccountTransferPage`, NOT `CrossBoarderACHPage`.
+- **Approve flow sequence**: `viewPageApproveButton` → `pushOption` (expand) → `getChallengeSMS` → `challengeResponse` (enter `CONSTANTS.CHALLENGEVIASMSCODE` = `'12345678'`) → wait for approve button enabled → `viewPageApproveButton` → `dismissButton`
+- **Status locator for CrossBorder**: Use `crsBrdTransactionStatusValue` (`#crsbrd-view-pendingStatus_0`) — works for both "Pending Approval" and "Approved" status values.
+- **Typical duration**: Create → Validate → Approve → Validate Status completes in ~2.0 minutes
+
   4. Enter challenge response via `AccountTransferPage.challengeResponse` with `CONSTANTS.CHALLENGEVIASMSCODE`
   5. Wait for `viewPageApproveButton` to be enabled (30s timeout)
   6. Click `viewPageApproveButton` → dismiss dialog → validate status
@@ -359,3 +442,40 @@ During TC01 ACT migration, initial code used raw Playwright APIs (`.fill()`, `ex
 - **Release flow (ManagePayroll TC013 pattern):** Logout → Login User2 (`testData.ManagePayroll.SIT.loginUserIdUser2` = "DBSAUTO0001") → Approval menu → `approveReleaseTab` → search reference → select checkbox + click `approveReleaseButton` → click `approveReleaseSubmitButton` → verify `releasedSuccessfullyMessage` → click finish
 - **Post-release status validation:** Use `toContainText(regex, { timeout: 30_000 })` instead of immediate `getTextFromElement` — the status field shows placeholder text for >10s before resolving to real value (Approved / Received / Completed / BankRejected / PendingRelease)
 - Released/Approved transactions **cannot be deleted** — no cleanup step needed
+
+
+## Common Mistakes
+- Adding `waitForUXLoading` after every click — only where spinner actually appears
+- Duplicating `handleAuthIfPresent` on repeated `paymentMenu` navigation within same test
+- Using `TIMEOUT.MAX` for long multi-phase workflows — will timeout at 5 min
+- Adding `handleAnnouncementIfPresent()` in beforeEach without verifying framework pattern
+- Setting `payeeNicknameLabelValue` to `newPayeeName` — must use `newPayeeNickName` (Protractor source used same value for both; Playwright test data has distinct name vs nickname)
+
+## Release Flow
+- After release, `PayrollPage.status` (`#bulk-view-pendingStatus_0`) may show raw status code like `"statusCode.2"` instead of a human-readable label (e.g., "Approved")
+- When validating final status post-release, include `'statusCode'` in the valid statuses array to handle unresolved i18n keys
+- `amountPendingRelease` + ApproveNow during creation → status goes directly to "Pending Release" (skips Verify & Approve phases)
+- User2 (DBSAUTO0001) then releases via Approvals → Release Approved Payment tab
+
+## Checkbox Toggle (Angular Hidden Inputs)
+- Angular wraps native `<input type="checkbox">` inside custom components (e.g., `ShuRu`) — the input is hidden and not directly clickable
+- **Working pattern:** Click the visible `<label for="checkboxId">` element, then verify the checked state and retry up to 3 times
+- `.click()`, `.check()`, `.check({ force: true })`, and `evaluate(el.click())` are all **unreliable** for these hidden checkboxes
+- First-attempt success rate is ~50% — always implement a verify-and-retry loop:
+  ```typescript
+  const checkbox = page.locator('input#checkboxId');
+  const label = page.locator('label[for="checkboxId"]');
+  for (let attempt = 0; attempt < 3; attempt++) {
+    await label.click();
+    await page.waitForTimeout(500);
+    const isChecked = await checkbox.evaluate(el => (el as HTMLInputElement).checked);
+    if (isChecked) break;
+  }
+  ```
+- Applies to: `isBeneAdvising`, `isTransactionNote`, and any other Angular-wrapped checkbox
+
+## Email Fields (Account Transfer)
+- After toggling `isBeneAdvising` checkbox, 5 email fields appear as `textbox "Email"` **without** `name` attributes
+- Old locators `ShuRu[@name="email-id-N"]` and `input[name="email-id-N"]` both fail
+- **Working pattern:** `page.getByRole('textbox', { name: 'Email' }).nth(N)` (0-indexed)
+- Use `safeClick → safeFill → blur()` for each email field
