@@ -10,6 +10,7 @@ import { ApprovalPage } from './ApprovalPage';
 import { BulkCollectionPage } from './BulkCollectionPage';
 import { PaymentTemplatesPage } from './PaymentTemplatesPage';
 import { CrossBoarderACHPage } from './CrossBoarderACHPage';
+import { IntraCompanyTransferPage } from './IntraCompanyTransferPage';
 
 export {
   AccountTransferPage,
@@ -21,6 +22,7 @@ export {
   BulkCollectionPage,
   PaymentTemplatesPage,
   CrossBoarderACHPage,
+  IntraCompanyTransferPage,
 };
 
 export class PaymentsPages {
@@ -33,6 +35,7 @@ export class PaymentsPages {
   public BulkCollectionPage: BulkCollectionPage;
   public PaymentTemplatesPage: PaymentTemplatesPage;
   public CrossBoarderACHPage: CrossBoarderACHPage;
+  public IntraCompanyTransferPage: IntraCompanyTransferPage;
   
   constructor(private readonly page: Page) {
     this.AccountTransferPage = new AccountTransferPage(page);
@@ -44,5 +47,6 @@ export class PaymentsPages {
     this.BulkCollectionPage = new BulkCollectionPage(page);
     this.PaymentTemplatesPage = new PaymentTemplatesPage(page);
     this.CrossBoarderACHPage = new CrossBoarderACHPage(page);
+    this.IntraCompanyTransferPage = new IntraCompanyTransferPage(page);
   }
 }

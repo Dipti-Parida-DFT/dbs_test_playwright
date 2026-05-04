@@ -401,4 +401,71 @@ async hardClick(locator: Locator): Promise<void> {
   }
 
 
+  /**
+   * Selects a value from a p-auto-complete dropdown with an optional filter
+   * to target a specific suggestion when multiple matches exist.
+   * Types the search text, waits for suggestions, then clicks the suggestion
+   * matching the filterText. Falls back to first suggestion or ArrowDown+Enter.
+   * @param page        Playwright Page
+   * @param container   Locator for the p-auto-complete container element
+   * @param text        The text to type into the autocomplete input
+   * @param filterText  Optional text to filter the suggestion list (e.g., "(SGD)")
+   */
+  async selectAutoCompleteWithFilter(
+    page: Page,
+    container: Locator,
+    text: string,
+    filterText?: string,
+    listItemLocator?: Locator,
+  ) {
+    const input = container.locator('input');
+    await input.click();
+    await input.fill('');
+    await page.keyboard.type(text);
+    await page.waitForTimeout(TIMEOUT.MODERATE);
+    if (filterText && listItemLocator) {
+      const filtered = listItemLocator.filter({ hasText: filterText });
+      if (await filtered.first().isVisible({ timeout: TIMEOUT.VERYMIN }).catch(() => false)) {
+        await filtered.first().click();
+        await page.waitForTimeout(TIMEOUT.BRIEF);
+        return;
+      }
+    }
+    const suggestion = container.locator('ul li').first();
+    if (await suggestion.isVisible({ timeout: TIMEOUT.VERYMIN }).catch(() => false)) {
+      await suggestion.click();
+    } else {
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+    }
+    await page.waitForTimeout(TIMEOUT.BRIEF);
+  }
+
+
+  /**
+   * Angular wraps native <input type="checkbox"> inside custom components — the input
+   * is hidden and not directly clickable. This method clicks the label and verifies
+   * the checked state with a retry loop (up to 3 attempts).
+   * @param page      Playwright Page
+   * @param label     Locator for the visible <label> element (e.g., label[for="checkboxId"])
+   * @param checkbox  Locator for the hidden <input> checkbox (e.g., input#checkboxId)
+   * @param checked   Desired state — true to check, false to uncheck (default: true)
+   */
+  async toggleAngularCheckbox(
+    page: Page,
+    label: Locator,
+    checkbox: Locator,
+    checked = true,
+  ): Promise<void> {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const isChecked = await checkbox.evaluate(
+        (el) => (el as HTMLInputElement).checked,
+      ).catch(() => false);
+      if (isChecked === checked) return;
+      await label.click();
+      await page.waitForTimeout(TIMEOUT.BRIEF);
+    }
+  }
+
+
 }

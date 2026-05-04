@@ -57,6 +57,13 @@
 - Use `javaScriptsClick` for `approveNowCheckbox` (checkbox requires JS click)
 - Use `CONSTANTS.CHALLENGEVIASMSCODE` (`'12345678'`) as the challenge response value
 
+### High-Amount ApprovalNow (ICT — Intra Company Transfer)
+- When the payment amount exceeds the user's single-approval limit (e.g., 90,000,001), the preview page shows an **"Approve Now" text link** instead of the hidden checkbox (`input[name="approveNow"]`)
+- The checkbox locator will timeout — must click the "Approve Now" link via `page.getByText('Approve Now', { exact: false })`
+- After clicking the link, the challenge response field appears directly (without M-Challenge) — no "Get Challenge via SMS" click needed
+- The final status for high-amount without M-Challenge is **"Partial Approved"** (not Completed), because the amount requires multi-level approval
+- For standard-amount (e.g., 1100), the hidden checkbox pattern still applies
+
 ## Existing Payee Flow
 - Must click `existingPayeeTabHeader` before calling `addExistingPayee(filterText)` — default tab is "New Payee"
 - `addExistingPayee` only fills filter + clicks add button; it does NOT switch the tab
@@ -87,6 +94,37 @@
   const isDeleteEnabled = await deleteButton.isEnabled({ timeout: 5_000 }).catch(() => false);
   if (isDeleteEnabled) { /* delete */ } else { /* skip */ }
   ```
+
+## Transaction Delete (Cleanup)
+- **ALWAYS** use the reusable method `pages.PayrollPage.deleteOpenPayeeOrReferenceNo()` for deleting transactions from the view page
+- Do NOT manually click delete button + dialog + dismiss — use the shared helper instead
+- **Pattern:**
+  ```typescript
+  await pages.PayrollPage.deleteOpenPayeeOrReferenceNo({
+    transactionDeleted: testData.AccountTransfer.transactionDeleted,
+    internalReference: reference,
+  }, reference);
+  ```
+- The method clicks Delete → confirms in the dialog → validates "Transaction deleted" popup text + reference number
+- The method does NOT dismiss the popup or navigate away — if further navigation is needed after delete, dismiss the popup manually
+- Works across all payment types (ACT, ICT, TT, CrossBorder, Payroll) — same shared delete dialog component
+- If the delete button may be disabled (e.g., Completed/Approved status), wrap in an enabled check before calling
+
+## Payment Template Delete (Cleanup)
+- Template deletion is a **3-step flow** (not 2):
+  1. Select template checkbox → click Delete button on list → navigates to "Confirm templates to delete" page (spinner appears)
+  2. Click Delete on confirm page → opens "Confirm delete" popup dialog **instantly** (NO spinner)
+  3. Click Delete in the dialog (`confirmDeletebutton` / `id="dialogDelete"`) → backend processes (spinner appears)
+  4. Dismiss "Template(s) deleted" popup via OK button
+- **Critical:** Do NOT add `waitForUXLoading` between step 2 (confirm page Delete) and step 3 (dialog Delete) — the popup opens instantly with no spinner, and waiting for a non-existent spinner causes timeout/hang
+- The `deletebuttonTemplate` locator (`//button[@name="delete"]`) is reused for both the list page and the confirm page — same `name="delete"` attribute
+- The `confirmDeletebutton` locator (`//button[@name="delete" and @id="dialogDelete"]`) targets the final dialog button specifically
+- After `deleteOpenPayeeOrReferenceNo()` in the same test, if you need to navigate away (e.g., to templates page), you MUST dismiss the "Transaction deleted" popup first — it blocks all navigation with a `cdk-overlay-backdrop`
+
+## To Account Autocomplete (ICT — FCY Accounts)
+- The `toAccountWithFCY` value ("878787") does NOT work reliably with `selectAutoComplete` — autocomplete dropdown fails to show/select
+- For ICT tests that need template save, use the standard `toAccount` ("WENDY JONES") which is confirmed working
+- The FCY account causes the "To account is required" validation error if not properly selected, blocking the Next button
 
 ## Common Mistakes
 - Adding `waitForUXLoading` after every click — only where spinner actually appears
@@ -161,12 +199,146 @@
 | `templateName` | `ShuRu[@name="templateName"]` | `input[name="templateName"]` | ShuRu replaced with native input (TC04 fix) |
 | `templateNameValue` | `#act-viewTemp-templateName` | `getByText('Template name:').locator('xpath=following-sibling::*[1]')` | ID not in ACT template view DOM (TC04 fix) |
 
+## Template Approval Flow (Multi-User — TC005 ICT)
+- Newly created templates have **"Pending Approval"** status — the "Make a Payment" link is NOT available until approved
+- Template approval requires a **different user** (approver) to log in and approve
+- The Protractor source relied on serial test execution (template approved in prior test run) — Playwright tests are independent so must self-approve
+
+### Logout/Login Pattern for Multi-User Flows
+- **Do NOT use `javaScriptsClick(logoutButton)`** from the submitted page — it hangs because:
+  - The submitted page may have overlays blocking the logout button
+  - `javaScriptsClick` does `evaluate(el.click())` which silently fails if the element isn't in the visible DOM hierarchy
+- **Working pattern:** Use `loginPage.goto()` to navigate directly to the login URL — this effectively logs out the current session and shows the login form:
+  ```typescript
+  const loginPageApprover = new LoginPage(page);
+  await loginPageApprover.goto();  // navigates to SIT login URL, implicitly logs out
+  await loginPageApprover.login(companyId, approverUserId, pin);
+  pages = new PaymentsPages(page);
+  ```
+- After `login()`, always call `pages.AccountTransferPage.waitForMenu()` before clicking `paymentMenu` — ensures the dashboard is fully loaded
+
+### Template Approve Button Locators
+- Two buttons are involved in template approval (note case difference):
+  - `approveButton`: `//button[@name="approve"]` — opens the approve section on the template view page
+  - `confirmApproveButton`: `//button[@name="Approve"]` — confirms the approval action
+- Both were added to `PaymentTemplatesPage.ts`
+- After confirmation, a dismiss popup appears — click `dismissButton` (`//button[@name="dismiss"]`)
+
+### Amount Input for Template Payments
+- The amount field in "Create from Template" page is pre-populated from the template
+- To change the amount: `click()` → `fill('')` → `enterTextarea(field, value)`
+- **Do NOT use comma-separated values** (e.g., "5,100") — the input field does not accept commas
+- Use plain numeric strings: `"5100"` (stored as `templateAmount` in test data)
+- The displayed/validated amount on the view page WILL show commas: "SGD 5,100.00"
+
+### ICT Approver User
+- For ICT templates in SIT: use `'DBSAUTOSGICT02'` as the approver user
+- Same `loginCompanyId` (`"SG2BFE1"`) and PIN (`123`) as the primary user
+- The `verifyUserId` from test data (`"SPI307R02"`) did NOT work — use `DBSAUTOSGICT02` instead
+
+## Save as Draft Flow (TC006 ICT)
+- Save as Draft skips the Preview page entirely — **no `nextButton` or `submitButton`**
+- After clicking `saveAsDraft`, a **dialog popup** appears with the reference ID
+- Dialog reference locator: `dialogMessageLabel` = `//p[@id="dialogMessage"]/span` — same XPath as ACT's `transactionDeletedPopupLabelMsg`
+- To capture reference: `getTextFromElement(dialogMessageLabel)` → `getReferenceID(text)`
+- After capture, click `dismissButton` to close the dialog
+- The saved draft appears in Transfer Center with status `"Saved"` (from `testData.status.Saved`)
+- Test data field used: `testData.IntraCompanyTransfer.transactionNote` (NOT `additionNote`)
+- Cleanup: use `deleteOpenPayeeOrReferenceNo()` from the View Payment page after validation
+- Transaction status validation: use `compareUIVsJsonValue()` (not `expect().toContainText()`) — consistent with all other field validations in the suite
+
 - The **old locators** (`newPayeeAdd3`, `payeeBankRadio`, `newPayeeAcctNumber`, `isBeneAdvising`, `isTransactionNote`, `emailList`) still exist in the page class for backward compatibility but should NOT be used in new tests
+
+## Copy Payment Flow (TC007 ICT)
+
+### Angular p-autocomplete After Copy — DO NOT Re-Select
+- After clicking the Copy button, Angular p-autocomplete fields (From Account, To Account) display chips with correct values — they are **already bound internally**
+- **NEVER** call `selectAutoCompleteWithFilter` or `selectAutoComplete` on pre-filled autocomplete fields after Copy
+- Re-selecting breaks Angular's internal form binding → form becomes invalid → Next button fails to navigate to Preview
+- **Only modify fields that need NEW values** (e.g., amount). Leave pre-filled autocomplete fields untouched
+- This rule applies to ALL Copy and Edit operations across payment types (ICT, ACT, TT, CrossBorder)
+- Original Protractor TC07 sequence after Copy: `copyButton.jsClick() → jiazhai() → amount.qingChu() → amount.ShuRu(amountV) → jiazhai() → nextButton.click()`
+- Equivalent Playwright: `javaScriptsClick(copyButton) → waitForCopyReady() → amount.click() → amount.fill('') → enterTextarea(amount, value) → clickWhenVisibleAndEnabled(nextButton)`
+
+### Checkbox State Inheritance After Copy
+- When a payment is copied, checkbox states (e.g., "Transaction Note" toggle) are **inherited from the source**
+- If the source had transaction note enabled, the copied form will also have it enabled
+- **Always check `isChecked()` before toggling** — calling `toggleAngularCheckbox` on an already-checked box will UNCHECK it:
+  ```typescript
+  const isChecked = await pages.IntraCompanyTransferPage.isTransactionNoteCheckbox.isChecked().catch(() => false);
+  if (!isChecked) {
+    await webComponents.toggleAngularCheckbox(page, label, checkbox);
+  }
+  ```
+- After confirming the checkbox is checked, clear and re-fill the textarea to overwrite inherited content:
+  ```typescript
+  await transactionNoteField.click();
+  await transactionNoteField.fill('');
+  await webComponents.enterTextarea(transactionNoteField, newValue);
+  ```
+
+### Variable Scoping in Multi-Phase Tests
+- When the same UI element (e.g., "Earliest available date" radio) is used in multiple phases of a single test, use **distinct variable names** per phase
+- Example: `earliestDateRadioSrc` (Phase 1) vs `earliestDateRadioCopy` (Phase 3) — avoids `const` redeclaration errors
+- Applies to any `const` declaration that appears in multiple phases within the same `test()` block
+
+### Message to Approver = Transaction Note
+- "Message to your Approver" is the **same field** as the `transactionNote` textarea (`//textarea[@name="transactionNote"]`)
+- Input data: `testData.IntraCompanyTransfer.additionNote` = "messageToOrderingBank"
+- View page display: `messageToApproverValue` locator (`#ict-view-transactionNote`)
+- Toggle checkbox: `isTransactionNote` / `isTransactionNoteLabel`
+
+### Copy Payment — Earliest Available Date
+- After Copy, the payment date may be stale (inherited from source)
+- Add a conditional click on "Earliest available date" radio if visible:
+  ```typescript
+  const earliestDateRadio = page.getByText('Earliest available date', { exact: false });
+  if (await earliestDateRadio.isVisible({ timeout: TIMEOUT.VERYMIN }).catch(() => false)) {
+    await webComponents.javaScriptsClick(earliestDateRadio);
+  }
+  ```
+- This ensures the copied payment uses a valid future date
 
 ## Existing Payee Display Name on View/Template Pages
 - The `toExistingPayeeNameValue` (`#act-view-existingPayee-acctName`) shows the **full system payee name** (e.g., `"ACT payee name 20230105 ACT payee n"`), NOT the short autocomplete filter text (`"ACT PAYEE"`)
 - Use `verifyUIElementTextIsNotNull()` instead of `compareUIVsJsonValue()` for this field in view page and template view assertions
 - This applies to all existing payee flows (TC02, TC03, TC04 and future TCs using existing payee)
+
+## Autocomplete with Multiple Currency Matches (ICT)
+- When an account exists under multiple currencies (e.g., SGD, CAD, USD), generic `selectAutoComplete()` picks the **first** dropdown suggestion which may be the wrong currency
+- **Working pattern:** Use `selectAutoCompleteWithFilter(page, container, searchText, filterText, listItemLocator)` — types the search text, then clicks only the suggestion matching `filterText`
+- The `filterText` must be **specific enough** to uniquely identify one dropdown item:
+  - BAD: `"(SGD)"` — too broad, matches other SGD accounts like "021account (SGD)"
+  - GOOD: `"03030303 (SGD)"` — includes account number + currency, uniquely identifies one item
+- The `searchText` should trigger the dropdown but doesn't need to be the full display value:
+  - e.g., `"03030303"` types fewer chars but still shows the target account in suggestions
+- The `listItemLocator` (e.g., `page.locator('.ui-autocomplete-list-item')`) must be defined in the **page class**, not hardcoded in `webComponents.ts`
+- View page displays the **account number** (e.g., `"03030303"`), NOT the autocomplete search/display text — use a separate `fromAccountViewValue` in test data for assertions
+
+## No Hardcoded Locators in webComponents.ts
+- `webComponents.ts` is a **shared utility** used by all spec files — it must NOT contain any page-specific or app-specific locators
+- If a method needs a DOM selector (e.g., `.ui-autocomplete-list-item` for dropdown items), accept it as a **Locator parameter** from the caller
+- The caller's page class defines the locator; the spec passes it to `webComponents`
+- This keeps `webComponents` generic and reusable across different applications/pages
+
+## No Hardcoded Values in Spec Files
+- **ALL** assertion values, search texts, filter texts, and credentials must come from `SG_testData.json`
+- If the view page shows a different format than the search input (e.g., account number vs search text), create a **separate test data field** for the view assertion:
+  - `fromAccount`: text typed into autocomplete input
+  - `fromAccountFilter`: text to filter the dropdown suggestion
+  - `fromAccountViewValue`: text expected on the view page
+- Never hardcode strings like `'03030303'` or `'Pending Approval'` in spec — reference `testData.X.Y.Z`
+
+## Delete Cleanup Step
+- Always add a delete step at the end of "Create" test cases to clean up test data
+- Delete is only possible for payments in "Pending Approval" status — ApprovalNow payments cannot be deleted
+- Pattern: Navigate to Transfer Center → Search by reference → Open view page → Click Delete → Confirm in dialog
+- Make delete conditional if status might vary: check `deleteButton.isEnabled()` before attempting
+
+## toggleAngularCheckbox — Reusable Method
+- Use `webComponents.toggleAngularCheckbox(page, labelLocator, checkboxLocator, checked)` for ALL Angular hidden checkboxes
+- Both `labelLocator` and `checkboxLocator` must be defined in the page class (e.g., `isTransactionNoteLabel`, `isTransactionNoteCheckbox`)
+- Never inline checkbox toggle logic in spec files — always use the shared method
 
 ## ACT Template View Page
 - The ACT template view page does NOT use `#act-viewTemp-templateName` for the template name (unlike Payroll's `#bulk-viewTemp-name`)

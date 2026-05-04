@@ -63,6 +63,34 @@
         "Failed": "Failed",
         "Cancelled": "Cancelled"
     },
+  "IntraCompanyTransfer": {
+    "SIT": {
+      "loginCompanyId": "SG2BFE1",
+      "loginUserId": "DBSAUTOSGICT01",
+      "verifyUserId": "SPI307R02",
+      "fromAccount": "03030303",
+      "fromAccountFilter": "03030303 (SGD)",
+      "fromAccountViewValue": "03030303",
+      "fromAccountWithUSD": "2024102801",
+      "toAccount": "WENDY JONES",
+      "toAccountViewValue": "0010687867",
+      "toSCAccount": "0018001282",
+      "toAccountWithFCY": "878787",
+      "toAccountWithUSD": "878787",
+      "amountV": "5,100",
+      "templateAmount": "5100"
+    },
+    "amountA1": "10",
+    "amountA2": "1100",
+    "amountA3": "90000001.00",
+    "maxUSDAmount": "999999999999.99",
+    "maxUSDAmountValue": "999,999,999,999.99",
+    "editAmount": "20",
+    "additionNote": "messageToOrderingBank",
+    "existingTemplate": "ICTAutoTemplateName001",
+    "transactionNote": "transactionNote",
+    "paymentType": "Transfer within Own Accounts"
+  },
   "TelegraphicTransfer": {
     "loginCompanyId": "SG2BFE1",
     "loginUserId": "DBSAUTOSG01",
