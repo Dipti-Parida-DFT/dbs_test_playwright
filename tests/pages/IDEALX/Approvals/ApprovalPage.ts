@@ -25,11 +25,12 @@ export class ApprovalPage {
     this.approveButton = page.locator('//*[@name="approve"]');
     this.reviewApproveButton = page.locator('//*[@id="transactionApprove"]');
     this.pushApproveButton = page.locator('//button[@id="push-btn"]');
+    this.pushApprovalOption = page.locator('xpath=//*[@class="push-option-label"]');
     this.searchButton = page.locator('xpath=//*[@name="search"]');
     this.approveDismissButton = page.locator('xpath=//button[@name="dismiss"]');
 
     // --- Challenge / OTP ---
-    this.getChallengeButton = page.locator('//button[@name="get-challenge"]');
+    this.getChallengeSMSButton = page.locator('//button[@name="get-challenge"]');
     this.challengeResponseInput = page.locator("//input[@name='responseCode']");
     this.confirmApproveButton = page.locator('//button[@class="btn btn__primary"]');
 
@@ -71,10 +72,11 @@ export class ApprovalPage {
   readonly approveButton: Locator;
   readonly reviewApproveButton: Locator;
   readonly pushApproveButton: Locator;
+  readonly pushApprovalOption: Locator;
   readonly searchButton: Locator;
   readonly approveDismissButton: Locator;
 
-  readonly getChallengeButton: Locator;
+  readonly getChallengeSMSButton: Locator;
   readonly challengeResponseInput: Locator;
   readonly confirmApproveButton: Locator;
 
@@ -93,8 +95,11 @@ export class ApprovalPage {
   readonly groupApproveButton: Locator;
   readonly groupNameLink: Locator;
 
-  // ---------- Waits / Page Ready ----------
+  
+  // create lib => components.ts object
+  webComponents = new WebComponents();
 
+  // ---------- Waits / Page Ready ----------
   /** Select Payment Type for Approval Page */ 
   async selectPaymentType(type: string) {
     //await this.paymentTypeInput.click();
@@ -169,10 +174,16 @@ export class ApprovalPage {
   }
 
   async approveWithOTP(otp: string) {
-    await this.safeClick(this.pushApproveButton);
-    await this.safeClick(this.getChallengeButton);
+    await this.webComponents.clickWhenVisibleAndEnabled(this.pushApprovalOption);
+    //await this.webComponents.clickWhenVisibleAndEnabled(this.getChallengeSMSButton);
+    await this.webComponents.enterTextarea(this.challengeResponseInput,otp);
+    await this.webComponents.clickWhenVisibleAndEnabled(this.approveButton.nth(1));
+    await this.webComponents.clickWhenVisibleAndEnabled(this.approveDismissButton); 
+
+    /*await this.safeClick(this.pushApprovalOption);
+    await this.safeClick(this.getChallengeSMSButton);
     await this.safeFill(this.challengeResponseInput, otp);
-    await this.safeClick(this.confirmApproveButton);
+    await this.safeClick(this.confirmApproveButton); */
   }
 
   async getApprovedTransactionReferences(items: number): Promise<string[]> {

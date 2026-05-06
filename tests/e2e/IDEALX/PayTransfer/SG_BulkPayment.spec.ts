@@ -30,11 +30,14 @@ const testDataPath = path.resolve(__dirname, '../../../data/SG_testData.json');
 const  testData  = JSON.parse(fs.readFileSync(testDataPath, 'utf-8'));
 import { chromium, Browser } from 'playwright';
 import { ref } from 'node:process';
+import { release } from 'node:os';
 
 let customBrowser: Browser;
 
 const loginCompanyId = testData.BulkPayment.SIT.loginCompanyId;
 const loginUserId    = testData.BulkPayment.SIT.loginUserId;
+const verifyUserId   = testData.BulkPayment.SIT.verifyUserId;
+const approveReleaseUserId = testData.BulkPayment.SIT.approveReleaseUserId;
 const fromAccount    = testData.BulkPayment.SIT.fromAccount;
 const payeeBankID    = testData.BulkPayment.payeeBankID;
 
@@ -49,6 +52,9 @@ const refs = {
   rejectReference: '',
   deleteReference: '',
   approvalReference: '',
+  verifyReference: '',
+  releaseReference: '',
+  tempReference: '',
 }
 
 let templateName = '';
@@ -548,6 +554,219 @@ test.describe.serial('SG_BulkPayment (Create Payments)', () => {
     await expect(pages.TransferCentersPage.transactionResultLabel).toContainText("No information to display");
   });
 
+});
+
+test.describe.serial('SG_Bulkpayment (Verify, Approve and Release Payment)', () => {
+  let pages: PaymentsPages;
+  type CreatedPayee = { name?: string; accountNumber?: string };
+  let createdPayees: CreatedPayee[] = [];
+
+  test.beforeEach(async ({ context, page }, testInfo) => {
+    approvalsPages = new ApprovalsPages(page);
+    process.env.currentTestTitle = testInfo.title;
+    customBrowser = await chromium.launch({ headless: false });
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.login(loginCompanyId, approveReleaseUserId, (String(CONSTANTS.PIN)));
+    pages = new PaymentsPages(page);
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+     // Only cleanup if the test passed
+  if (testInfo.status !== 'passed') {
+    console.warn(`[cleanup] Skipping payee deletion because test status is ${testInfo.status}`);
+    return;
+    }
+    
+  // Best-effort cleanup; never fail the test because cleanup failed
+  for (const p of createdPayees) {
+    try {
+      const key = p.name ?? p.accountNumber ?? '';
+      await pages.BulkPaymentPage.deletePayeeByFilter(key, /* confirm */ true);
+      console.log(`[cleanup] Deleted payee with key: ${key}`);
+    } catch (err) {
+      console.warn('[cleanup] Failed to delete a payee:', err);
+    }
+  }
+  });
+
+   test('TC010_BulkPayment - Create Bulk Payment to verify, approve and release', async ({ page }) => {
+    //Lgout from current user and login with maker to create bulk payment for approval flow
+    const loginPage = new LoginPage(page);
+    await loginPage.IdealxLogoutButton.click();
+    await loginPage.goto();
+    await loginPage.login(loginCompanyId, verifyUserId, (String(CONSTANTS.PIN)));
+    
+    // Step 1: Click on Pay & Transfer menu
+    await webComponents.waitForUXLoading([], page);
+    await webComponents.waitElementToBeVisible(pages.AccountTransferPage.paymentMenu);
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+
+    // Step 2: Authentication Pop-up
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
+
+    //Step 3: Click on Bulk Payment icon
+    try {
+        await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.bulkPayment);
+        await webComponents.waitElementToBeVisible(pages.BulkPaymentPage.fromAccount);
+        } catch {
+        await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.secondDot);
+        await webComponents.waitElementToBeVisible(pages.BulkPaymentPage.bulkPayment);
+        await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.bulkPayment);
+        await webComponents.waitElementToBeVisible(pages.BulkPaymentPage.fromAccount);
+        }
+      
+    // Step 4: Select From account
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.fromAccount);
+    await webComponents.typeTextThroughKeyBoardAction(page, fromAccount);
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'ArrowDown');
+    await webComponents.pressGivenButtonThroughKeyBoardAction(page, 'Enter');
+
+    // Reusable helper for add new payee
+    const { name, accountNumber }  = await pages.BulkPaymentPage.addNewPayeeSGBulkPayment({
+      name: testData.BulkPayment.newPayeeName,
+      nickName: testData.BulkPayment.newPayeeNickName,
+      bankId: payeeBankID,
+      accountNumber: testData.BulkPayment.newPayeeAcctNumber,
+    });
+
+    // Register for cleanup
+    createdPayees.push({ name, accountNumber }); 
+
+    // Step 5: Select Existing Payee
+    //await pages.BulkPaymentPage.addExistingPayee(testData.BulkPayment.existingPayee2);
+
+    // Step 6: Enter Amount
+    await webComponents.enterText(pages.BulkPaymentPage.amount, testData.BulkPayment.amountforTC010);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.showOptionalDetails);
+    await webComponents.enterText(pages.BulkPaymentPage.paymentDetailsTextarea, testData.BulkPayment.paymentDetails);
+
+    // Step 7: Next → Preview → Submit
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.nextButton);
+    await webComponents.waitElementToBeVisible(pages.BulkPaymentPage.submitButton);
+    await webComponents.clickWhenVisibleAndEnabled(pages.BulkPaymentPage.submitButton);
+    await webComponents.waitElementToBeVisible(pages.BulkPaymentPage.finishedButton);
+
+    // Step 8: Capture reference
+    refs.verifyReference = await pages.BulkPaymentPage.getReferenceID();
+
+    // Step 9: Verify reference in transfer center
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await pages.TransferCentersPage.searchAndOpenByReference(refs.verifyReference);
+    await webComponents.waitElementToBeVisible(pages.BulkPaymentPage.fromAccountViewLabel);
+    
+    // Step 10: Verify from account in view payment page
+    await expect(pages.BulkPaymentPage.transactionStatusValue).toContainText(`${testData.status.PendingVerification}`);
+  });
+
+  test('TC011_BulkPayment - Verify BulkPayment via My Approval', async ({page}) => {
+    test.setTimeout(TIMEOUT.EXTREME);
+    /**
+     * Step 4: Open Approval Menu and wait for approval page to be ready
+     */
+    await webComponents.clickWhenVisibleAndEnabled(approvalsPages.ApprovalPage.approvalMenu);
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
+    await approvalsPages.ApprovalPage.waitForApprovalPageReady();
+  
+    /**
+     * Step 5: Call method to verifySingleTransaction with reference captured from TC010. If reference is not available, use filters to search the transaction in approval list 
+     */
+    refs.approvalReference = await approvalsPages.MyVerificationAndReleasePage.verifySingleTransaction(
+      refs.verifyReference,
+      'SG - Bulk payment'
+    );
+  
+    /**
+     * Step 6: Verify transaction in Transfer Center
+     */
+    await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+    await pages.TransferCentersPage.searchAndOpenByReference(refs.approvalReference);
+    await expect(pages.BulkPaymentPage.transactionStatusValue).toContainText(`${testData.status.PendingApproval}`);
+  });
+
+   test('TC012_BulkPayment - Approve BulkPayment via My Approval', async ({page}) => {
+      test.setTimeout(TIMEOUT.EXTREME);
+      /**
+       * Step 1: Open My Approval
+       */
+      await webComponents.clickWhenVisibleAndEnabled(approvalsPages.ApprovalPage.approvalMenu);
+      await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
+      await approvalsPages.ApprovalPage.waitForApprovalPageReady();
+    
+      /**
+       * Step 2: Filter by reference (if available)
+       */
+      if (refs.approvalReference.trim().length > 0) {
+        await webComponents.enterTextarea(approvalsPages.ApprovalPage.byTransactionFilter, refs.approvalReference);
+      } else {
+        await webComponents.clickWhenVisibleAndEnabled(approvalsPages.ApprovalPage.showAdditionalFilter);
+        await approvalsPages.ApprovalPage.selectPaymentType('SG - Bulk payment');
+        await webComponents.clickWhenVisibleAndEnabled(approvalsPages.ApprovalPage.searchButton);
+      }
+    
+      /**
+       * Step 3: Capture reference from approval list
+       */
+      refs.releaseReference = (await approvalsPages.ApprovalPage.transactionReferenceLink.textContent())?.trim() ?? '';
+    
+      /**
+       * Step 4: Approve transaction
+       */
+      await approvalsPages.ApprovalPage.transactionList.first().click();
+      await webComponents.clickWhenVisibleAndEnabled(approvalsPages.ApprovalPage.approveButton);
+    
+      /**
+       * Step 5: Handle challenge (OTP)
+       */
+      
+     await approvalsPages.ApprovalPage.approveWithOTP('12312312');
+     
+      /**
+       * Step 6: Verify transaction in Transfer Center
+       */
+      await webComponents.clickWhenVisibleAndEnabled(pages.AccountTransferPage.paymentMenu);
+      await pages.TransferCentersPage.searchAndOpenByReference(refs.releaseReference);
+      await expect(pages.BulkPaymentPage.transactionStatusValue).toContainText(`${testData.status.PendingRelease}`);
+    });
+
+  test('TC013_BulkPayment - Release bulk payment via My Release', async ({ page }) => {
+    test.setTimeout(TIMEOUT.MAX);
+    /**
+     * Step 1: Open My Approval Page
+     */
+    await webComponents.clickWhenVisibleAndEnabled(
+      approvalsPages.ApprovalPage.approvalMenu
+    );
+    await webComponents.handleAuthIfPresent(pages.AccountTransferPage.authDialog, pages.AccountTransferPage.securityAccessCode, pages.AccountTransferPage.authenticateButton);
+    await approvalsPages.ApprovalPage.waitForApprovalPageReady();
+  
+    /**
+     * Step 2: Release BulkPayment transaction and capture reference
+     */
+    refs.tempReference =
+      await approvalsPages.MyVerificationAndReleasePage.releaseSingleTransaction(
+        refs.verifyReference,
+        refs.releaseReference,
+        'SG - Bulk payment'
+      );
+  
+    /**
+     * Step 3: Verify transaction in Transfer Center
+     */
+    await webComponents.clickWhenVisibleAndEnabled(
+      pages.AccountTransferPage.paymentMenu
+    );
+    await pages.TransferCentersPage.searchAndOpenByReference(
+      refs.tempReference
+    );
+  
+    /**
+     * Step 4: Assert that status should be Approved 
+    */
+    await expect(pages.BulkPaymentPage.transactionStatusValue
+    ).toContainText(`${testData.status.Approved}`);
+  });
+  
 });
 
 

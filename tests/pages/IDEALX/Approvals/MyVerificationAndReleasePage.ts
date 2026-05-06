@@ -112,7 +112,7 @@ export class MyVerificationAndReleasePage {
   async waitForVerifyByTransactionReady() {
     await this.waitForUXLoading();
     await expect(this.verifyTxnButton).toBeVisible({ timeout: TIMEOUT.MEDIUM });
-    await expect(this.transactionReferenceLink).toBeVisible({ timeout: TIMEOUT.MEDIUM });
+    //await expect(this.transactionReferenceLink).toBeVisible({ timeout: TIMEOUT.MEDIUM });
   }
 
   async waitForReleaseByTransactionReady() {
@@ -175,10 +175,13 @@ export class MyVerificationAndReleasePage {
       await this.selectPaymentType(paymentType);
     }
 
+    await expect(this.transactionReferenceLink).toBeVisible({ timeout: TIMEOUT.MEDIUM }); 
     verifyReference =
       (await this.transactionReferenceLink.textContent())?.trim() ?? '';
 
-    await this.safeClick(this.verifyTxnButton);
+    await this.transactionReferenceLink.click();
+    await this.waitForReleasePageReady();
+    await this.safeClick(this.viewReleaseBtn);
     await this.safeClick(this.verifyReleaseButton);
     await this.safeClick(this.dismissButton);
     return verifyReference;

@@ -97,6 +97,43 @@
         "transactionDeleted": "Transaction deleted",
         "internalReferenceUserProvided": "",
         "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
-   }
+    },
+    "RTGSPayment": {
+        "SIT": {
+            "loginCompanyId": "ID2BFE1",
+            "loginUserId": "DBSAUTOID001",
+            "fromAccount": "0301593814",
+            "payeeBankID": "DBS INDONESIA"
+        },
+        "UAT": {
+            "loginCompanyId": "ID2BFE1",
+            "loginUserId": "DBSAUTOID001",
+            "fromAccount": "0301593814",
+            "payeeBankID": "DBS INDONESIA"
+        },
+        "lessMinamount": "50000000",
+        "minAmount": "100000001",
+        "maxAmount": "999999999",
+        "moreThanMaxAmount": "10000000000000",
+        "newPayeeName": "TestRTGSPayeeName",
+        "newPayeeNickName": "TestRTGSPayeeNick",
+        "newPayeeAcctNumber": "8800112233445",
+        "payeeBankLocation" : "Indonesia",
+        "payeeLocation" : "Indonesia",
+        "townCity": "Jakarta",
+        "newPayeeAdd1": "123 Test Street",
+        "newPayeeAdd2": "Test City",
+        "newPayeeAdd3": "12345",
+        "residStatus": "Indonesian National",
+        "category": "Individual",
+        "relationship": "Affiliated",
+        "identity": "Identical",
+        "purposeCode": "Income",
+        "regulatoryComplianceCode": "N/A",
+        "underlyingCode": "N/A",
+        "paymentDetail": "RTGS Payment Details",
+        "messageContent": "Test message for RTGS payment",
+        "errorMessage": "One or more of the fields below have not been properly filled up. Please amend and submit again."
+    }
    
 }

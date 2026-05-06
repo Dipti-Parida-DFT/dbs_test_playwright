@@ -3,6 +3,26 @@
 > Runtime observations discovered during Playwright test execution.
 > Apply these when writing or converting tests to avoid repeat failures.
 
+## Migration Rules — MANDATORY for All Conversions
+
+### 1. No Hardcoded Playwright APIs in Spec Files
+- **NEVER** use raw Playwright APIs (`.fill()`, `expect().toContainText()`, `expect().toBeVisible()`) in spec files
+- **ALWAYS** use the corresponding `webComponents` framework utility from the start:
+  - Text input: `webComponents.enterTextarea()` / `webComponents.enterText()` — NOT `.fill()`
+  - Assertions: `webComponents.compareUIVsJsonValue()` — NOT `expect().toContainText()`
+  - Non-empty checks: `webComponents.verifyUIElementTextIsNotNull()` — NOT manual truthiness
+  - Visibility: `webComponents.isElementVisible()` — NOT `expect().toBeVisible()`
+  - Clicks: `webComponents.clickWhenVisibleAndEnabled()` / `webComponents.javaScriptsClick()` — NOT `.click()` directly
+- This ensures consistent logging, built-in retries, and framework compliance
+
+### 2. All Locators Must Live in the Page Class
+- **NEVER** create in-memory locators in the spec file (e.g., `const myLocator = page.locator(...)`)
+- If a locator is **broken** → fix it directly in the page class file (e.g., `AccountTransferPage.ts`)
+- If a locator is **missing** → add it directly in the page class file
+- If a locator needs a **fallback** → use `.or()` pattern in the page class, not in the spec
+- Spec files should ONLY reference locators via `pages.PageName.locatorName`
+- During the auto-retry loop (Stage 2.4), locator fixes go into the page class immediately — no in-memory workarounds
+
 ## Authentication
 - `handleAuthIfPresent()` is **session-scoped** — call only on the **first** `paymentMenu` click per test
 - Subsequent `paymentMenu` navigations in the same test do NOT re-trigger the auth dialog
@@ -42,18 +62,38 @@
 - `addExistingPayee` only fills filter + clicks add button; it does NOT switch the tab
 - For existing payee, only `fromAccount`, payee selection, and `amount` are needed — no additional details (reference, emails, etc.)
 
+## Existing Payee Autocomplete (ACT — Account Transfer)
+- The `existingPayee` locator targets the `p-auto-complete[@formcontrolname="payee"]` container — NOT the input
+- Must target the **inner input** for interaction: `pages.AccountTransferPage.existingPayee.locator('input')`
+- Using `.fill()` is too fast — autocomplete dropdown does not filter properly
+- **Working pattern:** Click inner input → clear → `typeTextThroughKeyBoardAction` (types char-by-char) → `waitForTimeout(2000)` → ArrowDown → Enter
+- Test data must match an **exact existing payee name** in the SIT environment autocomplete dropdown
+- `"ACT PAYEE"` confirmed working — maps to `ACT PAYEE - DBSSSGSGXXX - 32323233232` (DBS Bank)
+- `"SPI307-ACT-ExistingPayee"` does NOT exist in SIT — causes wrong payee selection (TT payee instead of ACT)
+- Wrong payee selection leads to payment type mismatch → form validation error ("Original remitter identity is required")
+
+## ApprovalNow M-Challenge Section (Expandable)
+- After clicking `approvalNowCheckBox`, the M-Challenge section may be **collapsed** behind the "Alternatively, use your digital token or security device for approval" link
+- The "Get Challenge via SMS" button (`getChallengeSMS`) is NOT always immediately visible
+- **Do NOT** use `waitForApproveNowPopUp()` — the ApproveNow section expands **inline** on the preview page, NOT as a dialog/popup
+- **Working pattern:** Check if `getChallengeSMS` is visible → if not, click the "Alternatively, use your digital token" text to expand → then wait for SMS button
+- The `pushApprovePopUp` locator (`mat-mdc-dialog-title`) targets a dialog that does NOT appear in the M-Challenge flow
+
+## ApprovalNow Payments — Delete Button Disabled
+- Payments submitted with ApprovalNow (M-Challenge) are auto-approved and reach Completed status immediately
+- The Delete button is **disabled** for Approved/Completed payments on the view page
+- Do NOT add a delete step for ApprovalNow test cases — or make it conditional:
+  ```typescript
+  const isDeleteEnabled = await deleteButton.isEnabled({ timeout: 5_000 }).catch(() => false);
+  if (isDeleteEnabled) { /* delete */ } else { /* skip */ }
+  ```
+
 ## Common Mistakes
 - Adding `waitForUXLoading` after every click — only where spinner actually appears
 - Duplicating `handleAuthIfPresent` on repeated `paymentMenu` navigation within same test
 - Using `TIMEOUT.MAX` for long multi-phase workflows — will timeout at 5 min
 - Adding `handleAnnouncementIfPresent()` in beforeEach without verifying framework pattern
 - Setting `payeeNicknameLabelValue` to `newPayeeName` — must use `newPayeeNickName` (Protractor source used same value for both; Playwright test data has distinct name vs nickname)
-
-## Release Flow
-- After release, `PayrollPage.status` (`#bulk-view-pendingStatus_0`) may show raw status code like `"statusCode.2"` instead of a human-readable label (e.g., "Approved")
-- When validating final status post-release, include `'statusCode'` in the valid statuses array to handle unresolved i18n keys
-- `amountPendingRelease` + ApproveNow during creation → status goes directly to "Pending Release" (skips Verify & Approve phases)
-- User2 (DBSAUTO0001) then releases via Approvals → Release Approved Payment tab
 
 ## Checkbox Toggle (Angular Hidden Inputs)
 - Angular wraps native `<input type="checkbox">` inside custom components (e.g., `ShuRu`) — the input is hidden and not directly clickable
@@ -72,13 +112,79 @@
   ```
 - Applies to: `isBeneAdvising`, `isTransactionNote`, and any other Angular-wrapped checkbox
 
-## ShuRu Locators (Account Transfer)
-- All `ShuRu[@name=...]` and `ShuRu[@formcontrolname=...]` locators in `AccountTransferPage.ts` are **broken** against the current UI
+## Radio Input State Verification — Hidden Element Display
+- RTGS Payment checkbox is actually a **radio input** (`<input type="radio" id="immediate_type">`) with `disabled="false"` or `disabled="true"` attribute
+- During form submission, the radio button may be **CSS-hidden** (element present in DOM but hidden via parent container or display style) even though technically visible per browser layout
+- **Do NOT** use `toBeVisible()` or `isElementVisible()` for state verification — these check CSS display and fail for hidden or deferred-visibility elements
+- **Working pattern** for hidden element state evaluation:
+  ```typescript
+  const elementState = await radioInput.evaluate((el: Element) => {
+    const element = el as HTMLInputElement;
+    return {
+      disabled: element.disabled,
+      checked: element.checked,
+      className: element.className,
+      ariaDisabled: element.getAttribute('aria-disabled'),
+      displayStyle: window.getComputedStyle(el).display,
+      visibilityStyle: window.getComputedStyle(el).visibility
+    };
+  });
+  // Check disabled state independent of visibility
+  const isDisabled = elementState.disabled === true || elementState.ariaDisabled === 'true';
+  expect(isDisabled).toBe(true);
+  ```
+- This pattern applies to **any element with state that needs verification independent of CSS display** — not just radio buttons
+- RTGS TC01 uses this pattern for the RTGSPaymentCheckBox verification after amount entry (Run 4 → Run 5)
+
+## View Page Status Loading Delay
+- For high-amount ApprovalNow payments (e.g., 90M+), the `#act-view-status` element renders with placeholder text `" status "` for >10 seconds before the actual status value loads
+- `compareUIVsJsonValue` has a 10s internal timeout on `toContainText` — insufficient for slow-loading status fields
+- **Working pattern:** Use `await expect(actStatusValue).toContainText(expectedStatus, { timeout: 30_000 })` directly instead of `compareUIVsJsonValue` for status assertions on high-amount payments
+- This applies specifically to the view page after ApprovalNow submissions; standard-amount payments load faster
+
+## ShuRu Locators — All Payment Types (Account Transfer, RTGS, etc.)
+- All `ShuRu[@name=...]` and `ShuRu[@formcontrolname=...]` locators across ALL page types are **broken** against the current UI
 - The `ShuRu` custom element has been replaced with standard HTML elements in the current app version
 - Replace with CSS selectors or role-based locators targeting the native HTML elements:
   - `ShuRu[@name="X"]` → `input[name="X"]` or `page.getByRole('textbox', ...)`
   - `ShuRu[@formcontrolname="X"]` → `label[for="X"]` (for checkboxes) or `input#X`
+- **RTGS Payment Page** — All ShuRu locators in `RTGSPaymentPage.ts` replaced during TC01 migration:
+  - amount: `ShuRu[@name="send-amount"]` → `input[@name="send-amount"]`
+  - newPayeeName: `ShuRu[@name="new-payee-name"]` → `textarea[@name="new-payee-name"]`
+  - newPayeeAdd1/2/3, newPayeeAcctNumber, newPayeeNickName, emailIds: All `ShuRu[@name="..."]` → `input[@name="..."]` or `textarea[@name="..."]`
+  - isBeneAdvising, isTransactionNote: `ShuRu[@formcontrolname="..."]` → `label[@for="..."]` (checkbox label click pattern)
+  - bankChargesThey, approvalNowCheckBox, challengeResponse, savaAsTemplateCheckBox, templateName, reasonForRejection: All `ShuRu[...]` → `input[...]` or `textarea[...]`
 - Always validate locators against live DOM before trusting page class definitions
+- The following in-memory locators from TC01 ACT migration have been **permanently added** to `AccountTransferPage.ts` under the `// ---------- New Locators Account Transfer ----------` section:
+
+| Locator Name | Old (Broken) | New (Working) | Reason |
+|---|---|---|---|
+| `newPayeeNickNameInput` | _(did not exist)_ | `input[placeholder="To identify this payee easily"]` | Mandatory field not in Protractor source |
+| `postalCodeInput` | `ShuRu[@name="new-payee-add3"]` | `getByText('Postal code')..getByRole('textbox')` | UI renamed "Address line 3" → "Postal code" |
+| `newPayeeAcctNumberInput` | `ShuRu[@name="new-payee-acct-number"]` | `input[name="new-payee-acct-number"]` with `.or()` fallback | ShuRu element replaced with native input |
+| `dbsBankRadio` | `ShuRu[@name="bankType-DBS"]` | `getByText('DBS Bank SINGAPORE', { exact: true }).first()` | Now a radio button, not ShuRu |
+| `isBeneAdvisingLabel` | _(did not exist)_ | `label[for="isBeneAdvising"]` | Angular hidden checkbox — click label instead |
+| `isBeneAdvisingCheckbox` | `ShuRu[@formcontrolname="isBeneAdvising"]` | `input#isBeneAdvising` | For verify-and-retry checked state |
+| `isTransactionNoteLabel` | _(did not exist)_ | `label[for="isTransactionNote"]` | Angular hidden checkbox — click label instead |
+| `isTransactionNoteCheckbox` | `ShuRu[@formcontrolname="isTransactionNote"]` | `input#isTransactionNote` | For verify-and-retry checked state |
+| `validateEmail1`–`validateEmail5` | `emailList` (single aggregate) | `(//*[@id="act-view-emailList"]//span[1]/span/span/span)[N]` | Individual email locators for precise view page validation |
+| `approvalNowCheckBox` | `ShuRu[@name="approveNow"]` | `input[name="approveNow"]` | ShuRu replaced with native input (TC02 fix) |
+| `challengeResponse` | `ShuRu[@name="responseCode"]` | `input[name="responseCode"]` | ShuRu replaced with native input (TC02 fix) |
+| `savaAsTemplateCheckBox` | `ShuRu[@name="saveAsTemplate"]` | `input[name="saveAsTemplate"]` | ShuRu replaced with native input (TC04 fix) |
+| `templateName` | `ShuRu[@name="templateName"]` | `input[name="templateName"]` | ShuRu replaced with native input (TC04 fix) |
+| `templateNameValue` | `#act-viewTemp-templateName` | `getByText('Template name:').locator('xpath=following-sibling::*[1]')` | ID not in ACT template view DOM (TC04 fix) |
+
+- The **old locators** (`newPayeeAdd3`, `payeeBankRadio`, `newPayeeAcctNumber`, `isBeneAdvising`, `isTransactionNote`, `emailList`) still exist in the page class for backward compatibility but should NOT be used in new tests
+
+## Existing Payee Display Name on View/Template Pages
+- The `toExistingPayeeNameValue` (`#act-view-existingPayee-acctName`) shows the **full system payee name** (e.g., `"ACT payee name 20230105 ACT payee n"`), NOT the short autocomplete filter text (`"ACT PAYEE"`)
+- Use `verifyUIElementTextIsNotNull()` instead of `compareUIVsJsonValue()` for this field in view page and template view assertions
+- This applies to all existing payee flows (TC02, TC03, TC04 and future TCs using existing payee)
+
+## ACT Template View Page
+- The ACT template view page does NOT use `#act-viewTemp-templateName` for the template name (unlike Payroll's `#bulk-viewTemp-name`)
+- Working locator: `page.getByText('Template name:').locator('xpath=following-sibling::*[1]')` — uses text-based sibling navigation
+- The `fromAccountValue`, `amountValue`, and `toExistingPayeeNameValue` locators work on the template view page (shared with payment view page)
 
 ## Email Fields (Account Transfer)
 - After toggling `isBeneAdvising` checkbox, 5 email fields appear as `textbox "Email"` **without** `name` attributes
@@ -98,4 +204,107 @@
 - `#view-act-acctBalance` — element no longer exists on the ACT view page
 - `payeeInfo` positional XPath → use individual locators: `toNewPayeeAcctValue`, `payeeAdd1`, `payeeAdd2`
 - View page `fromAccountValue` shows the underlying DBS account number, not the display name used during input
+
+## WebComponents Utilities — Preferred Over Hardcoded Playwright APIs
+
+During TC01 ACT migration, initial code used raw Playwright APIs (`.fill()`, `expect().toContainText()`, `expect().toBeVisible()`). These were later replaced with framework `webComponents` utilities for consistency, built-in retries, and standardized logging. Always prefer the framework utility over the raw Playwright equivalent.
+
+### Text Input — Use `enterTextarea()` / `enterText()` instead of `.fill()`
+- **Hardcoded:** `await pages.AccountTransferPage.amount.fill(value)`
+- **Framework:** `await webComponents.enterTextarea(pages.AccountTransferPage.amount, value)`
+- `enterTextarea()` — for `<textarea>` and ShuRu-based text areas (amount, paymentDetail, message, email fields, payeeName)
+- `enterText()` — for standard `<input>` fields (nickname, address lines, postal code, account number)
+- Both include internal click-clear-type-blur handling; `.fill()` can silently fail on custom Angular components
+
+### Visibility Check — Use `isElementVisible()` instead of `expect().toBeVisible()`
+- **Hardcoded:** `await expect(locator).toBeVisible({ timeout: TIMEOUT.LONG })`
+- **Framework:** `await webComponents.isElementVisible(page, locator, { timeout: TIMEOUT.LONG })`
+- Used before interacting with elements that may render late (postal code, radio buttons, account number input)
+- `isElementVisible` returns a boolean and does not throw — safer for conditional flows
+
+### Assertion — Use `compareUIVsJsonValue()` instead of `expect().toContainText()`
+- **Hardcoded:** `await expect(locator).toContainText(expectedValue)`
+- **Framework:** `await webComponents.compareUIVsJsonValue(locator, expectedValue)`
+- Provides standardized pass/fail logging with field name, expected vs actual values
+- Used for ALL view page field validations: fromAccount, amount, payeeName, status, paymentType, paymentDetail, message, emails, addresses, totalDeduct, transactionNote
+
+### Non-Empty Assertion — Use `verifyUIElementTextIsNotNull()`
+- **Hardcoded:** `expect(await locator.textContent()).toBeTruthy()`
+- **Framework:** `await webComponents.verifyUIElementTextIsNotNull(locator)`
+- Used for dynamic fields where exact value is unknown: hashValue, deductAmountValue, paymentDateValue, nextApprover
+
+### Email Fields — Use page class locators + `enterTextarea()` instead of `getByRole().nth(N)`
+- **Hardcoded:** `page.getByRole('textbox', { name: 'Email' }).nth(0).fill(value)` with safeClick + blur
+- **Framework:** `await webComponents.enterTextarea(pages.AccountTransferPage.emailId0, value)`
+- Page class defines individual locators (`emailId0` through `emailId4`) — no need for positional nth() selection
+- For view page validation, use `validateEmail1` through `validateEmail5` locators with `compareUIVsJsonValue()`
+
+### Email Validation — Use individual locators instead of single `emailList` element
+- **Hardcoded:** `await expect(pages.AccountTransferPage.emailList).toContainText(email)` (repeated 5×)
+- **Framework:** `await webComponents.compareUIVsJsonValue(pages.AccountTransferPage.validateEmail1, email)` (one per email)
+- Each email has its own view page locator (`validateEmail1`–`validateEmail5`) — more precise than checking substring in a single aggregate element
+
+### Summary of Replacements Applied in TC01
+
+| Step | Element | Old (Hardcoded) | New (Framework) |
+|------|---------|-----------------|-----------------|
+| 5 | amount | `.fill()` | `enterTextarea()` |
+| 9 | newPayeeName | `.fill()` | `enterTextarea()` |
+| 11 | newPayeeAdd1 | `.fill()` | `enterText()` |
+| 13 | postalCodeInput | `expect().toBeVisible()` | `isElementVisible()` |
+| 14 | dbsBankRadio | `expect().toBeVisible()` | `isElementVisible()` |
+| 15 | newPayeeAcctNumberInput | `expect().toBeVisible()` | `isElementVisible()` |
+| 16 | paymentDetail | `.fill()` | `enterTextarea()` |
+| 18 | email fields (×5) | `getByRole().nth(N).fill()` | `enterTextarea(emailIdN)` |
+| 19 | message | `.fill()` | `enterTextarea()` |
+| 29 | all view assertions (×16) | `expect().toContainText()` | `compareUIVsJsonValue()` |
+| 29 | hash, deduct, date, approver | manual truthiness check | `verifyUIElementTextIsNotNull()` |
+| 29 | email validation (×5) | `emailList.toContainText()` | `compareUIVsJsonValue(validateEmailN)` |
+
+## Template "Make a Payment" Requires Approved Status
+- Templates in "Pending Approval" status do NOT show the "Make a Payment" action link
+- Only approved/active templates display the `makeAPaymentLink` (`template-list-makeAPayment_0`)
+- Templates created without ApprovalNow are submitted as "Pending Approval" — they cannot be used for "payment from template" flows until approved
+- The `existingTemplate` test data value must reference a **pre-existing approved** template in SIT
+- SIT-confirmed approved ACT template: `"scACTtemplate01"` (not `"ACTAutoTemplateName001"` which does not exist)
+
+## RTGS Payment (TC01) — Minimum Amount Validation
+
+### Payment Type & Minimum Amount
+- RTGS (Real Time Gross Settlement) requires **minimum amount of 100,000,001 IDR** in SIT environment
+- Amounts below minimum (e.g., 50,000,000 IDR) correctly trigger the RTGSPaymentCheckBox to be **disabled=true**
+- The checkbox remains disabled throughout the payment creation flow until a valid amount (≥100M IDR) is entered
+
+### RTGS Payment Flow
+1. **Navigation**: Payments → Payments Portal → Make Payment → Select "RTGS" (via RTGSPaymentCheckBox)
+2. **Account & Amount**: Select From Account → Enter below-minimum amount (50M) → Checkbox auto-disables
+3. **New Payee Flow**: Switch to "New Payee" tab → Click "Continue" → Enter payee details (name, bank, account, etc.)
+4. **Payment Details**: Optional compliance fields (residency, category, relationship, purpose), emails, transaction note
+5. **Submission**: "Approve Now" flow optional; checkbox disabled state prevents direct submission of invalid amount
+6. **Verification**: RTGSPaymentCheckBox.disabled=true indicates payment rejected at business logic layer
+
+### RTGSPaymentPage Locators
+- All locators in `RTGSPaymentPage.ts` are ShuRu-free (replaced with native HTML in current UI)
+- Key fields: fromAccount (p-auto-complete), amount (input), payee details (textarea/input), compliance fields (checkboxes with label patterns)
+- Checkbox verification: Use `evaluate()` pattern to check `disabled` attribute independent of CSS visibility (see "Radio Input State Verification" section)
+
+### Test Data for RTGS
+- **Less than minimum amount**: 50,000,000 IDR (lessMinamount)
+- **Minimum amount**: 100,000,001 IDR (minAmount)
+- **Maximum amount**: 9,999,999,999,999 IDR (maxAmount)
+- **More than maximum**: 10,000,000,000,000 IDR (moreThanMaxAmount)
+- **Payee details**: newPayeeName, newPayeeAdd1/2/3, newPayeeNickName, payeeBankID (DBS or other), newPayeeAcctNumber
+- **Compliance fields**: residStatus, category, relationship, purposeCode, identityType, identityNumber
+- Reference: `tests/data/ID_testData.json` → `RTGSPayment.SIT` section
+
+### Retry Loop Notes
+- **Run 1-3**: Debugging ShuRu → native HTML conversion; steps 1-7 consistently pass
+- **Run 4**: RTGSPaymentCheckBox element found but CSS-hidden; changed verification to direct state evaluation
+- **Run 5**: ✅ Test passed; all 14 steps complete; checkbox correctly disabled (disabled=true) for 50M IDR amount
+
+## RTGS TC03 — Max Amount Validation
+- Amounts exceeding 9,999,999,999,999 IDR (`moreThanMaxAmount = "10000000000000"`) correctly trigger an error message after clicking Next: *"One or more of the fields below have not been properly filled up. Please amend and submit again."*
+- The error appears in the `alert__container--error` container (`uxIxErrorMsg` locator)
+- Error message locators (`uxIxErrorMsg`, `uxErrorMsg`, `uxIxErrorMsgLegacy`) were added to `RTGSPaymentPage.ts` — these mirror the base `Page` class patterns and can be reused for any future RTGS error validation TCs
+- TC03 passed on first run with all 16 steps completing in 1.4 minutes — no retry loop needed
 

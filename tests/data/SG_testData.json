@@ -264,7 +264,8 @@
       "SIT": {
         "loginCompanyId": "SG2BFE1",
         "loginUserId": "DBSAUTOSG03",
-        "verifyUserId": "SG2BFE1S01",
+        "verifyUserId": "DBSAUTOSG01",
+        "approveReleaseUserId": "DBSAUTOSG02",
         "fromAccount": "03030303"
       },
       "amountA1": "10",
@@ -272,10 +273,12 @@
       "amountA2IX": "1100",
       "amountV": "3,100",
       "amountVIX": "3100",
+      "amountforTC010"  : "8002",
       "editamount": "20",
       "deductAmount": "30",
       "payeeRef": "payeeRef",
       "existingPayee": "SGBulkPaymentExistingUserName",
+      "existingPayee2": "SGBulkPaymentExistingUserName2",
       "newPayeeName": "newPayeeName",
       "newPayeeNickName": "newPayeeNickName",
       "payeeBankID": "ANZBSGS0XXX",

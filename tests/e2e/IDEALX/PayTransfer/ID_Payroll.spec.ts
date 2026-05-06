@@ -310,7 +310,7 @@ test.describe.serial('ID_Payroll (Approve and Release Payment)', () => {
     // Set today as holiday by setting empty cutoff time for DBSID schedule
     await operationsPages.schedulesPage.editCutOffTime(
       testDataSAM.selectAffiliateByValue.DBSID,
-      pages.PayrollPage.IDPayrollScheduleLink,
+      'Indonesia Payroll', // paymentTypeLink,'',
       day,
       '' // holiday = no cutoff time
     );
@@ -352,7 +352,7 @@ test.describe.serial('ID_Payroll (Approve and Release Payment)', () => {
     } else {
       await webComponents.clickWhenVisibleAndEnabled(approvalsPages.ApprovalPage.showAdditionalFilter);
       await approvalsPages.ApprovalPage.selectPaymentType('ID - Payroll');
-      await webComponents.clickWhenVisibleAndEnabled(pages.PayrollPage.searchButton);
+      await webComponents.clickWhenVisibleAndEnabled(approvalsPages.ApprovalPage.searchButton);
     }
   
     /**
@@ -444,7 +444,7 @@ test.describe.serial('ID_Payroll (Approve and Release Payment)', () => {
   
     await operationsPages.schedulesPage.editCutOffTime(
       testDataSAM.selectAffiliateByValue.DBSID,
-      pages.PayrollPage.IDPayrollScheduleLink,
+      'Indonesia Payroll', // paymentTypeLink,'',
       day,
       testDataSAM.schedule.CutoffTime01
     );

@@ -65,7 +65,7 @@ export class SchedulesPage {
    * @param day 1–7 (Mon–Sun), 0 = Sunday (legacy behavior)
    * @param cutoffTime Cutoff time value (empty string = holiday)
    */
-  async editCutOffTime(affiliate: string, paymentTypeLink: Locator, day: number, cutoffTime: string) {
+  async editCutOffTime(affiliate: string, paymentTypeLink: string, day: number, cutoffTime: string) {
     const weekFields = [
       this.mondayTime,
       this.tuesdayTime,
@@ -80,7 +80,7 @@ export class SchedulesPage {
     await this.scheduleLink.click();
     await this.selectAffiliate.selectOption(affiliate);
     await this.safeClick(this.submitAffiliate);
-    await this.safeClick(paymentTypeLink);
+    await this.page.locator(`xpath=//a[contains(@href,'updateProcSchd') and normalize-space(text())='${paymentTypeLink}']`).click();
 
     const index = day === 0 ? 6 : day - 1;
     const field = weekFields[index];

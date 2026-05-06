@@ -36,6 +36,7 @@ export class BulkPaymentPage {
     this.bankCharge = page.locator('xpath=//dbs-radio-group[@formcontrolname="bankCharge"]');
     this.amount = page.locator('xpath=//input[@name="payeeAmount"]');
     this.amountPayee1 = page.locator('(//input[@name="payeeAmount"])[1]');
+    this.searchButton = page.locator('xpath=//*[@name="search"]');
 
     //Addded Locator fo Bulk Payment  Author: LC5741501   * Created Date: 11/03/26
     this.payeeResidentStatus = page.locator('xpath=//span[text()="Payee Resident Status"]/parent::div/following-sibling::div//span[@id="fromAccount"]');
@@ -299,6 +300,7 @@ export class BulkPaymentPage {
   readonly bankCharge: Locator;
   readonly amount: Locator;
   readonly amountPayee1: Locator;
+  readonly searchButton: Locator;
   readonly payeeResidentStatus: Locator;
   readonly payeeResidentOptionNonResident: Locator;
   readonly payeeCategory: Locator;
